@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentProvidersTable extends Migration
+class CreateAdminWithdrawalAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreatePaymentProvidersTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_providers', function (Blueprint $table) {
+        Schema::create('admin_withdrawal_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('owner');
-            $table->string('phone_number');
+            $table->string('name')->nullable();
+            $table->string('owner')->nullable();
+            $table->string('account')->nullable();
             $table->text('image')->nullable();
             $table->boolean('status')->default(1);
-            $table->unsignedBigInteger('agent_id');
-            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ class CreatePaymentProvidersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_providers');
+        Schema::dropIfExists('admin_withdrawal_accounts');
     }
 }

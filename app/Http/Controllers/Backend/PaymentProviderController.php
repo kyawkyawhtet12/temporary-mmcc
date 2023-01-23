@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
-use App\Models\PaymentProvider;
 use App\Http\Controllers\Controller;
+use App\Models\AdminWithdrawalAccount;
 
 class PaymentProviderController extends Controller
 {
@@ -15,7 +15,7 @@ class PaymentProviderController extends Controller
      */
     public function index()
     {
-        $providers = PaymentProvider::orderBy('id', 'DESC')->get();
+        $providers = AdminWithdrawalAccount::orderBy('id', 'DESC')->get();
         return view('backend.admin.payments.index', compact('providers'));
     }
 
@@ -38,33 +38,26 @@ class PaymentProviderController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-        $validateData = $this->validate($request, [
+        $this->validate($request, [
             'name' => 'required|string|max:255',
-            'owner' => 'required|string|max:255',
-            // 'phone_number' => 'required|phone:MM',
-            'phone_number' => 'required',
-            'image' => 'required|mimes:jpg,jpeg,png,gif'
+            // 'owner' => 'required|string|max:255',
+            // // 'phone_number' => 'required|phone:MM',
+            // 'phone_number' => 'required',
+            // 'image' => 'required|mimes:jpg,jpeg,png,gif'
         ]);
 
-        // if ($request->hasFile('image')) {
-        //     $dir = 'payment/';
-        //     // get image extension
-        //     $extension = strtolower($request->file('image')->getClientOriginalExtension());
-        //     // rename image
-        //     $fileName = uniqid() . '.' . $extension;
-        //     $request->file('image')->move($dir, $fileName);
-        // }
-        $image = $request->file('image');
-        $path = $image->store('payments');
+        // $image = $request->file('image');
+        // $path = $image->store('payments');
         
-        PaymentProvider::create([
+        AdminWithdrawalAccount::create([
             'name' => $request->name,
-            'owner' => $request->owner,
-            'phone_number' => $request->phone_number,
-            'image' => $path
+            // 'owner' => $request->owner,
+            // 'phone_number' => $request->phone_number,
+            // 'image' => $path
         ]);
     
-        return redirect()->route('providers.index')->with('success', 'Payment Provoider created successfully');
+        return redirect()->route('providers.index')
+                    ->with('success', 'Payment Provoider created successfully');
     }
 
     /**
@@ -86,7 +79,7 @@ class PaymentProviderController extends Controller
      */
     public function edit($id)
     {
-        $provider = PaymentProvider::find($id);
+        $provider = AdminWithdrawalAccount::find($id);
         return view('backend.admin.payments.edit', compact('provider'));
     }
 
@@ -101,25 +94,25 @@ class PaymentProviderController extends Controller
     {
         $validateData = $this->validate($request, [
             'name' => 'required|string|max:255',
-            'owner' => 'required|string|max:255',
-            // 'phone_number' => 'required|phone:MM',
-            'phone_number' => 'required',
-            'image' => 'nullable|mimes:jpg,jpeg,gif,png'
+            // 'owner' => 'required|string|max:255',
+            // // 'phone_number' => 'required|phone:MM',
+            // 'phone_number' => 'required',
+            // 'image' => 'nullable|mimes:jpg,jpeg,gif,png'
         ]);
 
-        $payment = PaymentProvider::findOrFail($id);
+        $payment = AdminWithdrawalAccount::findOrFail($id);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('payments');
-        } else {
-            $path= $payment->image;
-        }
+        // if ($request->hasFile('image')) {
+        //     $path = $request->file('image')->store('payments');
+        // } else {
+        //     $path= $payment->image;
+        // }
             
         $payment->update([
             'name' => $request->name,
-            'owner' => $request->owner,
-            'phone_number' => $request->phone_number,
-            'image' => $path
+            // 'owner' => $request->owner,
+            // 'phone_number' => $request->phone_number,
+            // 'image' => $path
         ]);
     
         return redirect()->route('providers.index')->with('success', 'Payment Provider updated successfully');
@@ -131,9 +124,18 @@ class PaymentProviderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        // PaymentProvider::find($id)->delete();
-        // return redirect()->route('payments.index')->with('success','Payment Provider deleted successfully');
+        $provider = AdminWithdrawalAccount::find($id);
+
+        if ($request->status == 0) {
+            $provider->update([ 'status' => 0 ]);
+            return redirect()->route('providers.index')
+                        ->with('success', 'Payment Provider closed successfully');
+        } else {
+            $provider->update([ 'status' => 1 ]);
+            return redirect()->route('providers.index')
+                        ->with('success', 'Payment Provider opened successfully');
+        }
     }
 }

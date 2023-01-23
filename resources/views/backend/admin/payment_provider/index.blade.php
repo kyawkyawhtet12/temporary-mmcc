@@ -40,7 +40,10 @@
                                 <thead>
                                     <tr>
                                         <th>No.</th>
+                                        <th>Image</th>
                                         <th>Provider Name</th>
+                                        <th>Account Number</th>
+                                        <th>Owner</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -49,7 +52,13 @@
                                     @foreach ($providers as $key => $payment)
                                         <tr>
                                             <td>{{ ++$key }}</td>
+                                            <td>
+                                                <img src="{{ $payment->image }}" alt="Payment Provider Image"
+                                                    width='50px'>
+                                            </td>
                                             <td>{{ $payment->name }}</td>
+                                            <td>{{ $payment->phone_number }}</td>
+                                            <td>{{ $payment->owner }}</td>
                                             <td>
                                                 @if ($payment->status)
                                                     <span class="badge badge-success badge-sm text-white"> Active </span>

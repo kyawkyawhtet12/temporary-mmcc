@@ -34,7 +34,7 @@
                             <table class="table table-bordered nowrap">
                               <thead>
                                 <tr class="bg-primary text-white" role="row">
-                                    <th>Amount</th>
+                                    {{-- <th>Amount</th> --}}
                                     <th>Compensate Amount</th>
                                     <th>Updated Date</th>
                                 </tr>
@@ -42,8 +42,8 @@
                               <tbody>
                                 @foreach($twocompensate as $key => $amount)
                                 <tr>
-                                  <td><label class="badge badge-primary badge-pill">{{ $amount->amount }}</label>
-                                  </td>
+                                  {{-- <td><label class="badge badge-primary badge-pill">{{ $amount->amount }}</label>
+                                  </td> --}}
                                   <td>
                                     <form id="editable-form" class="editable-form">
                                       <div class="form-group row">
@@ -75,17 +75,16 @@
                                 <table class="table table-bordered nowrap">
                                   <thead>
                                     <tr class="bg-primary text-white" role="row">
-                                        <th>Amount</th>
+                                        {{-- <th>Amount</th> --}}
                                         <th>Compensate Amount</th>
-                                        <th>Vote</th>
                                         <th>Updated Date</th>
                                     </tr>
                                   </thead>
                                   <tbody>
                                     @foreach($threecompensate as $key => $amount)
                                     <tr>
-                                      <td><label class="badge badge-primary badge-pill">{{ $amount->amount }}</label>
-                                      </td>
+                                      {{-- <td><label class="badge badge-primary badge-pill">{{ $amount->amount }}</label>
+                                      </td> --}}
                                       <td>
                                         <form id="editable-form" class="editable-form">
                                           <div class="form-group row">
@@ -95,15 +94,7 @@
                                           </div>
                                         </form>
                                       </td>
-                                      <td>
-                                        <form id="editable-form" class="editable-form">
-                                          <div class="form-group row">
-                                            <div class="col-6 col-lg-8 d-flex align-items-center">
-                                              <a href="#" id="vote" data-type="number" data-pk="{{ $amount->id }}">{{ $amount->vote }}</a>
-                                            </div>
-                                          </div>
-                                        </form>
-                                      </td>
+                                      
                                       <td>
                                         <label class="badge badge-info badge-pill">{{ date("F j, Y, g:i A", strtotime($amount->updated_at)) }}</label>
                                       </td>

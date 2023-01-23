@@ -16,6 +16,7 @@ class Cashout extends Model
         'phone',
         'remark',
         'status',
+        'agent_id'
     ];
 
     public function user()

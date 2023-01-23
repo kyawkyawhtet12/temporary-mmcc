@@ -20,7 +20,7 @@ class MaungFeesController extends Controller
 
         if ($request->ajax()) {
             $query = FootballMatch::whereNull('score')->where('type', 1)
-                                    ->with('bodyFees','maungFees')->latest()->get();
+                                    ->with('bodyFees', 'maungFees')->latest()->get();
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('league', function ($match) {
@@ -52,9 +52,9 @@ class MaungFeesController extends Controller
                         return $match->maungFees?->user?->name;
                     })
                     ->addColumn('action', function ($match) {
-                        if($match->maungFees){
+                        if ($match->maungFees) {
                             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
-                        }else{
+                        } else {
                             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
                         }
                                                
@@ -95,30 +95,30 @@ class MaungFeesController extends Controller
         ]);
 
         $match = FootballMatch::find($request->match_id);
-        if(!$match) return response()->json(['error'=>'something is wrong.']);        
+        if (!$match) {
+            return response()->json(['error'=>'something is wrong.']);
+        }
 
         $check = FootballMaungFee::where('match_id', $match->id)->count();
 
-        if( $check ){
+        if ($check) {
             FootballMaungFee::where('match_id', $match->id)->update(['status' => 0]);
         }
 
         FootballMaungFee::create([
             'match_id' => $match->id,
-            'body'     => $request->up .' '. $request->condition .' '. $request->down,
+            'body'     => ($request->up ?? '=') .' '. $request->condition .' '. $request->down,
             'goals'    => $request->goal_up .' '. $request->goal_condition .' '. $request->goal_down,
             'up_team'  => $request->up_team,
             'by'       => Auth::id()
         ]);
           
         return response()->json(['success'=>'Match saved successfully.']);
-         
     }
 
     public function edit($id)
     {
-        $match = FootballMatch::with('maungFees','home','away')->find($id);
+        $match = FootballMatch::with('maungFees', 'home', 'away')->find($id);
         return response()->json($match);
     }
-
 }

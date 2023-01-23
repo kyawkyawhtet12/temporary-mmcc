@@ -40,7 +40,7 @@
                                         <tr class="bg-primary text-white" role="row">
                                         <th>No.</th>
                                         <th>3 Digit Number</th>
-                                        <th>Votes</th>
+                                        {{-- <th>Votes</th> --}}
                                         <th>Status</th>
                                         <th>Date</th>
                                         <th>Action</th>
@@ -85,7 +85,7 @@
                           </div>
                         </div>
     
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Three Digit Number (Votes)</label>
                           <div class="col-sm-12">
                             <select class="js-example-basic-multiple w-100" name="votes[]" id="votes" style="width: 100%" multiple="multiple">
@@ -94,7 +94,7 @@
                               @endforeach
                             </select>
                           </div>
-                        </div>
+                        </div> --}}
     
                         <div class="col-sm-offset-2 col-sm-10 mt-3">
                          <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
@@ -135,7 +135,7 @@
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'number', name: 'number'},
-                {data: 'votes', name: 'votes'},
+                // {data: 'votes', name: 'votes'},
                 {data: 'status', name: 'status'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action'},
@@ -198,7 +198,7 @@
             {
               $('#threedigit_id').val(data.id);
               $('#threedigit_number').val(data.three_digit_id).trigger('change');
-              $("#votes").val(data.votes).trigger("change");
+              // $("#votes").val(data.votes).trigger("change");
               $('#modelHeading').html("Edit Two Digit Lucky Number");
               $('#saveBtn').val("edit-number");
               $('#ajaxModel').modal('show');

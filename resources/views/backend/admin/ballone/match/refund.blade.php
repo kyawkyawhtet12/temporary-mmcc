@@ -59,7 +59,7 @@
                             </div>               
                           </div> 
                             <div class="table-responsive">
-                                <table id="matches" class="table table-bordered table-striped nowrap">
+                                <table id="matches" class="table table-bordered nowrap">
                                     <thead>
                                         <tr>
                                           <th>No.</th>

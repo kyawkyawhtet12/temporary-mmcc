@@ -25,6 +25,6 @@ class AgentWithdraw extends Model
 
     public function provider()
     {
-        return $this->belongsTo(PaymentProvider::class, 'payment_provider_id');
+        return $this->belongsTo(AdminWithdrawalAccount::class, 'payment_provider_id');
     }
 }

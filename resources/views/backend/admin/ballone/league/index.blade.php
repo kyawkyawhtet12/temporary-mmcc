@@ -39,7 +39,7 @@
                           <div class="row">
                             <div class="col-12">
                                 <div class="table-responsive">
-                                    <table id="leagues" class="table table-bordered table-striped nowrap">
+                                    <table id="leagues" class="table table-bordered nowrap">
                                         <thead>
                                             <tr>
                                               <th>No.</th>

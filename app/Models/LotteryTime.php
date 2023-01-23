@@ -21,7 +21,6 @@ class LotteryTime extends Model
 
     public function getTimeNumberAttribute()
     {
-        // return trim($this->time, " AM");
         return Carbon::parse($this->time)->format('H:i');
     }
 }

@@ -78,11 +78,11 @@ Route::group(
         Route::get('/ballone-today-report', 'Report\BalloneReportController@today')->name('ballone.today-report');
 
         Route::resource('users', 'UserController');
-        Route::resource('user-payments', 'PaymentController');
-        Route::post('/paymentstatus', 'PaymentController@UpdateByAjax');
+        // Route::resource('user-payments', 'PaymentController');
+        // Route::post('/paymentstatus', 'PaymentController@UpdateByAjax');
 
-        Route::resource('cashouts', 'CashoutController');
-        Route::post('changeStatus', 'CashoutController@ChangeTransferStatus')->name('cash.changeStatus');
+        // Route::resource('cashouts', 'CashoutController');
+        // Route::post('changeStatus', 'CashoutController@ChangeTransferStatus')->name('cash.changeStatus');
 
         Route::resource('providers', 'PaymentProviderController');
 
@@ -152,13 +152,13 @@ Route::group(
         Route::get('compensate', 'TwoDigitCompensationController@index')->name('compensate.amount');
         Route::post('/two_compensate', 'TwoDigitCompensationController@updateTwoCompensate');
         Route::post('/three_compensate', 'TwoDigitCompensationController@updateThreeCompensate');
-        Route::post('/vote', 'TwoDigitCompensationController@updateVote');
+        // Route::post('/vote', 'TwoDigitCompensationController@updateVote');
 
         Route::get('lottery-times', 'LotteryTimeController@index')->name('lottery-time.index');
         Route::get('lottery-times/edit/{id}', 'LotteryTimeController@edit')->name('lottery-time.edit');
         Route::put('lottery-times/edit/{id}', 'LotteryTimeController@update')->name('lottery-time.update');
 
-        
+        Route::resource('banner', 'BannerImageController');
         
         // Ballone
         Route::resource('ballone/league', 'Ballone\LeagueController', ['as' => 'ballone' ]);

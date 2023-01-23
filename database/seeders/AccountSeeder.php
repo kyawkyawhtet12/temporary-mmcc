@@ -56,14 +56,5 @@ class AccountSeeder extends Seeder
             'referral_code' => 'test',
             'password' => bcrypt('password')
         ]);
-
-        Payment::create([
-            'amount' => 100000,
-            'user_id' => 1,
-            'payment_provider_id' => 1,
-            'phone' => '09123456789',
-            'transation_no' => '000000',
-            'status' => 'Approved'
-        ]);
     }
 }

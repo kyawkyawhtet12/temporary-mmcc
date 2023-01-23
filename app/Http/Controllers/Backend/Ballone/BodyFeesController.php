@@ -2,21 +2,12 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
-use App\Models\Club;
-use App\Models\User;
 use App\Models\League;
-use App\Models\FootballBet;
 use Illuminate\Support\Str;
-use App\Models\FootballBody;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
-use App\Models\FootballMaung;
 use App\Models\FootballBodyFee;
-use App\Models\FootballMaungZa;
-use App\Models\FootballMatchFee;
 use Yajra\DataTables\DataTables;
-use App\Models\FootballMaungGroup;
-use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,9 +52,9 @@ class BodyFeesController extends Controller
                         return $match->bodyFees?->user?->name;
                     })
                     ->addColumn('action', function ($match) {
-                        if($match->bodyFees){
+                        if ($match->bodyFees) {
                             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
-                        }else{
+                        } else {
                             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
                         }
                                                
@@ -104,42 +95,30 @@ class BodyFeesController extends Controller
         ]);
 
         $match = FootballMatch::find($request->match_id);
-        if(!$match) return response()->json(['error'=>'something is wrong.']);        
+        if (!$match) {
+            return response()->json(['error'=>'something is wrong.']);
+        }
 
         $check = FootballBodyFee::where('match_id', $match->id)->count();
 
-        if( $check ){
+        if ($check) {
             FootballBodyFee::where('match_id', $match->id)->update(['status' => 0]);
         }
 
         FootballBodyFee::create([
             'match_id' => $match->id,
-            'body'     => $request->up .' '. $request->condition .' '. $request->down,
+            'body'     => ($request->up ?? '=') .' '. $request->condition .' '. $request->down,
             'goals'    => $request->goal_up .' '. $request->goal_condition .' '. $request->goal_down,
             'up_team'  => $request->up_team,
             'by'       => Auth::id()
         ]);
           
         return response()->json(['success'=>'Match saved successfully.']);
-         
     }
-
-    // public function show($id)
-    // {
-    //     $match = FootballMatch::with('home', 'away', 'allBodyFees', 'allBodyFees.match')
-    //                         ->find($id);
-    //     return response()->json($match);
-    // }
 
     public function edit($id)
     {
-        $match = FootballMatch::with('bodyFees','home','away')->find($id);
+        $match = FootballMatch::with('bodyFees', 'home', 'away')->find($id);
         return response()->json($match);
     }
-
-    // public function getClubs($league_id)
-    // {
-    //     $clubs = Club::where('league_id', $league_id)->get();
-    //     return response()->json($clubs);
-    // }
 }

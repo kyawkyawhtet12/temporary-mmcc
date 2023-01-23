@@ -26,17 +26,17 @@ class TwoLuckyDrawController extends Controller
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('user', function ($digit) {
-                        return '<label class="badge badge-success badge-pill">'.$digit->user?->name.'</label>';
+                        return $digit->user?->name;
                     })
                     ->addColumn('agent', function ($digit) {
                         if ($digit->agent) {
-                            return '<label class="badge badge-success badge-pill">'.$digit->agent?->name.'</label>';
+                            return $digit->agent?->name;
                         } else {
                             return "-";
                         }
                     })
                     ->addColumn('number', function ($digit) {
-                        return '<label class="badge badge-warning badge-pill">'.$digit->twodigit->number.'</label>';
+                        return $digit->twodigit->number;
                     })
                     ->addColumn('lottery_time', function ($row) {
                         return '<span>'.$row->lottery_time->time.'</span>';

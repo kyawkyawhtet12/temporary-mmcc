@@ -22,7 +22,6 @@ class CreateAgentWithdrawsTable extends Migration
             $table->text('remark')->nullable();
             $table->boolean('status')->default(0);
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
-            $table->foreign('payment_provider_id')->references('id')->on('payment_providers')->onDelete('cascade');
             $table->timestamps();
         });
     }

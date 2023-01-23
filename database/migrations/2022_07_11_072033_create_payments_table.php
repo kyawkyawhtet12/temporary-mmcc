@@ -24,6 +24,8 @@ class CreatePaymentsTable extends Migration
             $table->enum('status', ['Pending', 'Approved', 'Rejected']);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('payment_provider_id')->references('id')->on('payment_providers')->onDelete('cascade');
+            $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class Payment extends Model
         'transation_no',
         'transation_ss',
         'status',
+        'agent_id'
     ];
 
     public function user()
