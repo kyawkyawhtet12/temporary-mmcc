@@ -37,7 +37,7 @@ class UserController extends Controller
                             $instance->where(function ($w) use ($request) {
                                 $search = $request->get('search');
                                 $w->orWhere('name', 'LIKE', "%$search%");
-                                $w->orWhere('phone', 'LIKE', "%$search%");
+                                $w->orWhere('user_id', 'LIKE', "%$search%");
                             });
                         }
                     })
@@ -55,17 +55,17 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (is_null($request->user_id)) {
+        if (is_null($request->old_id)) {
             $this->validate($request, [
                 'name' => 'required|string|max:255',
                 // 'phone' => 'required|phone:MM|unique:users',
-                'phone' => 'required|unique:users',
+                'user_id' => 'required|unique:users',
                 'password' => 'required|string|min:4|same:confirm-password',
             ]);
 
             User::create([
                 'name'     => $request->name,
-                'phone' => $request->phone,
+                'user_id' => $request->user_id,
                 'amount' => $request->amount,
                 'password' => Hash::make($request->password)
             ]);
@@ -73,13 +73,13 @@ class UserController extends Controller
             $this->validate($request, [
                 'name' => 'required|string|max:255',
                 // 'phone' => 'required|phone:MM|unique:users,phone,'.$request->user_id,
-                'phone' => 'required|unique:users,phone,'.$request->user_id,
+                'user_id' => 'required|unique:users,user_id,'.$request->user_id,
                 'password' => 'nullable|string|min:4|same:confirm-password',
             ]);
 
-            $user = User::find($request->user_id);
+            $user = User::find($request->old_id);
             $user->name = $request->name;
-            $user->phone = $request->phone;
+            $user->user_id = $request->user_id;
             $user->amount = $request->amount;
             if ($request->password) {
                 $user->password = Hash::make($request->password);
