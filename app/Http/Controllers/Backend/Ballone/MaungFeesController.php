@@ -86,12 +86,9 @@ class MaungFeesController extends Controller
     {
         $request->validate([
             'match_id' => 'required',
-            // 'up' => 'required',
-            'down' => 'required',
-            'condition' => 'required',
-            'goal_up' => 'required',
-            'goal_down' => 'required',
-            'goal_condition' => 'required',
+            'home_body' => 'required_without:away_body',
+            'away_body' => 'required_without:home_body',
+            'goals' => 'required'
         ]);
 
         $match = FootballMatch::find($request->match_id);
@@ -105,11 +102,14 @@ class MaungFeesController extends Controller
             FootballMaungFee::where('match_id', $match->id)->update(['status' => 0]);
         }
 
+        $body = ($request->home_body) ?? $request->away_body;
+        $up_team = ($request->home_body) ? 1 : 2;
+
         FootballMaungFee::create([
             'match_id' => $match->id,
-            'body'     => ($request->up ?? '=') .' '. $request->condition .' '. $request->down,
-            'goals'    => $request->goal_up .' '. $request->goal_condition .' '. $request->goal_down,
-            'up_team'  => $request->up_team,
+            'body'     => $body,
+            'goals'    => $request->goals,
+            'up_team'  => $up_team,
             'by'       => Auth::id()
         ]);
           
