@@ -11,6 +11,7 @@ class TwoLuckyNumber extends Model
 
     protected $fillable = [
         'lottery_time_id',
+        'date',
         'two_digit_id',
         'status',
         'type'

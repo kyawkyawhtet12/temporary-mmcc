@@ -18,6 +18,7 @@ class CreateTwoLuckyNumbersTable extends Migration
             // $table->string('lottery_time');
             $table->unsignedBigInteger('lottery_time_id');
             $table->foreign('lottery_time_id')->references('id')->on('lottery_times')->onDelete('cascade');
+            $table->date('date')->nullable();
             $table->unsignedBigInteger('two_digit_id');
             $table->foreign('two_digit_id')->references('id')->on('two_digits')->onDelete('cascade');
             $table->enum('status', ['Pending', 'Approved', 'Rejected']);

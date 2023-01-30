@@ -14,13 +14,14 @@ use App\Models\TwoLuckyNumber;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\TwoDigitCompensation;
+use App\Http\Requests\TwoLuckyNumberRequest;
 
 class TwoLuckyNumberController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = TwoLuckyNumber::with('two_digit', 'lottery_time')->latest();
+            $query = TwoLuckyNumber::with('two_digit', 'lottery_time')->orderBy('date', 'desc');
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('number', function ($number) {
@@ -42,6 +43,9 @@ class TwoLuckyNumberController extends Controller
                                         </div>
                                     </form>';
                         }
+                    })
+                    ->addColumn('date', function ($number) {
+                        return date("F j, Y", strtotime($number->date));
                     })
                     ->addColumn('created_at', function ($number) {
                         return date("F j, Y, g:i A", strtotime($number->created_at));
@@ -71,7 +75,7 @@ class TwoLuckyNumberController extends Controller
         return view('backend.admin.lucky_numbers.2digits', compact('times_one'));
     }
 
-    public function store(Request $request)
+    public function store(TwoLuckyNumberRequest $request)
     {
         $two_digit_id = TwoDigit::where('number', $request->twodigit_number)->first();
 
@@ -81,14 +85,15 @@ class TwoLuckyNumberController extends Controller
                             ->where('lottery_time_id', $lottery_time)
                             ->first();
         
-        if ($data) {
-            return response()->json(['error' => 'Lucky number is already added.']);
-        }
+        // if ($data) {
+        //     return response()->json(['error' => 'Lucky number is already added.']);
+        // }
                 
         TwoLuckyNumber::updateOrCreate([
             'id'   => $request->twodigit_id,
         ], [
             'two_digit_id'     => $two_digit_id['id'],
+            'date' => $request->date,
             'lottery_time_id' => $lottery_time,
             'type' => 0
         ]);
@@ -120,9 +125,9 @@ class TwoLuckyNumberController extends Controller
             $data = TwoLuckyNumber::find($request->pk);
             // $yesterday = date("Y-m-d 16:30:00", strtotime("yesterday"));
             // return $data->lottery_time;
-           
+            $date = $data->date;
             $two_lucky_draw_id = TwoLuckyDraw::where([
-                                    ['created_at','>=',Carbon::today()],
+                                    ['created_at','>=', $date ],
                                     ['lottery_time_id','=', $data->lottery_time_id],
                                     ['two_digit_id','=',$data->two_digit_id],
                                 ])->get();
@@ -138,7 +143,7 @@ class TwoLuckyNumberController extends Controller
             }
            
             $grouped = TwoLuckyDraw::where([
-                        ['created_at','>=',Carbon::today()],
+                        ['created_at','>=', $date ],
                         ['lottery_time_id','=',$data->lottery_time_id],
                         ['two_digit_id','=',$data->two_digit_id],
                     ])->selectRaw('SUM(amount) as amount, user_id as user_id')->groupBy('user_id')->get();

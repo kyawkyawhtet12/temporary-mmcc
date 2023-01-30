@@ -19,15 +19,15 @@ class TwoWinnerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = TwoWinner::with('twoLuckyDraw', 'twoLuckyNumber')->latest();
+            $query = TwoWinner::with('twoLuckyDraw', 'twoLuckyNumber', 'twoLuckyDraw.agent', 'twoLuckyNumber.two_digit')->latest();
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('user', function ($digit) {
-                        return '<label class="badge badge-primary badge-pill">'.$digit->twoLuckyDraw->user?->name.'</label>';
+                        return $digit->twoLuckyDraw->user?->name;
                     })
                     ->addColumn('agent', function ($digit) {
                         if ($digit->twoLuckyDraw->agent) {
-                            return '<label class="badge badge-primary badge-pill">'.$digit->twoLuckyDraw->agent?->name.'</label>';
+                            return $digit->twoLuckyDraw->agent?->name;
                         } else {
                             return "-";
                         }
@@ -46,7 +46,7 @@ class TwoWinnerController extends Controller
                         return '<span>'. $digit->twoLuckyDraw->amount * $za->compensate .' MMK</span>';
                     })
                     ->addColumn('created_at', function ($digit) {
-                        return date("F j, Y", strtotime($digit->created_at));
+                        return date("F j, Y", strtotime($digit->twoLuckyDraw->created_at));
                     })
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {
