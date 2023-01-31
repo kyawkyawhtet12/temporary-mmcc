@@ -73,7 +73,7 @@ class UserController extends Controller
             $this->validate($request, [
                 'name' => 'required|string|max:255',
                 // 'phone' => 'required|phone:MM|unique:users,phone,'.$request->user_id,
-                'user_id' => 'required|unique:users,user_id,'.$request->user_id,
+                'user_id' => 'required|unique:users,user_id,'.$request->old_id,
                 'password' => 'nullable|string|min:4|same:confirm-password',
             ]);
 

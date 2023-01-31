@@ -182,6 +182,7 @@
 
             $('#createUser').click(function() {
                 $('#saveBtn').val("create-user");
+                $('#old_id').val('');
                 $('#user_id').val('');
                 $('#userForm').trigger("reset");
                 $('#modelHeading').html("Create New User");
