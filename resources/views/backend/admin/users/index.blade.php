@@ -43,8 +43,8 @@
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>No.</th>
-                                                    <th>Name</th>
                                                     <th>User ID</th>
+                                                    <th>Name</th>
                                                     <th>Balance</th>
                                                     <th>Status</th>
                                                     <th>Registered Date</th>
@@ -80,7 +80,7 @@
                             <label for="name" class="col-sm-12 control-label">Name</label>
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="name" name="name"
-                                    placeholder="Enter Name" value="" required="">
+                                    placeholder="Enter Name" value="">
                             </div>
                         </div>
 
@@ -154,12 +154,12 @@
                         searchable: false
                     },
                     {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
                         data: 'user_id',
                         name: 'user_id'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'amount',

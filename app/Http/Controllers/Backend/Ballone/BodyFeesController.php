@@ -43,10 +43,42 @@ class BodyFeesController extends Controller
                         return $match->away?->name;
                     })
                     ->addColumn('goals', function ($match) {
-                        return $match->bodyFees?->goals;
+                        // return $match->bodyFees?->goals;
+                        $old_fees = '';
+
+                        foreach ($match->oldBodyFees as $old) {
+                            $old_fees .= "<div style='height:15px'> {$old->goals} </div>";
+                        }
+
+                        return "<div>
+                                    <div style='height:15px'> {$match->bodyFees?->goals} </div>
+                                    $old_fees
+                                </div>";
                     })
                     ->addColumn('body', function ($match) {
-                        return $match->bodyFees?->body;
+                        $home = $match->bodyFees?->up_team == 1 ? $match->bodyFees?->body : '';
+                        $away = $match->bodyFees?->up_team == 2 ? $match->bodyFees?->body : '';
+                        $old_fees = "";
+
+                        foreach ($match->oldBodyFees as $old) {
+                            $home_old = $old->up_team == 1 ? $old->body : '';
+                            $away_old = $old->up_team == 2 ? $old->body : '';
+                            $old_fees .= "<div class='d-flex text-center'> 
+                                            <div style='width:50px'> $home_old </div> 
+                                            <div style='height:15px;border-right:1px solid #333;margin:0 5px;'></div> 
+                                            <div style='width:50px'> $away_old </div> 
+                                        </div>";
+                        }
+
+                        return "<div class='d-flex text-center'> 
+                                    <div style='width:50px'> $home </div> 
+                                    <div style='height:15px;border-right:1px solid #333;margin:0 5px;'></div> 
+                                    <div style='width:50px'> $away </div> 
+                                </div>
+
+                                $old_fees
+                                
+                            ";
                     })
                     ->addColumn('by', function ($match) {
                         return $match->bodyFees?->user?->name;
@@ -76,7 +108,7 @@ class BodyFeesController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['score','action'])
+                    ->rawColumns(['score','action','body','goals'])
                     ->make(true);
         }
         return view('backend.admin.ballone.match.body', compact('leagues'));

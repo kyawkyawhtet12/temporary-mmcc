@@ -31,6 +31,11 @@ class FootballMatch extends Model
         return $this->hasOne(FootballBodyFee::class, 'match_id')->where('status', '=', 1);
     }
 
+    public function oldBodyfees()
+    {
+        return $this->hasMany(FootballBodyFee::class, 'match_id')->where('status', '=', 0);
+    }
+
     public function allBodyfees()
     {
         return $this->hasMany(FootballBodyFee::class, 'match_id');
@@ -39,6 +44,11 @@ class FootballMatch extends Model
     public function maungfees()
     {
         return $this->hasOne(FootballMaungFee::class, 'match_id')->where('status', '=', 1);
+    }
+
+    public function oldMaungfees()
+    {
+        return $this->hasMany(FootballMaungFee::class, 'match_id')->where('status', '=', 0);
     }
 
     public function allMaungfees()

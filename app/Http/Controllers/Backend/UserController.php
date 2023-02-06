@@ -57,7 +57,7 @@ class UserController extends Controller
     {
         if (is_null($request->old_id)) {
             $this->validate($request, [
-                'name' => 'required|string|max:255',
+                'name' => 'nullable|string|max:255',
                 // 'phone' => 'required|phone:MM|unique:users',
                 'user_id' => 'required|unique:users',
                 'password' => 'required|string|min:4|same:confirm-password',
@@ -71,7 +71,7 @@ class UserController extends Controller
             ]);
         } else {
             $this->validate($request, [
-                'name' => 'required|string|max:255',
+                'name' => 'nullable|string|max:255',
                 // 'phone' => 'required|phone:MM|unique:users,phone,'.$request->user_id,
                 'user_id' => 'required|unique:users,user_id,'.$request->old_id,
                 'password' => 'nullable|string|min:4|same:confirm-password',

@@ -27,7 +27,7 @@ class ClubController extends Controller
                         return date("F j, Y, g:i A", strtotime($club->created_at));
                     })
                     ->addColumn('action', function ($club) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$club->id.'" data-original-title="Edit" class="edit btn btn-outline-warning editClub">Edit</a>';
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$club->id.'" data-original-title="Edit" class="edit btn btn-outline-info editClub">Edit</a>';
                         $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$club->id.'" data-original-title="Delete" class="btn btn-outline-danger deleteClub">Delete</a>';
                         return $btn;
                     })
@@ -58,21 +58,32 @@ class ClubController extends Controller
             'league_id' => 'required',
         ]);
 
-        Club::updateOrCreate([
-            'id'   => $request->club_id,
-        ], [
-            'name'     => $request->name,
-            'code' => $request->code,
-            'league_id' => $request->league_id,
-        ]);
-   
+        if ($request->club_id) {
+            $club = Club::find($request->club_id);
+            Club::where('name', $club->name)->delete();
+        }
+
+        foreach ($request->league_id as $league) {
+            Club::create([
+                'name' => $request->name,
+                'code' => $request->code,
+                'league_id' => $league,
+            ]);
+        }
+        
         return response()->json(['success'=>'Club saved successfully.']);
     }
 
     public function edit($id)
     {
         $club = Club::find($id);
-        return response()->json($club);
+        $league = Club::where('name', $club->name)->pluck('league_id');
+
+        $data = [
+            'club' => $club,
+            'league' => $league
+        ];
+        return response()->json($data);
     }
 
     public function destroy($id)

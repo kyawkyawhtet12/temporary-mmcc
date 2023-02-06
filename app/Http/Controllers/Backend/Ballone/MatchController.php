@@ -23,13 +23,16 @@ class MatchController extends Controller
     public function index(Request $request)
     {
         $leagues = League::all();
-        // $clubs = Club::all();
 
         if ($request->ajax()) {
             // $query = FootballMatch::whereNull('score')->where('type', 1)->with('fees')->latest()->get();
             $query = FootballMatch::where('type', 1)
-            ->where('calculate_body',0)->orWhere('calculate_maung',0)
-            ->with('bodyFees','maungFees')->latest()->get();
+                                ->where(function ($query) {
+                                    $query->where('calculate_body', 0)
+                                        ->orWhere('calculate_maung', 0);
+                                })
+                                ->with('bodyFees', 'maungFees')
+                                ->latest()->get();
 
             return Datatables::of($query)
                     ->addIndexColumn()
@@ -40,24 +43,24 @@ class MatchController extends Controller
                         return date("F j, Y, g:i A", strtotime($match->date_time));
                     })
                     ->addColumn('score', function ($match) {
-                        
                         if ($match->score === null) {
                             return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="addResult"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
                         }
                         return $match->score;
                     })
                     ->addColumn('calculate', function ($match) {
-
                         $btn = '';
                         
-                        if ($match->score === null) return '-';     
+                        if ($match->score === null) {
+                            return '-';
+                        }
                         
-                        if( !$match->calculate_body && $match->bodyFees ){ 
+                        if (!$match->calculate_body && $match->bodyFees) {
                             $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="body" class="calculateBtn mr-3">
                             <i class="fa fa-plus-square text-inverse m-r-10"></i> Body
                             </a>';
                         }
-                        if( !$match->calculate_maung && $match->maungFees ){ 
+                        if (!$match->calculate_maung && $match->maungFees) {
                             $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="maung" class="calculateBtn">
                                 <i class="fa fa-plus-square text-inverse m-r-10"></i> Maung
                                 </a>';
@@ -213,7 +216,7 @@ class MatchController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // 'round' => 'nullable|string|max:255',
+            'round' => 'nullable|string|max:255',
             'league_id' => 'required',
             'date_time' => 'required|date_format:Y-m-d H:i:s',
         ]);
@@ -236,6 +239,7 @@ class MatchController extends Controller
             ]);
         } else {
             $match = FootballMatch::create([
+                'round' => $request->round,
                 'date_time' => $request->date_time,
                 'league_id' => $request->league_id,
                 'home_id' => $request->home_id,
@@ -261,10 +265,10 @@ class MatchController extends Controller
             [
               'score' => $request->up_team .' '. '-' .' '. $request->down_team,
             ]
-        );        
+        );
 
         return response()->json(['success'=>'Match saved successfully.']);
-    }    
+    }
 
     
     //

@@ -48,6 +48,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>No.</th>
+                                                    <th>Round</th>
                                                     <th>League</th>
                                                     <th>Date Time</th>
                                                     <th>Home Team</th>
@@ -89,21 +90,6 @@
                             <h5 id="score"> Vs </h5>
                             <h5 id="away"> Liverpool </h5>
                         </div>
-
-
-                        {{-- <div class="form-group editBet mt-3">
-                            <label for="name" class="col-sm-12 control-label"> Up Team </label>
-                            <div class="col-sm-12 d-flex">
-                                <div class="mr-3">
-                                    <input type="checkbox" name="up_team" id="home_up" value="1">
-                                    <label> Home </label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" name="up_team" id="away_up" value="2">
-                                    <label> Away </label>
-                                </div>
-                            </div>
-                        </div> --}}
 
                         <input type="hidden" name="type" id="type" value="0">
 
@@ -206,6 +192,10 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'round',
+                        name: 'round'
                     },
                     {
                         data: 'league',

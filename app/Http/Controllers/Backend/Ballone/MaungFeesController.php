@@ -20,7 +20,7 @@ class MaungFeesController extends Controller
 
         if ($request->ajax()) {
             $query = FootballMatch::whereNull('score')->where('type', 1)
-                                    ->with('bodyFees', 'maungFees')->latest()->get();
+                                    ->with('maungfees')->latest()->get();
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('league', function ($match) {
@@ -43,16 +43,47 @@ class MaungFeesController extends Controller
                         return $match->away?->name;
                     })
                     ->addColumn('goals', function ($match) {
-                        return $match->maungFees?->goals;
+                        $old_fees = '';
+
+                        foreach ($match->oldMaungfees as $old) {
+                            $old_fees .= "<div style='height:15px'> {$old->goals} </div>";
+                        }
+
+                        return "<div>
+                                    <div style='height:15px'> {$match->maungfees?->goals} </div>
+                                    $old_fees
+                                </div>";
                     })
                     ->addColumn('body', function ($match) {
-                        return $match->maungFees?->body;
+                        $home = $match->maungfees?->up_team == 1 ? $match->maungfees?->body : '';
+                        $away = $match->maungfees?->up_team == 2 ? $match->maungfees?->body : '';
+                        $old_fees = "";
+
+                        foreach ($match->oldMaungfees as $old) {
+                            $home_old = $old->up_team == 1 ? $old->body : '';
+                            $away_old = $old->up_team == 2 ? $old->body : '';
+                            $old_fees .= "<div class='d-flex text-center'> 
+                                            <div style='width:50px'> $home_old </div> 
+                                            <div style='height:15px;border-right:1px solid #333;margin:0 5px;'></div> 
+                                            <div style='width:50px'> $away_old </div> 
+                                        </div>";
+                        }
+
+                        return "<div class='d-flex text-center'> 
+                                    <div style='width:50px'> $home </div> 
+                                    <div style='height:15px;border-right:1px solid #333;margin:0 5px;'></div> 
+                                    <div style='width:50px'> $away </div> 
+                                </div>
+
+                                $old_fees
+                                
+                            ";
                     })
                     ->addColumn('by', function ($match) {
-                        return $match->maungFees?->user?->name;
+                        return $match->maungfees?->user?->name;
                     })
                     ->addColumn('action', function ($match) {
-                        if ($match->maungFees) {
+                        if ($match->maungfees) {
                             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
                         } else {
                             $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
@@ -76,7 +107,7 @@ class MaungFeesController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['score','action'])
+                    ->rawColumns(['score','action', 'body', 'goals'])
                     ->make(true);
         }
         return view('backend.admin.ballone.match.maung', compact('leagues'));
