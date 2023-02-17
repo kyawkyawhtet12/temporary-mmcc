@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 
 class AddResultController extends Controller
 {
-    public function test($id)
+    public function index($id)
     {
         $match = FootballMatch::findOrFail($id);
         return view("backend.admin.ballone.match.result", compact("match"));
@@ -26,7 +26,7 @@ class AddResultController extends Controller
 
         $match = FootballMatch::findOrFail($id);
 
-        $match->update([ 'score' => $request->home .' '. '-' .' '. $request->away ]);
+        $match->update([ 'temp_score' => $request->home .' '. '-' .' '. $request->away ]);
 
         $footballBodyFee = FootballBodyFee::where('match_id', $id)->get();
         $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
@@ -39,6 +39,8 @@ class AddResultController extends Controller
         foreach ($footballMaungFee as $maungFees) {
             $this->calculation($maungFees, $request);
         }
+
+        $match->update(['calculate' => 0]);
 
         return back();
     }
@@ -81,9 +83,9 @@ class AddResultController extends Controller
 
             $net = (int) $request->home - (int) $request->away;
 
+            $real_limit = ($limit == "L") ? 0 : $limit;
             if ($fees_type === "=") {
                 // return $net;
-                $real_limit = ($limit == "L") ? 0 : $limit;
                 if ($net > $real_limit) {
                     $allFees->result->update(['home' => 100 , 'away' => -100 ]);
                 } else {
@@ -97,27 +99,27 @@ class AddResultController extends Controller
             }
 
             if ($fees_type === "+") {
-                if ($net < $limit) {
+                if ($net < $real_limit) {
                     $allFees->result->update(['home' => -100 , 'away' => 100 ]);
                 } else {
-                    if ($net > $limit) {
+                    if ($net > $real_limit) {
                         $allFees->result->update(['home' => 100 , 'away' => -100 ]);
                     }
             
-                    if ($net == $limit) {
+                    if ($net == $real_limit) {
                         $allFees->result->update(['home' => $percent , 'away' => '-'.$percent ]);
                     }
                 }
             }
 
             if ($fees_type === "-") {
-                if ($net < $limit) {
+                if ($net < $real_limit) {
                     $allFees->result->update(['home' => -100 , 'away' => 100 ]);
                 } else {
-                    if ($net > $limit) {
+                    if ($net > $real_limit) {
                         $allFees->result->update(['home' => 100 , 'away' => -100 ]);
                     }
-                    if ($net == $limit) {
+                    if ($net == $real_limit) {
                         $allFees->result->update(['home' =>  '-'.$percent , 'away' => $percent ]);
                     }
                 }

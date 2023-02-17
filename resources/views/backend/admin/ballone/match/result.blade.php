@@ -67,9 +67,9 @@
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ getHomeScore($match->score) }}">
+                                        value="{{ getHomeScore($match->temp_score) }}">
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ getAwayScore($match->score) }}">
+                                        value="{{ getAwayScore($match->temp_score) }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
@@ -80,7 +80,12 @@
 
                                 <div class="d-flex">
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
-                                    <a href="#" class="btn btn-sm btn-success mt-3"> Calculate </a>
+
+                                    @if (!$match->calculate)
+                                        <a href="{{ route('ballone.calculate.result', $match->id) }}"
+                                            class="btn btn-sm btn-success mt-3"> Calculate </a>
+                                    @endif
+
                                 </div>
                             </form>
 

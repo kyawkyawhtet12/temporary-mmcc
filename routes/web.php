@@ -200,7 +200,9 @@ Route::group(
         Route::get('body-today-report', 'Ballone\ReportController@bodyTodayReport')->name('ballone.body.today-report');
         Route::get('maung-today-report', 'Ballone\ReportController@maungTodayReport')->name('ballone.maung.today-report');
 
-        Route::get('ballone-add-result/{id}', 'Ballone\AddResultController@test');
+        Route::get('ballone-add-result/{id}', 'Ballone\AddResultController@index');
         Route::post('ballone-add-result/{id}', 'Ballone\AddResultController@add')->name('calculate.result');
+
+        Route::get('ballone-calculate-result/{id}', 'Ballone\CalculationController@index')->name('ballone.calculate.result');
     }
 );

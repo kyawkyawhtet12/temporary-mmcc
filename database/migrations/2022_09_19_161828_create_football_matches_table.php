@@ -21,10 +21,12 @@ class CreateFootballMatchesTable extends Migration
             $table->unsignedBigInteger('home_id');
             $table->unsignedBigInteger('away_id');
             $table->string('score')->nullable();
+            $table->string('temp_score')->nullable();
             $table->boolean('status')->default('0');
             $table->boolean('type')->default(1);
             $table->boolean('calculate_body')->default(0);
             $table->boolean('calculate_maung')->default(0);
+            $table->boolean('calculate')->default(0);
             $table->timestamps();
             $table->foreign('league_id')->references('id')->on('leagues')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('home_id')->references('id')->on('clubs')->onDelete('cascade')->onUpdate('cascade');
