@@ -9,6 +9,7 @@ use App\Models\FootballMatch;
 use App\Models\FootballBodyFee;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBodyFeeResult;
 use Illuminate\Support\Facades\Auth;
 
 class BodyFeesController extends Controller
@@ -137,12 +138,16 @@ class BodyFeesController extends Controller
         $body = ($request->home_body) ?? $request->away_body;
         $up_team = ($request->home_body) ? 1 : 2;
 
-        FootballBodyFee::create([
-            'match_id' => $match->id,
-            'body'     => $body,
-            'goals'    => $request->goals,
-            'up_team'  => $up_team,
-            'by'       => Auth::id()
+        $fees = FootballBodyFee::create([
+                        'match_id' => $match->id,
+                        'body'     => $body,
+                        'goals'    => $request->goals,
+                        'up_team'  => $up_team,
+                        'by'       => Auth::id()
+                    ]);
+        
+        FootballBodyFeeResult::create([
+            'fee_id' => $fees->id
         ]);
           
         return response()->json(['success'=>'Match saved successfully.']);

@@ -57,7 +57,8 @@
                                                     <th>Home Team</th>
                                                     <th>Away Team</th>
                                                     <th>Result</th>
-                                                    <th>Calculate</th>
+                                                    <th>Add Result</th>
+                                                    {{-- <th>Calculate</th> --}}
                                                     {{-- <th>Body</th>
                                           <th>Goals</th> --}}
                                                     <th>Action</th>
@@ -299,9 +300,13 @@
                         name: 'score'
                     },
                     {
-                        data: 'calculate',
-                        name: 'calculate'
+                        data: 'add_score',
+                        name: 'add_score'
                     },
+                    // {
+                    //     data: 'calculate',
+                    //     name: 'calculate'
+                    // },
                     // {data: 'body', name: 'body'},
                     // {data: 'goals', name: 'goals'},
                     {

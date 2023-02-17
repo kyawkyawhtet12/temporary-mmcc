@@ -12,6 +12,8 @@ use App\Models\FootballMaungZa;
 use App\Models\FootballMaungGroup;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBodyFee;
+use Laravel\Ui\Presets\React;
 
 class CalculationController extends Controller
 {
@@ -174,5 +176,333 @@ class CalculationController extends Controller
         FootballMatch::find($request->match_id)->update(['calculate_maung' => 1 ]);
 
         return response()->json(['success'=>'Match saved successfully.']);
+    }
+
+    public function test($id)
+    {
+        $match = FootballMatch::findOrFail($id);
+        return view("backend.admin.ballone.match.result", compact("match"));
+        // if (!$match->score) {
+        //     return view("backend.admin.ballone.match.result", compact("match"));
+        // }
+    }
+
+    public function add(Request $request, $id)
+    {
+        // return $request->all();
+
+        $match = FootballMatch::findOrFail($id);
+
+        $match->update(['score' => $request->home .' '. '-' .' '. $request->away]);
+
+        $home = $request->home;
+        $away = $request->away;
+
+        // Calculation Body Winner
+
+        // $footballBody = FootballBodyFee::where('match_id', $id)->get();
+        $bodySetting  = FootballBodySetting::find(1);
+
+        $footballBody = FootballBody::where('match_id', $id)->get();
+
+        $net = (int) $home - (int) $away;
+        $total_goals = (int) $home + (int) $away;
+        
+        // if ($net > 0) {
+        //     return "HOME Team Wins";
+        // } elseif ($net < 0) {
+        //     return "Away Team Wins";
+        // } else {
+        //     return "Draw";
+        // }
+        
+        // return $net;
+        $data = [];
+        
+        foreach ($footballBody as $body) {
+            // return $body;
+            // return $body->fees;
+
+            $type = $body->type; // Home or Away , Over or Under
+            $upteam = $body->fees->up_team;
+            
+            $user = User::find($body->user_id);
+            
+            if ($type == "home") {
+                $fees = $body->fees->body;
+                $this->upCalculation($net, $fees, $body);
+            } elseif ($type == "away") {
+                $fees = $body->fees->body;
+                $this->downCalculation($net, $fees, $body);
+            // if ($upteam == 1) {
+                //     // dd("some");
+                //     $this->downCalculation($net, $fees, $body);
+            // } else {
+                //     // dd("none");
+                //     $this->upCalculation($net, $fees, $body);
+            // }
+            } elseif ($type == "over") {
+                $fees = $body->fees->goals;
+                
+                $this->upCalculation($total_goals, $fees, $body);
+            } elseif ($type == "under") {
+                $fees = $body->fees->goals;
+                $this->downCalculation($total_goals, $fees, $body);
+            } else {
+                $data[$type] = "You Lose";
+            }
+        }
+
+        return $data;
+
+        foreach ($footballBody as $body) {
+            // return $body;
+            return $body->bodyTest;
+
+            $user = User::find($body->user_id);
+
+            $club_id = $request->club_id[$body->fee_id];
+            $goals  = $request->goals[$body->fee_id];
+            $body_percentage  = $request->body_percentage[$body->fee_id];
+            $goals_percentage = $request->goals_percentage[$body->fee_id];
+
+            $betAmount = $body->bet->amount;
+
+            if ($goals === 'draw' || $club_id === 'draw') {
+                // Draw
+                $user->update(['amount' => $user->amount + $betAmount ]);
+                $body->bet->update(['status' => 3 , 'net_amount' => $betAmount ]);
+            } elseif ($body->type == 'home' || $body->type == 'away') {
+                // Home or Away
+                $team = ($body->type == 'home') ? $body->match->home_id : $body->match->away_id;
+
+                $percent = $body_percentage === null ? 100 : $body_percentage ;
+               
+                if ($team == $club_id) {
+                    $win_amount = $betAmount * ($percent / 100);
+                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                    $net_amount = $betAmount + $win_net_amount;
+                    $user->update(['amount' => $user->amount + $net_amount ]);
+                    $body->bet->update(['status' => 1 , 'net_amount' => $net_amount ]);
+                } else {
+                    $amount = $betAmount - ($betAmount * ($percent / 100));
+                    $user->update(['amount' => $user->amount + $amount ]);
+                    $body->bet->update(['status' => 2 , 'net_amount' => $amount ]);
+                }
+            } else {
+                // Goals Over or Under
+                $percent = $goals_percentage === null ? 100 : $goals_percentage ;
+
+                if ($body->type == $goals) {
+                    $win_amount = $betAmount * ($percent / 100);
+                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                    $net_amount = $betAmount + $win_net_amount;
+                    $user->update(['amount' => $user->amount + $net_amount ]);
+                    $body->bet->update(['status' => 1 , 'net_amount' => $net_amount ]);
+                } else {
+                    $amount = $betAmount - ($betAmount * ($percent / 100));
+                    $user->update(['amount' => $user->amount + $amount ]);
+                    $body->bet->update(['status' => 2 , 'net_amount' => $amount ]);
+                }
+            }
+
+            // $body->bet->update(['status' => 1]);
+        }
+
+        FootballMatch::find($request->match_id)->update(['calculate_body' => 1 ]);
+    }
+
+    public function getFees($fees)
+    {
+        if (strpos($fees, '+')) {
+            return explode('+', $fees);
+        } elseif (strpos($fees, '-')) {
+            return explode('-', $fees);
+        } else {
+            return explode('=', $fees);
+        }
+    }
+
+    public function getFeesType($fees)
+    {
+        if (strpos($fees, '+')) {
+            return "+";
+        } elseif (strpos($fees, '-')) {
+            return "-";
+        } else {
+            return "=";
+        }
+    }
+
+    public function upCalculation($net, $fees, $body)
+    {
+        $fees_array = $this->getFees($fees);
+        $fees_type = $this->getFeesType($fees);
+        $limit =  $fees_array[0]; // 3
+        $percent =  $fees_array[1]; // 3
+        $betAmount = $body->bet->amount;
+        $user = User::find($body->user_id);
+        $bodySetting  = FootballBodySetting::find(1);
+        dd($net);
+        if ($fees_type === "=") {
+            if ($net < 0) {
+                // return "You lose";
+                $body->bet->update(['status' => 2 , 'net_amount' => 0 ]);
+            } else {
+                if ($net == 0) {
+                    // return "You draw";
+                    $status = 3;
+                    $net_amount = $betAmount;
+                }
+                if ($net > 0) {
+                    // return "You win.";
+                    $win_amount = $betAmount * ($percent / 100);
+                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                    $net_amount = $betAmount + $win_net_amount;
+                    $status = 1;
+                }
+
+                $user->update(['amount' => $user->amount + $net_amount ]);
+                $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
+            }
+        }
+
+        if ($fees_type === "+") {
+            if ($net < $limit) {
+                // return "You lose";
+                $body->bet->update(['status' => 2 , 'net_amount' => 0 ]);
+            } else {
+                if ($net > $limit) {
+                    // return "You win.";
+                    $win_percent = 100;
+                }
+    
+                if ($net == $limit) {
+                    // return "You win $percent % ";
+                    $win_percent = $percent;
+                }
+    
+                $win_amount = $betAmount * ($win_percent / 100);
+                $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                $net_amount = $betAmount + $win_net_amount;
+                $user->update(['amount' => $user->amount + $net_amount ]);
+                $body->bet->update(['status' => 1 , 'net_amount' => $net_amount ]);
+            }
+        }
+
+        if ($fees_type === "-") {
+            if ($net < $limit) {
+                // return "You lose";
+                $body->bet->update(['status' => 2 , 'net_amount' => 0 ]);
+            } else {
+                if ($net > $limit) {
+                    // return "You win.";
+                    $percent = 100;
+                    $win_amount = $betAmount * ($percent / 100);
+                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                    $net_amount = $betAmount + $win_net_amount;
+                    $status = 1;
+                }
+    
+                if ($net == $limit) {
+                    // return "You win $percent % ";
+                    $win_percent = $percent;
+                    $net_amount = $betAmount - ($betAmount * ($percent / 100));
+                    $status = 2;
+                }
+                    
+                $user->update(['amount' => $user->amount + $net_amount ]);
+                $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
+            }
+        }
+
+        return "done";
+    }
+
+    public function downCalculation($net, $fees, $body)
+    {
+        $fees_array = $this->getFees($fees);
+        $fees_type = $this->getFeesType($fees);
+        $limit =  $fees_array[0]; // 3
+        $percent =  $fees_array[1]; // 3
+        $betAmount = $body->bet->amount;
+        $user = User::find($body->user_id);
+        $bodySetting  = FootballBodySetting::find(1);
+
+        if ($fees_type === "=") {
+            // return $net;
+            if ($net > 0) {
+                // return "You lose";
+                $body->bet->update(['status' => 2 , 'net_amount' => 0 ]);
+            } else {
+                if ($net == 0) {
+                    // return "You draw";
+                    $status = 3;
+                    $net_amount = $betAmount;
+                }
+                if ($net < 0) {
+                    // return "You win.";
+                    $win_amount = $betAmount * ($percent / 100);
+                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                    $net_amount = $betAmount + $win_net_amount;
+                    $status = 1;
+                }
+
+                $user->update(['amount' => $user->amount + $net_amount ]);
+                $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
+            }
+        }
+
+        // if ($fees_type === "+") {
+        //     if ($net < $limit) {
+        //         return "You win.";
+        //     }
+
+        //     if ($net == $limit) {
+        //         return "You lose $percent %";
+        //     }
+
+        //     if ($net > $limit) {
+        //         return "You lose";
+        //     }
+        // }
+
+        if ($fees_type === "+") {
+            if ($net > $limit) {
+                // return "You lose";
+                $body->bet->update(['status' => 2 , 'net_amount' => 0 ]);
+            } else {
+                if ($net < $limit) {
+                    // return "You win.";
+                    $win_percent = $percent;
+                    $win_amount = $betAmount * ($win_percent / 100);
+                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
+                    $net_amount = $betAmount + $win_net_amount;
+                }
+    
+                if ($net == $limit) {
+                    // return "You win $percent % ";
+                    $net_amount = $betAmount - ($betAmount * ($percent / 100));
+                    $status = 1;
+                }
+                    
+                $user->update(['amount' => $user->amount + $net_amount ]);
+                $body->bet->update(['status' => 1 , 'net_amount' => $net_amount ]);
+            }
+        }
+
+        if ($fees_type === "-") {
+            if ($net < $limit) {
+                return "You win.";
+            }
+
+            if ($net == $limit) {
+                return "You win $percent %";
+            }
+
+            if ($net > $limit) {
+                return "You lose";
+            }
+        }
     }
 }

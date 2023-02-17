@@ -199,5 +199,8 @@ Route::group(
         // Ballone Bet Report
         Route::get('body-today-report', 'Ballone\ReportController@bodyTodayReport')->name('ballone.body.today-report');
         Route::get('maung-today-report', 'Ballone\ReportController@maungTodayReport')->name('ballone.maung.today-report');
+
+        Route::get('ballone-add-result/{id}', 'Ballone\AddResultController@test');
+        Route::post('ballone-add-result/{id}', 'Ballone\AddResultController@add')->name('calculate.result');
     }
 );
