@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
+use App\Models\FootballBodyFee;
+use App\Models\FootballMaungFee;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
-use App\Models\FootballBodyFee;
 
 class AddResultController extends Controller
 {
@@ -26,161 +27,17 @@ class AddResultController extends Controller
         $match = FootballMatch::findOrFail($id);
 
         $match->update([ 'score' => $request->home .' '. '-' .' '. $request->away ]);
-        $bodySetting  = FootballBodySetting::find(1);
 
         $footballBodyFee = FootballBodyFee::where('match_id', $id)->get();
-
-        $data = [];
+        $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
+        
         
         foreach ($footballBodyFee as $bodyFees) {
-            $type = $bodyFees->type; // Home or Away , Over or Under
-            $upteam = $bodyFees->up_team;
-                    
+            $this->calculation($bodyFees, $request);
+        }
 
-            $fees = $bodyFees->body;
-            $fees_array = $this->getFees($fees);
-            $fees_type = $this->getFeesType($fees);
-            $limit =  $fees_array[0]; // 3
-            $percent =  $fees_array[1]; // 3
-
-            if ($upteam == 1) {
-                // home
-
-                $net = (int) $request->home - (int) $request->away;
-
-                if ($fees_type === "=") {
-                    // return $net;
-                    $real_limit = ($limit == "L") ? 0 : $limit;
-                    if ($net > $real_limit) {
-                        $bodyFees->result->update(['home' => 100 , 'away' => -100 ]);
-                    } else {
-                        if ($net == $real_limit) {
-                            $bodyFees->result->update(['home' => 0 , 'away' => 0 ]);
-                        }
-                        if ($net < $real_limit) {
-                            $bodyFees->result->update(['home' => -100 , 'away' => 100 ]);
-                        }
-                    }
-                }
-
-                if ($fees_type === "+") {
-                    if ($net < $limit) {
-                        $bodyFees->result->update(['home' => -100 , 'away' => 100 ]);
-                    } else {
-                        if ($net > $limit) {
-                            $bodyFees->result->update(['home' => 100 , 'away' => -100 ]);
-                        }
-            
-                        if ($net == $limit) {
-                            $bodyFees->result->update(['home' => $percent , 'away' => '-'.$percent ]);
-                        }
-                    }
-                }
-
-                if ($fees_type === "-") {
-                    if ($net < $limit) {
-                        $bodyFees->result->update(['home' => -100 , 'away' => 100 ]);
-                    } else {
-                        if ($net > $limit) {
-                            $bodyFees->result->update(['home' => 100 , 'away' => -100 ]);
-                        }
-                        if ($net == $limit) {
-                            $bodyFees->result->update(['home' =>  '-'.$percent , 'away' => $percent ]);
-                        }
-                    }
-                }
-            } else {
-                // away
-                $net = (int) $request->away - (int) $request->home;
-                $real_limit = ($limit == "L") ? 0 : $limit;
-                if ($fees_type === "=") {
-                    if ($net > $real_limit) {
-                        $bodyFees->result->update(['home' => -100 , 'away' => 100 ]);
-                    } else {
-                        if ($net == $real_limit) {
-                            $bodyFees->result->update(['home' => 0 , 'away' => 0 ]);
-                        }
-                        if ($net < $real_limit) {
-                            $bodyFees->result->update(['home' => 100 , 'away' => -100 ]);
-                        }
-                    }
-                }
-                
-                if ($fees_type === "+") {
-                    if ($net > $real_limit) {
-                        $bodyFees->result->update(['home' => -100 , 'away' => 100 ]);
-                    } else {
-                        if ($net < $real_limit) {
-                            $bodyFees->result->update(['home' => 100 , 'away' => -100 ]);
-                        }
-            
-                        if ($net == $real_limit) {
-                            $bodyFees->result->update(['home' => '-'.$percent , 'away' => $percent ]);
-                        }
-                    }
-                }
-
-                if ($fees_type === "-") {
-                    if ($net < $real_limit) {
-                        $bodyFees->result->update(['home' => 100 , 'away' => -100 ]);
-                    } else {
-                        if ($net > $real_limit) {
-                            $bodyFees->result->update(['home' => -100 , 'away' => 100 ]);
-                        }
-            
-                        if ($net == $real_limit) {
-                            $bodyFees->result->update(['home' => $percent  , 'away' => '-'.$percent ]);
-                        }
-                    }
-                }
-            }
-
-            // goals
-            $total_goals = (int) $request->home + (int) $request->away;
-            $fees = $bodyFees->goals;
-            $fees_array = $this->getFees($fees);
-            $fees_type = $this->getFeesType($fees);
-            $limit =  $fees_array[0]; // 3
-            $percent =  $fees_array[1]; // 3
-
-            if ($fees_type === "=") {
-                if ($total_goals > $limit) {
-                    $bodyFees->result->update(['over' => 100 , 'under' => -100 ]);
-                } else {
-                    if ($total_goals == $limit) {
-                        $bodyFees->result->update(['over' => 0 , 'under' => 0 ]);
-                    }
-                    if ($total_goals < $limit) {
-                        $bodyFees->result->update(['over' => -100 , 'under' => 100 ]);
-                    }
-                }
-            }
-
-            if ($fees_type === "+") {
-                if ($total_goals > $limit) {
-                    $bodyFees->result->update(['over' => 100 , 'under' => -100 ]);
-                } else {
-                    if ($total_goals == $limit) {
-                        $bodyFees->result->update(['over' => $percent , 'under' => '-'.$percent ]);
-                    }
-                    if ($total_goals < $limit) {
-                        $bodyFees->result->update(['over' => -100 , 'under' => 100 ]);
-                    }
-                }
-            }
-
-            if ($fees_type === "-") {
-                if ($total_goals > $limit) {
-                    $bodyFees->result->update(['over' => 100 , 'under' => -100 ]);
-                } else {
-                    if ($total_goals == $limit) {
-                        $bodyFees->result->update(['over' => '-'.$percent , 'under' => $percent ]);
-                    }
-                    if ($total_goals < $limit) {
-                        $bodyFees->result->update(['over' => -100 , 'under' => 100 ]);
-                    }
-                }
-            }
+        foreach ($footballMaungFee as $maungFees) {
+            $this->calculation($maungFees, $request);
         }
 
         return back();
@@ -205,6 +62,157 @@ class AddResultController extends Controller
             return "-";
         } else {
             return "=";
+        }
+    }
+
+    public function calculation($allFees, $request)
+    {
+        $type = $allFees->type; // Home or Away , Over or Under
+        $upteam = $allFees->up_team;
+                    
+        $fees = $allFees->body;
+        $fees_array = $this->getFees($fees);
+        $fees_type = $this->getFeesType($fees);
+        $limit =  $fees_array[0]; // 3
+        $percent =  $fees_array[1]; // 3
+
+        if ($upteam == 1) {
+            // home
+
+            $net = (int) $request->home - (int) $request->away;
+
+            if ($fees_type === "=") {
+                // return $net;
+                $real_limit = ($limit == "L") ? 0 : $limit;
+                if ($net > $real_limit) {
+                    $allFees->result->update(['home' => 100 , 'away' => -100 ]);
+                } else {
+                    if ($net == $real_limit) {
+                        $allFees->result->update(['home' => 0 , 'away' => 0 ]);
+                    }
+                    if ($net < $real_limit) {
+                        $allFees->result->update(['home' => -100 , 'away' => 100 ]);
+                    }
+                }
+            }
+
+            if ($fees_type === "+") {
+                if ($net < $limit) {
+                    $allFees->result->update(['home' => -100 , 'away' => 100 ]);
+                } else {
+                    if ($net > $limit) {
+                        $allFees->result->update(['home' => 100 , 'away' => -100 ]);
+                    }
+            
+                    if ($net == $limit) {
+                        $allFees->result->update(['home' => $percent , 'away' => '-'.$percent ]);
+                    }
+                }
+            }
+
+            if ($fees_type === "-") {
+                if ($net < $limit) {
+                    $allFees->result->update(['home' => -100 , 'away' => 100 ]);
+                } else {
+                    if ($net > $limit) {
+                        $allFees->result->update(['home' => 100 , 'away' => -100 ]);
+                    }
+                    if ($net == $limit) {
+                        $allFees->result->update(['home' =>  '-'.$percent , 'away' => $percent ]);
+                    }
+                }
+            }
+        } else {
+            // away
+            $net = (int) $request->away - (int) $request->home;
+            $real_limit = ($limit == "L") ? 0 : $limit;
+            if ($fees_type === "=") {
+                if ($net > $real_limit) {
+                    $allFees->result->update(['home' => -100 , 'away' => 100 ]);
+                } else {
+                    if ($net == $real_limit) {
+                        $allFees->result->update(['home' => 0 , 'away' => 0 ]);
+                    }
+                    if ($net < $real_limit) {
+                        $allFees->result->update(['home' => 100 , 'away' => -100 ]);
+                    }
+                }
+            }
+                
+            if ($fees_type === "+") {
+                if ($net > $real_limit) {
+                    $allFees->result->update(['home' => -100 , 'away' => 100 ]);
+                } else {
+                    if ($net < $real_limit) {
+                        $allFees->result->update(['home' => 100 , 'away' => -100 ]);
+                    }
+            
+                    if ($net == $real_limit) {
+                        $allFees->result->update(['home' => '-'.$percent , 'away' => $percent ]);
+                    }
+                }
+            }
+
+            if ($fees_type === "-") {
+                if ($net < $real_limit) {
+                    $allFees->result->update(['home' => 100 , 'away' => -100 ]);
+                } else {
+                    if ($net > $real_limit) {
+                        $allFees->result->update(['home' => -100 , 'away' => 100 ]);
+                    }
+            
+                    if ($net == $real_limit) {
+                        $allFees->result->update(['home' => $percent  , 'away' => '-'.$percent ]);
+                    }
+                }
+            }
+        }
+
+        // goals
+        $total_goals = (int) $request->home + (int) $request->away;
+        $fees = $allFees->goals;
+        $fees_array = $this->getFees($fees);
+        $fees_type = $this->getFeesType($fees);
+        $limit =  $fees_array[0]; // 3
+        $percent =  $fees_array[1]; // 3
+
+        if ($fees_type === "=") {
+            if ($total_goals > $limit) {
+                $allFees->result->update(['over' => 100 , 'under' => -100 ]);
+            } else {
+                if ($total_goals == $limit) {
+                    $allFees->result->update(['over' => 0 , 'under' => 0 ]);
+                }
+                if ($total_goals < $limit) {
+                    $allFees->result->update(['over' => -100 , 'under' => 100 ]);
+                }
+            }
+        }
+
+        if ($fees_type === "+") {
+            if ($total_goals > $limit) {
+                $allFees->result->update(['over' => 100 , 'under' => -100 ]);
+            } else {
+                if ($total_goals == $limit) {
+                    $allFees->result->update(['over' => $percent , 'under' => '-'.$percent ]);
+                }
+                if ($total_goals < $limit) {
+                    $allFees->result->update(['over' => -100 , 'under' => 100 ]);
+                }
+            }
+        }
+
+        if ($fees_type === "-") {
+            if ($total_goals > $limit) {
+                $allFees->result->update(['over' => 100 , 'under' => -100 ]);
+            } else {
+                if ($total_goals == $limit) {
+                    $allFees->result->update(['over' => '-'.$percent , 'under' => $percent ]);
+                }
+                if ($total_goals < $limit) {
+                    $allFees->result->update(['over' => -100 , 'under' => 100 ]);
+                }
+            }
         }
     }
 }

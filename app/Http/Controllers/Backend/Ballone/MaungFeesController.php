@@ -10,6 +10,7 @@ use App\Models\FootballMaungFee;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\FootballMaungFeeResult;
 
 class MaungFeesController extends Controller
 {
@@ -136,12 +137,16 @@ class MaungFeesController extends Controller
         $body = ($request->home_body) ?? $request->away_body;
         $up_team = ($request->home_body) ? 1 : 2;
 
-        FootballMaungFee::create([
-            'match_id' => $match->id,
-            'body'     => $body,
-            'goals'    => $request->goals,
-            'up_team'  => $up_team,
-            'by'       => Auth::id()
+        $fees = FootballMaungFee::create([
+                    'match_id' => $match->id,
+                    'body'     => $body,
+                    'goals'    => $request->goals,
+                    'up_team'  => $up_team,
+                    'by'       => Auth::id()
+                ]);
+
+        FootballMaungFeeResult::create([
+            'fee_id' => $fees->id
         ]);
           
         return response()->json(['success'=>'Match saved successfully.']);

@@ -126,6 +126,44 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5> Maung Fees </h5>
+                            <table class="table">
+
+                                <thead>
+                                    <tr>
+                                        <th> Fees / Goals </th>
+                                        <th> : </th>
+                                        <th> Home </th>
+                                        <th> Away </th>
+                                        <th> Over </th>
+                                        <th> Under </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach ($match->allMaungfees as $key => $maungfee)
+                                        <tr>
+                                            <td> {{ $maungfee->body }} / {{ $maungfee->goals }}</td>
+                                            <td> : </td>
+                                            <td> {{ $maungfee->result->home }} </td>
+                                            <td> {{ $maungfee->result->away }} </td>
+                                            <td> {{ $maungfee->result->over }} </td>
+                                            <td> {{ $maungfee->result->under }} </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection
