@@ -1,17 +1,5 @@
 @extends('layouts.master')
 
-@section('css')
-    <link
-        href="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <style>
-        #resultForm input.text {
-            height: 30px;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -36,6 +24,13 @@
 
             <div class="row">
                 <div class="col-lg-6 offset-lg-3">
+                    @if (Session::has('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong> Success</strong> {{ Session::get('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="card-body">
 
