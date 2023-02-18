@@ -69,21 +69,19 @@ class AddResultController extends Controller
 
     public function calculation($allFees, $request)
     {
-        $type = $allFees->type; // Home or Away , Over or Under
         $upteam = $allFees->up_team;
-                    
-        $fees = $allFees->body;
+        $fees   = $allFees->body;
         $fees_array = $this->getFees($fees);
-        $fees_type = $this->getFeesType($fees);
-        $limit =  $fees_array[0]; // 3
-        $percent =  $fees_array[1]; // 3
+        $fees_type  = $this->getFeesType($fees);
+        $limit   =  $fees_array[0];
+        $percent =  $fees_array[1];
 
         if ($upteam == 1) {
             // home
 
             $net = (int) $request->home - (int) $request->away;
-
             $real_limit = ($limit == "L") ? 0 : $limit;
+
             if ($fees_type === "=") {
                 // return $net;
                 if ($net > $real_limit) {
@@ -105,7 +103,6 @@ class AddResultController extends Controller
                     if ($net > $real_limit) {
                         $allFees->result->update(['home' => 100 , 'away' => -100 ]);
                     }
-            
                     if ($net == $real_limit) {
                         $allFees->result->update(['home' => $percent , 'away' => '-'.$percent ]);
                     }
@@ -128,6 +125,7 @@ class AddResultController extends Controller
             // away
             $net = (int) $request->away - (int) $request->home;
             $real_limit = ($limit == "L") ? 0 : $limit;
+
             if ($fees_type === "=") {
                 if ($net > $real_limit) {
                     $allFees->result->update(['home' => -100 , 'away' => 100 ]);
@@ -148,7 +146,6 @@ class AddResultController extends Controller
                     if ($net < $real_limit) {
                         $allFees->result->update(['home' => 100 , 'away' => -100 ]);
                     }
-            
                     if ($net == $real_limit) {
                         $allFees->result->update(['home' => '-'.$percent , 'away' => $percent ]);
                     }
@@ -162,7 +159,6 @@ class AddResultController extends Controller
                     if ($net > $real_limit) {
                         $allFees->result->update(['home' => -100 , 'away' => 100 ]);
                     }
-            
                     if ($net == $real_limit) {
                         $allFees->result->update(['home' => $percent  , 'away' => '-'.$percent ]);
                     }
@@ -175,8 +171,8 @@ class AddResultController extends Controller
         $fees = $allFees->goals;
         $fees_array = $this->getFees($fees);
         $fees_type = $this->getFeesType($fees);
-        $limit =  $fees_array[0]; // 3
-        $percent =  $fees_array[1]; // 3
+        $limit =  $fees_array[0];
+        $percent =  $fees_array[1];
 
         if ($fees_type === "=") {
             if ($total_goals > $limit) {
