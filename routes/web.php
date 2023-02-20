@@ -204,5 +204,9 @@ Route::group(
         Route::get('match-maung-list', 'Ballone\ReportController@maung')->name('ballone.match-maung-list');
         Route::get('match-body-report/{id}', 'Ballone\ReportController@detail')->name('ballone.body.report');
         Route::get('match-maung-report/{id}', 'Ballone\ReportController@detail')->name('ballone.maung.report');
+        Route::get('ballone-add-result/{id}', 'Ballone\AddResultController@index');
+        Route::post('ballone-add-result/{id}', 'Ballone\AddResultController@add')->name('calculate.result');
+
+        Route::get('ballone-calculate-result/{id}', 'Ballone\CalculationController@index')->name('ballone.calculate.result');
     }
 );

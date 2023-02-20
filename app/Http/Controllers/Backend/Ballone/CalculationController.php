@@ -4,175 +4,96 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use App\Models\User;
 use App\Models\Agent;
-use App\Models\FootballBody;
-use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballMaung;
 use App\Models\FootballMaungZa;
 use App\Models\FootballMaungGroup;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBodyFeeResult;
+use App\Models\FootballMaungFeeResult;
 
 class CalculationController extends Controller
 {
-    public function calculateBodyResult(Request $request)
+    public function index($id)
     {
-        // Calculation Body Winner
-        $footballBody = FootballBody::where('match_id', $request->match_id)
-                                    ->whereStatus(0)->get();
+        $match = FootballMatch::findOrFail($id);
         $bodySetting = FootballBodySetting::find(1);
+        $charge = 0;
 
-        foreach ($footballBody as $body) {
-            //
-            if ($body->user_id) {
-                $user = User::find($body->user_id);
-            } else {
-                $user = Agent::find($body->agent_id);
-            }
-
-            $club_id = $request->club_id[$body->fee_id];
-            $goals = $request->goals[$body->fee_id];
-            $body_percentage = $request->body_percentage[$body->fee_id];
-            $goals_percentage = $request->goals_percentage[$body->fee_id];
-
+        // Body Calculation
+        foreach ($match->bodies as $body) {
+            $result = FootballBodyFeeResult::where('fee_id', $body->fee_id)->first();
+            $type = $body->type;
+            $percent =  $result->$type;
             $betAmount = $body->bet->amount;
+            $win_amount = $betAmount * ($percent / 100);
+            $user = User::find($body->user_id);
 
-            if ($goals === 'draw' || $club_id === 'draw') {
-                // Draw
-                $user->update(['amount' => $user->amount + $betAmount ]);
-                $body->bet->update(['status' => 3 , 'net_amount' => $betAmount ]);
-            } elseif ($body->type == 'home' || $body->type == 'away') {
-                // Home or Away
-                $team = ($body->type == 'home') ? $body->match->home_id : $body->match->away_id;
-
-                $percent = $body_percentage === null ? 100 : $body_percentage ;
-               
-                if ($team == $club_id) {
-                    $win_amount = $betAmount * ($percent / 100);
-                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
-                    $net_amount = $betAmount + $win_net_amount;
-                    $user->update(['amount' => $user->amount + $net_amount ]);
-                    $body->bet->update(['status' => 1 , 'net_amount' => $net_amount ]);
-                } else {
-                    $amount = $betAmount - ($betAmount * ($percent / 100));
-                    $user->update(['amount' => $user->amount + $amount ]);
-                    $body->bet->update(['status' => 2 , 'net_amount' => $amount ]);
-                }
+            if ($win_amount > 0) {
+                $charge = $win_amount * ($bodySetting->percentage / 100);
+                $status = 1;
+            } elseif ($win_amount == 0) {
+                $status = 3;
             } else {
-                // Goals Over or Under
-                $percent = $goals_percentage === null ? 100 : $goals_percentage ;
-
-                if ($body->type == $goals) {
-                    $win_amount = $betAmount * ($percent / 100);
-                    $win_net_amount = $win_amount - ($win_amount * ($bodySetting->percentage / 100));
-                    $net_amount = $betAmount + $win_net_amount;
-                    $user->update(['amount' => $user->amount + $net_amount ]);
-                    $body->bet->update(['status' => 1 , 'net_amount' => $net_amount ]);
-                } else {
-                    $amount = $betAmount - ($betAmount * ($percent / 100));
-                    $user->update(['amount' => $user->amount + $amount ]);
-                    $body->bet->update(['status' => 2 , 'net_amount' => $amount ]);
-                }
+                $status = 2;
             }
-
-            // $body->bet->update(['status' => 1]);
+            
+            $net_amount = $betAmount + ($win_amount - $charge);
+            $user->increment('amount', $net_amount);
+            $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
         }
 
-        FootballMatch::find($request->match_id)->update(['calculate_body' => 1 ]);
+        // Maung Calculation
+        $footballMaung = FootballMaung::where('match_id', $id)->whereStatus(0)->get();
 
-        return response()->json(['success'=>'Match saved successfully.']);
-    }
-
-    public function calculateMaungResult(Request $request)
-    {
-        // Calculation Maung Winner
-        $footballMaung = FootballMaung::where('match_id', $request->match_id)
-                                        ->whereStatus(0)->get();
-        
         foreach ($footballMaung as $maung) {
             $maungGroup = FootballMaungGroup::with('bet')->find($maung->maung_group_id);
 
             if ($maungGroup->bet->status == 0) {
                 // calculation
+                $user = User::find($maung->user_id);
+                $result = FootballMaungFeeResult::where('fee_id', $maung->fee_id)->first();
+                $type = $maung->type;
+                $percent =  $result->$type;
                 
-                if ($maung->user_id) {
-                    $user = User::find($maung->user_id);
-                } else {
-                    $user = Agent::find($maung->agent_id);
-                }
-
-                $club_id = $request->club_id[$maung->fee_id];
-                $goals = $request->goals[$maung->fee_id];
-                $body_percentage = $request->body_percentage[$maung->fee_id];
-                $goals_percentage = $request->goals_percentage[$maung->fee_id];
-
+                $user = User::find($maung->user_id);
                 $betAmount = $maungGroup->bet->net_amount == 0 ? $maungGroup->bet->amount : $maungGroup->bet->net_amount;
 
-                if ($goals === 'draw' || $club_id === 'draw') {
-                    // Draw
+                if ($percent == 0) {
+                    $net_amount = ($maungGroup->bet->net_amount == 0) ? $betAmount : $maungGroup->bet->net_amount;
                     $maung->update([ 'status' => 3 ]);
                     $maungGroup->decrement('count', 1);
-                } elseif ($maung->type == 'home' || $maung->type == 'away') {
-                    // Home or Away
-                    $team = ($maung->type == 'home') ? $maung->match->home_id : $maung->match->away_id;
-
-                    $percent = $body_percentage === null ? 100 : $body_percentage ;
-               
-                    if ($team == $club_id) {
-                        $amount = $betAmount + ($betAmount * ($percent / 100));
-                        $net_amount = $betAmount + ($amount - $betAmount);
-                        $maung->update(['status'=> 1]);
-                        $maungGroup->bet->update(['net_amount' => $net_amount ]);
-                    } else {
-                        if ($percent == 100) {
-                            $maung->update(['status' => 2]);
-                            $maungGroup->bet->update(['status' => 2 , 'net_amount' => 0]);
-                        } else {
-                            $amount = $betAmount - ($betAmount * ($percent / 100));
-                            $net_amount = $betAmount + ($amount - $betAmount);
-                            $maung->update(['status'=> 1]);
-                            $maungGroup->bet->update(['net_amount' => $net_amount ]);
-                        }
-                    }
+                    $maungGroup->bet->update(['net_amount' => $net_amount ]);
                 } else {
-                    $percent = $goals_percentage === null ? 100 : $goals_percentage ;
-
-                    if ($maung->type == $goals) {
+                    $win_amount = $betAmount * ($percent / 100);
+                    
+                    if ($win_amount > 0) {
                         $amount = $betAmount + ($betAmount * ($percent / 100));
                         $net_amount = $betAmount + ($amount - $betAmount);
-                        $maung->update(['status'=> 1]);
+                        $maung->update([ 'status' => 1 ]);
                         $maungGroup->bet->update(['net_amount' => $net_amount ]);
                     } else {
-                        if ($percent == 100) {
-                            $maung->update(['status' => 2]);
-                            $maungGroup->bet->update(['status' => 2 , 'net_amount' => 0]);
-                        } else {
-                            $amount = $betAmount - ($betAmount * ($percent / 100));
-                            $net_amount = $betAmount + ($amount - $betAmount);
-                            $maung->update(['status'=> 1]);
-                            $maungGroup->bet->update(['net_amount' => $net_amount ]);
-                        }
+                        $maung->update([ 'status' => 2 ]);
+                        $maungGroup->bet->update(['status' => 2 , 'net_amount' => 0]);
                     }
                 }
 
-                $data = FootballMaung::where('maung_group_id', $maung->maung_group_id)
-                                    ->where('status', 0)
-                                    ->count();
+                $data = FootballMaung::where('maung_group_id', $maung->maung_group_id)->where('status', 0)->count();
 
                 if ($data == 0) {
                     $maungZa = FootballMaungZa::where('teams', $maungGroup->count)->first();
-                    // $win = $maungZa->za * $maungGroup->bet->amount;
                     $win = $maungGroup->bet->net_amount;
                     $percent = $win * ($maungZa->percent / 100);
                     $amount = $win - $percent;
-                    $user->update(['amount' => $user->amount +  $amount ]);
+                    $user->increment('amount', $amount);
                     $maungGroup->bet->update(['status' => 1 , 'net_amount' => $amount ]);
                 }
             }
         }
 
-        FootballMatch::find($request->match_id)->update(['calculate_maung' => 1 ]);
-
-        return response()->json(['success'=>'Match saved successfully.']);
+        $match->update([ 'score' => $match->temp_score , 'calculate' => 1 ]);
+        
+        return back()->with('success', '* calculation successfully done.');
     }
 }

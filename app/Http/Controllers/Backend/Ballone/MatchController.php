@@ -43,30 +43,30 @@ class MatchController extends Controller
                         return date("F j, Y, g:i A", strtotime($match->date_time));
                     })
                     ->addColumn('score', function ($match) {
-                        if ($match->score === null) {
-                            return '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="addResult"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
-                        }
                         return $match->score;
                     })
-                    ->addColumn('calculate', function ($match) {
-                        $btn = '';
-                        
-                        if ($match->score === null) {
-                            return '-';
-                        }
-                        
-                        if (!$match->calculate_body && $match->bodyFees) {
-                            $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="body" class="calculateBtn mr-3">
-                            <i class="fa fa-plus-square text-inverse m-r-10"></i> Body
-                            </a>';
-                        }
-                        if (!$match->calculate_maung && $match->maungFees) {
-                            $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="maung" class="calculateBtn">
-                                <i class="fa fa-plus-square text-inverse m-r-10"></i> Maung
-                                </a>';
-                        }
-                        return $btn;
+                    ->addColumn('add_score', function ($match) {
+                        return '<a href="/admin/ballone-add-result/'.$match->id.'" ><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
                     })
+                    // ->addColumn('calculate', function ($match) {
+                    //     $btn = '';
+                        
+                    //     if ($match->score === null) {
+                    //         return '-';
+                    //     }
+                        
+                    //     if (!$match->calculate_body && $match->bodyFees) {
+                    //         $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="body" class="calculateBtn mr-3">
+                    //         <i class="fa fa-plus-square text-inverse m-r-10"></i> Body
+                    //         </a>';
+                    //     }
+                    //     if (!$match->calculate_maung && $match->maungFees) {
+                    //         $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="maung" class="calculateBtn">
+                    //             <i class="fa fa-plus-square text-inverse m-r-10"></i> Maung
+                    //             </a>';
+                    //     }
+                    //     return $btn;
+                    // })
                     ->addColumn('home', function ($match) {
                         return $match->home?->name;
                     })
@@ -110,7 +110,7 @@ class MatchController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['score','action','calculate'])
+                    ->rawColumns(['score', 'add_score', 'action','calculate'])
                     ->make(true);
         }
         return view('backend.admin.ballone.match.index', compact('leagues'));
@@ -218,7 +218,9 @@ class MatchController extends Controller
         $request->validate([
             'round' => 'nullable|string|max:255',
             'league_id' => 'required',
-            'date_time' => 'required|date_format:Y-m-d H:i:s',
+            // 'date_time' => 'required|date_format:Y-m-d H:i:s',
+            'date' => 'required',
+            'time' => 'required'
         ]);
 
         // return response()->json($request->all());
@@ -234,13 +236,15 @@ class MatchController extends Controller
 
         if ($match) {
             $match->update([
-                'date_time' => $request->date_time,
+                'date' => $request->date,
+                'time' => $request->time,
                 'league_id' => $request->league_id
             ]);
         } else {
             $match = FootballMatch::create([
                 'round' => $request->round,
-                'date_time' => $request->date_time,
+                'date' => $request->date,
+                'time' => $request->time,
                 'league_id' => $request->league_id,
                 'home_id' => $request->home_id,
                 'away_id' => $request->away_id

@@ -22,6 +22,7 @@ class CreateFootballBodyFeesTable extends Migration
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('by');
             $table->foreign('match_id')->references('id')->on('football_matches')->onDelete('cascade')->onUpdate('cascade');
+           
             $table->timestamps();
         });
     }

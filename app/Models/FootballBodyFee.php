@@ -20,4 +20,9 @@ class FootballBodyFee extends Model
     {
         return $this->belongsTo(Admin::class, 'by');
     }
+
+    public function result()
+    {
+        return $this->hasOne(FootballBodyFeeResult::class, 'fee_id');
+    }
 }
