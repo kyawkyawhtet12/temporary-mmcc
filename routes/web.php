@@ -200,6 +200,11 @@ Route::group(
         Route::get('body-today-report', 'Ballone\ReportController@bodyTodayReport')->name('ballone.body.today-report');
         Route::get('maung-today-report', 'Ballone\ReportController@maungTodayReport')->name('ballone.maung.today-report');
 
+        Route::get('match-body-list', 'Ballone\ReportController@index')->name('ballone.match-body-list');
+        Route::get('match-maung-list', 'Ballone\ReportController@maung')->name('ballone.match-maung-list');
+        Route::get('match-body-report/{id}', 'Ballone\ReportController@detail')->name('ballone.body.report');
+        Route::get('match-maung-report/{id}', 'Ballone\ReportController@detail')->name('ballone.maung.report');
+
         Route::get('ballone-add-result/{id}', 'Ballone\AddResultController@index');
         Route::post('ballone-add-result/{id}', 'Ballone\AddResultController@add')->name('calculate.result');
 

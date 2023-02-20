@@ -60,7 +60,7 @@
                                                     <th>Add Result</th>
                                                     {{-- <th>Calculate</th> --}}
                                                     {{-- <th>Body</th>
-                                          <th>Goals</th> --}}
+                                                    <th>Goals</th> --}}
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -110,9 +110,17 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="name" class="col-sm-12 control-label">Date Time</label>
+                            <label for="name" class="col-sm-12 control-label">Date</label>
                             <div class="col-sm-12">
-                                <input type="text" id="date-format" class="form-control" name="date_time">
+                                {{-- <input type="text" id="date-format" class="form-control" name="date_time"> --}}
+                                <input type="date" id="date" class="form-control" name="date">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name" class="col-sm-12 control-label">Time</label>
+                            <div class="col-sm-12">
+                                <input type="time" id="time" class="form-control" name="time">
                             </div>
                         </div>
 

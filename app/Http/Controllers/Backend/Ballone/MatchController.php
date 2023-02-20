@@ -218,7 +218,9 @@ class MatchController extends Controller
         $request->validate([
             'round' => 'nullable|string|max:255',
             'league_id' => 'required',
-            'date_time' => 'required|date_format:Y-m-d H:i:s',
+            // 'date_time' => 'required|date_format:Y-m-d H:i:s',
+            'date' => 'required',
+            'time' => 'required'
         ]);
 
         // return response()->json($request->all());
@@ -234,13 +236,15 @@ class MatchController extends Controller
 
         if ($match) {
             $match->update([
-                'date_time' => $request->date_time,
+                'date' => $request->date,
+                'time' => $request->time,
                 'league_id' => $request->league_id
             ]);
         } else {
             $match = FootballMatch::create([
                 'round' => $request->round,
-                'date_time' => $request->date_time,
+                'date' => $request->date,
+                'time' => $request->time,
                 'league_id' => $request->league_id,
                 'home_id' => $request->home_id,
                 'away_id' => $request->away_id

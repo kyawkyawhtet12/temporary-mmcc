@@ -16,7 +16,8 @@ class CreateFootballMatchesTable extends Migration
         Schema::create('football_matches', function (Blueprint $table) {
             $table->id();
             $table->string('round')->nullable();
-            $table->dateTime('date_time');
+            $table->date('date');
+            $table->time('time');
             $table->unsignedBigInteger('league_id');
             $table->unsignedBigInteger('home_id');
             $table->unsignedBigInteger('away_id');
