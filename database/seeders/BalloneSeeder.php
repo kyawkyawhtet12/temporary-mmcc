@@ -93,13 +93,13 @@ class BalloneSeeder extends Seeder
         $club->save();
 
         $club = new Club();
-        $club->name = "Roma";
+        $club->name = "Manchester United";
         $club->league_id = 4;
         $club->save();
 
         $club = new Club();
-        $club->name = "Roma";
-        $club->league_id = 3;
+        $club->name = "Manchester United";
+        $club->league_id = 5;
         $club->save();
     }
 }

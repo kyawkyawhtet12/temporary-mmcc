@@ -116,7 +116,7 @@ class MatchController extends Controller
     {
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = FootballMatch::whereNotNull('score')->whereBetween('date_time', [$request->from_date, $request->to_date])->get();
+                $query = FootballMatch::whereNotNull('score')->whereBetween('date', [$request->from_date, $request->to_date])->get();
             } else {
                 $query = FootballMatch::whereNotNull('score')->latest()->get();
             }
@@ -126,7 +126,7 @@ class MatchController extends Controller
                         return $match->league?->name;
                     })
                     ->addColumn('date_time', function ($match) {
-                        return date("F j, Y, g:i A", strtotime($match->date_time));
+                        return get_date_time_format($match);
                     })
                     ->addColumn('home', function ($match) {
                         return $match->home?->name;
@@ -166,7 +166,7 @@ class MatchController extends Controller
     {
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = FootballMatch::where('type', 0)->whereBetween('date_time', [$request->from_date, $request->to_date])->get();
+                $query = FootballMatch::where('type', 0)->whereBetween('date', [$request->from_date, $request->to_date])->get();
             } else {
                 $query = FootballMatch::where('type', 0)->latest()->get();
             }
@@ -176,7 +176,7 @@ class MatchController extends Controller
                         return $match->league?->name;
                     })
                     ->addColumn('date_time', function ($match) {
-                        return date("F j, Y, g:i A", strtotime($match->date_time));
+                        return get_date_time_format($match);
                     })
                     ->addColumn('home', function ($match) {
                         return $match->home?->name;

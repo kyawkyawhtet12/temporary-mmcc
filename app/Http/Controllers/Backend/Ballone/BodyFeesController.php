@@ -28,7 +28,7 @@ class BodyFeesController extends Controller
                         return $match->league?->name;
                     })
                     ->addColumn('date_time', function ($match) {
-                        return date("F j, Y, g:i A", strtotime($match->date_time));
+                        return get_date_time_format($match);
                     })
                     ->addColumn('score', function ($match) {
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="addResult"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
