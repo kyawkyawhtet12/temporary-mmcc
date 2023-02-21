@@ -54,7 +54,7 @@
                     </a>
                     <div class="collapse menu-dropdown" id="ballone-today-report">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('ballone.match-body-list') }}" class="nav-link" data-key="t-calendar">
                                     Body Match List </a>
                             </li>
@@ -62,7 +62,7 @@
                                 <a href="{{ route('ballone.match-maung-list') }}" class="nav-link"
                                     data-key="t-calendar">
                                     Maung Match List </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <a href="{{ route('ballone.today-report') }}" class="nav-link" data-key="t-calendar">
                                     Today Report </a>

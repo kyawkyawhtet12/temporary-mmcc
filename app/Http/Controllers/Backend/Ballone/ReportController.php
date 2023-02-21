@@ -34,8 +34,8 @@ class ReportController extends Controller
                                         ->orWhere('calculate_maung', 0);
                                 })
                                 ->with('bodyFees', 'maungFees')
-                                ->whereDate('date_time', today())
-                                ->orWhereDate('date_time', Carbon::yesterday())
+                                ->whereDate('date', today())
+                                ->orWhereDate('date', Carbon::yesterday())
                                 ->orderBy('round', 'asc')->paginate(10);
 
         return view("backend.admin.ballone.report.list", compact('data'));

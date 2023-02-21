@@ -47,7 +47,7 @@
                                             <tr>
                                                 <td>{{ $dt->round }}</td>
                                                 <td>{{ $dt->league->name }}</td>
-                                                <td>{{ $dt->date_time }}</td>
+                                                <td>{{ get_date_time_format($dt) }}</td>
                                                 <td>
                                                     <a href="{{ route('ballone.body.report', $dt->id) }}">
                                                         {{ $dt->home->name }} vs {{ $dt->away->name }}
