@@ -15,13 +15,17 @@ class ClubController extends Controller
     public function index(Request $request)
     {
         $leagues = League::all();
+
+        // $query = Club::latest()->get()->unique('name');
+
+        // return $query;
         if ($request->ajax()) {
-            $query = Club::latest()->get();
+            $query = Club::latest()->get()->unique('name');
 
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('league', function ($club) {
-                        return $club->league->name;
+                        return $club->all_leagues;
                     })
                     ->addColumn('created_at', function ($club) {
                         return date("F j, Y, g:i A", strtotime($club->created_at));
