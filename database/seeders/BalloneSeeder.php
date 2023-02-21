@@ -30,6 +30,18 @@ class BalloneSeeder extends Seeder
         $league->country = "Italy";
         $league->save();
 
+        $league = new League();
+        $league->name = "FA Cup";
+        $league->country = "United Kingdom";
+        $league->save();
+
+        $league = new League();
+        $league->name = "Champion League";
+        $league->country = "United Kingdom";
+        $league->save();
+
+        //
+
         $club = new Club();
         $club->name = "Manchester United";
         $club->league_id = 1;
@@ -73,6 +85,16 @@ class BalloneSeeder extends Seeder
         $club = new Club();
         $club->name = "Inter Milan";
         $club->league_id = 3;
+        $club->save();
+
+        $club = new Club();
+        $club->name = "Roma";
+        $club->league_id = 3;
+        $club->save();
+
+        $club = new Club();
+        $club->name = "Roma";
+        $club->league_id = 4;
         $club->save();
 
         $club = new Club();

@@ -31,7 +31,6 @@ class AddResultController extends Controller
         $footballBodyFee = FootballBodyFee::where('match_id', $id)->get();
         $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
         
-        
         foreach ($footballBodyFee as $bodyFees) {
             $this->calculation($bodyFees, $request);
         }
@@ -41,7 +40,7 @@ class AddResultController extends Controller
         }
 
         $match->update(['calculate' => 0]);
-
+        
         return back();
     }
 

@@ -9,6 +9,10 @@
         #resultForm input.text {
             height: 30px;
         }
+
+        .active {
+            color: #18e418;
+        }
     </style>
 @endsection
 
@@ -234,6 +238,7 @@
 
     <script>
         $(document).ready(function() {
+
             $('#date-format').bootstrapMaterialDatePicker({
                 format: 'YYYY-MM-DD HH:mm:ss'
             });

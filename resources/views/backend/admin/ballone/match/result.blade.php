@@ -48,7 +48,7 @@
                                 <tr>
                                     <td> Date Time </td>
                                     <td> : </td>
-                                    <td> {{ get_date_time_format($match->date_time) }} </td>
+                                    <td> {{ get_date_time_format($match) }} </td>
                                 </tr>
                             </table>
 
@@ -76,9 +76,9 @@
                                 <div class="d-flex">
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate)
+                                    @if (!$match->calculate && $match->temp_score)
                                         <a href="{{ route('ballone.calculate.result', $match->id) }}"
-                                            class="btn btn-sm btn-success mt-3"> Calculate </a>
+                                            class="btn btn-sm btn-success mt-3"> Done </a>
                                     @endif
 
                                 </div>

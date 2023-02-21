@@ -36,48 +36,44 @@ class MatchController extends Controller
 
             return Datatables::of($query)
                     ->addIndexColumn()
+                    ->addColumn('round', function ($match) {
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> $match->round </span>";
+                    })
                     ->addColumn('league', function ($match) {
-                        return $match->league?->name;
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> {$match->league?->name} </span>";
                     })
                     ->addColumn('date_time', function ($match) {
-                        return date("F j, Y, g:i A", strtotime($match->date_time));
+                        $active = ($match->calculate) ? 'active' : '';
+                        $date_time = get_date_time_format($match);
+                        return "<span class=$active> $date_time </span>";
                     })
                     ->addColumn('score', function ($match) {
-                        return $match->score;
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> $match->score </span>";
                     })
                     ->addColumn('add_score', function ($match) {
+                        if ($match->calculate) {
+                            return "<div></div>";
+                        }
                         return '<a href="/admin/ballone-add-result/'.$match->id.'" ><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
                     })
-                    // ->addColumn('calculate', function ($match) {
-                    //     $btn = '';
-                        
-                    //     if ($match->score === null) {
-                    //         return '-';
-                    //     }
-                        
-                    //     if (!$match->calculate_body && $match->bodyFees) {
-                    //         $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="body" class="calculateBtn mr-3">
-                    //         <i class="fa fa-plus-square text-inverse m-r-10"></i> Body
-                    //         </a>';
-                    //     }
-                    //     if (!$match->calculate_maung && $match->maungFees) {
-                    //         $btn = $btn.'<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" data-type="maung" class="calculateBtn">
-                    //             <i class="fa fa-plus-square text-inverse m-r-10"></i> Maung
-                    //             </a>';
-                    //     }
-                    //     return $btn;
-                    // })
                     ->addColumn('home', function ($match) {
-                        return $match->home?->name;
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> {$match->home?->name} </span>";
                     })
                     ->addColumn('away', function ($match) {
-                        return $match->away?->name;
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> {$match->away?->name} </span>";
                     })
                     ->addColumn('goals', function ($match) {
-                        return $match->fees?->goals;
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> {$match->fees?->goals} </span>";
                     })
                     ->addColumn('body', function ($match) {
-                        return $match->fees?->body;
+                        $active = ($match->calculate) ? 'active' : '';
+                        return "<span class=$active> {$match->fees?->body} </span>";
                     })
                     ->addColumn('action', function ($match) {
                         // $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
@@ -110,7 +106,7 @@ class MatchController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['score', 'add_score', 'action','calculate'])
+                    ->rawColumns(['round', 'league' , 'date_time' , 'score', 'add_score', 'action','calculate', 'home', 'away' , 'body' , 'goals'])
                     ->make(true);
         }
         return view('backend.admin.ballone.match.index', compact('leagues'));

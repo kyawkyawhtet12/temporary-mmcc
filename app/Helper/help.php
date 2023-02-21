@@ -3,9 +3,11 @@
 use Carbon\Carbon;
 
 //
-function get_date_time_format($date)
+function get_date_time_format($match)
 {
-    return Carbon::parse($date)->format('d/m/Y g:i A');
+    $date = Carbon::parse($match->date)->format('d-m-Y');
+    $time = Carbon::parse($match->time)->format('g:i A');
+    return $date . '  ' . $time ;
 }
 
 function getHomeScore($score)
