@@ -37,3 +37,23 @@ table thead tr.bg-primary {
 .w-20 {
     width: 20% !important;
 }
+
+.btn-primary {
+    border-color: rgb(38, 100, 235) !important;
+    background-color: rgb(38, 100, 235) !important;
+}
+
+.pagination .page-item.active .page-link {
+    border-color: rgb(38, 100, 235) !important;
+    background-color: rgb(38, 100, 235) !important;
+}
+
+.pagination .page-item:hover .page-link,
+.btn-primary:hover {
+    background-color: rgb(64, 98, 172) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: unset !important;
+    border: unset !important;
+}

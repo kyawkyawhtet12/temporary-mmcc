@@ -22,94 +22,9 @@ class MatchController extends Controller
 {
     public function index(Request $request)
     {
-        $leagues = League::all();
-
-        if ($request->ajax()) {
-            // $query = FootballMatch::whereNull('score')->where('type', 1)->with('fees')->latest()->get();
-            $query = FootballMatch::where('type', 1)
-                                ->where(function ($query) {
-                                    $query->where('calculate_body', 0)
-                                        ->orWhere('calculate_maung', 0);
-                                })
-                                ->with('bodyFees', 'maungFees')
-                                ->latest()->get();
-
-            return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('round', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> $match->round </span>";
-                    })
-                    ->addColumn('league', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> {$match->league?->name} </span>";
-                    })
-                    ->addColumn('date_time', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        $date_time = get_date_time_format($match);
-                        return "<span class=$active> $date_time </span>";
-                    })
-                    ->addColumn('score', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> $match->score </span>";
-                    })
-                    ->addColumn('add_score', function ($match) {
-                        if ($match->calculate) {
-                            return "<div></div>";
-                        }
-                        return '<a href="/admin/ballone-add-result/'.$match->id.'" ><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
-                    })
-                    ->addColumn('home', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> {$match->home?->name} </span>";
-                    })
-                    ->addColumn('away', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> {$match->away?->name} </span>";
-                    })
-                    ->addColumn('goals', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> {$match->fees?->goals} </span>";
-                    })
-                    ->addColumn('body', function ($match) {
-                        $active = ($match->calculate) ? 'active' : '';
-                        return "<span class=$active> {$match->fees?->body} </span>";
-                    })
-                    ->addColumn('action', function ($match) {
-                        // $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
-
-                        $btn = '';
-                        
-                        if (count($match->bodies) == 0 && count($match->maungs) == 0) {
-                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Delete" class="deleteMatch mr-2"><i class="fa fa-trash text-danger m-r-10"></i></a>';
-                        }
-
-                        if ($match->score === null) {
-                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Refund" class="cancelMatch"><i class="far fa-times-circle text-danger m-r-10"></i></a>';
-                        }
-
-                        return $btn;
-                    })
-                    ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                                if (Str::contains(Str::lower($row['home']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                if (Str::contains(Str::lower($row['away']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                if (Str::contains(Str::lower($row['round']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                return false;
-                            });
-                        }
-                    })
-                    ->rawColumns(['round', 'league' , 'date_time' , 'score', 'add_score', 'action','calculate', 'home', 'away' , 'body' , 'goals'])
-                    ->make(true);
-        }
-        return view('backend.admin.ballone.match.index', compact('leagues'));
+        $data = FootballMatch::where('type', 1)->where('created_at', '>=', now()->subDays(30))
+                            ->with('bodyFees', 'maungFees')->latest()->get();
+        return view('backend.admin.ballone.match.index', compact('data'));
     }
 
     public function matchHistory(Request $request)
@@ -209,45 +124,43 @@ class MatchController extends Controller
         return view('backend.admin.ballone.match.refund');
     }
 
+    public function create()
+    {
+        $leagues = League::all();
+        return view("backend.admin.ballone.match.create", compact('leagues'));
+    }
+
     public function store(Request $request)
     {
+        // return $request->all();
+        
         $request->validate([
-            'round' => 'nullable|string|max:255',
+            'round' => 'nullable|array',
             'league_id' => 'required',
-            // 'date_time' => 'required|date_format:Y-m-d H:i:s',
-            'date' => 'required',
-            'time' => 'required'
+            'date' => 'required|array',
+            'date.*' => 'required',
+            'time' => 'required|array',
+            'time.*' => 'required',
+            'home_id' => 'required|array',
+            'home_id.*' => 'required',
+            'away_id' => 'required|array',
+            'away_id.*' => 'required',
         ]);
+        
+        $times = $request->time;
 
-        // return response()->json($request->all());
-
-        if ($request->type == 0) {
-            $request->validate([
-                'home_id' => 'required',
-                'away_id' => 'required'
-            ]);
-        }
-
-        $match = FootballMatch::find($request->match_id);
-
-        if ($match) {
-            $match->update([
-                'date' => $request->date,
-                'time' => $request->time,
-                'league_id' => $request->league_id
-            ]);
-        } else {
-            $match = FootballMatch::create([
-                'round' => $request->round,
-                'date' => $request->date,
-                'time' => $request->time,
+        foreach ($times as $key => $time) {
+            FootballMatch::create([
+                'round' => $request->round[$key],
+                'date' => $request->date[$key],
+                'time'  => $request->time[$key],
                 'league_id' => $request->league_id,
-                'home_id' => $request->home_id,
-                'away_id' => $request->away_id
+                'home_id' => $request->home_id[$key],
+                'away_id' => $request->away_id[$key]
             ]);
         }
        
-        return response()->json(['success'=>'Match saved successfully.']);
+        return redirect('/admin/ballone/match')->with('success', '* match successfully add.');
     }
 
     public function updateResult(Request $request)

@@ -93,9 +93,8 @@ class CalculationController extends Controller
         }
 
         $match->update([ 'score' => $match->temp_score , 'calculate' => 1 ]);
-        
-        // return back()->with('success', '* calculation successfully done.');
 
-        return redirect('/admin/ballone/match');
+        return redirect('/admin/ballone/match')->with('success', '* calculation successfully done.');
+        ;
     }
 }
