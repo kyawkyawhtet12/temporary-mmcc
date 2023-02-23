@@ -193,8 +193,35 @@ class MatchController extends Controller
 
     public function edit($id)
     {
-        $match = FootballMatch::with('fees')->find($id);
-        return response()->json($match);
+        $match = FootballMatch::find($id);
+        $leagues = League::all();
+        $clubs = Club::where('league_id', $match->league_id)->get();
+        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // return $request->all();
+        
+        $request->validate([
+            'round' => 'nullable',
+            'league_id' => 'required',
+            'date' => 'required',
+            'time' => 'required',
+            'home_id' => 'required',
+            'away_id' => 'required',
+        ]);
+        
+        FootballMatch::findOrFail($id)->update([
+            'round' => $request->round,
+            'date' => $request->date,
+            'time'  => $request->time,
+            'league_id' => $request->league_id,
+            'home_id' => $request->home_id,
+            'away_id' => $request->away_id
+        ]);
+       
+        return redirect('/admin/ballone/match')->with('success', '* match successfully updated.');
     }
 
     public function destroy($id)

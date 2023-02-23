@@ -71,6 +71,7 @@
                                                     <th>Away Team</th>
                                                     <th>Result</th>
                                                     <th>Add Result</th>
+                                                    <th>Edit</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -89,6 +90,13 @@
                                                                 <a href="/admin/ballone-add-result/{{ $dt->id }}">
                                                                     <i class="fa fa-plus-square text-inverse m-r-10"></i>
                                                                 </a>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if (count($dt->bodies) == 0 && count($dt->maungs) == 0 && $dt->score == null)
+                                                                <a href="{{ route('ballone.match.edit', $dt->id) }}"
+                                                                    class="text-success">
+                                                                    <i class="fa fa-edit text-success m-r-10"></i></a>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -139,7 +147,9 @@
                 }
             });
 
-            var table = $('#matches').DataTable();
+            var table = $('#matches').DataTable({
+                "pageLength": 30
+            });
 
             $('body').on('click', '.deleteMatch', function() {
                 swal({
