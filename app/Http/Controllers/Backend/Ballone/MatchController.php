@@ -135,29 +135,31 @@ class MatchController extends Controller
         // return $request->all();
         
         $request->validate([
-            'round' => 'nullable|array',
+            'round' => 'required|array',
             'league_id' => 'required',
             'date' => 'required|array',
-            'date.*' => 'required',
+            // 'date.*' => 'required',
             'time' => 'required|array',
-            'time.*' => 'required',
+            // 'time.*' => 'required',
             'home_id' => 'required|array',
-            'home_id.*' => 'required',
+            // 'home_id.*' => 'required',
             'away_id' => 'required|array',
-            'away_id.*' => 'required',
+            // 'away_id.*' => 'required',
         ]);
         
         $times = $request->time;
 
         foreach ($times as $key => $time) {
-            FootballMatch::create([
-                'round' => $request->round[$key],
-                'date' => $request->date[$key],
-                'time'  => $request->time[$key],
-                'league_id' => $request->league_id,
-                'home_id' => $request->home_id[$key],
-                'away_id' => $request->away_id[$key]
-            ]);
+            if ($request->date[$key] && $request->time[$key]) {
+                FootballMatch::create([
+                    'round' => $request->round[$key],
+                    'date' => $request->date[$key],
+                    'time'  => $request->time[$key],
+                    'league_id' => $request->league_id,
+                    'home_id' => $request->home_id[$key],
+                    'away_id' => $request->away_id[$key]
+                ]);
+            }
         }
        
         return redirect('/admin/ballone/match')->with('success', '* match successfully add.');

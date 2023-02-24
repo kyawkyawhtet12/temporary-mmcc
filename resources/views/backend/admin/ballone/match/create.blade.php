@@ -32,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('ballone.match.store') }}" method="POST" class="form-horizontal">
+                    <form action="{{ route('ballone.match.store') }}" method="POST" class="form-horizontal" novalidate>
                         @csrf
 
                         <div class="card">
@@ -57,7 +57,7 @@
                             <div class="card">
                                 <div class="card-body">
 
-                                    <div class="form-group editTeams">
+                                    <div class="form-group">
                                         <label for="round" class="col-sm-6 control-label"> Round
                                         </label>
                                         <div class="col-sm-12">
@@ -109,12 +109,11 @@
                         </div>
 
                         <div id="more">
-
                             @for ($i = 1; $i < 20; $i++)
                                 <div class="card d-none" id="group_{{ $i }}">
                                     <div class="card-body">
 
-                                        <div class="form-group editTeams">
+                                        <div class="form-group">
                                             <label for="round" class="col-sm-6 control-label"> Round
                                             </label>
                                             <div class="col-sm-12">
@@ -221,7 +220,6 @@
             });
 
             $("body").on('click', "#add", function(e) {
-
 
                 $(`#group_${count}`).removeClass('d-none');
 
