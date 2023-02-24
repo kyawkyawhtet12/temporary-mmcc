@@ -73,7 +73,7 @@
                                             <label for="name" class="col-sm-12 control-label">Date</label>
                                             <div class="col-sm-12">
                                                 <input type="date" id="date" class="form-control" name="date"
-                                                    value="{{ $match->date }}" required>
+                                                    value="{{ get_date_format($match) }}" required>
                                             </div>
                                         </div>
 
@@ -81,7 +81,7 @@
                                             <label for="name" class="col-sm-12 control-label">Time</label>
                                             <div class="col-sm-12">
                                                 <input type="time" id="time" class="form-control" name="time"
-                                                    value={{ $match->time }} required>
+                                                    value={{ get_time_format($match) }} required>
                                             </div>
                                         </div>
                                     </div>

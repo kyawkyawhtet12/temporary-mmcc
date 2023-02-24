@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
+use Carbon\Carbon;
 use App\Models\Club;
 use App\Models\User;
 use App\Models\League;
@@ -11,12 +12,12 @@ use App\Models\FootballBody;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballMaung;
+use Laravel\Ui\Presets\React;
+use App\Models\FootballMaungZa;
 use Yajra\DataTables\DataTables;
+use App\Models\FootballMaungGroup;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
-use App\Models\FootballMaungGroup;
-use App\Models\FootballMaungZa;
-use Laravel\Ui\Presets\React;
 
 class MatchController extends Controller
 {
@@ -151,10 +152,11 @@ class MatchController extends Controller
 
         foreach ($times as $key => $time) {
             if ($request->date[$key] && $request->time[$key]) {
+                $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date[$key] . $request->time[$key]);
+                
                 FootballMatch::create([
                     'round' => $request->round[$key],
-                    'date' => $request->date[$key],
-                    'time'  => $request->time[$key],
+                    'date_time' => $date_time,
                     'league_id' => $request->league_id,
                     'home_id' => $request->home_id[$key],
                     'away_id' => $request->away_id[$key]
@@ -195,10 +197,15 @@ class MatchController extends Controller
 
     public function edit($id)
     {
-        $match = FootballMatch::find($id);
+        $match = FootballMatch::findOrFail($id);
         $leagues = League::all();
         $clubs = Club::where('league_id', $match->league_id)->get();
-        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs'));
+
+        if (count($match->bodies) == 0 && count($match->maungs) == 0 && $match->score == null) {
+            return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs'));
+        }
+
+        return redirect('/admin/ballone/match')->with('error', '* something is wrong.');
     }
 
     public function update(Request $request, $id)
@@ -213,11 +220,10 @@ class MatchController extends Controller
             'home_id' => 'required',
             'away_id' => 'required',
         ]);
-        
+        $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
         FootballMatch::findOrFail($id)->update([
             'round' => $request->round,
-            'date' => $request->date,
-            'time'  => $request->time,
+            'date_time' => $date_time,
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,
             'away_id' => $request->away_id
