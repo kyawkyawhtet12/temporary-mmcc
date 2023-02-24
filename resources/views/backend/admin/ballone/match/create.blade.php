@@ -109,6 +109,61 @@
                         </div>
 
                         <div id="more">
+
+                            @for ($i = 1; $i < 20; $i++)
+                                <div class="card d-none" id="group_{{ $i }}">
+                                    <div class="card-body">
+
+                                        <div class="form-group editTeams">
+                                            <label for="round" class="col-sm-6 control-label"> Round
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="text" id="round" class="form-control" name="round[]">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="name" class="col-sm-12 control-label">Date</label>
+                                                <div class="col-sm-12">
+                                                    <input type="date" id="date" class="form-control" name="date[]"
+                                                        required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="name" class="col-sm-12 control-label">Time</label>
+                                                <div class="col-sm-12">
+                                                    <input type="time" id="time" class="form-control"
+                                                        name="time[]" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="home_id" class="col-sm-6 control-label"> Home Team
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <select class="form-control selectHomeTeam" name="home_id[]"
+                                                        id="home_id_{{ $i }}" required style="width: 100%;">
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="away_id" class="col-sm-12 control-label"> Away Team
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <select class="form-control selectAwayTeam" name="away_id[]"
+                                                        id="away_id_{{ $i }}" required style="width: 100%;">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endfor
                         </div>
 
                         <div class="form-group my-3">
@@ -131,8 +186,16 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
     <script>
         $(document).ready(function() {
+
+            let count = 1;
+
+            $('#home_id').select2();
+            $('#away_id').select2();
+
             $("body").on('change', '.selectLeague', function(e) {
 
                 $(".selectHomeTeam").html('').trigger('change');
@@ -143,13 +206,11 @@
 
                         if (data) {
                             data.map(function(d) {
-                                // console.log(d)
                                 var newOption = new Option(d.name, d.id, true, true);
                                 $(".selectHomeTeam").append(newOption).trigger('change');
                             });
 
                             data.map(function(d) {
-                                // console.log(d)
                                 var newOption = new Option(d.name, d.id, true, true);
                                 $('.selectAwayTeam').append(newOption)
                                     .trigger('change');
@@ -157,11 +218,21 @@
                         }
                     })
                 }
-
             });
 
             $("body").on('click', "#add", function(e) {
-                $(".first .card").clone().appendTo("#more");
+
+
+                $(`#group_${count}`).removeClass('d-none');
+
+                $(`#home_id_${count}`).select2();
+                $(`#away_id_${count}`).select2();
+
+                count++;
+
+                if (count == 20) {
+                    $("#add").addClass('d-none');
+                }
             });
 
         })
