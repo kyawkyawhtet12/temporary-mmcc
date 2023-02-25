@@ -48,10 +48,10 @@ class AddResultController extends Controller
     {
         if (strpos($fees, '+')) {
             return explode('+', $fees);
-        } elseif (strpos($fees, '-')) {
-            return explode('-', $fees);
-        } else {
+        } elseif (strpos($fees, '=')) {
             return explode('=', $fees);
+        } else {
+            return explode('-', $fees);
         }
     }
 
@@ -59,10 +59,10 @@ class AddResultController extends Controller
     {
         if (strpos($fees, '+')) {
             return "+";
-        } elseif (strpos($fees, '-')) {
-            return "-";
-        } else {
+        } elseif (strpos($fees, '=')) {
             return "=";
+        } else {
+            return "-";
         }
     }
 
@@ -72,17 +72,15 @@ class AddResultController extends Controller
         $fees   = $allFees->body;
         $fees_array = $this->getFees($fees);
         $fees_type  = $this->getFeesType($fees);
-        $limit   =  $fees_array[0];
-        $percent =  $fees_array[1];
-
+        $limit   =  $fees_array[0] ?: 0;
+        $percent =  $fees_array[1] ?: 100;
+        
         if ($upteam == 1) {
             // home
-
             $net = (int) $request->home - (int) $request->away;
-            $real_limit = ($limit == "L") ? 0 : $limit;
-
+            $real_limit = ($limit == "=") ? 0 : $limit;
+            
             if ($fees_type === "=") {
-                // return $net;
                 if ($net > $real_limit) {
                     $allFees->result->update(['home' => 100 , 'away' => -100 ]);
                 } else {
@@ -123,7 +121,7 @@ class AddResultController extends Controller
         } else {
             // away
             $net = (int) $request->away - (int) $request->home;
-            $real_limit = ($limit == "L") ? 0 : $limit;
+            $real_limit = ($limit == "=") ? 0 : $limit;
 
             if ($fees_type === "=") {
                 if ($net > $real_limit) {
