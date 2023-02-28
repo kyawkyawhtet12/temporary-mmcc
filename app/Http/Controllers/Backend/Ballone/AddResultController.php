@@ -48,7 +48,7 @@ class AddResultController extends Controller
     {
         if (strpos($fees, '+')) {
             return explode('+', $fees);
-        } elseif (strpos($fees, '=')) {
+        } elseif (strpos($fees, '=') || $fees == "=") {
             return explode('=', $fees);
         } else {
             return explode('-', $fees);
@@ -57,28 +57,30 @@ class AddResultController extends Controller
 
     public function getFeesType($fees)
     {
+        // dd(strpos($fees, '='));
         if (strpos($fees, '+')) {
             return "+";
-        } elseif (strpos($fees, '=')) {
+        } elseif (strpos($fees, '=') || $fees == "=") {
             return "=";
         } else {
             return "-";
         }
     }
 
-    public function calculation($allFees, $request)
+    private function calculation($allFees, $request)
     {
         $upteam = $allFees->up_team;
         $fees   = $allFees->body;
         $fees_array = $this->getFees($fees);
         $fees_type  = $this->getFeesType($fees);
-        $limit   =  $fees_array[0] ?: 0;
-        $percent =  $fees_array[1] ?: 100;
+        
+        $limit   =  (isset($fees_array[0]) && $fees_array[0]) ? $fees_array[0] : 0;
+        $percent =  (isset($fees_array[1]) && $fees_array[1]) ? $fees_array[1] : 100;
         
         if ($upteam == 1) {
             // home
             $net = (int) $request->home - (int) $request->away;
-            $real_limit = ($limit == "=") ? 0 : $limit;
+            $real_limit = ($limit == "=" || $limit == "") ? 0 : $limit;
             
             if ($fees_type === "=") {
                 if ($net > $real_limit) {
@@ -168,8 +170,8 @@ class AddResultController extends Controller
         $fees = $allFees->goals;
         $fees_array = $this->getFees($fees);
         $fees_type = $this->getFeesType($fees);
-        $limit =  $fees_array[0];
-        $percent =  $fees_array[1];
+        $limit   =  (isset($fees_array[0]) && $fees_array[0]) ? $fees_array[0] : 0;
+        $percent =  (isset($fees_array[1]) && $fees_array[1]) ? $fees_array[1] : 100;
 
         if ($fees_type === "=") {
             if ($total_goals > $limit) {
