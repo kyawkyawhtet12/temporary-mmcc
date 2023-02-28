@@ -57,7 +57,6 @@ class AddResultController extends Controller
 
     public function getFeesType($fees)
     {
-        // dd(strpos($fees, '='));
         if (strpos($fees, '+')) {
             return "+";
         } elseif (strpos($fees, '=') || $fees == "=") {

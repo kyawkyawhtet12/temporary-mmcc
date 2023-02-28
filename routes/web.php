@@ -209,5 +209,8 @@ Route::group(
         Route::post('ballone-add-result/{id}', 'Ballone\AddResultController@add')->name('calculate.result');
 
         Route::get('ballone-calculate-result/{id}', 'Ballone\CalculationController@index')->name('ballone.calculate.result');
+
+        // Match Report
+        Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');
     }
 );

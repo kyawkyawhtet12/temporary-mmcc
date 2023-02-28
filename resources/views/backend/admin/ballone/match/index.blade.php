@@ -13,6 +13,10 @@
         #done {
             background-color: #0ed318 !important;
         }
+
+        table a.match-detail {
+            color: black !important;
+        }
     </style>
 @endsection
 
@@ -75,8 +79,7 @@
                                                     <th>Round</th>
                                                     <th>League</th>
                                                     <th>Date Time</th>
-                                                    <th>Home Team</th>
-                                                    <th>Away Team</th>
+                                                    <th>Match</th>
                                                     <th>Result</th>
                                                     <th>Add Result</th>
                                                     <th>Edit</th>
@@ -90,8 +93,11 @@
                                                         <td>{{ $dt->round }}</td>
                                                         <td>{{ $dt->league->name }}</td>
                                                         <td>{{ get_date_time_format($dt) }}</td>
-                                                        <td>{{ $dt->home->name }}</td>
-                                                        <td>{{ $dt->away->name }}</td>
+                                                        <td>
+                                                            <a href="#" class="match-detail">
+                                                                {{ $dt->home->name }} Vs {{ $dt->away->name }}
+                                                            </a>
+                                                        </td>
                                                         <td>{{ $dt->score }}</td>
                                                         <td>
                                                             @if (!$dt->calculate)
@@ -129,6 +135,10 @@
                                             </tbody>
                                         </table>
                                     </div>
+
+                                    <div class="mt-3">
+                                        {{ $data->links() }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -155,9 +165,13 @@
                 }
             });
 
-            var table = $('#matches').DataTable({
-                "pageLength": 30
-            });
+            // var table = $('#matches').DataTable({
+            //     "pageLength": 30,
+            //     'columnDefs': [{
+            //         'targets': [1, 2, 3, 4, 5, 6, 7, 8],
+            //         'orderable': false,
+            //     }]
+            // });
 
             $('body').on('click', '.deleteMatch', function() {
                 swal({
@@ -177,7 +191,8 @@
                                     text: "အောင်မြင်ပါသည်",
                                     icon: "success",
                                 }).then((e) => {
-                                    table.draw();
+                                    // table.draw();
+                                    location.reload();
                                 })
                             })
                         }
@@ -207,7 +222,8 @@
                                         text: "အောင်မြင်ပါသည်",
                                         icon: "success",
                                     }).then((e) => {
-                                        table.draw();
+                                        // table.draw();
+                                        location.reload();
                                     })
                                 }
                             })
