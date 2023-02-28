@@ -76,7 +76,6 @@
                                             <thead>
                                                 <tr>
                                                     <th>No.</th>
-                                                    <th>Round</th>
                                                     <th>League</th>
                                                     <th>Date Time</th>
                                                     <th>Match</th>
@@ -90,11 +89,12 @@
                                                 @foreach ($data as $x => $dt)
                                                     <tr id="{{ $dt->calculate ? 'done' : '' }}">
                                                         <td>{{ ++$x }}</td>
-                                                        <td>{{ $dt->round }}</td>
                                                         <td>{{ $dt->league->name }}</td>
                                                         <td>{{ get_date_time_format($dt) }}</td>
                                                         <td>
-                                                            <a href="#" class="match-detail">
+                                                            <a href="{{ route('match.report', $dt->id) }}"
+                                                                class="match-detail">
+                                                                ({{ $dt->round }})
                                                                 {{ $dt->home->name }} Vs {{ $dt->away->name }}
                                                             </a>
                                                         </td>

@@ -58,7 +58,7 @@
                                 <div class="card-body">
 
                                     <div class="form-group">
-                                        <label for="round" class="col-sm-6 control-label"> Round
+                                        <label for="round" class="col-sm-6 control-label"> No
                                         </label>
                                         <div class="col-sm-12">
                                             <input type="text" id="round" class="form-control" name="round[]">
@@ -114,7 +114,7 @@
                                     <div class="card-body">
 
                                         <div class="form-group">
-                                            <label for="round" class="col-sm-6 control-label"> Round
+                                            <label for="round" class="col-sm-6 control-label"> No
                                             </label>
                                             <div class="col-sm-12">
                                                 <input type="text" id="round" class="form-control" name="round[]">

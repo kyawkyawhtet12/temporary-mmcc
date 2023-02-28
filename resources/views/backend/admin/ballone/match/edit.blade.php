@@ -60,7 +60,7 @@
 
                                     <div class="form-group editTeams">
                                         <label for="round" class="col-sm-6 control-label">
-                                            Round
+                                            No
                                         </label>
                                         <div class="col-sm-12">
                                             <input type="text" id="round" class="form-control" name="round"

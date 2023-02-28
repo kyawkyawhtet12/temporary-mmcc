@@ -7,12 +7,13 @@ use App\Models\FootballBet;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBody;
 
 class ReportDetailController extends Controller
 {
     public function index($id)
     {
-        $data = FootballMatch::findOrFail($id);
+        $data = FootballBody::where('match_id', $id)->get();
 
         return $data;
     }

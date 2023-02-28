@@ -24,7 +24,7 @@ class MatchController extends Controller
     public function index(Request $request)
     {
         $data = FootballMatch::where('type', 1)->where('created_at', '>=', now()->subDays(30))
-                            ->with('bodyFees', 'maungFees')->latest()->paginate(30);
+                            ->with('bodyFees', 'maungFees')->orderBy('created_at', 'desc')->orderby('round', 'asc')->paginate(30);
         
         return view('backend.admin.ballone.match.index', compact('data'));
     }
@@ -33,9 +33,9 @@ class MatchController extends Controller
     {
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = FootballMatch::whereNotNull('score')->whereBetween('date', [$request->from_date, $request->to_date])->get();
+                $query = FootballMatch::whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
             } else {
-                $query = FootballMatch::whereNotNull('score')->latest()->get();
+                $query = FootballMatch::whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
             }
             return Datatables::of($query)
                     ->addIndexColumn()
@@ -45,11 +45,8 @@ class MatchController extends Controller
                     ->addColumn('date_time', function ($match) {
                         return get_date_time_format($match);
                     })
-                    ->addColumn('home', function ($match) {
-                        return $match->home?->name;
-                    })
-                    ->addColumn('away', function ($match) {
-                        return $match->away?->name;
+                    ->addColumn('match', function ($match) {
+                        return "({$match->round}) {$match->home?->name} Vs {$match->away?->name}";
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -60,20 +57,14 @@ class MatchController extends Controller
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {
                             $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                                if (Str::contains(Str::lower($row['home']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                if (Str::contains(Str::lower($row['away']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                if (Str::contains(Str::lower($row['round']), Str::lower($request->get('search')))) {
+                                if (Str::contains(Str::lower($row['match']), Str::lower($request->get('search')))) {
                                     return true;
                                 }
                                 return false;
                             });
                         }
                     })
-                    ->rawColumns(['score'])
+                    ->rawColumns(['score','match'])
                     ->make(true);
         }
         return view('backend.admin.ballone.match.history');
@@ -83,9 +74,9 @@ class MatchController extends Controller
     {
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = FootballMatch::where('type', 0)->whereBetween('date', [$request->from_date, $request->to_date])->get();
+                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->get();
             } else {
-                $query = FootballMatch::where('type', 0)->latest()->get();
+                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->latest()->get();
             }
             return Datatables::of($query)
                     ->addIndexColumn()
@@ -95,11 +86,8 @@ class MatchController extends Controller
                     ->addColumn('date_time', function ($match) {
                         return get_date_time_format($match);
                     })
-                    ->addColumn('home', function ($match) {
-                        return $match->home?->name;
-                    })
-                    ->addColumn('away', function ($match) {
-                        return $match->away?->name;
+                    ->addColumn('match', function ($match) {
+                        return "({$match->round}) {$match->home?->name} Vs {$match->away?->name}";
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -110,10 +98,7 @@ class MatchController extends Controller
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {
                             $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                                if (Str::contains(Str::lower($row['home']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                if (Str::contains(Str::lower($row['away']), Str::lower($request->get('search')))) {
+                                if (Str::contains(Str::lower($row['match']), Str::lower($request->get('search')))) {
                                     return true;
                                 }
                                 return false;
