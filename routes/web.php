@@ -123,6 +123,8 @@ Route::group(
         Route::post('agent-withdrawal/accept/{id}', 'AgentWithdrawController@accept');
         Route::post('agent-withdrawal/reject/{id}', 'AgentWithdrawController@reject');
 
+        Route::get('/agent-payment/report/{id}', 'AgentController@payment_report')->name('payment.report');
+
         // Route::get('withdrawChangeStatus', 'AgentWithdrawController@ChangeTransferStatus')->name('agent.changeStatus');
 
         Route::get('agents-three', 'AgentController@threeLuckyDraw')->name('agents.three');

@@ -2,23 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UserPaymentReport extends Model
+class AgentPaymentReport extends Model
 {
     use HasFactory;
 
-    protected $fillable = [ 'user_id' , 'agent_id', 'deposit', 'withdraw' , 'net' ];
+    protected $fillable = [ 'agent_id', 'deposit', 'withdraw' , 'net' ];
 
     public function getNetAmountAttribute()
     {
         return $this->deposit - $this->withdraw;
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function agent()

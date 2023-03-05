@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Models\Agent;
+use DB;
+use Carbon\Carbon;
 use App\Models\User;
-use App\Models\TwoLuckyDraw;
-use App\Models\ThreeLuckyDraw;
+use App\Models\Agent;
 use Illuminate\Support\Str;
+use App\Models\AgentDeposit;
+use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
+use App\Models\AgentWithdraw;
+use App\Models\ThreeLuckyDraw;
+use Yajra\DataTables\DataTables;
+use App\Models\AgentPaymentReport;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\DataTables;
-use DB;
 
 class AgentController extends Controller
 {
@@ -24,7 +28,12 @@ class AgentController extends Controller
             $query = Agent::select('*');
 
             return Datatables::of($query)
-                    ->addIndexColumn()                    
+                    ->addIndexColumn()
+                    ->addColumn('name', function ($agent) {
+                        return "
+                            <a href='/admin/agent-payment/report/$agent->id' > $agent->name </a>
+                        ";
+                    })
                     ->addColumn('created_at', function ($agent) {
                         return date("F j, Y, g:i A", strtotime($agent->created_at));
                     })
@@ -42,7 +51,7 @@ class AgentController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['status','action'])
+                    ->rawColumns(['name', 'status','action'])
                     ->make(true);
         }
 
@@ -75,7 +84,7 @@ class AgentController extends Controller
 
     public function footballLuckyDraw()
     {
-        $data = DB::table('agents')                   
+        $data = DB::table('agents')
                    ->join('football_bets', 'football_bets.agent_id', '=', 'agents.id')
                    ->selectRaw('SUM(football_bets.amount) as amount, DATE(football_bets.created_at) day, agents.name as name, agents.referral_code as referral_code')
                    ->groupBy('day', 'name', 'referral_code')
@@ -103,7 +112,7 @@ class AgentController extends Controller
                        ->join('football_bets', 'football_bets.agent_id', '=', 'agents.id')
                        ->selectRaw('SUM(football_bets.amount) as amount, agents.name as name, agents.id as id')
                        ->groupBy('name', 'id')
-                       ->get();                      
+                       ->get();
 
         $collection = collect([$two_percentages, $three_percentages, $football_percentages])->flatten()->all();
         $result = array();
@@ -143,7 +152,7 @@ class AgentController extends Controller
                 'name' => 'required|string|max:255',
                 // 'phone' => 'required|phone:MM|unique:agents',
                 'password' => 'required|string|min:8|same:confirm-password',
-            ]);            
+            ]);
             $random = Str::random(8);
             $password = Hash::make($request->password);
         } else {
@@ -152,8 +161,8 @@ class AgentController extends Controller
                 // 'phone' => 'required|phone:MM|unique:agents,phone,'.$request->agent_id,
                 'phone' => 'required|unique:agents,phone,'.$request->agent_id,
                 'password' => 'nullable|string|min:8|same:confirm-password',
-            ]);        
-            $random = Agent::where('id', $request->agent_id)->value('referral_code');    
+            ]);
+            $random = Agent::where('id', $request->agent_id)->value('referral_code');
             
             if ($request->password) {
                 $password = Hash::make($request->password);
@@ -185,5 +194,38 @@ class AgentController extends Controller
     {
         Agent::find($id)->delete();
         return response()->json(['success'=>'Agent deleted successfully.']);
+    }
+
+    // Payment Report
+    public function payment_report(Request $request, $id)
+    {
+        $agent = Agent::findOrFail($id);
+        
+        if ($request->ajax()) {
+            $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->latest();
+            return Datatables::of($query)
+                    ->addIndexColumn()
+                    ->addColumn('agent', function ($data) {
+                        return $data->agent?->name;
+                    })
+                    ->addColumn('net', function ($data) {
+                        return $data->deposit - $data->withdraw;
+                    })
+                    ->addColumn('created_at', function ($data) {
+                        return Carbon::parse($data->created_at)->format('d-m-Y');
+                    })
+                    ->filter(function ($instance) use ($request) {
+                        if (!empty($request->get('search'))) {
+                            $instance->whereHas('agent', function ($w) use ($request) {
+                                $search = $request->get('search');
+                                $w->where('name', 'LIKE', "%$search%");
+                            });
+                        }
+                    })
+                    ->rawColumns(['agent'])
+                    ->make(true);
+        }
+
+        return view("backend.report.payment", compact('id'));
     }
 }
