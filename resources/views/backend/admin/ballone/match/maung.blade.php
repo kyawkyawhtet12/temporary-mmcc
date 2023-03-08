@@ -47,14 +47,10 @@
                                         <table id="matches" class="table table-bordered nowrap">
                                             <thead>
                                                 <tr>
-                                                    <th>No.</th>
-                                                    <th>Round</th>
-                                                    <th>League</th>
+                                                    <th>Match</th>
                                                     <th>Date Time</th>
-                                                    <th>Home Team</th>
-                                                    <th>Away Team</th>
-                                                    {{-- <th>Result</th> --}}
-                                                    <th>Body</th>
+                                                    <th>Body (Home)</th>
+                                                    <th>Body (Away)</th>
                                                     <th>Goals</th>
                                                     <th>By</th>
                                                     <th>Action</th>
@@ -190,33 +186,20 @@
                     }
                 },
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
-                    {
-                        data: 'round',
-                        name: 'round'
-                    },
-                    {
-                        data: 'league',
-                        name: 'league'
+                        data: 'match',
+                        name: 'match'
                     },
                     {
                         data: 'date_time',
                         name: 'date_time'
                     },
                     {
-                        data: 'home',
-                        name: 'home'
+                        data: 'body_home',
+                        name: 'body_home'
                     },
                     {
-                        data: 'away',
-                        name: 'away'
-                    },
-                    // {data: 'score', name: 'score'},
-                    {
-                        data: 'body',
-                        name: 'body'
+                        data: 'body_away',
+                        name: 'body_away'
                     },
                     {
                         data: 'goals',

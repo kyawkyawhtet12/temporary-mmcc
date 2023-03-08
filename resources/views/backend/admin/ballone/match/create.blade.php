@@ -57,14 +57,6 @@
                             <div class="card">
                                 <div class="card-body">
 
-                                    <div class="form-group">
-                                        <label for="round" class="col-sm-6 control-label"> No
-                                        </label>
-                                        <div class="col-sm-12">
-                                            <input type="text" id="round" class="form-control" name="round[]">
-                                        </div>
-                                    </div>
-
                                     <div class="form-group row">
                                         <div class="col-sm-6">
                                             <label for="name" class="col-sm-12 control-label">Date</label>
@@ -79,6 +71,24 @@
                                             <div class="col-sm-12">
                                                 <input type="time" id="time" class="form-control" name="time[]"
                                                     required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="home_no" class="col-sm-6 control-label"> Home No
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="text" id="home_no" class="form-control" name="home_no[]">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <label for="away_no" class="col-sm-6 control-label"> Away No
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="text" id="away_no" class="form-control" name="away_no[]">
                                             </div>
                                         </div>
                                     </div>
@@ -113,14 +123,6 @@
                                 <div class="card d-none" id="group_{{ $i }}">
                                     <div class="card-body">
 
-                                        <div class="form-group">
-                                            <label for="round" class="col-sm-6 control-label"> No
-                                            </label>
-                                            <div class="col-sm-12">
-                                                <input type="text" id="round" class="form-control" name="round[]">
-                                            </div>
-                                        </div>
-
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label for="name" class="col-sm-12 control-label">Date</label>
@@ -135,6 +137,26 @@
                                                 <div class="col-sm-12">
                                                     <input type="time" id="time" class="form-control"
                                                         name="time[]" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <label for="home_no" class="col-sm-6 control-label"> Home No
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <input type="text" id="home_no" class="form-control"
+                                                        name="home_no[]">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <label for="away_no" class="col-sm-6 control-label"> Away No
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <input type="text" id="away_no" class="form-control"
+                                                        name="away_no[]">
                                                 </div>
                                             </div>
                                         </div>
@@ -159,6 +181,11 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-end">
+                                            <a href="javascript:void(0)" data-group="group_{{ $i }}"
+                                                class="deleteMatch"> Delete </a>
                                         </div>
                                     </div>
                                 </div>
@@ -233,6 +260,12 @@
                 }
             });
 
-        })
+            $("body").on('click', ".deleteMatch", function(e) {
+                let group = $(this).data('group');
+                console.log(group);
+                $(`#${group}`).addClass('d-none');
+            });
+
+        });
     </script>
 @endsection

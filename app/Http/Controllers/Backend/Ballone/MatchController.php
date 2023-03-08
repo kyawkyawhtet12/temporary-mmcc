@@ -13,18 +13,23 @@ use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballMaung;
 use Laravel\Ui\Presets\React;
+use App\Models\FootballBodyFee;
 use App\Models\FootballMaungZa;
+use App\Models\FootballMaungFee;
 use Yajra\DataTables\DataTables;
 use App\Models\FootballMaungGroup;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Models\FootballBodyFeeResult;
+use App\Models\FootballMaungFeeResult;
 
 class MatchController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballMatch::where('type', 1)->where('created_at', '>=', now()->subDays(30))
-                            ->with('bodyFees', 'maungFees')->orderBy('created_at', 'desc')->orderby('round', 'asc')->paginate(30);
+        $data = FootballMatch::where('created_at', '>=', now()->subDays(7))
+                            ->with('bodyFees', 'maungFees')->orderBy('created_at', 'asc')->paginate(30);
         
         return view('backend.admin.ballone.match.index', compact('data'));
     }
@@ -46,7 +51,7 @@ class MatchController extends Controller
                         return get_date_time_format($match);
                     })
                     ->addColumn('match', function ($match) {
-                        return "({$match->round}) {$match->home?->name} Vs {$match->away?->name}";
+                        return "({$match->home_no}) {$match->home?->name} Vs ({$match->away_no}) {$match->away?->name}";
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -87,7 +92,7 @@ class MatchController extends Controller
                         return get_date_time_format($match);
                     })
                     ->addColumn('match', function ($match) {
-                        return "({$match->round}) {$match->home?->name} Vs {$match->away?->name}";
+                        return "({$match->home_no}) {$match->home?->name} Vs ({$match->away_no}) {$match->away?->name}";
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -122,7 +127,8 @@ class MatchController extends Controller
         // return $request->all();
         
         $request->validate([
-            'round' => 'required|array',
+            'home_no' => 'required|array',
+            'away_no' => 'required|array',
             'league_id' => 'required',
             'date' => 'required|array',
             // 'date.*' => 'required',
@@ -140,13 +146,20 @@ class MatchController extends Controller
             if ($request->date[$key] && $request->time[$key]) {
                 $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date[$key] . $request->time[$key]);
                 
-                FootballMatch::create([
-                    'round' => $request->round[$key],
-                    'date_time' => $date_time,
-                    'league_id' => $request->league_id,
-                    'home_id' => $request->home_id[$key],
-                    'away_id' => $request->away_id[$key]
-                ]);
+                $match = FootballMatch::create([
+                            'home_no' => $request->home_no[$key],
+                            'away_no' => $request->away_no[$key],
+                            'date_time' => $date_time,
+                            'league_id' => $request->league_id,
+                            'home_id' => $request->home_id[$key],
+                            'away_id' => $request->away_id[$key]
+                        ]);
+
+                $bodyFees = FootballBodyFee::create(['match_id' => $match->id, 'by'=> Auth::id() ]);
+                $maungFees = FootballMaungFee::create(['match_id' => $match->id, 'by'=> Auth::id() ]);
+
+                FootballBodyFeeResult::create([ 'fee_id' => $bodyFees->id ]);
+                FootballMaungFeeResult::create([ 'fee_id' => $maungFees->id ]);
             }
         }
        
@@ -199,7 +212,8 @@ class MatchController extends Controller
         // return $request->all();
         
         $request->validate([
-            'round' => 'nullable',
+            'home_no' => 'nullable',
+            'away_no' => 'nullable',
             'league_id' => 'required',
             'date' => 'required',
             'time' => 'required',
@@ -208,7 +222,8 @@ class MatchController extends Controller
         ]);
         $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
         FootballMatch::findOrFail($id)->update([
-            'round' => $request->round,
+            'home_no' => $request->home_no,
+            'away_no' => $request->away_no,
             'date_time' => $date_time,
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,

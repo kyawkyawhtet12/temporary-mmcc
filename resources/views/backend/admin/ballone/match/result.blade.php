@@ -36,11 +36,6 @@
 
                             <table class="table">
                                 <tr>
-                                    <td> Round </td>
-                                    <td> : </td>
-                                    <td> {{ $match->round }} </td>
-                                </tr>
-                                <tr>
                                     <td> League </td>
                                     <td> : </td>
                                     <td> {{ $match->league->name }} </td>
@@ -57,6 +52,7 @@
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="up-team">
+                                            ( {{ $match->home_no }} )
                                             {{ $match->home->name }}
                                         </span>
                                     </div>
@@ -68,6 +64,7 @@
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
+                                            ( {{ $match->away_no }} )
                                             {{ $match->away->name }}
                                         </span>
                                     </div>
@@ -110,14 +107,16 @@
                                 <tbody>
 
                                     @foreach ($match->allBodyFees as $key => $fee)
-                                        <tr>
-                                            <td> {{ $fee->body }} / {{ $fee->goals }}</td>
-                                            <td> : </td>
-                                            <td> {{ $fee->result->home }} </td>
-                                            <td> {{ $fee->result->away }} </td>
-                                            <td> {{ $fee->result->over }} </td>
-                                            <td> {{ $fee->result->under }} </td>
-                                        </tr>
+                                        @if ($fee)
+                                            <tr>
+                                                <td> {{ $fee?->body }} / {{ $fee?->goals }}</td>
+                                                <td> : </td>
+                                                <td> {{ $fee?->result?->home }} </td>
+                                                <td> {{ $fee?->result?->away }} </td>
+                                                <td> {{ $fee?->result?->over }} </td>
+                                                <td> {{ $fee?->result?->under }} </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
 
@@ -147,14 +146,16 @@
 
                                 <tbody>
                                     @foreach ($match->allMaungfees as $key => $maungfee)
-                                        <tr>
-                                            <td> {{ $maungfee->body }} / {{ $maungfee->goals }}</td>
-                                            <td> : </td>
-                                            <td> {{ $maungfee->result->home }} </td>
-                                            <td> {{ $maungfee->result->away }} </td>
-                                            <td> {{ $maungfee->result->over }} </td>
-                                            <td> {{ $maungfee->result->under }} </td>
-                                        </tr>
+                                        @if ($maungfee)
+                                            <tr>
+                                                <td> {{ $maungfee?->body }} / {{ $maungfee?->goals }}</td>
+                                                <td> : </td>
+                                                <td> {{ $maungfee?->result?->home }} </td>
+                                                <td> {{ $maungfee?->result?->away }} </td>
+                                                <td> {{ $maungfee?->result?->over }} </td>
+                                                <td> {{ $maungfee?->result?->under }} </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
 

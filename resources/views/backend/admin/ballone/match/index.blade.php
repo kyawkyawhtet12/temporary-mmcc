@@ -17,6 +17,11 @@
         table a.match-detail {
             color: black !important;
         }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #e0e0ef !important;
+        }
     </style>
 @endsection
 
@@ -72,33 +77,73 @@
                                     @endif
 
                                     <div class="table-responsive">
-                                        <table id="matches" class="table table-bordered nowrap">
+                                        <table id="matches" class="table table-bordered nowrap text-center">
                                             <thead>
                                                 <tr>
-                                                    <th>No.</th>
-                                                    <th>League</th>
-                                                    <th>Date Time</th>
                                                     <th>Match</th>
+                                                    <th>Date Time</th>
                                                     <th>Result</th>
+                                                    <th colspan="2">Body</th>
+                                                    <th>Goals</th>
+                                                    <th>Home</th>
+                                                    <th>Away</th>
+                                                    <th>Over</th>
+                                                    <th>Under</th>
                                                     <th>Add Result</th>
                                                     <th>Edit</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data as $x => $dt)
+                                                @forelse ($data as $x => $dt)
                                                     <tr id="{{ $dt->calculate ? 'done' : '' }}">
-                                                        <td>{{ ++$x }}</td>
-                                                        <td>{{ $dt->league->name }}</td>
-                                                        <td>{{ get_date_time_format($dt) }}</td>
                                                         <td>
                                                             <a href="{{ route('match.report', $dt->id) }}"
                                                                 class="match-detail">
-                                                                ({{ $dt->round }})
-                                                                {{ $dt->home->name }} Vs {{ $dt->away->name }}
+                                                                ({{ $dt->home_no }})
+                                                                {{ $dt->home->name }} Vs
+                                                                ({{ $dt->away_no }})
+                                                                {{ $dt->away->name }}
                                                             </a>
                                                         </td>
+                                                        <td>{{ get_date_time_format($dt) }}</td>
+
                                                         <td>{{ $dt->score }}</td>
+
+                                                        <td>
+                                                            @if ($dt->bodyfees->up_team == 1)
+                                                                {{ $dt->bodyfees->body }}
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if ($dt->bodyfees->up_team == 2)
+                                                                {{ $dt->bodyfees->body }}
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            {{ $dt->bodyfees->goals }}
+                                                        </td>
+
+                                                        @if ($dt->calculate)
+                                                            <td>
+                                                                {{ $dt->bodyfees->result->home }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $dt->bodyfees->result->away }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $dt->bodyfees->result->home }}
+                                                            </td>
+                                                            <td>
+                                                                {{ $dt->bodyfees->result->home }}
+                                                            </td>
+                                                        @else
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                        @endif
+
                                                         <td>
                                                             @if (!$dt->calculate)
                                                                 <a href="/admin/ballone-add-result/{{ $dt->id }}">
@@ -114,7 +159,6 @@
                                                             @endif
                                                         </td>
                                                         <td>
-
                                                             @if (count($dt->bodies) == 0 && count($dt->maungs) == 0)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->id }}"
@@ -126,12 +170,16 @@
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->id }}"
                                                                     data-original-title="Refund" class="cancelMatch">
-                                                                    <i
-                                                                        class="far fa-times-circle text-danger m-r-10"></i></a>
+                                                                    <i class="far fa-times-circle text-danger m-r-10"></i>
+                                                                </a>
                                                             @endif
                                                         </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="13" class="text-center"> No Data Available. </td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

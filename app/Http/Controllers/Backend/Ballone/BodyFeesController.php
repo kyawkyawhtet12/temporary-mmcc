@@ -20,76 +20,47 @@ class BodyFeesController extends Controller
         // $clubs = Club::all();
 
         if ($request->ajax()) {
-            $query = FootballMatch::whereNull('score')->where('type', 1)
-                                    ->with('bodyFees')->latest()->get();
+            // $query = FootballMatch::whereNull('score')->where('type', 1)
+            //                         ->with('bodyFees')->latest()->get();
+
+            $query = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
+                                    ->with('match')->latest()->get();
+
             return Datatables::of($query)
                     ->addIndexColumn()
-                    ->addColumn('league', function ($match) {
-                        return $match->league?->name;
+                    ->addColumn('league', function ($fees) {
+                        return $fees->match->league?->name;
                     })
-                    ->addColumn('date_time', function ($match) {
-                        return get_date_time_format($match);
+                    ->addColumn('date_time', function ($fees) {
+                        return get_date_time_format($fees->match);
                     })
-                    ->addColumn('score', function ($match) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="addResult"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
-                        if ($match->score === null) {
+                    ->addColumn('score', function ($fees) {
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$fees->match->id.'" data-original-title="Edit" class="addResult"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
+                        if ($fees->match->score === null) {
                             return $btn;
                         }
-                        return $match->score;
+                        return $fees->match->score;
                     })
-                    ->addColumn('home', function ($match) {
-                        return $match->home?->name;
+                    
+                    ->addColumn('match', function ($fees) {
+                        return "({$fees->match->home_no}) " . $fees->match->home?->name . " Vs " . "({$fees->match->away_no}) " . $fees->match->away?->name;
                     })
-                    ->addColumn('away', function ($match) {
-                        return $match->away?->name;
-                    })
-                    ->addColumn('goals', function ($match) {
-                        // return $match->bodyFees?->goals;
-                        $old_fees = '';
 
-                        foreach ($match->oldBodyFees as $old) {
-                            $old_fees .= "<div style='height:15px'> {$old->goals} </div>";
-                        }
-
-                        return "<div>
-                                    <div style='height:15px'> {$match->bodyFees?->goals} </div>
-                                    $old_fees
-                                </div>";
+                    ->addColumn('goals', function ($fees) {
+                        return $fees->goals;
                     })
-                    ->addColumn('body', function ($match) {
-                        $home = $match->bodyFees?->up_team == 1 ? $match->bodyFees?->body : '';
-                        $away = $match->bodyFees?->up_team == 2 ? $match->bodyFees?->body : '';
-                        $old_fees = "";
-
-                        foreach ($match->oldBodyFees as $old) {
-                            $home_old = $old->up_team == 1 ? $old->body : '';
-                            $away_old = $old->up_team == 2 ? $old->body : '';
-                            $old_fees .= "<div class='d-flex text-center'> 
-                                            <div style='width:50px'> $home_old </div> 
-                                            <div style='height:15px;border-right:1px solid #333;margin:0 5px;'></div> 
-                                            <div style='width:50px'> $away_old </div> 
-                                        </div>";
-                        }
-
-                        return "<div class='d-flex text-center'> 
-                                    <div style='width:50px'> $home </div> 
-                                    <div style='height:15px;border-right:1px solid #333;margin:0 5px;'></div> 
-                                    <div style='width:50px'> $away </div> 
-                                </div>
-
-                                $old_fees
-                                
-                            ";
+                    ->addColumn('body_home', function ($fees) {
+                        return $fees->up_team == 1 ? $fees->body : '';
                     })
-                    ->addColumn('by', function ($match) {
-                        return $match->bodyFees?->user?->name;
+                    ->addColumn('body_away', function ($fees) {
+                        return $fees->up_team == 2 ? $fees->body : '';
                     })
-                    ->addColumn('action', function ($match) {
-                        if ($match->bodyFees) {
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
-                        } else {
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-plus-square text-inverse m-r-10"></i></a>';
-                        }
+
+                    ->addColumn('by', function ($fees) {
+                        return $fees->user?->name;
+                    })
+                    ->addColumn('action', function ($fees) {
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$fees->match->id.'" data-original-title="Edit" class="editMatch mr-2"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
                                                
                         return $btn;
                     })
@@ -109,7 +80,7 @@ class BodyFeesController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['score','action','body','goals'])
+                    ->rawColumns(['score','action','body_home', 'body_away','goals', 'match'])
                     ->make(true);
         }
         return view('backend.admin.ballone.match.body', compact('leagues'));
@@ -125,6 +96,7 @@ class BodyFeesController extends Controller
         ]);
 
         $match = FootballMatch::find($request->match_id);
+
         if (!$match) {
             return response()->json(['error'=>'something is wrong.']);
         }
@@ -138,6 +110,9 @@ class BodyFeesController extends Controller
         $body = ($request->home_body) ?? $request->away_body;
         $up_team = ($request->home_body) ? 1 : 2;
 
+        FootballBodyFee::where('match_id', $match->id)
+                        ->whereNull('body')->whereNull('goals')->delete();
+
         $fees = FootballBodyFee::create([
                         'match_id' => $match->id,
                         'body'     => $body,
@@ -146,11 +121,9 @@ class BodyFeesController extends Controller
                         'by'       => Auth::id()
                     ]);
         
-        FootballBodyFeeResult::create([
-            'fee_id' => $fees->id
-        ]);
+        FootballBodyFeeResult::create([ 'fee_id' => $fees->id ]);
           
-        return response()->json(['success'=>'Match saved successfully.']);
+        return response()->json([ 'success' => 'Match saved successfully.' ]);
     }
 
     public function edit($id)

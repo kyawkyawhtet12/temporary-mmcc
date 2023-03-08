@@ -19,7 +19,9 @@ class CreateFootballMatchesTable extends Migration
             $table->dateTime('date_time');
             $table->unsignedBigInteger('league_id');
             $table->unsignedBigInteger('home_id');
+            $table->string('home_no')->nullable();
             $table->unsignedBigInteger('away_id');
+            $table->string('away_no')->nullable();
             $table->string('score')->nullable();
             $table->string('temp_score')->nullable();
             $table->boolean('status')->default('0');

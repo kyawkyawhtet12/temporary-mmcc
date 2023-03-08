@@ -58,16 +58,6 @@
                             <div class="card">
                                 <div class="card-body">
 
-                                    <div class="form-group editTeams">
-                                        <label for="round" class="col-sm-6 control-label">
-                                            No
-                                        </label>
-                                        <div class="col-sm-12">
-                                            <input type="text" id="round" class="form-control" name="round"
-                                                value="{{ $match->round }}">
-                                        </div>
-                                    </div>
-
                                     <div class="form-group row">
                                         <div class="col-sm-6">
                                             <label for="name" class="col-sm-12 control-label">Date</label>
@@ -82,6 +72,26 @@
                                             <div class="col-sm-12">
                                                 <input type="time" id="time" class="form-control" name="time"
                                                     value={{ get_time_format($match) }} required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <label for="home_no" class="col-sm-6 control-label"> Home No
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="text" id="home_no" class="form-control" name="home_no"
+                                                    value="{{ $match->home_no }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <label for="away_no" class="col-sm-6 control-label"> Away No
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input type="text" id="away_no" class="form-control" name="away_no"
+                                                    value="{{ $match->away_no }}">
                                             </div>
                                         </div>
                                     </div>
