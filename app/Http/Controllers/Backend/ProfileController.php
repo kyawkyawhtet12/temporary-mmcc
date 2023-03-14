@@ -33,6 +33,8 @@ class ProfileController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
+        Auth::logoutOtherDevices($request->password);
+
         return redirect()->back()->with('success', '* Successfully Updated');
     }
 }

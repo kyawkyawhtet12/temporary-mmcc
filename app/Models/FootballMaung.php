@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FootballMaung extends Model
 {
@@ -28,5 +29,20 @@ class FootballMaung extends Model
     public function bet()
     {
         return $this->belongsTo(FootballMaungGroup::class, 'maung_group_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class, 'agent_id');
+    }
+
+    public function getBettingTimeAttribute()
+    {
+        return Carbon::parse($this->created_at)->format('d-m-Y g:i A');
     }
 }

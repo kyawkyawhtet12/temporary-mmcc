@@ -29,7 +29,7 @@ class CalculationController extends Controller
             $betAmount = $body->bet->amount;
             $win_amount = $betAmount * ($percent / 100);
             $user = User::find($body->user_id);
-
+            
             if ($win_amount > 0) {
                 $charge = $win_amount * ($bodySetting->percentage / 100);
                 $status = 1;
@@ -58,7 +58,10 @@ class CalculationController extends Controller
                 $percent =  $result->$type;
                 
                 $user = User::find($maung->user_id);
-                $betAmount = $maungGroup->bet->net_amount == 0 ? $maungGroup->bet->amount : $maungGroup->bet->net_amount;
+
+                $betAmount = $maungGroup->bet->net_amount == 0 ?
+                                    $maungGroup->bet->amount :
+                                    $maungGroup->bet->net_amount;
 
                 if ($percent == 0) {
                     $net_amount = ($maungGroup->bet->net_amount == 0) ? $betAmount : $maungGroup->bet->net_amount;

@@ -30,30 +30,71 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="leagues" class="table table-bordered nowrap">
+                                <table id="body" class="table table-bordered nowrap">
                                     <thead>
                                         <tr>
-                                            <th>Round</th>
-                                            <th>League</th>
-                                            <th>Date Time</th>
-                                            <th>Match</th>
-                                            <th colspan="2">Body</th>
-                                            <th>Goals</th>
-                                            <th>Result</th>
+                                            <th>User ID</th>
+                                            <th>Agent</th>
+                                            <th>Betting Time</th>
+                                            <th>Total Betting Amount</th>
+                                            <th>Betting Result</th>
+                                            <th>Betting Wins</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($body as $k => $dt)
                                             <tr>
-                                                <td>{{ $dt->match->round }}</td>
-                                                <td>{{ $dt->match->league->name }}</td>
-                                                <td>{{ get_date_time_format($dt) }}</td>
-                                                <td>
-                                                    <a href="{{ route('ballone.body.report', $dt->match->id) }}">
-                                                        {{ $dt->match->home->name }} vs {{ $dt->match->away->name }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ $dt->match->score }}</td>
+                                                <td>{{ $dt->user->user_id }}</td>
+                                                <td>{{ $dt->agent->name }}</td>
+                                                <td>{{ $dt->betting_time }}</td>
+                                                <td>{{ $dt->bet->amount }}</td>
+                                                <td>{{ $dt->bet->status_format }}</td>
+                                                <td>{{ $dt->bet->net_amount }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row grid-margin">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5> Maung Report </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="maung" class="table table-bordered nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Agent</th>
+                                            <th>Betting Time</th>
+                                            <th>Total Betting Amount</th>
+                                            <th>Betting Count</th>
+                                            <th>Betting Result</th>
+                                            <th>Betting Wins</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($maung as $k => $dt)
+                                            <tr>
+                                                <td>{{ $dt->user->user_id }}</td>
+                                                <td>{{ $dt->agent->name }}</td>
+                                                <td>{{ $dt->betting_time }}</td>
+                                                <td>{{ $dt->bet->bet->amount }}</td>
+                                                <td>{{ $dt->count() }}</td>
+                                                <td>{{ $dt->bet->bet->status_format }}</td>
+                                                @if ($dt->bet->bet->status == 0)
+                                                    <td> 0 </td>
+                                                @else
+                                                    <td>{{ $dt->bet->bet->net_amount }}</td>
+                                                @endif
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -66,4 +107,13 @@
         </div>
         <!-- container-fluid -->
     </div>
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+            var body = $('#body').DataTable();
+            var maung = $('#maung').DataTable();
+        });
+    </script>
 @endsection

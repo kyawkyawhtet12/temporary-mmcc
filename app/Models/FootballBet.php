@@ -30,4 +30,26 @@ class FootballBet extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function getStatusFormatAttribute()
+    {
+        switch ($this->status) {
+            case 0:
+                return "Pending";
+                break;
+            case 1:
+                return "Win";
+                break;
+            case 2:
+                return "No Win";
+                break;
+            case 3:
+                return "Draw";
+                break;
+            
+            default:
+                return "-";
+                break;
+        }
+    }
 }
