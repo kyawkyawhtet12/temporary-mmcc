@@ -44,12 +44,12 @@
                                     <tbody>
                                         @foreach ($body as $k => $dt)
                                             <tr>
-                                                <td>{{ $dt->user->user_id }}</td>
-                                                <td>{{ $dt->agent->name }}</td>
+                                                <td>{{ $dt->user?->user_id }}</td>
+                                                <td>{{ $dt->agent?->name }}</td>
                                                 <td>{{ $dt->betting_time }}</td>
-                                                <td>{{ $dt->bet->amount }}</td>
-                                                <td>{{ $dt->bet->status_format }}</td>
-                                                <td>{{ $dt->bet->net_amount }}</td>
+                                                <td>{{ $dt->bet?->amount }}</td>
+                                                <td>{{ $dt->bet?->status_format }}</td>
+                                                <td>{{ $dt->bet?->net_amount }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -84,16 +84,16 @@
                                     <tbody>
                                         @foreach ($maung as $k => $dt)
                                             <tr>
-                                                <td>{{ $dt->user->user_id }}</td>
-                                                <td>{{ $dt->agent->name }}</td>
+                                                <td>{{ $dt->user?->user_id }}</td>
+                                                <td>{{ $dt->agent?->name }}</td>
                                                 <td>{{ $dt->betting_time }}</td>
-                                                <td>{{ $dt->bet->bet->amount }}</td>
+                                                <td>{{ $dt->bet?->bet?->amount }}</td>
                                                 <td>{{ $dt->count() }}</td>
-                                                <td>{{ $dt->bet->bet->status_format }}</td>
-                                                @if ($dt->bet->bet->status == 0)
+                                                <td>{{ $dt->bet?->bet?->status_format }}</td>
+                                                @if ($dt->bet?->bet?->status == 0)
                                                     <td> 0 </td>
                                                 @else
-                                                    <td>{{ $dt->bet->bet->net_amount }}</td>
+                                                    <td>{{ $dt->bet?->bet?->net_amount }}</td>
                                                 @endif
                                             </tr>
                                         @endforeach
