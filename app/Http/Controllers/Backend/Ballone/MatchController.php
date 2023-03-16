@@ -29,8 +29,8 @@ class MatchController extends Controller
     public function index(Request $request)
     {
         $data = FootballMatch::where('created_at', '>=', now()->subDays(7))
-                            ->with('bodyFees', 'maungFees')->orderBy('created_at', 'asc')->paginate(30);
-        
+                            ->with('bodyFees', 'maungFees')->latest()->paginate(30);
+        // return $data;
         return view('backend.admin.ballone.match.index', compact('data'));
     }
 

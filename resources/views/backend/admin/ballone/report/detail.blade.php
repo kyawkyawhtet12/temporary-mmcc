@@ -39,6 +39,7 @@
                                             <th>Total Betting Amount</th>
                                             <th>Betting Result</th>
                                             <th>Betting Wins</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -50,6 +51,12 @@
                                                 <td>{{ $dt->bet?->amount }}</td>
                                                 <td>{{ $dt->bet?->status_format }}</td>
                                                 <td>{{ $dt->bet?->net_amount }}</td>
+                                                <td>
+                                                    <a href="javascript:void(0)" class="btn btn-success btn-sm viewBody"
+                                                        data-id="{{ $dt->id }}">
+                                                        view
+                                                    </a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -59,7 +66,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
@@ -79,6 +85,7 @@
                                             <th>Betting Count</th>
                                             <th>Betting Result</th>
                                             <th>Betting Wins</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -95,6 +102,12 @@
                                                 @else
                                                     <td>{{ $dt->bet?->bet?->net_amount }}</td>
                                                 @endif
+                                                <td>
+                                                    <a href="javascript:void(0)" class="btn btn-success btn-sm viewMaung"
+                                                        data-id="{{ $dt->maung_group_id }}">
+                                                        view
+                                                    </a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -104,8 +117,45 @@
                     </div>
                 </div>
             </div>
+
+
+            {{-- Detail --}}
+            <div class="row grid-margin">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5> Betting Detail </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="maung" class="table table-bordered nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Betting Team</th>
+                                            <th>Betting Type</th>
+                                            <th>Odds</th>
+                                            <th>Betting Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="betting-data">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- container-fluid -->
+
     </div>
 @endsection
 
@@ -114,6 +164,92 @@
         $(document).ready(function() {
             var body = $('#body').DataTable();
             var maung = $('#maung').DataTable();
+
+            function getFees(data) {
+                console.log(data);
+                let fees = (data.type == 'home' || data.type == 'away') ? data.fees.body : data
+                    .fees.goals;
+
+                return fees;
+            }
+
+            function getType(data) {
+                switch (data.type) {
+                    case 'home':
+                        return data.match.home.name;
+                        break;
+                    case 'away':
+                        return data.match.away.name;
+                        break;
+                    case 'over':
+                        return 'Goal Over';
+                        break;
+                    case 'under':
+                        return 'Goal Under';
+                        break;
+                }
+            }
+
+            $('body').on('click', '.viewBody', function() {
+                let id = $(this).data('id');
+
+                fetch(`/admin/football/body-detail/${id}`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: "same-origin"
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        let tr = '';
+
+                        var fees = getFees(data);
+                        var type = getType(data);
+
+                        tr += `<tr>
+                                    <td> 1 </td>
+                                    <td> ${type} </td>
+                                    <td> Body </td>
+                                    <td> ${fees} </td>
+                                    <td> ${data.bet.amount}</td>
+                                </tr>`;
+
+                        $("#betting-data").html(tr);
+
+                    });
+            });
+
+            $('body').on('click', '.viewMaung', function() {
+                let id = $(this).data('id');
+
+                fetch(`/admin/football/maung-detail/${id}`, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: "same-origin"
+                    })
+                    .then((response) => response.json())
+                    .then((res) => {
+                        let tr = '';
+
+                        res.forEach((data, index) => {
+
+                            var fees = getFees(data);
+                            var type = getType(data);
+
+                            tr += `<tr>
+                                    <td> ${index + 1} </td>
+                                    <td> ${type} </td>
+                                    <td> Maung </td>
+                                    <td> ${fees} </td>
+                                    <td> ${data.bet.bet.amount}</td>
+                                </tr>`;
+                        });
+
+                        $("#betting-data").html(tr);
+
+                    });
+            });
         });
     </script>
 @endsection

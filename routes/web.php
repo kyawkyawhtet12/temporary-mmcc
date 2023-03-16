@@ -214,5 +214,7 @@ Route::group(
 
         // Match Report
         Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');
+        Route::get('football/body-detail/{id}', 'Ballone\ReportDetailController@bodyDetail')->name('match.body.detail.report');
+        Route::get('football/maung-detail/{id}', 'Ballone\ReportDetailController@maungDetail')->name('match.maung.detail.report');
     }
 );
