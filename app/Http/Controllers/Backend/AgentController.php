@@ -15,6 +15,7 @@ use App\Models\ThreeLuckyDraw;
 use Yajra\DataTables\DataTables;
 use App\Models\AgentPaymentReport;
 use App\Http\Controllers\Controller;
+use App\Models\UserPaymentReport;
 use Illuminate\Support\Facades\Hash;
 
 class AgentController extends Controller
@@ -202,11 +203,24 @@ class AgentController extends Controller
         $agent = Agent::findOrFail($id);
         
         if ($request->ajax()) {
-            $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->latest();
+            if (!empty($request->from_date)) {
+                $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
+            } else {
+                $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->latest();
+            }
+
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('agent', function ($data) {
                         return $data->agent?->name;
+                    })
+                    ->addColumn('deposit', function ($data) {
+                        $count = UserPaymentReport::getDepositCount($data->agent_id, $data->created_at);
+                        return "$data->deposit ($count)";
+                    })
+                    ->addColumn('withdraw', function ($data) {
+                        $count = UserPaymentReport::getWithdrawCount($data->agent_id, $data->created_at);
+                        return "$data->withdraw ($count)";
                     })
                     ->addColumn('net', function ($data) {
                         return $data->deposit - $data->withdraw;

@@ -25,4 +25,27 @@ class UserPaymentReport extends Model
     {
         return $this->belongsTo(Agent::class, 'agent_id');
     }
+
+    public static function getDepositCount($agent_id, $date)
+    {
+        return UserPaymentReport::where('agent_id', $agent_id)
+                ->whereDate('created_at', $date)
+                ->where('deposit', '!=', 0)->count();
+    }
+
+    public static function getWithdrawCount($agent_id, $date)
+    {
+        return UserPaymentReport::where('agent_id', $agent_id)
+                ->whereDate('created_at', $date)
+                ->where('withdraw', '!=', 0)->count();
+    }
+
+    public function scopeFilterDates($query)
+    {
+        $date = explode(" - ", request()->input('date_range', ""));
+        if (count($date) != 2) {
+            $date = [now()->today()->format("Y-m-d"), now()->format("Y-m-d")];
+        }
+        return $query->whereBetween('created_at', [$date['0'] . " 00:00:00", $date['1'] . " 23:59:59"]);
+    }
 }
