@@ -22,6 +22,7 @@
             </div>
             <!-- end page title -->
 
+            {{-- Body Report List --}}
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
                     <div class="card">
@@ -67,6 +68,42 @@
                 </div>
             </div>
 
+            {{-- Body Detail --}}
+            <div class="row grid-margin">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5> Betting Detail </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="maung" class="table table-bordered nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Betting Team</th>
+                                            <th>Betting Type</th>
+                                            <th>Odds</th>
+                                            <th>Betting Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="betting-body-data">
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Maung Report List --}}
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
                     <div class="card">
@@ -118,8 +155,7 @@
                 </div>
             </div>
 
-
-            {{-- Detail --}}
+            {{-- Maung Detail --}}
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
                     <div class="card">
@@ -138,7 +174,7 @@
                                             <th>Betting Amount</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="betting-data">
+                                    <tbody id="betting-maung-data">
                                         <tr>
                                             <td></td>
                                             <td></td>
@@ -166,7 +202,7 @@
             var maung = $('#maung').DataTable();
 
             function getFees(data) {
-                console.log(data);
+                // console.log(data);
                 let fees = (data.type == 'home' || data.type == 'away') ? data.fees.body : data
                     .fees.goals;
 
@@ -214,7 +250,7 @@
                                     <td> ${data.bet.amount}</td>
                                 </tr>`;
 
-                        $("#betting-data").html(tr);
+                        $("#betting-body-data").html(tr);
 
                     });
             });
@@ -246,7 +282,7 @@
                                 </tr>`;
                         });
 
-                        $("#betting-data").html(tr);
+                        $("#betting-maung-data").html(tr);
 
                     });
             });
