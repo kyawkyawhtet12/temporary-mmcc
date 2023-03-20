@@ -14,6 +14,7 @@ class TwoDigit extends Model
     protected $fillable = [
         'number',
         'status',
-        'amount'
+        'amount',
+        'date'
     ];
 }

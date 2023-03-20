@@ -70,21 +70,30 @@ class AdminController extends Controller
     public function changeTwoDigitEnable(Request $request)
     {
         $ids = $request->ids;
-        TwoDigit::whereIn('id', explode(",", $ids))->update(['status' => $request->status]);
+        TwoDigit::whereIn('id', explode(",", $ids))->update([
+            'status' => $request->status,
+            'date' => null
+        ]);
         return response()->json('success');
     }
 
     public function changeTwoDigitDisable(Request $request)
     {
         $ids = $request->ids;
-        TwoDigit::whereIn('id', explode(",", $ids))->update(['status' => $request->status]);
+        TwoDigit::whereIn('id', explode(",", $ids))->update([
+            'status' => $request->status,
+            'date' => $request->date
+        ]);
         return response()->json('success');
     }
 
     public function changeTwoDigitSubmit(Request $request)
     {
         $ids = $request->ids;
-        TwoDigit::whereIn('id', explode(",", $ids))->update(['amount' => $request->amount]);
+        TwoDigit::whereIn('id', explode(",", $ids))->update([
+            'amount' => $request->amount,
+            'date' => $request->date
+        ]);
         return response()->json('success');
     }
 }
