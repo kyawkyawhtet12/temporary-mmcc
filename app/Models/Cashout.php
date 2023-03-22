@@ -19,6 +19,11 @@ class Cashout extends Model
         'agent_id'
     ];
 
+    public static function getWithdrawalCount($date)
+    {
+        return Cashout::whereDate('created_at', $date)->where('status', 'Approved')->count();
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

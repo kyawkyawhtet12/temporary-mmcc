@@ -197,6 +197,11 @@
                                     Agent Lists </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('agent.payment-reports') }}" class="nav-link"
+                                    data-key="t-agent-payment-reports">
+                                    Payment Reports </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('agents.create') }}" class="nav-link" data-key="t-two-lucky-draw">
                                     Two Lucky Draw </a>
                             </li>
