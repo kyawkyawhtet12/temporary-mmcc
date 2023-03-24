@@ -15,4 +15,18 @@ class AgentPaymentAllReport extends Model
     {
         return $this->deposit - $this->withdraw;
     }
+
+    public static function addReport($payment, $type)
+    {
+        $check = AgentPaymentAllReport::whereDate('created_at', today())
+                                ->first();
+
+        if ($check) {
+            $check->increment($type, $payment->amount);
+        } else {
+            $check = AgentPaymentAllReport::create([
+                $type      => $payment->amount
+            ]);
+        }
+    }
 }

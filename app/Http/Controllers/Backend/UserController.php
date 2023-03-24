@@ -27,6 +27,12 @@ class UserController extends Controller
                     ->addColumn('created_at', function ($user) {
                         return date("F j, Y, g:i A", strtotime($user->created_at));
                     })
+                    ->addColumn('payment', function ($user) {
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="deposit"  data-original-title="Deposit" class="edit btn btn-info btn-sm payment"> + </a>';
+
+                        // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="withdrawal" data-original-title="Withdrawal" class="btn btn-warning btn-sm payment"> - </a>';
+                        return $btn;
+                    })
                     ->addColumn('action', function ($user) {
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Edit" class="edit btn btn-warning editUser">Edit</a>';
                         $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Delete" class="btn btn-danger deleteUser">Delete</a>';
@@ -41,7 +47,7 @@ class UserController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['status','action'])
+                    ->rawColumns(['status','action','payment'])
                     ->make(true);
         }
         return view('backend.admin.users.index');

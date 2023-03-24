@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Backend\UserPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -214,5 +215,10 @@ Route::group(
         Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');
         Route::get('football/body-detail/{id}', 'Ballone\ReportDetailController@bodyDetail')->name('match.body.detail.report');
         Route::get('football/maung-detail/{id}', 'Ballone\ReportDetailController@maungDetail')->name('match.maung.detail.report');
+
+
+        Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
+        // Route::get('user-deposits', [PaymentController::class, 'deposits'])->name('user-deposits');
+        // Route::get('user-withdrawals', [PaymentController::class, 'withdrawals'])->name('user-withdrawals');
     }
 );

@@ -40,14 +40,14 @@ class PaymentProviderSeeder extends Seeder
             'name' => 'Wave Pay'
         ]);
 
-        Payment::create([
-            'amount' => 100000,
-            'user_id' => 1,
-            'payment_provider_id' => 1,
-            'phone' => '09123456789',
-            'transation_no' => '000000',
-            'status' => 'Approved',
-            'agent_id' => 1
-        ]);
+        // Payment::create([
+        //     'amount' => 100000,
+        //     'user_id' => 1,
+        //     'payment_provider_id' => 1,
+        //     'phone' => '09123456789',
+        //     'transation_no' => '000000',
+        //     'status' => 'Approved',
+        //     'agent_id' => 1
+        // ]);
     }
 }

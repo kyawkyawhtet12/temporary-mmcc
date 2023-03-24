@@ -45,4 +45,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function getAgent($referral_code)
+    {
+        $agent = Agent::where('referral_code', $referral_code)->first();
+        return $agent ? $agent->id : null;
+    }
 }

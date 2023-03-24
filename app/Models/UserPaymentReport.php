@@ -48,4 +48,21 @@ class UserPaymentReport extends Model
         }
         return $query->whereBetween('created_at', [$date['0'] . " 00:00:00", $date['1'] . " 23:59:59"]);
     }
+
+    public static function addReport($payment, $type)
+    {
+        $check = UserPaymentReport::whereDate('created_at', today())
+                                ->where('user_id', $payment->user_id)
+                                ->first();
+
+        if ($check) {
+            $check->increment($type, $payment->amount);
+        } else {
+            $check = UserPaymentReport::create([
+                'user_id' => $payment->user_id,
+                'agent_id' => auth()->id(),
+                $type      => $payment->amount
+            ]);
+        }
+    }
 }

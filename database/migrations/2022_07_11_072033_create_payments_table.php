@@ -16,16 +16,24 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('amount')->default('0');
+
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('payment_provider_id');
-            $table->string('phone');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unsignedBigInteger('payment_provider_id')->nullable();
+            $table->foreign('payment_provider_id')->references('id')->on('payment_providers')->onDelete('cascade');
+
+            $table->string('phone')->nullable();
             $table->string('transation_no')->nullable();
             $table->string('transation_ss')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Rejected']);
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('payment_provider_id')->references('id')->on('payment_providers')->onDelete('cascade');
-            $table->unsignedBigInteger('agent_id');
+                        
+            $table->unsignedBigInteger('agent_id')->nullable();
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
+
+            $table->unsignedBigInteger('by')->nullable();
+            $table->foreign('by')->references('id')->on('admins')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

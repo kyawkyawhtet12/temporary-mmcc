@@ -17,7 +17,8 @@ class Payment extends Model
         'transation_no',
         'transation_ss',
         'status',
-        'agent_id'
+        'agent_id',
+        'by'
     ];
 
     public static function getDepositCount($date)

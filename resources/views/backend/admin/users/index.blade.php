@@ -48,6 +48,7 @@
                                                     <th>Balance</th>
                                                     <th>Status</th>
                                                     <th>Registered Date</th>
+                                                    <th>Payment</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -123,6 +124,65 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="paymentModel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modelHeading"></h4>
+                </div>
+                <div class="modal-body">
+
+                    <div id="error" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+                        <strong> Error !</strong> <span id="text"></span>
+                    </div>
+
+                    <form id="paymentForm" name="paymentForm" class="form-horizontal">
+                        <input type="hidden" name="id" id="id">
+                        <input type="hidden" name="type" id="type">
+
+                        <div class="form-group">
+                            <label for="name" class="col-sm-12 control-label">Name</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Enter Name" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group my-3">
+                            <label for="phone" class="col-sm-12 control-label"> Phone</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="phone" name="phone"
+                                    placeholder="Enter Phone" value="" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group my-3">
+                            <label for="current" class="col-sm-12 control-label">Current Amount</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" id="current" name="current" value=""
+                                    readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group my-3">
+                            <label for="amount" class="col-sm-12 control-label"> Amount </label>
+
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" id="amount" name="amount"
+                                    placeholder="Enter Amount" value="">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary" id="paymentSave"> Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -174,6 +234,10 @@
                         name: 'created_at'
                     },
                     {
+                        data: 'payment',
+                        name: 'payment'
+                    },
+                    {
                         data: 'action',
                         name: 'action'
                     },
@@ -202,6 +266,24 @@
                 })
             });
 
+            $('body').on('click', '.payment', function() {
+                var id = $(this).data('id');
+                var type = $(this).data('type');
+                var heading = (type == "deposit") ? " User Deposit " : " User Withdrawal ";
+
+                $.get("{{ route('users.index') }}" + '/' + id + '/edit', function(data) {
+
+                    $('#paymentModel #id').val(data.id);
+                    $('#paymentModel #type').val(type);
+                    $('#paymentModel #name').val(data.name);
+                    $('#paymentModel #phone').val(data.phone);
+                    $('#paymentModel #current').val(data.amount);
+
+                    $('#paymentModel #modelHeading').html(heading);
+                    $('#paymentModel').modal('show');
+                })
+            });
+
             $('#saveBtn').click(function(e) {
                 e.preventDefault();
                 $(this).html('Sending..');
@@ -219,6 +301,32 @@
                         console.log('Error:', data);
                         alert("* Something is wrong.");
                         $('#saveBtn').html('Save Changes');
+                    }
+                });
+            });
+
+            $('body').on('click', '#paymentSave', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    data: $('#paymentForm').serialize(),
+                    url: "{{ route('payment.store') }}",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.error) {
+                            $("#paymentModel #error #text").text(data.error);
+                            $("#paymentModel #error").removeClass('d-none');
+                        } else {
+                            $('#paymentForm').trigger("reset");
+                            $('#paymentModel').modal('hide');
+                            table.draw();
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error:', data);
+                        alert("* Something is wrong.");
+                        $('#paymentSave').html('Save Changes');
                     }
                 });
             });
