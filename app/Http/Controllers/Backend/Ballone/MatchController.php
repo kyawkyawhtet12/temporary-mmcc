@@ -28,8 +28,8 @@ class MatchController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballMatch::where('created_at', '>=', now()->subDays(7))
-                            ->with('bodyFees', 'maungFees')->latest()->paginate(30);
+        $data = FootballMatch::where('type', 1)->where('created_at', '>=', now()->subDays(7))
+                                ->with('bodyFees', 'maungFees')->latest()->paginate(30);
         // return $data;
         return view('backend.admin.ballone.match.index', compact('data'));
     }
@@ -38,9 +38,9 @@ class MatchController extends Controller
     {
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = FootballMatch::whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
+                $query = FootballMatch::where('type', 1)->whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
             } else {
-                $query = FootballMatch::whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
+                $query = FootballMatch::where('type', 1)->whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
             }
             return Datatables::of($query)
                     ->addIndexColumn()

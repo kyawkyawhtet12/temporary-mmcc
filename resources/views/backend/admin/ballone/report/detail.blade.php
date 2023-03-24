@@ -132,7 +132,7 @@
                                                 <td>{{ $dt->agent?->name }}</td>
                                                 <td>{{ $dt->betting_time }}</td>
                                                 <td>{{ $dt->bet?->bet?->amount }}</td>
-                                                <td>{{ $dt->count() }}</td>
+                                                <td>{{ $dt->bet->teams->count() }}</td>
                                                 <td>{{ $dt->bet?->bet?->status_format }}</td>
                                                 @if ($dt->bet?->bet?->status == 0)
                                                     <td> 0 </td>

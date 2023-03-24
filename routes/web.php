@@ -110,7 +110,6 @@ Route::group(
 
         // Agents
         Route::resource('agents', 'AgentController');
-
         Route::resource('staff', 'StaffController');
         
         Route::resource('agent-deposit', 'AgentDepositController');
@@ -135,8 +134,6 @@ Route::group(
         Route::get('agent-percentage', 'AgentController@agentPercentage')->name('agent.percentage');
         Route::post('/percentage', 'AgentController@updatePercentage');
 
-        
-
         Route::get('two-thai-lottery', 'EnabledController@twoThaiLotteryStatus')->name('two.thai.changeStatus');
         Route::get('two-dubai-lottery', 'EnabledController@twoDubaiLotteryStatus')->name('two.dubai.changeStatus');
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
@@ -146,8 +143,6 @@ Route::group(
         Route::post('two-digits/submit-all', 'AdminController@changeTwoDigitSubmit')->name('twodigits.submit-all');
         
         // Setting
-
-        
         Route::resource('three-lottery-close', 'DisableController');
 
         Route::get('limit_amounts', 'LimitAmountController@index')->name('limit.amount');

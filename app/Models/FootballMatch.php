@@ -11,6 +11,8 @@ class FootballMatch extends Model
 
     protected $guarded = [];
 
+    // type - 0 Refund
+
     public function home()
     {
         return $this->belongsTo(Club::class, 'home_id');

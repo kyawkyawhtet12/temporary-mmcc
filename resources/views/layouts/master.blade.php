@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" data-layout="vertical" data-sidebar="dark" data-sidebar-size="lg" data-layout-mode="light" data-layout-width="fluid" data-layout-position="fixed" data-layout-style="default" data-topbar="dark">
+<html lang="en" data-layout="vertical" data-sidebar="dark" data-sidebar-size="lg" data-layout-mode="light"
+    data-layout-width="fluid" data-layout-position="fixed" data-layout-style="default" data-topbar="dark">
 
 <head>
 
@@ -10,8 +11,8 @@
     <meta content="" name="author" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-     @include('layouts.style')
+
+    @include('layouts.style')
 
 </head>
 
@@ -23,10 +24,10 @@
         @include('layouts.header')
         <!-- ========== App Menu ========== -->
 
-        @if( Auth::guard('admin')->check())
+        @if (Auth::user()->is_admin)
             @include('layouts.sidebar.admin')
         @else
-            @include('layouts.sidebar.agent')
+            @include('layouts.sidebar.staff')
         @endif
         <!-- Left Sidebar End -->
 
@@ -53,7 +54,7 @@
     </button>
     <!--end back-to-top-->
 
-   @include('layouts.script')   
+    @include('layouts.script')
 
 </body>
 
