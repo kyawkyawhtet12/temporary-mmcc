@@ -19,12 +19,19 @@ class BodyFeesController extends Controller
         $leagues = League::all();
         // $clubs = Club::all();
 
+        $query = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
+                                    ->with('match')->get();
+
+        
+
         if ($request->ajax()) {
             // $query = FootballMatch::whereNull('score')->where('type', 1)
             //                         ->with('bodyFees')->latest()->get();
 
-            $query = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
+            $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
                                     ->with('match')->get();
+
+            $query = collect($data)->where('match.calculate', 0);
 
             return Datatables::of($query)
                     ->addIndexColumn()

@@ -23,9 +23,11 @@ class MaungFeesController extends Controller
             // $query = FootballMatch::whereNull('score')->where('type', 1)
             //                         ->with('maungfees')->latest()->get();
 
-            $query = FootballMaungFee::where('created_at', '>=', now()->subDays(7))
+            $data = FootballMaungFee::where('created_at', '>=', now()->subDays(7))
                                     ->with('match')
                                     ->latest()->get();
+
+            $query = collect($data)->where('match.calculate', 0);
 
             return Datatables::of($query)
                     ->addIndexColumn()

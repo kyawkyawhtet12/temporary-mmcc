@@ -262,8 +262,7 @@
 
             $("body").on('click', ".deleteMatch", function(e) {
                 let group = $(this).data('group');
-                console.log(group);
-                $(`#${group}`).addClass('d-none');
+                $(`#${group}`).remove();
             });
 
         });
