@@ -20,19 +20,16 @@
                     </div>
                 </div>
             </div>
-            <!-- end page title -->                        
+            <!-- end page title -->
 
             <div class="row">
-                <div class="col-12 grid-margin stretch-card d-none d-md-flex">
-                    <div class="card">                                      
+                <div class="col-12 grid-margin stretch-card d-md-flex">
+                    <div class="card">
                         <!-- Two Digit Thai Today Report -->
-                        @include("backend.admin.report.two_digit_thai_report")
-
-                        <!-- Two Digit Dubai Today Report -->
-                        {{-- @include("backend.admin.report.two_digit_dubai_report") --}}
+                        @include('backend.admin.report.two_digit_thai_report')
 
                         <!-- Three Digit Today Report -->
-                        @include("backend.admin.report.three_digit_report")
+                        @include('backend.admin.report.three_digit_report')
                     </div>
                 </div>
             </div>
