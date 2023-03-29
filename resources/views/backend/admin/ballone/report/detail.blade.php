@@ -183,6 +183,15 @@
                                             <td></td>
                                         </tr>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td id="maung-amount"></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -212,10 +221,10 @@
             function getType(data) {
                 switch (data.type) {
                     case 'home':
-                        return data.match.home.name;
+                        return `(${data.match.home_no}) ${data.match.home.name}`;
                         break;
                     case 'away':
-                        return data.match.away.name;
+                        return `(${data.match.away_no}) ${data.match.away.name}`;
                         break;
                     case 'over':
                         return 'Goal Over';
@@ -278,10 +287,10 @@
                                     <td> ${type} </td>
                                     <td> Maung </td>
                                     <td> ${fees} </td>
-                                    <td> ${data.bet.bet.amount}</td>
+                                    <td> </td>
                                 </tr>`;
+                            $("#maung-amount").text(data.bet.bet.amount);
                         });
-
                         $("#betting-maung-data").html(tr);
 
                     });

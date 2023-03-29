@@ -23,7 +23,15 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col-lg-6 offset-lg-3">
+                <div class="col">
+                    <a class="btn btn-success" href="/admin/ballone/match" id="createNewNumber">
+                        Back
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong> Success</strong> {{ Session::get('success') }}
@@ -87,7 +95,7 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-6 offset-lg-3">
+                <div class="col-lg-8 offset-lg-2">
                     <div class="card">
                         <div class="card-body">
                             <h5> Body Fees </h5>
@@ -109,7 +117,8 @@
                                     @foreach ($match->allBodyFees as $key => $fee)
                                         @if ($fee)
                                             <tr>
-                                                <td> {{ $fee?->body }} / {{ $fee?->goals }}</td>
+                                                <td> {{ $fee?->upteam_name }} {{ $fee?->body }} / {{ $fee?->goals }}
+                                                </td>
                                                 <td> : </td>
                                                 <td> {{ $fee?->result?->home }} </td>
                                                 <td> {{ $fee?->result?->away }} </td>
@@ -127,7 +136,7 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-6 offset-lg-3">
+                <div class="col-lg-8 offset-lg-2">
                     <div class="card">
                         <div class="card-body">
                             <h5> Maung Fees </h5>
@@ -148,7 +157,8 @@
                                     @foreach ($match->allMaungfees as $key => $maungfee)
                                         @if ($maungfee)
                                             <tr>
-                                                <td> {{ $maungfee?->body }} / {{ $maungfee?->goals }}</td>
+                                                <td>{{ $maungfee?->upteam_name }} {{ $maungfee?->body }} /
+                                                    {{ $maungfee?->goals }}</td>
                                                 <td> : </td>
                                                 <td> {{ $maungfee?->result?->home }} </td>
                                                 <td> {{ $maungfee?->result?->away }} </td>

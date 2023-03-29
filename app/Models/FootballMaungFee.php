@@ -25,4 +25,13 @@ class FootballMaungFee extends Model
     {
         return $this->hasOne(FootballMaungFeeResult::class, 'fee_id');
     }
+
+    public function getUpteamNameAttribute()
+    {
+        if ($this->up_team == 1) {
+            return $this->match->home->name;
+        } elseif ($this->up_team == 2) {
+            return $this->match->away->name;
+        }
+    }
 }
