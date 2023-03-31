@@ -84,11 +84,13 @@
                                             <th>Betting Team</th>
                                             <th>Betting Type</th>
                                             <th>Odds</th>
+                                            <th>Result</th>
                                             <th>Betting Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody id="betting-body-data">
                                         <tr>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -171,6 +173,7 @@
                                             <th>Betting Team</th>
                                             <th>Betting Type</th>
                                             <th>Odds</th>
+                                            <th>Result</th>
                                             <th>Betting Amount</th>
                                         </tr>
                                     </thead>
@@ -181,10 +184,12 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <td></td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
                                         <tr>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -212,10 +217,10 @@
 
             function getFees(data) {
                 // console.log(data);
-                let fees = (data.type == 'home' || data.type == 'away') ? data.fees.body : data
-                    .fees.goals;
+                let upteam_name = getUpTeam(data);
 
-                return fees;
+                return (data.type == 'home' || data.type == 'away') ? `${upteam_name} ${data.fees.body}` : data
+                    .fees.goals;
             }
 
             function getType(data) {
@@ -235,6 +240,24 @@
                 }
             }
 
+            function getResult(data) {
+                if (data.match.type == 0) {
+                    return "P-P";
+                } else if (data.match.score) {
+                    return data.match.score;
+                } else {
+                    return "-";
+                }
+            }
+
+            function getUpTeam(data) {
+                if (data.match.up_team == 1) {
+                    return `(${data.match.home_no}) ${data.match.home.name}`;
+                } else {
+                    return `(${data.match.away_no}) ${data.match.away.name}`;
+                }
+            }
+
             $('body').on('click', '.viewBody', function() {
                 let id = $(this).data('id');
 
@@ -248,14 +271,12 @@
                     .then((data) => {
                         let tr = '';
 
-                        var fees = getFees(data);
-                        var type = getType(data);
-
                         tr += `<tr>
                                     <td> 1 </td>
-                                    <td> ${type} </td>
+                                    <td> ${getType(data)} </td>
                                     <td> Body </td>
-                                    <td> ${fees} </td>
+                                    <td> ${getFees(data)} </td>
+                                    <td> ${getResult(data)} </td>
                                     <td> ${data.bet.amount}</td>
                                 </tr>`;
 
@@ -276,23 +297,18 @@
                     .then((response) => response.json())
                     .then((res) => {
                         let tr = '';
-
                         res.forEach((data, index) => {
-
-                            var fees = getFees(data);
-                            var type = getType(data);
-
                             tr += `<tr>
                                     <td> ${index + 1} </td>
-                                    <td> ${type} </td>
+                                    <td> ${getType(data)} </td>
                                     <td> Maung </td>
-                                    <td> ${fees} </td>
+                                    <td> ${getFees(data)} </td>
+                                    <td> ${getResult(data)} </td>
                                     <td> </td>
                                 </tr>`;
                             $("#maung-amount").text(data.bet.bet.amount);
                         });
                         $("#betting-maung-data").html(tr);
-
                     });
             });
         });
