@@ -27,7 +27,7 @@ class MaungFeesController extends Controller
                                     ->with('match')
                                     ->latest()->get();
 
-            $query = collect($data)->where('match.calculate', 0);
+            $query = collect($data)->where('match.calculate', 0)->where('type', 1);
 
             return Datatables::of($query)
                     ->addIndexColumn()
