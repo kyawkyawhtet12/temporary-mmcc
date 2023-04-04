@@ -26,7 +26,7 @@ class BodyFeesController extends Controller
             $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
                                     ->with('match')->latest()->get();
             
-            $query = collect($data)->where('match.calculate', 0)->where('type', 1);
+            $query = collect($data)->where('match.calculate', 0)->where('match.type', 1);
 
             return Datatables::of($query)
                     ->addIndexColumn()

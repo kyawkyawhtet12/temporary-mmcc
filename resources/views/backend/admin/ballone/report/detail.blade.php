@@ -31,7 +31,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="body" class="table table-bordered nowrap">
+                                <table id="body" class="table table-bordered nowrap text-center">
                                     <thead>
                                         <tr>
                                             <th>User ID</th>
@@ -77,10 +77,11 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="maung" class="table table-bordered nowrap">
+                                <table id="maung" class="table table-bordered nowrap text-center">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
+                                            <th>Match</th>
                                             <th>Betting Team</th>
                                             <th>Betting Type</th>
                                             <th>Odds</th>
@@ -90,6 +91,7 @@
                                     </thead>
                                     <tbody id="betting-body-data">
                                         <tr>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -114,7 +116,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="maung" class="table table-bordered nowrap">
+                                <table id="maung" class="table table-bordered nowrap text-center">
                                     <thead>
                                         <tr>
                                             <th>User ID</th>
@@ -166,10 +168,11 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="maung" class="table table-bordered nowrap">
+                                <table id="maung" class="table table-bordered nowrap text-center">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
+                                            <th>Match</th>
                                             <th>Betting Team</th>
                                             <th>Betting Type</th>
                                             <th>Odds</th>
@@ -189,6 +192,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -219,11 +223,12 @@
                 // console.log(data);
                 let upteam_name = getUpTeam(data);
 
-                return (data.type == 'home' || data.type == 'away') ? `${upteam_name} ${data.fees.body}` : data
-                    .fees.goals;
+                return (data.type == 'home' || data.type == 'away') ? `${upteam_name} ${data.fees.body}` : data.fees
+                    .goals;
             }
 
             function getType(data) {
+
                 switch (data.type) {
                     case 'home':
                         return `(${data.match.home_no}) ${data.match.home.name}`;
@@ -232,10 +237,10 @@
                         return `(${data.match.away_no}) ${data.match.away.name}`;
                         break;
                     case 'over':
-                        return 'Goal Over';
+                        return `Goal Over`;
                         break;
                     case 'under':
-                        return 'Goal Under';
+                        return `Goal Under`;
                         break;
                 }
             }
@@ -258,6 +263,14 @@
                 }
             }
 
+            function getMatch(data) {
+                return `
+                (${data.match.home_no}) ${data.match.home.name}
+                Vs
+                (${data.match.away_no}) ${data.match.away.name}`;
+            }
+
+
             $('body').on('click', '.viewBody', function() {
                 let id = $(this).data('id');
 
@@ -273,6 +286,7 @@
 
                         tr += `<tr>
                                     <td> 1 </td>
+                                    <td> ${getMatch(data)} </td>
                                     <td> ${getType(data)} </td>
                                     <td> Body </td>
                                     <td> ${getFees(data)} </td>
@@ -300,6 +314,7 @@
                         res.forEach((data, index) => {
                             tr += `<tr>
                                     <td> ${index + 1} </td>
+                                    <td> ${getMatch(data)} </td>
                                     <td> ${getType(data)} </td>
                                     <td> Maung </td>
                                     <td> ${getFees(data)} </td>
