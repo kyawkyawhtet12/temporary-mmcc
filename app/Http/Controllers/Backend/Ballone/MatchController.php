@@ -125,8 +125,6 @@ class MatchController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-
-        // dd(array_key_exists(1, $request->other));
         
         $request->validate([
             'home_no' => 'required|array',
@@ -155,7 +153,7 @@ class MatchController extends Controller
                             'league_id' => $request->league_id,
                             'home_id' => $request->home_id[$key],
                             'away_id' => $request->away_id[$key],
-                            'other' => (array_key_exists($key, $request->other)) ? 1 : 0
+                            'other' => ($request->other && array_key_exists($key, $request->other)) ? 1 : 0
                         ]);
 
                 $bodyFees = FootballBodyFee::create(['match_id' => $match->id, 'by'=> Auth::id() ]);
