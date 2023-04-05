@@ -51,7 +51,7 @@ class MatchController extends Controller
                         return get_date_time_format($match);
                     })
                     ->addColumn('match', function ($match) {
-                        return "({$match->home_no}) {$match->home?->name} Vs ({$match->away_no}) {$match->away?->name}";
+                        return "({$match->home_no}) " . $match->home?->name . " " .$match->other_status . " Vs " . "({$match->away_no}) " . $match->away?->name . " " . $match->other_status;
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -92,7 +92,7 @@ class MatchController extends Controller
                         return get_date_time_format($match);
                     })
                     ->addColumn('match', function ($match) {
-                        return "({$match->home_no}) {$match->home?->name} Vs ({$match->away_no}) {$match->away?->name}";
+                        return "({$match->home_no}) " . $match->home?->name . " " .$match->other_status . " Vs " . "({$match->away_no}) " . $match->away?->name . " " . $match->other_status;
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -125,6 +125,8 @@ class MatchController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
+
+        // dd(array_key_exists(1, $request->other));
         
         $request->validate([
             'home_no' => 'required|array',
@@ -152,7 +154,8 @@ class MatchController extends Controller
                             'date_time' => $date_time,
                             'league_id' => $request->league_id,
                             'home_id' => $request->home_id[$key],
-                            'away_id' => $request->away_id[$key]
+                            'away_id' => $request->away_id[$key],
+                            'other' => (array_key_exists($key, $request->other)) ? 1 : 0
                         ]);
 
                 $bodyFees = FootballBodyFee::create(['match_id' => $match->id, 'by'=> Auth::id() ]);

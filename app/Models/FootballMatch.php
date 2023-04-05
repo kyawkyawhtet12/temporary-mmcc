@@ -78,4 +78,9 @@ class FootballMatch extends Model
     {
         return $this->hasMany(FootballMaung::class, 'match_id');
     }
+
+    public function getOtherStatusAttribute()
+    {
+        return $this->other == 1 ? '(N)' : '';
+    }
 }

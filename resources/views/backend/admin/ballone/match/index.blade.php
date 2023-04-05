@@ -101,9 +101,12 @@
                                                             <a href="{{ route('match.report', $dt->id) }}"
                                                                 class="match-detail">
                                                                 ({{ $dt->home_no }})
-                                                                {{ $dt->home->name }} Vs
+                                                                {{ $dt->home->name }}
+                                                                {{ $dt->other_status }}
+                                                                Vs
                                                                 ({{ $dt->away_no }})
                                                                 {{ $dt->away->name }}
+                                                                {{ $dt->other_status }}
                                                             </a>
                                                         </td>
                                                         <td>{{ get_date_time_format($dt) }}</td>

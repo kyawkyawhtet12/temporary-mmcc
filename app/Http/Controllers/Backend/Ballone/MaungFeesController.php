@@ -44,8 +44,9 @@ class MaungFeesController extends Controller
                         }
                         return $fees->match->score;
                     })
+                    
                     ->addColumn('match', function ($fees) {
-                        return "({$fees->match->home_no}) " . $fees->match->home?->name . " Vs " . "({$fees->match->away_no}) " . $fees->match->away?->name;
+                        return "({$fees->match->home_no}) " . $fees->match->home?->name . " " .$fees->match->other_status . " Vs " . "({$fees->match->away_no}) " . $fees->match->away?->name . " " . $fees->match->other_status;
                     })
 
                     ->addColumn('goals', function ($fees) {

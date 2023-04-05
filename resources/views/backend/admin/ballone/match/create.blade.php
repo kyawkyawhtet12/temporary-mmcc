@@ -76,6 +76,16 @@
                                     </div>
 
                                     <div class="form-group row">
+                                        <div class="col-sm-6 d-flex">
+                                            <label for="other" class="control-label">
+                                                ကြားကွင်း
+                                            </label>
+                                            <input type="checkbox" id="other" name="other[0]" value="1"
+                                                class="ml-2">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
                                         <div class="col-sm-6">
                                             <label for="home_no" class="col-sm-6 control-label"> Home No
                                             </label>
@@ -127,8 +137,8 @@
                                             <div class="col-sm-6">
                                                 <label for="name" class="col-sm-12 control-label">Date</label>
                                                 <div class="col-sm-12">
-                                                    <input type="date" id="date" class="form-control" name="date[]"
-                                                        required>
+                                                    <input type="date" id="date" class="form-control"
+                                                        name="date[]" required>
                                                 </div>
                                             </div>
 
@@ -138,6 +148,16 @@
                                                     <input type="time" id="time" class="form-control"
                                                         name="time[]" required>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-6 d-flex">
+                                                <label for="other" class="control-label">
+                                                    ကြားကွင်း
+                                                </label>
+                                                <input type="checkbox" id="other" name="other[{{ $i }}]"
+                                                    value="1" class="ml-2">
                                             </div>
                                         </div>
 
