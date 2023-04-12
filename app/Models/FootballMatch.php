@@ -83,4 +83,9 @@ class FootballMatch extends Model
     {
         return $this->other == 1 ? '(N)' : '';
     }
+
+    public function getMatchFormatAttribute()
+    {
+        return "({$this->home_no}) " . $this->home?->name . " " .$this->other_status . " Vs " . "({$this->away_no}) " . $this->away?->name . " " . $this->other_status;
+    }
 }

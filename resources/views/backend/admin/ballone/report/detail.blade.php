@@ -220,7 +220,7 @@
             var maung = $('#maung').DataTable();
 
             function getFees(data) {
-                // console.log(data);
+                console.log(data);
                 let upteam_name = getUpTeam(data);
 
                 return (data.type == 'home' || data.type == 'away') ? `${upteam_name} ${data.fees.body}` : data.fees
@@ -256,7 +256,7 @@
             }
 
             function getUpTeam(data) {
-                if (data.match.up_team == 1) {
+                if (data.upteam == 1) {
                     return `(${data.match.home_no}) ${data.match.home.name}`;
                 } else {
                     return `(${data.match.away_no}) ${data.match.away.name}`;
@@ -273,6 +273,8 @@
 
             $('body').on('click', '.viewBody', function() {
                 let id = $(this).data('id');
+
+                $('table tr').removeClass('text-danger');
 
                 fetch(`/admin/football/body-detail/${id}`, {
                         headers: {
@@ -297,10 +299,14 @@
                         $("#betting-body-data").html(tr);
 
                     });
+
+                $(this).parent().parent().addClass('text-danger');
             });
 
             $('body').on('click', '.viewMaung', function() {
                 let id = $(this).data('id');
+
+                $('table tr').removeClass('text-danger');
 
                 fetch(`/admin/football/maung-detail/${id}`, {
                         headers: {
@@ -325,6 +331,8 @@
                         });
                         $("#betting-maung-data").html(tr);
                     });
+
+                $(this).parent().parent().addClass('text-danger');
             });
         });
     </script>

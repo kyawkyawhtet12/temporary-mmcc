@@ -9,6 +9,10 @@
         #resultForm input.text {
             height: 30px;
         }
+
+        .old {
+            background: rgb(228, 227, 227) !important;
+        }
     </style>
 @endsection
 
@@ -57,6 +61,34 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @foreach ($query as $dt)
+                                                    <tr class="{{ $dt->status == 0 ? 'old' : '' }}">
+                                                        <td>
+                                                            {{ $dt->match->match_format }}
+                                                        </td>
+                                                        <td>
+                                                            {{ get_date_time_format($dt->match) }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $dt->up_team == 1 ? $dt->body : '' }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $dt->up_team == 2 ? $dt->body : '' }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $dt->goals }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $dt->user?->name }}
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" data-toggle="tooltip"
+                                                                data-id=" {{ $dt->match->id }}" data-original-title="Edit"
+                                                                class="editMatch mr-2"><i
+                                                                    class="fa fa-edit text-inverse m-r-10"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -173,48 +205,7 @@
                 }
             });
 
-            var table = $('#matches').DataTable({
-                processing: true,
-                "language": {
-                    processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>'
-                },
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('ballone.body.index') }}",
-                    data: function(d) {
-                        d.search = $('input[type="search"]').val()
-                    }
-                },
-                columns: [{
-                        data: 'match',
-                        name: 'match'
-                    },
-                    {
-                        data: 'date_time',
-                        name: 'date_time'
-                    },
-                    {
-                        data: 'body_home',
-                        name: 'body_home'
-                    },
-                    {
-                        data: 'body_away',
-                        name: 'body_away'
-                    },
-                    {
-                        data: 'goals',
-                        name: 'goals'
-                    },
-                    {
-                        data: 'by',
-                        name: 'by'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action'
-                    },
-                ],
-            });
+            var table = $('#matches').DataTable();
 
             $('body').on('click', '.editMatch', function() {
                 var match_id = $(this).data('id');
@@ -223,8 +214,8 @@
                     $('#modelHeading').html("Add Body Fees");
                     $('#ajaxModel').modal('show');
                     $('#match_id').val(data.id);
-                    $("form #home").text(data.home.name);
-                    $("form #away").text(data.away.name);
+                    $("form #home").text(`(${data.home_no}) ${data.home.name}`);
+                    $("form #away").text(`(${data.away_no}) ${data.away.name}`);
                 })
             });
 
@@ -240,7 +231,8 @@
                         console.log(data)
                         $('#matchForm').trigger("reset");
                         $('#ajaxModel').modal('hide');
-                        table.draw();
+                        // table.draw();
+                        location.reload();
                     },
                     error: function(data) {
                         console.log('Error:', data);

@@ -148,10 +148,14 @@
                                                         @endif
 
                                                         <td>
-                                                            @if (!$dt->calculate)
+                                                            @if (!$dt->calculate && $dt->type == 1)
                                                                 <a href="/admin/ballone-add-result/{{ $dt->id }}">
                                                                     <i class="fa fa-plus-square text-inverse m-r-10"></i>
                                                                 </a>
+                                                            @endif
+
+                                                            @if ($dt->type == 0)
+                                                                <p> Refund Match </p>
                                                             @endif
                                                         </td>
                                                         <td>
@@ -169,7 +173,7 @@
                                                                     <i class="fa fa-trash text-danger m-r-10"></i></a>
                                                             @endif
 
-                                                            @if ($dt->score === null)
+                                                            @if ($dt->score === null && $dt->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->id }}"
                                                                     data-original-title="Refund" class="cancelMatch">

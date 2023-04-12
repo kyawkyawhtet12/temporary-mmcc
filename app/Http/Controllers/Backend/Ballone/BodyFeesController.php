@@ -19,6 +19,11 @@ class BodyFeesController extends Controller
         $leagues = League::all();
         // $clubs = Club::all();
 
+        $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
+                                    ->with('match')->latest()->get();
+            
+        $query = $data->where('match.calculate', 0)->where('match.type', 1);
+
         if ($request->ajax()) {
             // $query = FootballMatch::whereNull('score')->where('type', 1)
             //                         ->with('bodyFees')->latest()->get();
@@ -85,7 +90,9 @@ class BodyFeesController extends Controller
                     ->rawColumns(['score','action','body_home', 'body_away','goals', 'match'])
                     ->make(true);
         }
-        return view('backend.admin.ballone.match.body', compact('leagues'));
+
+        
+        return view('backend.admin.ballone.match.body', compact('leagues', 'query'));
     }
 
     public function store(Request $request)
