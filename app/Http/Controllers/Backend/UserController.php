@@ -72,7 +72,7 @@ class UserController extends Controller
             User::create([
                 'name'     => $request->name,
                 'user_id' => $request->user_id,
-                'amount' => $request->amount,
+                // 'amount' => $request->amount,
                 'password' => Hash::make($request->password)
             ]);
         } else {
@@ -86,7 +86,7 @@ class UserController extends Controller
             $user = User::find($request->old_id);
             $user->name = $request->name;
             $user->user_id = $request->user_id;
-            $user->amount = $request->amount;
+            // $user->amount = $request->amount;
             if ($request->password) {
                 $user->password = Hash::make($request->password);
             }

@@ -93,13 +93,13 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="name" class="col-sm-12 control-label">Amount</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="amount" name="amount" value=""
-                                    required="">
+                                    required="" readonly>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="form-group" id="pass">
                             <label for="password" class="col-sm-12 control-label">Password</label>
@@ -146,14 +146,6 @@
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="name" name="name"
                                     placeholder="Enter Name" readonly>
-                            </div>
-                        </div>
-
-                        <div class="form-group my-3">
-                            <label for="phone" class="col-sm-12 control-label"> Phone</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="phone" name="phone"
-                                    placeholder="Enter Phone" value="" readonly>
                             </div>
                         </div>
 
@@ -276,7 +268,6 @@
                     $('#paymentModel #id').val(data.id);
                     $('#paymentModel #type').val(type);
                     $('#paymentModel #name').val(data.name);
-                    $('#paymentModel #phone').val(data.phone);
                     $('#paymentModel #current').val(data.amount);
 
                     $('#paymentModel #modelHeading').html(heading);
