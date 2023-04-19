@@ -30,7 +30,7 @@ class UserController extends Controller
                     ->addColumn('payment', function ($user) {
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="deposit"  data-original-title="Deposit" class="edit btn btn-info btn-sm payment"> + </a>';
 
-                        // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="withdrawal" data-original-title="Withdrawal" class="btn btn-warning btn-sm payment"> - </a>';
+                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="withdrawal" data-original-title="Withdrawal" class="btn btn-warning btn-sm payment"> - </a>';
                         return $btn;
                     })
                     ->addColumn('action', function ($user) {

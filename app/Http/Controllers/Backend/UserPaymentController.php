@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Models\User;
+use App\Models\Cashout;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use App\Models\UserPaymentReport;
@@ -21,22 +22,44 @@ class UserPaymentController extends Controller
 
         $agent = User::getAgent($user->referral_code);
 
-        $payment = Payment::create([
-            'payment_provider_id' => null,
-            'amount' => $request->amount,
-            'phone' => null,
-            'transation_no' => null,
-            'transation_ss' => null,
-            'user_id' => $user->id,
-            'agent_id' => $agent,
-            'by' => Auth::id(),
-            'status' => 'Approved'
-        ]);
+        if($request->type == 'deposit') {
+        
+            $payment = Payment::create([
+                'payment_provider_id' => null,
+                'amount' => $request->amount,
+                'phone' => null,
+                'transation_no' => null,
+                'transation_ss' => null,
+                'user_id' => $user->id,
+                'agent_id' => $agent,
+                'by' => Auth::id(),
+                'status' => 'Approved'
+            ]);
 
-        $user->increment('amount', $request->amount);
-        UserPaymentReport::addReport($payment, 'deposit');
-        AgentPaymentReport::addReport($payment, 'deposit', $agent);
-        AgentPaymentAllReport::addReport($payment, 'deposit');
+            $user->increment('amount', $request->amount);
+            UserPaymentReport::addReport($payment, 'deposit');
+            AgentPaymentReport::addReport($payment, 'deposit', $agent);
+            AgentPaymentAllReport::addReport($payment, 'deposit');
+
+        } else {
+
+            $cashout = Cashout::create([
+                'user_id' => $user->id,
+                'payment_provider_id' => null,
+                'amount' => $request->amount,
+                'phone' => null,
+                'remark' => "-",
+                'agent_id' => $agent,
+                'by' => Auth::id(),
+                'status' => 'Approved'
+            ]);
+
+            $user->decrement('amount', $request->amount);
+            UserPaymentReport::addReport($cashout, 'withdraw');
+            AgentPaymentReport::addReport($cashout, 'withdraw', $agent);
+            AgentPaymentAllReport::addReport($cashout, 'withdraw');
+            
+        }
         
         return response()->json(['success' => '* Successfully done']);
     }

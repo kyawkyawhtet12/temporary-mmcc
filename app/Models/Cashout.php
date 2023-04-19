@@ -16,7 +16,8 @@ class Cashout extends Model
         'phone',
         'remark',
         'status',
-        'agent_id'
+        'agent_id',
+        'by'
     ];
 
     public static function getWithdrawalCount($date)

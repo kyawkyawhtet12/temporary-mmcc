@@ -16,15 +16,22 @@ class CreateCashoutsTable extends Migration
         Schema::create('cashouts', function (Blueprint $table) {
             $table->id();
             $table->string('amount')->default('0');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('payment_provider_id');
-            $table->string('phone');
-            $table->text('remark');
+            $table->string('phone')->nullable();
+            $table->text('remark')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Rejected']);
+
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->unsignedBigInteger('payment_provider_id')->nullable();
             $table->foreign('payment_provider_id')->references('id')->on('payment_providers')->onDelete('cascade');
+            
             $table->unsignedBigInteger('agent_id');
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
+
+            $table->unsignedBigInteger('by')->nullable();
+            $table->foreign('by')->references('id')->on('admins')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
