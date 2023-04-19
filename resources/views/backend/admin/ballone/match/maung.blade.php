@@ -11,7 +11,7 @@
         }
 
         .old {
-            background: rgb(228, 227, 227) !important;
+            background: rgb(238 236 236) !important
         }
     </style>
 @endsection

@@ -23,6 +23,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FootballBodyFeeResult;
 use App\Models\FootballMaungFeeResult;
+use App\Models\FootballRefundHistory;
 
 class MatchController extends Controller
 {
@@ -30,7 +31,11 @@ class MatchController extends Controller
     {
         $data = FootballMatch::where('created_at', '>=', now()->subDays(7))
                                 ->with('bodyFees', 'maungFees')->latest()->paginate(30);
+
+        $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
+                                ->with('match')->latest()->get();
         // return $data;
+        $data = $data->sortBy('match.home_no');
         return view('backend.admin.ballone.match.index', compact('data'));
     }
 
@@ -255,6 +260,12 @@ class MatchController extends Controller
             $dt->update([ 'refund' => 1 ]);
             User::findOrFail($dt->user_id)->increment('amount', (int)$dt->bet->amount);
             $dt->bet->update(['status' => 4 ]);
+
+            FootballRefundHistory::create([
+                'agent_id' => User::getAgent($dt->user->referral_code),
+                'user_id' => $dt->user_id,
+                'bet_id' => $dt->bet->id
+            ]);
         }
 
         foreach ($maung as $dt) {
