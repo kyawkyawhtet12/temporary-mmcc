@@ -269,6 +269,7 @@
                     $('#paymentModel #type').val(type);
                     $('#paymentModel #name').val(data.name);
                     $('#paymentModel #current').val(data.amount);
+                    $("#paymentModel #error").addClass('d-none');
 
                     $('#paymentModel #modelHeading').html(heading);
                     $('#paymentModel').modal('show');
@@ -311,6 +312,7 @@
                         } else {
                             $('#paymentForm').trigger("reset");
                             $('#paymentModel').modal('hide');
+                            $("#paymentModel #error").addClass('d-none');
                             table.draw();
                         }
                     },

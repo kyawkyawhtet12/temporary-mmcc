@@ -19,7 +19,6 @@ class UserPaymentController extends Controller
         // return $request->all();
 
         $user = User::findOrFail($request->id);
-
         $agent = User::getAgent($user->referral_code);
 
         if($request->type == 'deposit') {
@@ -42,6 +41,10 @@ class UserPaymentController extends Controller
             AgentPaymentAllReport::addReport($payment, 'deposit');
 
         } else {
+
+            if($request->amount > $user->amount) {
+                return response()->json(['error' => '* invalid amount']);
+            }
 
             $cashout = Cashout::create([
                 'user_id' => $user->id,
