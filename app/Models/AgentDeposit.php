@@ -21,8 +21,8 @@ class AgentDeposit extends Model
         return $this->belongsTo(Agent::class);
     }
 
-    public function payment()
+    public function provider()
     {
-        return $this->belongsTo(PaymentProvider::class, 'payment_provider_id');
+        return $this->belongsTo(AdminPaymentProvider::class, 'payment_provider_id');
     }
 }

@@ -113,7 +113,7 @@ Route::group(
         Route::resource('agents', 'AgentController');
         Route::resource('staff', 'StaffController');
         
-        Route::resource('agent-deposit', 'AgentDepositController');
+        Route::get('agent-deposit', 'AgentDepositController@index')->name('agent-deposit.index');
         Route::get('agent-deposit/history', 'AgentDepositController@history')->name('agent-deposit.history');
         Route::post('agent-deposit/accept/{id}', 'AgentDepositController@accept');
         Route::post('agent-deposit/reject/{id}', 'AgentDepositController@reject');

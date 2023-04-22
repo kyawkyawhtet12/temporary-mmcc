@@ -226,11 +226,11 @@
                         <i class="ri-file-download-line"></i> <span data-key="t-users">Agent Withdraws</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('agent.percentage') }}">
                         <i class="ri-percent-line"></i> <span data-key="t-users">Agent Percentage</span>
                     </a>
-                </li>
+                </li> --}}
                 {{-- agent end --}}
 
                 {{-- User --}}

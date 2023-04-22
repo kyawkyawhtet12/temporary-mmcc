@@ -18,8 +18,8 @@ class CreateAgentDepositsTable extends Migration
             $table->unsignedBigInteger('agent_id');
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->unsignedBigInteger('payment_provider_id');
-            $table->foreign('payment_provider_id')->references('id')->on('payment_providers')->onDelete('cascade');
-            $table->string('account');
+            $table->foreign('payment_provider_id')->references('id')->on('admin_payment_providers')->onDelete('cascade');
+            $table->string('account')->nullable();
             $table->string('amount')->default('0');
             $table->text('remark')->nullable();
             $table->text('transaction')->nullable();

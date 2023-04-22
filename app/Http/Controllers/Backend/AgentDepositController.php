@@ -13,38 +13,44 @@ class AgentDepositController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = AgentDeposit::with('payment', 'agent')->where('status', 0)->latest();
+            $query = AgentDeposit::with('provider', 'agent')->where('status', 0)->latest();
             return Datatables::of($query)
                     ->addIndexColumn()
-                    ->addColumn('payment', function ($cashout) {
-                        return '<span>'.$cashout->payment->name.'</span>';
+                    ->addColumn('provider', function ($payment) {
+                        return '<span>'.$payment->provider->name.'</span>';
                     })
-                    ->addColumn('agent', function ($cashout) {
-                        return '<span>'.$cashout->agent->name.'</span>';
+                    ->addColumn('agent', function ($payment) {
+                        return '<span>'.$payment->agent->name.'</span>';
                     })
-                    ->addColumn('amount', function ($cashout) {
-                        return '<span>'.$cashout->amount.' MMK</span>';
+                    ->addColumn('amount', function ($payment) {
+                        return '<span>'.$payment->amount.' MMK</span>';
                     })
-                    ->addColumn('status', function ($cashout) {
-                        if ($cashout->status == 0) {
+                    ->addColumn('status', function ($payment) {
+                        if ($payment->status == 0) {
                             return 'Pending';
-                        } elseif ($cashout->status == 1) {
+                        } elseif ($payment->status == 1) {
                             return 'Approved';
                         } else {
                             return 'Rejected';
                         }
                     })
-                    ->addColumn('transaction', function ($cashout) {
-                        return '<img src='.$cashout->transaction.'>';
+                    ->addColumn('transaction', function ($payment) {
+                        if ($payment->transaction) {
+                            return "<a href='javascript:void(0)' data-toggle='tooltip'  data-img='$payment->transaction' id='imgClick'>
+                                <img src='$payment->transaction'>
+                            </a>";
+                        } else {
+                            return "-";
+                        }
                     })
-                    ->addColumn('created_at', function ($cashout) {
-                        return date("d-m-Y, g:i A", strtotime($cashout->created_at));
+                    ->addColumn('created_at', function ($payment) {
+                        return date("d-m-Y, g:i A", strtotime($payment->created_at));
                     })
-                    ->addColumn('actions', function ($cashout) {
+                    ->addColumn('actions', function ($payment) {
                         return "
-                            <a href='#' data-route='/admin/agent-deposit/accept/$cashout->id' data-type='accept' class='btn btn-success btn-sm'> Accept </a>
+                            <a href='#' data-route='/admin/agent-deposit/accept/$payment->id' data-type='accept' class='btn btn-success btn-sm'> Accept </a>
 
-                            <a href='#' data-route='/admin/agent-deposit/reject/$cashout->id' data-type='reject' class='btn btn-danger btn-sm'> Reject </a>
+                            <a href='#' data-route='/admin/agent-deposit/reject/$payment->id' data-type='reject' class='btn btn-danger btn-sm'> Reject </a>
 
                         ";
                     })
@@ -62,34 +68,67 @@ class AgentDepositController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['payment','agent','amount','status','transaction','actions'])
+                    ->rawColumns(['provider','agent','amount','status','transaction','actions'])
                     ->make(true);
         }
         return view('backend.admin.agent-deposits.index');
     }
 
-    // public function store(Request $request)
-    // {
-    //     $validateData = $request->validate([
-    //         'payment_provider_id' => ['required'],
-    //         'amount' => ['required', new LimitWithdraw],
-    //         'phone' => ['required', 'phone:MM'],
-    //         'remark' => ['required'],
-    //     ]);
-    //     $validateData['agent_id'] = Auth::guard('agent')->user()->id;
-    //     AgentDeposit::create($validateData);
-    //     $agent = Agent::find(Auth::guard('agent')->user()->id);
-    //     Agent::find($agent->id)->update(['amount'=> $agent->amount - $validateData['amount']]);
-    //     return redirect()->route('agent.withdraw')->with('success', 'Withdraws form send successfully');
-    // }
-
-    // public function changeTransferStatus(Request $request)
-    // {
-    //     $cashout = AgentDeposit::find($request->cashout_id);
-    //     $cashout->status = $request->status;
-    //     $cashout->save();
-    //     return response()->json(['message' => 'Withdraws status changed successfully.']);
-    // }
+    public function history(Request $request)
+    {
+        if ($request->ajax()) {
+            $query = AgentDeposit::with('provider', 'agent')->where('status', '!=', 0)->latest();
+            return Datatables::of($query)
+                    ->addIndexColumn()
+                    ->addColumn('provider', function ($payment) {
+                        return '<span>'.$payment->provider->name.'</span>';
+                    })
+                    ->addColumn('agent', function ($payment) {
+                        return '<span>'.$payment->agent->name.'</span>';
+                    })
+                    ->addColumn('amount', function ($payment) {
+                        return '<span>'.$payment->amount.' MMK</span>';
+                    })
+                    ->addColumn('status', function ($payment) {
+                        if ($payment->status == 0) {
+                            return 'Pending';
+                        } elseif ($payment->status == 1) {
+                            return 'Approved';
+                        } else {
+                            return 'Rejected';
+                        }
+                    })
+                    ->addColumn('transaction', function ($payment) {
+                        if ($payment->transaction) {
+                            return "<a href='javascript:void(0)' data-toggle='tooltip'  data-img='$payment->transaction' id='imgClick'>
+                                <img src='$payment->transaction'>
+                            </a>";
+                        } else {
+                            return "-";
+                        }
+                    })
+                    ->addColumn('created_at', function ($payment) {
+                        return date("d-m-Y, g:i A", strtotime($payment->created_at));
+                    })
+                    ->filter(function ($instance) use ($request) {
+                        if (!empty($request->get('search'))) {
+                            $instance->whereHas('provider', function ($w) use ($request) {
+                                $search = $request->get('search');
+                                $w->where('name', 'LIKE', "%$search%");
+                                $w->orWhere('phone', 'LIKE', "%$search%");
+                            })
+                            ->orwhereHas('agent', function ($w) use ($request) {
+                                $search = $request->get('search');
+                                $w->where('name', 'LIKE', "%$search%");
+                                $w->orWhere('phone', 'LIKE', "%$search%");
+                            });
+                        }
+                    })
+                    ->rawColumns(['provider','agent','amount','status','transaction'])
+                    ->make(true);
+        }
+        return view('backend.admin.agent-deposits.history');
+    }
 
     public function accept($id)
     {

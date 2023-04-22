@@ -43,7 +43,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{-- <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Owner (Name)</label>
                                             <div class="col-sm-9">
@@ -57,9 +57,9 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                 </div>
-                                {{-- <div class="row">
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-3 col-form-label">Account Number</label>
@@ -90,21 +90,21 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                                        <a href="{{ url()->previous() }}" class="btn btn-dark">Back</a>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary mr-2">Submit</button>
-                                <a href="{{ url()->previous() }}" class="btn btn-dark">Back</a>
-                            </div>
-                        </div>
-                        </form>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-    <!-- container-fluid -->
+        </div>
+        <!-- container-fluid -->
     </div>
 @endsection

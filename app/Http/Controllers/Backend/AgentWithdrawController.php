@@ -76,7 +76,7 @@ class AgentWithdrawController extends Controller
     public function history(Request $request)
     {
         if ($request->ajax()) {
-            $query = AgentWithdraw::with('provider', 'agent')->where('status', '!=', '0')->latest();
+            $query = AgentWithdraw::with('provider', 'agent')->where('status', '!=', 0)->latest();
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('provider', function ($cashout) {
@@ -150,7 +150,7 @@ class AgentWithdrawController extends Controller
         if (!$data) {
             return 'error';
         }
-        Agent::find($data->agent_id)->decrement('amount', $data->amount);
+        // Agent::find($data->agent_id)->decrement('amount', $data->amount);
         $data->update(['status' => 1]);
         return back()->with('success', 'Withdrawal accepted successfully');
     }
@@ -162,6 +162,7 @@ class AgentWithdrawController extends Controller
             return 'error';
         }
         $data->update(['status' => 2]);
+        Agent::find($data->agent_id)->increment('amount', $data->amount);
         return back()->with('success', 'Withdrawal rejected successfully');
     }
 }
