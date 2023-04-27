@@ -27,11 +27,19 @@ class AgentPaymentController extends Controller
                     } else {
                         $query = AgentPaymentReport::where('agent_id', $request->agent)->latest()->orderBy('created_at');
                     }
+
+                    
                 } else {
+                    // if (!empty($request->from_date)) {
+                    //     $query = AgentPaymentReport::whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
+                    // } else {
+                    //     $query = AgentPaymentReport::latest()->orderBy('created_at');
+                    // }
+
                     if (!empty($request->from_date)) {
-                        $query = AgentPaymentReport::whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
+                        $query = AgentPaymentAllReport::whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
                     } else {
-                        $query = AgentPaymentReport::latest()->orderBy('created_at');
+                        $query = AgentPaymentAllReport::latest()->orderBy('created_at');
                     }
                 }
             } else {
@@ -45,11 +53,11 @@ class AgentPaymentController extends Controller
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('deposit', function ($data) {
-                        $count = Payment::getDepositCount($data->created_at);
+                        $count = Payment::getDepositCount($data->created_at, $data->agent_id);
                         return "$data->deposit ($count)";
                     })
                     ->addColumn('withdraw', function ($data) {
-                        $count = Cashout::getWithdrawalCount($data->created_at);
+                        $count = Cashout::getWithdrawalCount($data->created_at, $data->agent_id);
                         return "$data->withdraw ($count)";
                     })
                     ->addColumn('net', function ($data) {

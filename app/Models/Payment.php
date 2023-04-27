@@ -21,9 +21,14 @@ class Payment extends Model
         'by'
     ];
 
-    public static function getDepositCount($date)
+    public static function getDepositCount($date, $agent = null)
     {
-        return Payment::whereDate('created_at', $date)->where('status', 'Approved')->count();
+        // return Payment::whereDate('created_at', $date)->where('status', 'Approved')->count();
+        if($agent) {
+            return Payment::where('agent_id', $agent)->whereDate('created_at', $date)->where('status', 'Approved')->count();
+        } else {
+            return Payment::whereDate('created_at', $date)->where('status', 'Approved')->count();
+        }
     }
 
     public function user()
