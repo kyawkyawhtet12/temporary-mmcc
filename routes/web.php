@@ -220,5 +220,9 @@ Route::group(
         Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
         // Route::get('user-deposits', [PaymentController::class, 'deposits'])->name('user-deposits');
         // Route::get('user-withdrawals', [PaymentController::class, 'withdrawals'])->name('user-withdrawals');
+
+        Route::get('/3d-disable', 'ThreeDigitDisableController@index')->name('3d.disable');
+        Route::post('/3d-disable', 'ThreeDigitDisableController@store')->name('3d.disable.post');
+        Route::delete('/3d-disable/{id}', 'ThreeDigitDisableController@enable')->name('3d.disable.delete');
     }
 );

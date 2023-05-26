@@ -14,6 +14,10 @@
             background-color: #0ed318 !important;
         }
 
+        .old {
+            background: rgb(238 236 236) !important
+        }
+
         table a.match-detail {
             color: black !important;
         }
@@ -77,68 +81,69 @@
                                     @endif
 
                                     <div class="table-responsive">
-                                        <table id="matches" class="table table-bordered nowrap text-center">
+                                        <table id="matchese" class="table table-bordered nowrap text-center">
                                             <thead>
                                                 <tr>
                                                     <th>Match</th>
-                                                    <th>Date Time</th>
-                                                    <th>Result</th>
-                                                    <th colspan="2">Body</th>
-                                                    <th>Goals</th>
-                                                    <th>Home</th>
-                                                    <th>Away</th>
-                                                    <th>Over</th>
-                                                    <th>Under</th>
-                                                    <th>Add Result</th>
-                                                    <th>Edit</th>
-                                                    <th>Action</th>
+                                                    <th class="sorting_disabled">Date Time</th>
+                                                    <th class="sorting_disabled">Result</th>
+                                                    <th class="sorting_disabled" colspan="2">Body</th>
+                                                    <th class="sorting_disabled">Goals</th>
+                                                    <th class="sorting_disabled">Home</th>
+                                                    <th class="sorting_disabled">Away</th>
+                                                    <th class="sorting_disabled">Over</th>
+                                                    <th class="sorting_disabled">Under</th>
+                                                    <th class="sorting_disabled">Add Result</th>
+                                                    <th class="sorting_disabled">Edit</th>
+                                                    <th class="sorting_disabled">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @forelse ($data as $x => $dt)
-                                                    <tr id="{{ $dt->calculate ? 'done' : '' }}">
+                                                    <tr id="{{ $dt->match->calculate ? 'done' : '' }}"
+                                                        class="{{ $dt->status == 0 ? 'old' : '' }}">
                                                         <td>
-                                                            <a href="{{ route('match.report', $dt->id) }}"
+                                                            <a href="{{ route('match.report', $dt->match->id) }}"
                                                                 class="match-detail">
-                                                                ({{ $dt->home_no }})
-                                                                {{ $dt->home->name }}
-                                                                {{ $dt->other_status }}
+                                                                ({{ $dt->match->home_no }})
+                                                                {{ $dt->match->home->name }}
+                                                                {{ $dt->match->other_status }}
                                                                 Vs
-                                                                ({{ $dt->away_no }})
-                                                                {{ $dt->away->name }}
-                                                                {{ $dt->other_status }}
+                                                                ({{ $dt->match->away_no }})
+                                                                {{ $dt->match->away->name }}
+                                                                {{ $dt->match->other_status }}
                                                             </a>
                                                         </td>
-                                                        <td>{{ get_date_time_format($dt) }}</td>
+                                                        <td>{{ get_date_time_format($dt->match) }}</td>
 
-                                                        <td>{{ $dt->score }}</td>
+                                                        <td>{{ $dt->match->score }}</td>
 
                                                         <td>
-                                                            @if ($dt->bodyfees->up_team == 1)
-                                                                {{ $dt->bodyfees->body }}
+                                                            @if ($dt->up_team == 1)
+                                                                {{ $dt->body }}
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if ($dt->bodyfees->up_team == 2)
-                                                                {{ $dt->bodyfees->body }}
+                                                            @if ($dt->up_team == 2)
+                                                                {{ $dt->body }}
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            {{ $dt->bodyfees->goals }}
+                                                            {{ $dt->goals }}
                                                         </td>
 
-                                                        @if ($dt->calculate)
+                                                        @if ($dt->match->calculate)
                                                             <td>
-                                                                {{ $dt->bodyfees->result->home }}
+                                                                {{ $dt->result->home }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->bodyfees->result->away }}
+                                                                {{ $dt->result->away }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->bodyfees->result->home }}
+                                                                {{ $dt->result->home }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->bodyfees->result->home }}
+                                                                {{ $dt->result->home }}
                                                             </td>
                                                         @else
                                                             <td>-</td>
@@ -148,34 +153,34 @@
                                                         @endif
 
                                                         <td>
-                                                            @if (!$dt->calculate && $dt->type == 1)
-                                                                <a href="/admin/ballone-add-result/{{ $dt->id }}">
+                                                            @if (!$dt->match->calculate && $dt->match->type == 1)
+                                                                <a href="/admin/ballone-add-result/{{ $dt->match->id }}">
                                                                     <i class="fa fa-plus-square text-inverse m-r-10"></i>
                                                                 </a>
                                                             @endif
 
-                                                            @if ($dt->type == 0)
-                                                                <p> Refund Match </p>
+                                                            @if ($dt->match->type == 0)
+                                                                Refund Match
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if (count($dt->bodies) == 0 && count($dt->maungs) == 0 && $dt->score == null)
-                                                                <a href="{{ route('ballone.match.edit', $dt->id) }}"
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->score == null)
+                                                                <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
                                                                     class="text-success">
                                                                     <i class="fa fa-edit text-success m-r-10"></i></a>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if (count($dt->bodies) == 0 && count($dt->maungs) == 0)
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                    data-id="{{ $dt->id }}"
+                                                                    data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Delete" class="deleteMatch mr-2">
                                                                     <i class="fa fa-trash text-danger m-r-10"></i></a>
                                                             @endif
 
-                                                            @if ($dt->score === null && $dt->type == 1)
+                                                            @if ($dt->match->score === null && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                    data-id="{{ $dt->id }}"
+                                                                    data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Refund" class="cancelMatch">
                                                                     <i class="far fa-times-circle text-danger m-r-10"></i>
                                                                 </a>
@@ -189,10 +194,6 @@
                                                 @endforelse
                                             </tbody>
                                         </table>
-                                    </div>
-
-                                    <div class="mt-3">
-                                        {{ $data->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -220,28 +221,59 @@
                 }
             });
 
-            // var table = $('#matches').DataTable({
-            //     "pageLength": 30,
-            //     'columnDefs': [{
-            //         'targets': [1, 2, 3, 4, 5, 6, 7, 8],
-            //         'orderable': false,
-            //     }]
-            // });
+            var table = $('#matchese').DataTable({
+                paging: true
+            });
 
-            $('body').on('click', '.deleteMatch', function() {
-                swal({
-                        text: "Are you sure to delete match ?",
-                        icon: "info",
-                        buttons: true,
-                        dangerMode: true,
-                    })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            $.ajax({
-                                url: "{{ route('ballone.match.store') }}" + '/' + $(this).data(
-                                    "id"),
-                                method: 'DELETE',
-                            }).done(function(res) {
+
+
+        });
+
+        $('body').on('click', '.deleteMatch', function() {
+            swal({
+                    text: "Are you sure to delete match ?",
+                    icon: "info",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: "{{ route('ballone.match.store') }}" + '/' + $(this).data(
+                                "id"),
+                            method: 'DELETE',
+                        }).done(function(res) {
+                            swal({
+                                text: "အောင်မြင်ပါသည်",
+                                icon: "success",
+                            }).then((e) => {
+                                // table.draw();
+                                location.reload();
+                            })
+                        })
+                    }
+                });
+        });
+
+        $('body').on('click', '.cancelMatch', function() {
+            swal({
+                    text: "Are you sure to cancel match and make refund ?",
+                    icon: "info",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: `/admin/ballone/match/refund/${$(this).data("id")}`,
+                            method: 'POST',
+                        }).done(function(res) {
+                            if (res == 'error') {
+                                swal({
+                                    text: "something is wrong.",
+                                    icon: "error",
+                                })
+                            } else {
                                 swal({
                                     text: "အောင်မြင်ပါသည်",
                                     icon: "success",
@@ -249,44 +281,10 @@
                                     // table.draw();
                                     location.reload();
                                 })
-                            })
-                        }
-                    });
-            });
-
-            $('body').on('click', '.cancelMatch', function() {
-                swal({
-                        text: "Are you sure to cancel match and make refund ?",
-                        icon: "info",
-                        buttons: true,
-                        dangerMode: true,
-                    })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            $.ajax({
-                                url: `/admin/ballone/match/refund/${$(this).data("id")}`,
-                                method: 'POST',
-                            }).done(function(res) {
-                                if (res == 'error') {
-                                    swal({
-                                        text: "something is wrong.",
-                                        icon: "error",
-                                    })
-                                } else {
-                                    swal({
-                                        text: "အောင်မြင်ပါသည်",
-                                        icon: "success",
-                                    }).then((e) => {
-                                        // table.draw();
-                                        location.reload();
-                                    })
-                                }
-                            })
-                        }
-                    });
-            });
-
-
+                            }
+                        })
+                    }
+                });
         });
     </script>
 @endsection

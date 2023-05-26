@@ -10,18 +10,10 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use App\Models\Agent;
 use App\Models\TwoDigit;
-use App\Models\TwoDigitTransaction;
-use App\Models\ThreeDigit;
-use App\Models\ThreeDigitTransaction;
 use App\Models\User;
 use App\Models\Enabled;
-use App\Models\TwoLuckyDraw;
-use App\Models\ThreeLuckyDraw;
-use App\Models\Payment;
-use App\Models\TwoWinner;
 use App\Models\AgentWithdraw;
 use Carbon\Carbon;
-use Yajra\DataTables\DataTables;
 
 class AdminController extends Controller
 {
@@ -38,9 +30,6 @@ class AdminController extends Controller
        
         $enabled = Enabled::first();
         $two_digits = TwoDigit::all();
-        
-        // return $total_amount;
-        
         
         return view('backend.admin.index', compact(
             'two_digits',
@@ -60,18 +49,20 @@ class AdminController extends Controller
             'new_confirm_password' => ['same:new_password'],
         ]);
         if (Auth::guard('admin')->check()) {
-            Admin::find(Auth::guard('admin')->user()->id)->update(['password'=> Hash::make($request->new_password)]);
+            Admin::find(Auth::guard('admin')->user()->id)
+                ->update(['password'=> Hash::make($request->new_password)]);
         } else {
-            Agent::find(Auth::guard('agent')->user()->id)->update(['password'=> Hash::make($request->new_password)]);
+            Agent::find(Auth::guard('agent')->user()->id)
+                ->update(['password'=> Hash::make($request->new_password)]);
         }
         return back()->with('success', 'Password change successfully.');
     }
 
     public function changeTwoDigitEnable(Request $request)
     {
-        $ids = $request->ids;
-        TwoDigit::whereIn('id', explode(",", $ids))->update([
+        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
             'status' => $request->status,
+            'amount' => 0,
             'date' => null
         ]);
         return response()->json('success');
@@ -79,9 +70,9 @@ class AdminController extends Controller
 
     public function changeTwoDigitDisable(Request $request)
     {
-        $ids = $request->ids;
-        TwoDigit::whereIn('id', explode(",", $ids))->update([
+        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
             'status' => $request->status,
+            'amount' => 0,
             'date' => $request->date
         ]);
         return response()->json('success');
@@ -89,8 +80,7 @@ class AdminController extends Controller
 
     public function changeTwoDigitSubmit(Request $request)
     {
-        $ids = $request->ids;
-        TwoDigit::whereIn('id', explode(",", $ids))->update([
+        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
             'amount' => $request->amount,
             'date' => $request->date
         ]);

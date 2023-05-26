@@ -16,6 +16,9 @@ class CreateThreeDigitsTable extends Migration
         Schema::create('three_digits', function (Blueprint $table) {
             $table->id();
             $table->string('number');
+            $table->boolean('status')->default(0);
+            $table->integer('amount')->default(0);
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }

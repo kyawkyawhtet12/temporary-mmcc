@@ -29,13 +29,38 @@ class MatchController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballMatch::where('created_at', '>=', now()->subDays(7))
-                                ->with('bodyFees', 'maungFees')->latest()->paginate(30);
+        // $data = FootballMatch::where('created_at', '>=', now()->subDays(30))
+        //                         ->with('bodyFees', 'maungFees')->latest()->get();
 
-        $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
+        $data = FootballBodyFee::where('created_at', '>=', now()->subDays(30))
                                 ->with('match')->latest()->get();
-        // return $data;
+        
         $data = $data->sortBy('match.home_no');
+
+        // return $data;
+
+        // if ($request->ajax()) {
+        //     $data = FootballBodyFee::where('created_at', '>=', now()->subDays(30))
+        //                         ->with('match')->latest()->get();
+        
+        //     $query = $data->sortBy('match.home_no');
+        //     return Datatables::of($query)
+        //             ->addIndexColumn()
+                    
+        //             ->addColumn('date_time', function ($dt) {
+        //                 return get_date_time_format($dt->match);
+        //             })
+        //             ->addColumn('match', function ($dt) {
+        //                 return $dt->match->match_format;
+        //             })
+        //             ->addColumn('score', function ($dt) {
+        //                 return $dt->match->score;
+        //             })
+                    
+        //             ->rawColumns(['score','match'])
+        //             ->make(true);
+        // }
+
         return view('backend.admin.ballone.match.index', compact('data'));
     }
 
@@ -233,7 +258,8 @@ class MatchController extends Controller
             'date_time' => $date_time,
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,
-            'away_id' => $request->away_id
+            'away_id' => $request->away_id,
+            'other' => ($request->other) ? 1 : 0
         ]);
        
         return redirect('/admin/ballone/match')->with('success', '* match successfully updated.');

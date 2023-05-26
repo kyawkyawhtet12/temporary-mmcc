@@ -18,6 +18,7 @@ class CreateTwoDigitsTable extends Migration
             $table->string('number');
             $table->boolean('status')->default('0');
             $table->integer('amount')->default('0');
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }

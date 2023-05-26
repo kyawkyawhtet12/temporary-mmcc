@@ -22,6 +22,14 @@
             </div>
             <!-- end page title -->
 
+            <div class="row mb-5">
+                <div class="col">
+                    <a class="btn btn-success" href="/admin/ballone/match" id="createNewNumber">
+                        Back
+                    </a>
+                </div>
+            </div>
+
             {{-- Body Report List --}}
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">

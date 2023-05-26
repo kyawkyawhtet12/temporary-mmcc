@@ -77,6 +77,16 @@
                                     </div>
 
                                     <div class="form-group row">
+                                        <div class="col-sm-6 d-flex">
+                                            <label for="other" class="control-label">
+                                                ကြားကွင်း
+                                            </label>
+                                            <input type="checkbox" id="other" name="other[0]" value="1"
+                                                class="ml-2">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
                                         <div class="col-sm-6">
                                             <label for="home_no" class="col-sm-6 control-label"> Home No
                                             </label>

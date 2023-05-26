@@ -13,5 +13,8 @@ class ThreeDigit extends Model
 
     protected $fillable = [
         'number',
+        'status',
+        'amount',
+        'date'
     ];
 }

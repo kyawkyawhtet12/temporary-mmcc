@@ -48,6 +48,12 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('3d.disable') }}">
+                        <i class="ri-information-line"></i> <span data-key="t-payment-accounts"> 3D Open/Close </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link menu-link" href="#ballone-today-report" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="ballone-today-report">
                         <i class="ri-award-line"></i> <span data-key="t-apps">Ballone Today Report</span>

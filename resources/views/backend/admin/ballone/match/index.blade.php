@@ -81,21 +81,21 @@
                                     @endif
 
                                     <div class="table-responsive">
-                                        <table id="matches" class="table table-bordered nowrap text-center">
+                                        <table id="matchese" class="table table-bordered nowrap text-center">
                                             <thead>
                                                 <tr>
                                                     <th>Match</th>
-                                                    <th>Date Time</th>
-                                                    <th>Result</th>
-                                                    <th colspan="2">Body</th>
-                                                    <th>Goals</th>
-                                                    <th>Home</th>
-                                                    <th>Away</th>
-                                                    <th>Over</th>
-                                                    <th>Under</th>
-                                                    <th>Add Result</th>
-                                                    <th>Edit</th>
-                                                    <th>Action</th>
+                                                    <th class="sorting_disabled">Date Time</th>
+                                                    <th class="sorting_disabled">Result</th>
+                                                    <th class="sorting_disabled" colspan="2">Body</th>
+                                                    <th class="sorting_disabled">Goals</th>
+                                                    <th class="sorting_disabled">Home</th>
+                                                    <th class="sorting_disabled">Away</th>
+                                                    <th class="sorting_disabled">Over</th>
+                                                    <th class="sorting_disabled">Under</th>
+                                                    <th class="sorting_disabled">Add Result</th>
+                                                    <th class="sorting_disabled">Edit</th>
+                                                    <th class="sorting_disabled">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -221,12 +221,8 @@
                 }
             });
 
-            var table = $('#matches').DataTable({
-                "pageLength": 25,
-                // 'columnDefs': [{
-                //     'targets': [1, 2, 3, 4, 5, 6, 7, 8],
-                //     'orderable': false,
-                // }]
+            var table = $('#matchese').DataTable({
+                paging: true
             });
 
 
