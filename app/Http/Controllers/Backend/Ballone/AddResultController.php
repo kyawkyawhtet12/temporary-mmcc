@@ -19,7 +19,7 @@ class AddResultController extends Controller
         //     return view("backend.admin.ballone.match.result", compact("match"));
         // }
     }
-    
+
     public function add(Request $request, $id)
     {
         // return $request->all();
@@ -30,7 +30,7 @@ class AddResultController extends Controller
 
         $footballBodyFee = FootballBodyFee::where('match_id', $id)->get();
         $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
-        
+
         foreach ($footballBodyFee as $bodyFees) {
             $this->calculation($bodyFees, $request);
         }
@@ -40,7 +40,7 @@ class AddResultController extends Controller
         }
 
         $match->update(['calculate' => 0]);
-        
+
         return back();
     }
 
@@ -57,6 +57,8 @@ class AddResultController extends Controller
 
     public function getFeesType($fees)
     {
+
+        // dd($fees);
         if (strpos($fees, '+')) {
             return "+";
         } elseif (strpos($fees, '=') || $fees == "=") {
@@ -72,15 +74,19 @@ class AddResultController extends Controller
         $fees   = $allFees->body;
         $fees_array = $this->getFees($fees);
         $fees_type  = $this->getFeesType($fees);
-        
+
+        // dd($fees_array , $fees_type);
+
         $limit   =  (isset($fees_array[0]) && $fees_array[0]) ? $fees_array[0] : 0;
         $percent =  (isset($fees_array[1]) && $fees_array[1]) ? $fees_array[1] : 100;
-        
+
+        // dd($limit, $percent);
+
         if ($upteam == 1) {
             // home
             $net = (int) $request->home - (int) $request->away;
             $real_limit = ($limit == "=" || $limit == "") ? 0 : $limit;
-            
+
             if ($fees_type === "=") {
                 if ($net > $real_limit) {
                     $allFees->result->update(['home' => 100 , 'away' => -100 ]);
@@ -136,7 +142,7 @@ class AddResultController extends Controller
                     }
                 }
             }
-                
+
             if ($fees_type === "+") {
                 if ($net > $real_limit) {
                     $allFees->result->update(['home' => -100 , 'away' => 100 ]);

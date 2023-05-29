@@ -20,6 +20,7 @@ use Yajra\DataTables\DataTables;
 use App\Models\FootballMaungGroup;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
+use App\Models\AdminPaymentProvider;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FootballBodyFeeResult;
 use App\Models\FootballMaungFeeResult;
@@ -32,21 +33,30 @@ class MatchController extends Controller
         // $data = FootballMatch::where('created_at', '>=', now()->subDays(30))
         //                         ->with('bodyFees', 'maungFees')->latest()->get();
 
-        $data = FootballBodyFee::where('created_at', '>=', now()->subDays(30))
-                                ->with('match')->latest()->get();
-        
-        $data = $data->sortBy('match.home_no');
+        $data = FootballBodyFee::with('match','result')
+                                ->join('football_matches', 'football_matches.id', '=', 'football_body_fees.match_id')
+                                ->select('football_body_fees.*')
+                                ->orderBy('football_matches.created_at', 'desc')
+                                // ->orderBy('football_matches.round', 'desc')
+                                ->orderBy('football_matches.home_no','asc')
+                                ->paginate(10);
+
+        // $data = FootballBodyFee::with('match','result')
+        //                         ->latest()
+        //                         ->paginate(10);
+
+        // $data = $data->sortBy('match.home_no')->paginate(10);
 
         // return $data;
 
         // if ($request->ajax()) {
         //     $data = FootballBodyFee::where('created_at', '>=', now()->subDays(30))
         //                         ->with('match')->latest()->get();
-        
+
         //     $query = $data->sortBy('match.home_no');
         //     return Datatables::of($query)
         //             ->addIndexColumn()
-                    
+
         //             ->addColumn('date_time', function ($dt) {
         //                 return get_date_time_format($dt->match);
         //             })
@@ -56,7 +66,7 @@ class MatchController extends Controller
         //             ->addColumn('score', function ($dt) {
         //                 return $dt->match->score;
         //             })
-                    
+
         //             ->rawColumns(['score','match'])
         //             ->make(true);
         // }
@@ -68,9 +78,19 @@ class MatchController extends Controller
     {
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = FootballMatch::where('type', 1)->whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
+                $query = FootballMatch::where('type', 1)->whereNotNull('score')
+                ->where('created_at', '>=', now()->subDays(30))
+                ->whereBetween('date_time', [$request->from_date, $request->to_date])
+                ->orderBy('created_at', 'desc')
+                ->orderby('round', 'asc')
+                ->get();
             } else {
-                $query = FootballMatch::where('type', 1)->whereNotNull('score')->where('created_at', '>=', now()->subDays(30))->orderBy('created_at', 'desc')->orderby('round', 'asc')->get();
+                $query = FootballMatch::where('type', 1)
+                ->whereNotNull('score')
+                ->where('created_at', '>=', now()->subDays(30))
+                ->orderBy('created_at', 'desc')
+                ->orderby('round', 'asc')
+                ->get();
             }
             return Datatables::of($query)
                     ->addIndexColumn()
@@ -155,7 +175,7 @@ class MatchController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-        
+
         $request->validate([
             'home_no' => 'required|array',
             'away_no' => 'required|array',
@@ -169,13 +189,13 @@ class MatchController extends Controller
             'away_id' => 'required|array',
             // 'away_id.*' => 'required',
         ]);
-        
+
         $times = $request->time;
 
         foreach ($times as $key => $time) {
             if ($request->date[$key] && $request->time[$key]) {
                 $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date[$key] . $request->time[$key]);
-                
+
                 $match = FootballMatch::create([
                             'home_no' => $request->home_no[$key],
                             'away_no' => $request->away_no[$key],
@@ -193,7 +213,7 @@ class MatchController extends Controller
                 FootballMaungFeeResult::create([ 'fee_id' => $maungFees->id ]);
             }
         }
-       
+
         return redirect('/admin/ballone/match')->with('success', '* match successfully add.');
     }
 
@@ -217,7 +237,7 @@ class MatchController extends Controller
         return response()->json(['success'=>'Match saved successfully.']);
     }
 
-    
+
     //
     public function show($id)
     {
@@ -241,7 +261,7 @@ class MatchController extends Controller
     public function update(Request $request, $id)
     {
         // return $request->all();
-        
+
         $request->validate([
             'home_no' => 'nullable',
             'away_no' => 'nullable',
@@ -261,7 +281,7 @@ class MatchController extends Controller
             'away_id' => $request->away_id,
             'other' => ($request->other) ? 1 : 0
         ]);
-       
+
         return redirect('/admin/ballone/match')->with('success', '* match successfully updated.');
     }
 
@@ -278,7 +298,7 @@ class MatchController extends Controller
         if (!$match) {
             return response()->json('error');
         }
-        
+
         $body = FootballBody::where('match_id', $match->id)->get();
         $maung = FootballMaung::where('match_id', $match->id)->get();
 

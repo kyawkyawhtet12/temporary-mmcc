@@ -34,4 +34,19 @@ class FootballBodyFee extends Model
             return $this->match->away->name;
         }
     }
+
+    public function getMatchStatusAttribute()
+    {
+        if( $this->match->calculate  && $this->status == 0){
+            return "done-old";
+        }
+
+        if( $this->match->calculate){
+            return "done";
+        }
+
+        if( $this->status == 0){
+            return "old";
+        }
+    }
 }

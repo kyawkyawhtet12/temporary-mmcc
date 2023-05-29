@@ -1,8 +1,5 @@
 @extends('layouts.master')
 
-@section('css')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
-@endsection
 
 @section('content')
     <div class="page-content">
@@ -36,7 +33,7 @@
                                     Payment Account</a>
                             </div>
 
-                            <table id="table_id" class="display">
+                            <table id="table_id">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -70,31 +67,25 @@
                                                 <a class="btn btn-info btn-sm mb-1"
                                                     href="{{ route('providers.edit', $payment->id) }}">Edit</a>
 
-                                                @if ($payment->status)
-                                                    <form action="{{ route('providers.destroy', $payment->id) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <input type="hidden" name="status" value="0">
-                                                        <button
-                                                            onclick="return confirm('Are you sure want to make unactive this?')"
-                                                            type="submit" class="btn btn-danger btn-sm">
-                                                            Close
-                                                        </button>
-                                                    </form>
-                                                @else
-                                                    <form action="{{ route('providers.destroy', $payment->id) }}"
-                                                        method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <input type="hidden" name="status" value="1">
-                                                        <button
-                                                            onclick="return confirm('Are you sure want to make active this?')"
-                                                            type="submit" class="btn btn-success btn-sm">
-                                                            Open
-                                                        </button>
-                                                    </form>
-                                                @endif
+                                                @php
+                                                    $status = ($payment->status) ? 0 : 1;
+                                                    $text = ($payment->status) ? 'unactive' : 'active';
+                                                    $color = ($payment->status) ? 'danger' : 'success';
+                                                    $btn = ($payment->status) ? 'Close' : 'Open';
+                                                @endphp
+
+                                                <form action="{{ route('providers.destroy', $payment->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="hidden" name="status" value="{{ $status }}">
+                                                    <button
+                                                        onclick="return confirm('Are you sure want to make {{ $text }} this?')"
+                                                        type="submit" class="btn btn-{{ $color }} btn-sm">
+                                                        {{ $btn }}
+                                                    </button>
+                                                </form>
+
                                             </td>
                                         </tr>
                                     @endforeach
@@ -114,8 +105,6 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
-
     <script>
         $(document).ready(function() {
             $('#table_id').DataTable();

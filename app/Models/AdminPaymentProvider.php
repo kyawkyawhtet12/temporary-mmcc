@@ -14,7 +14,8 @@ class AdminPaymentProvider extends Model
         'name',
         'owner',
         'phone_number',
-        'image'
+        'image',
+        'status'
     ];
 
     protected $casts = [

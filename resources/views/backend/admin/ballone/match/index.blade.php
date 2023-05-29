@@ -1,5 +1,6 @@
 @extends('layouts.master')
 
+
 @section('css')
     <link
         href="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}"
@@ -10,12 +11,16 @@
             height: 30px;
         }
 
-        #done {
+        .done {
             background-color: #0ed318 !important;
         }
 
         .old {
             background: rgb(238 236 236) !important
+        }
+
+        .done-old{
+            background-color: #84e388 !important;
         }
 
         table a.match-detail {
@@ -80,8 +85,8 @@
                                         </div>
                                     @endif
 
-                                    <div class="table-responsive">
-                                        <table id="matchese" class="table table-bordered nowrap text-center">
+                                    <div class="table-responive">
+                                        <table id="table_id" class="table table-bordered no-warp text-center">
                                             <thead>
                                                 <tr>
                                                     <th>Match</th>
@@ -100,8 +105,7 @@
                                             </thead>
                                             <tbody>
                                                 @forelse ($data as $x => $dt)
-                                                    <tr id="{{ $dt->match->calculate ? 'done' : '' }}"
-                                                        class="{{ $dt->status == 0 ? 'old' : '' }}">
+                                                    <tr class="{{ $dt->match_status }}" >
                                                         <td>
                                                             <a href="{{ route('match.report', $dt->match->id) }}"
                                                                 class="match-detail">
@@ -132,7 +136,7 @@
                                                             {{ $dt->goals }}
                                                         </td>
 
-                                                        @if ($dt->match->calculate)
+                                                        @if ($dt->match->calculate && $dt->result)
                                                             <td>
                                                                 {{ $dt->result->home }}
                                                             </td>
@@ -195,6 +199,11 @@
                                             </tbody>
                                         </table>
                                     </div>
+
+                                    <div class="mt-3">
+                                        {{  $data->links() }}
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -206,27 +215,14 @@
 @endsection
 
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
-    <script
-        src="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}">
-    </script>
-
     <script>
-        $(document).ready(function() {
 
+        $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-            var table = $('#matchese').DataTable({
-                paging: true
-            });
-
-
-
         });
 
         $('body').on('click', '.deleteMatch', function() {

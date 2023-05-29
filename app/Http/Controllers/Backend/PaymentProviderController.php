@@ -57,7 +57,7 @@ class PaymentProviderController extends Controller
             'phone_number' => $request->phone_number,
             'image' => $file_path
         ]);
-    
+
         return redirect()->route('providers.index')
                     ->with('success', 'Payment Provoider created successfully');
     }
@@ -112,14 +112,14 @@ class PaymentProviderController extends Controller
         } else {
             $file_path= $payment->image;
         }
-            
+
         $payment->update([
             'name' => $request->name,
             'owner' => $request->owner,
             'phone_number' => $request->phone_number,
             'image' => $file_path
         ]);
-    
+
         return redirect()->route('providers.index')->with('success', 'Payment Provider updated successfully');
     }
 
@@ -135,12 +135,13 @@ class PaymentProviderController extends Controller
 
         if ($request->status == 0) {
             $provider->update([ 'status' => 0 ]);
-            return redirect()->route('providers.index')
-                        ->with('success', 'Payment Provider closed successfully');
+            $status = "closed";
         } else {
             $provider->update([ 'status' => 1 ]);
-            return redirect()->route('providers.index')
-                        ->with('success', 'Payment Provider opened successfully');
+            $status = "opened";
         }
+
+        return redirect()->route('providers.index')
+                        ->with('success', "Payment Provider {$status} successfully");
     }
 }
