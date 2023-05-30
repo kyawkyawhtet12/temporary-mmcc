@@ -26,7 +26,12 @@ class AddResultController extends Controller
 
         $match = FootballMatch::findOrFail($id);
 
-        $match->update([ 'temp_score' => $request->home .' '. '-' .' '. $request->away ]);
+        $this->validate($request, [
+            'home' => 'required',
+            'away' => 'required'
+        ]);
+
+        // $match->update([ 'temp_score' => $request->home .' '. '-' .' '. $request->away ]);
 
         $footballBodyFee = FootballBodyFee::where('match_id', $id)->get();
         $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
@@ -39,7 +44,7 @@ class AddResultController extends Controller
             $this->calculation($maungFees, $request);
         }
 
-        $match->update(['calculate' => 0]);
+        $match->update(['calculate' => 0 , 'temp_score' => $request->home .' '. '-' .' '. $request->away ]);
 
         return back();
     }

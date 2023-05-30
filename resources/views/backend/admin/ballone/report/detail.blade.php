@@ -85,7 +85,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="maung" class="table table-bordered nowrap text-center">
+                                <table id="body" class="table table-bordered nowrap text-center">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
@@ -227,22 +227,35 @@
             var body = $('#body').DataTable();
             var maung = $('#maung').DataTable();
 
-            function getFees(data) {
-                console.log(data);
-                let upteam_name = getUpTeam(data);
+            function getUpTeam(data) {
+                return (data.upteam == 1) ? getHomeTeam(data) : getAwayTeam(data);
+            }
 
-                return (data.type == 'home' || data.type == 'away') ? `${upteam_name} ${data.fees.body}` : data.fees
-                    .goals;
+            function getMatch(data) {
+                return `${getHomeTeam(data)} Vs ${getAwayTeam(data)}`;
+            }
+
+            function getHomeTeam(data){
+                return `(${data.match.home_no}) ${data.match.home.name}`;
+            }
+
+            function getAwayTeam(data){
+                return `(${data.match.away_no}) ${data.match.away.name}`;
+            }
+
+            function getFees(data) {
+                return (data.type == 'home' || data.type == 'away')
+                        ? `${getUpTeam(data)} ${data.fees.body}`
+                        : data.fees.goals;
             }
 
             function getType(data) {
-
                 switch (data.type) {
                     case 'home':
-                        return `(${data.match.home_no}) ${data.match.home.name}`;
+                        return getHomeTeam(data);
                         break;
                     case 'away':
-                        return `(${data.match.away_no}) ${data.match.away.name}`;
+                        return getAwayTeam(data);
                         break;
                     case 'over':
                         return `Goal Over`;
@@ -254,31 +267,10 @@
             }
 
             function getResult(data) {
-                if (data.match.type == 0) {
-                    return "P-P";
-                } else if (data.match.score) {
-                    return data.match.score;
-                } else {
-                    return "-";
-                }
+                return (data.match.type == 0) ? "P-P" : (data.match.score) ?? '-';
             }
 
-            function getUpTeam(data) {
-                if (data.upteam == 1) {
-                    return `(${data.match.home_no}) ${data.match.home.name}`;
-                } else {
-                    return `(${data.match.away_no}) ${data.match.away.name}`;
-                }
-            }
-
-            function getMatch(data) {
-                return `
-                (${data.match.home_no}) ${data.match.home.name}
-                Vs
-                (${data.match.away_no}) ${data.match.away.name}`;
-            }
-
-
+            // For Body Detail View
             $('body').on('click', '.viewBody', function() {
                 let id = $(this).data('id');
 
@@ -293,7 +285,6 @@
                     .then((response) => response.json())
                     .then((data) => {
                         let tr = '';
-
                         tr += `<tr>
                                     <td> 1 </td>
                                     <td> ${getMatch(data)} </td>
@@ -305,12 +296,13 @@
                                 </tr>`;
 
                         $("#betting-body-data").html(tr);
-
                     });
 
                 $(this).parent().parent().addClass('text-danger');
             });
 
+
+            // For Maung Detail View
             $('body').on('click', '.viewMaung', function() {
                 let id = $(this).data('id');
 

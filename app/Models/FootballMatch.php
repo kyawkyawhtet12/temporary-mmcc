@@ -88,4 +88,24 @@ class FootballMatch extends Model
     {
         return "({$this->home_no}) " . $this->home?->name . " " .$this->other_status . " Vs " . "({$this->away_no}) " . $this->away?->name . " " . $this->other_status;
     }
+
+    public function getHomeTempscoreAttribute()
+    {
+        return self::getTempScore($this->temp_score, 0);
+    }
+
+    public function getAwayTempscoreAttribute()
+    {
+        return self::getTempScore($this->temp_score, 1);
+    }
+
+    public static function getTempScore($score, $key)
+    {
+        if ($score) {
+            $array = explode("-", $score);
+            return str_replace(' ', '', $array[$key]);
+        } else {
+            return null;
+        }
+    }
 }

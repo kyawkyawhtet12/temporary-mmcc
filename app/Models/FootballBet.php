@@ -46,7 +46,10 @@ class FootballBet extends Model
             case 3:
                 return "Draw";
                 break;
-            
+            case 4:
+                return "Refund Match";
+                break;
+
             default:
                 return "-";
                 break;

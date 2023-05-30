@@ -21,9 +21,9 @@ class BodyFeesController extends Controller
 
         $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
                                     ->with('match')->latest()->get();
-            
+
         $query = $data->where('match.calculate', 0)->where('match.type', 1);
-        
+
         return view('backend.admin.ballone.match.body', compact('leagues', 'query'));
     }
 
@@ -42,28 +42,42 @@ class BodyFeesController extends Controller
             return response()->json(['error'=>'something is wrong.']);
         }
 
-        $check = FootballBodyFee::where('match_id', $match->id)->count();
-
-        if ($check) {
-            FootballBodyFee::where('match_id', $match->id)->update(['status' => 0]);
-        }
-
         $body = ($request->home_body) ?? $request->away_body;
         $up_team = ($request->home_body) ? 1 : 2;
 
-        FootballBodyFee::where('match_id', $match->id)
-                        ->whereNull('body')->whereNull('goals')->delete();
+        $check_null = FootballBodyFee::where('match_id', $match->id)
+                                    ->whereNull('body')
+                                    ->whereNull('goals')
+                                    ->first();
 
-        $fees = FootballBodyFee::create([
-                        'match_id' => $match->id,
-                        'body'     => $body,
-                        'goals'    => $request->goals,
-                        'up_team'  => $up_team,
-                        'by'       => Auth::id()
-                    ]);
-        
-        FootballBodyFeeResult::create([ 'fee_id' => $fees->id ]);
-          
+        if( $check_null ){
+
+            $check_null->update([
+                'body' => $body,
+                'goals' => $request->goals,
+                'up_team' => $up_team,
+                'by' => Auth::id()
+            ]);
+
+        }else{
+
+            $check = FootballBodyFee::where('match_id', $match->id)->count();
+
+            if ($check) {
+                FootballBodyFee::where('match_id', $match->id)->update(['status' => 0]);
+            }
+
+            $fees = FootballBodyFee::create([
+                            'match_id' => $match->id,
+                            'body'     => $body,
+                            'goals'    => $request->goals,
+                            'up_team'  => $up_team,
+                            'by'       => Auth::id()
+                        ]);
+
+            FootballBodyFeeResult::create([ 'fee_id' => $fees->id ]);
+        }
+
         return response()->json([ 'success' => 'Match saved successfully.' ]);
     }
 

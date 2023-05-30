@@ -24,7 +24,7 @@ class MaungFeesController extends Controller
                                     ->latest()->get();
 
         $query = collect($data)->where('match.calculate', 0)->where('match.type', 1);
-        
+
         return view('backend.admin.ballone.match.maung', compact('leagues', 'query'));
     }
 
@@ -38,34 +38,48 @@ class MaungFeesController extends Controller
         ]);
 
         $match = FootballMatch::find($request->match_id);
+
         if (!$match) {
             return response()->json(['error'=>'something is wrong.']);
-        }
-
-        $check = FootballMaungFee::where('match_id', $match->id)->count();
-
-        if ($check) {
-            FootballMaungFee::where('match_id', $match->id)->update(['status' => 0]);
         }
 
         $body = ($request->home_body) ?? $request->away_body;
         $up_team = ($request->home_body) ? 1 : 2;
 
-        FootballMaungFee::where('match_id', $match->id)
-                        ->whereNull('body')->whereNull('goals')->delete();
+        $check_null = FootballMaungFee::where('match_id', $match->id)
+                                        ->whereNull('body')
+                                        ->whereNull('goals')
+                                        ->first();
 
-        $fees = FootballMaungFee::create([
-                    'match_id' => $match->id,
-                    'body'     => $body,
-                    'goals'    => $request->goals,
-                    'up_team'  => $up_team,
-                    'by'       => Auth::id()
-                ]);
+        if( $check_null ){
 
-        FootballMaungFeeResult::create([
-            'fee_id' => $fees->id
-        ]);
-          
+            $check_null->update([
+                'body' => $body,
+                'goals' => $request->goals,
+                'up_team' => $up_team,
+                'by' => Auth::id()
+            ]);
+
+        }else{
+
+            $check = FootballMaungFee::where('match_id', $match->id)->count();
+
+            if ($check) {
+                FootballMaungFee::where('match_id', $match->id)->update(['status' => 0]);
+            }
+
+            $fees = FootballMaungFee::create([
+                        'match_id' => $match->id,
+                        'body'     => $body,
+                        'goals'    => $request->goals,
+                        'up_team'  => $up_team,
+                        'by'       => Auth::id()
+                    ]);
+
+            FootballMaungFeeResult::create([ 'fee_id' => $fees->id ]);
+
+        }
+
         return response()->json(['success'=>'Match saved successfully.']);
     }
 

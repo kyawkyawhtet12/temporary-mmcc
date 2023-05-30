@@ -15,14 +15,14 @@ class CreateFootballMatchesTable extends Migration
     {
         Schema::create('football_matches', function (Blueprint $table) {
             $table->id();
-            $table->string('round')->nullable();
+            $table->integer('round')->nullable();
             $table->dateTime('date_time');
             $table->unsignedBigInteger('league_id');
             $table->boolean('other')->default(0);
             $table->unsignedBigInteger('home_id');
-            $table->string('home_no')->nullable();
+            $table->integer('home_no')->nullable();
             $table->unsignedBigInteger('away_id');
-            $table->string('away_no')->nullable();
+            $table->integer('away_no')->nullable();
             $table->string('score')->nullable();
             $table->string('temp_score')->nullable();
             $table->boolean('status')->default('0');

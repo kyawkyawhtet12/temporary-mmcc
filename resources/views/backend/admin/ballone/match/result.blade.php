@@ -66,9 +66,9 @@
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ getHomeScore($match->temp_score) }}">
+                                        value="{{ $match->home_tempscore }}">
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ getAwayScore($match->temp_score) }}">
+                                        value="{{ $match->away_tempscore }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
