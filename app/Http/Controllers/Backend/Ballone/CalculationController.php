@@ -54,15 +54,22 @@ class CalculationController extends Controller
             }elseif( $percent > 0 ){
                 //win
                 $status = 1;
-                $win_amount = $betAmount + ($betAmount * $percent / 100 );
-                $charge = ($win_amount * $charge_percent) / 100;
-                $net_amount = $win_amount - $charge;
+                // $win_amount = $betAmount + ($betAmount * $percent / 100 );
+                // $charge = ($win_amount * $charge_percent) / 100;
+                // $net_amount = $win_amount - $charge;
+
+                $win_amount = ( $betAmount * $percent / 100 );
+                $charge = ($win_amount * $charge_percent ) / 100;
+                $net_amount = $betAmount + ( $win_amount - $charge);
+
             }else{
                 //lose
                 $status = 2;
-                $win_amount = $betAmount + ($betAmount * $percent / 100 );
+
+
+                $win_amount = ( $betAmount * $percent / 100 );
                 $charge = 0;
-                $net_amount = $win_amount - $charge;
+                $net_amount = $betAmount + ( $win_amount - $charge);
             }
 
             $body->user->increment('amount', $net_amount);
