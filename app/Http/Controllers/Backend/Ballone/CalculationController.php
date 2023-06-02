@@ -18,10 +18,10 @@ class CalculationController extends Controller
     public function index($id)
     {
         // find match id is exist or not
-        $match = FootballMatch::findOrFail($id);
+        $match = FootballMatch::with('bodies')->findOrFail($id);
 
         // Body Calculation
-        $this->bodyCalculation($match);
+        $this->bodyCalculation($match->bodies);
 
         // Maung Calculation
         $maungs = FootballMaung::where('match_id', $id)->whereStatus(0)->get();
@@ -33,42 +33,39 @@ class CalculationController extends Controller
         return redirect('/admin/ballone/match')->with('success', '* calculation successfully done.');
     }
 
-    public function bodyCalculation($match)
+    public function bodyCalculation($bodies)
     {
-        $bodySetting = FootballBodySetting::find(1);
-        $charge = 0;
+        $charge_percent = FootballBodySetting::find(1)->percentage;
 
-        foreach ($match->bodies as $body) {
+        foreach ($bodies as $body) {
             $result = FootballBodyFeeResult::where('fee_id', $body->fee_id)->first();
 
             $type = $body->type;
             $percent =  $result->$type;
 
             $betAmount = $body->bet->amount;
-            $win_amount = $betAmount * ($percent / 100);
 
-            $user = User::find($body->user_id);
+            // $user = User::find($body->user_id);
 
-            if ($win_amount > 0) {
-                $charge = $win_amount * ($bodySetting->percentage / 100); // နိုင်ရင် အကောင့် ကောက်
-                $status = 1;
-            } elseif ($win_amount == 0) {
+            if( $percent == 0 ){
+                // draw
                 $status = 3;
-            } else {
+                $net_amount = $betAmount;
+            }elseif( $percent > 0 ){
+                //win
+                $status = 1;
+                $win_amount = $betAmount + ($betAmount * $percent / 100 );
+                $charge = ($win_amount * $charge_percent) / 100;
+                $net_amount = $win_amount - $charge;
+            }else{
+                //lose
                 $status = 2;
+                $win_amount = $betAmount + ($betAmount * $percent / 100 );
+                $charge = 0;
+                $net_amount = $win_amount - $charge;
             }
 
-            // if( $win_amount == 0 ){
-            //     $status = 3 ; //draw
-            // }elseif( $percent == '-100'){
-            //     $status = 2;
-            // }else{
-            //     $charge = $win_amount * ($bodySetting->percentage / 100); // နိုင်ရင် အကောင့် ကောက်
-            //     $status = 1;
-            // }
-
-            $net_amount = $betAmount + ($win_amount - $charge);
-            $user->increment('amount', $net_amount);
+            $body->user->increment('amount', $net_amount);
             $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
         }
     }
