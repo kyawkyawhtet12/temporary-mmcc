@@ -22,7 +22,7 @@ class UserPaymentController extends Controller
         $agent = User::getAgent($user->referral_code);
 
         if($request->type == 'deposit') {
-        
+
             $payment = Payment::create([
                 'payment_provider_id' => null,
                 'amount' => $request->amount,
@@ -36,7 +36,7 @@ class UserPaymentController extends Controller
             ]);
 
             $user->increment('amount', $request->amount);
-            UserPaymentReport::addReport($payment, 'deposit');
+            UserPaymentReport::addReport($payment, 'deposit', $agent);
             AgentPaymentReport::addReport($payment, 'deposit', $agent);
             AgentPaymentAllReport::addReport($payment, 'deposit');
 
@@ -58,12 +58,12 @@ class UserPaymentController extends Controller
             ]);
 
             $user->decrement('amount', $request->amount);
-            UserPaymentReport::addReport($cashout, 'withdraw');
+            UserPaymentReport::addReport($cashout, 'withdraw', $agent);
             AgentPaymentReport::addReport($cashout, 'withdraw', $agent);
             AgentPaymentAllReport::addReport($cashout, 'withdraw');
-            
+
         }
-        
+
         return response()->json(['success' => '* Successfully done']);
     }
 }

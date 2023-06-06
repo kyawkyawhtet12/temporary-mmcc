@@ -25,7 +25,7 @@ class AgentPaymentReport extends Model
     public static function addReport($payment, $type, $agent)
     {
         $check = AgentPaymentReport::whereDate('created_at', today())
-                                ->where('agent_id', Auth::id())
+                                ->where('agent_id', $agent)
                                 ->first();
 
         if ($check) {
