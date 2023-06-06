@@ -13,6 +13,11 @@
         .old {
             background: rgb(238 236 236) !important
         }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #e0e0ef !important;
+        }
     </style>
 @endsection
 
@@ -51,6 +56,7 @@
                                         <table id="matches" class="table table-bordered nowrap">
                                             <thead>
                                                 <tr>
+                                                    <th>Round</th>
                                                     <th>Match</th>
                                                     <th>Date Time</th>
                                                     <th>Body (Home)</th>
@@ -61,8 +67,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($query as $dt)
+                                                @foreach ($data as $dt)
                                                     <tr class="{{ $dt->status == 0 ? 'old' : '' }}">
+                                                        <td>{{  $dt->match->round }}</td>
                                                         <td>
                                                             {{ $dt->match->match_format }}
                                                         </td>
@@ -91,6 +98,10 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
+                                    </div>
+
+                                    <div class="mt-3">
+                                        {{  $data->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +216,7 @@
                 }
             });
 
-            var table = $('#matches').DataTable();
+            // var table = $('#matches').DataTable();
 
             $('body').on('click', '.editMatch', function() {
                 var match_id = $(this).data('id');

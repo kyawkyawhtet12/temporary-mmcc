@@ -23,6 +23,14 @@
             background-color: #84e388 !important;
         }
 
+        .time-old{
+            background-color: #fbe376 !important;
+        }
+
+        .refund{
+            background-color: #ffb59c !important;
+        }
+
         table a.match-detail {
             color: black !important;
         }
@@ -89,6 +97,7 @@
                                         <table id="table_id" class="table table-bordered no-warp text-center">
                                             <thead>
                                                 <tr>
+                                                    <th>Round</th>
                                                     <th>Match</th>
                                                     <th class="sorting_disabled">Date Time</th>
                                                     <th class="sorting_disabled">Result</th>
@@ -106,6 +115,7 @@
                                             <tbody>
                                                 @forelse ($data as $x => $dt)
                                                     <tr class="{{ $dt->match_status }}" >
+                                                        <td> {{  $dt->match->round }} </td>
                                                         <td>
                                                             <a href="{{ route('match.report', $dt->match->id) }}"
                                                                 class="match-detail">
@@ -168,14 +178,14 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->score == null)
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->score == null && $dt->match->type == 1)
                                                                 <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
                                                                     class="text-success">
                                                                     <i class="fa fa-edit text-success m-r-10"></i></a>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0)
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Delete" class="deleteMatch mr-2">

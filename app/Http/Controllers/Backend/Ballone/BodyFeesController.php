@@ -16,15 +16,17 @@ class BodyFeesController extends Controller
 {
     public function index(Request $request)
     {
-        $leagues = League::all();
-        // $clubs = Club::all();
+        $data = FootballBodyFee::with('match','result')
+                                ->join('football_matches', 'football_matches.id', '=', 'football_body_fees.match_id')
+                                ->select('football_body_fees.*')
+                                ->where('football_matches.calculate', 0)
+                                ->where('football_matches.type', 1)
+                                ->orderBy('football_matches.round', 'desc')
+                                ->orderBy('football_matches.home_no','asc')
+                                ->orderBy('football_body_fees.created_at', 'desc')
+                                ->paginate(15);
 
-        $data = FootballBodyFee::where('created_at', '>=', now()->subDays(7))
-                                    ->with('match')->latest()->get();
-
-        $query = $data->where('match.calculate', 0)->where('match.type', 1);
-
-        return view('backend.admin.ballone.match.body', compact('leagues', 'query'));
+        return view('backend.admin.ballone.match.body', compact('data'));
     }
 
     public function store(Request $request)

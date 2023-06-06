@@ -40,7 +40,7 @@ class MatchController extends Controller
                                 ->orderBy('football_matches.round', 'desc')
                                 ->orderBy('football_matches.home_no','asc')
                                 ->orderBy('football_body_fees.created_at', 'desc')
-                                ->paginate(10);
+                                ->paginate(15);
 
         return view('backend.admin.ballone.match.index', compact('data'));
     }
