@@ -72,7 +72,9 @@ class MatchController extends Controller
                         return get_date_time_format($match);
                     })
                     ->addColumn('match', function ($match) {
-                        return "({$match->home_no}) " . $match->home?->name . " " .$match->other_status . " Vs " . "({$match->away_no}) " . $match->away?->name . " " . $match->other_status;
+                        // return "({$match->home_no}) " . $match->home?->name . " " .$match->other_status . " Vs " . "({$match->away_no}) " . $match->away?->name . " " . $match->other_status;
+
+                        return $match->match_format;
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -113,7 +115,7 @@ class MatchController extends Controller
                         return get_date_time_format($match);
                     })
                     ->addColumn('match', function ($match) {
-                        return "({$match->home_no}) " . $match->home?->name . " " .$match->other_status . " Vs " . "({$match->away_no}) " . $match->away?->name . " " . $match->other_status;
+                        return $match->match_format;
                     })
                     ->addColumn('goals', function ($match) {
                         return $match->fees?->goals;
@@ -178,7 +180,7 @@ class MatchController extends Controller
                             'league_id' => $request->league_id,
                             'home_id' => $request->home_id[$key],
                             'away_id' => $request->away_id[$key],
-                            'other' => ($request->other && array_key_exists($key, $request->other)) ? 1 : 0
+                            'other' => ($request->other && array_key_exists($key, $request->other)) ? $request->other[$key] : 0
                         ]);
 
                 $bodyFees = FootballBodyFee::create(['match_id' => $match->id, 'by'=> Auth::id() ]);
@@ -255,7 +257,7 @@ class MatchController extends Controller
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,
             'away_id' => $request->away_id,
-            'other' => ($request->other) ? 1 : 0
+            'other' => ($request->other) ? : 0
         ]);
 
         return redirect('/admin/ballone/match')->with('success', '* match successfully updated.');

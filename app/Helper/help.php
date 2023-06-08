@@ -19,3 +19,8 @@ function get_date_time_format($match)
 {
     return Carbon::parse($match->date_time)->format('d-m-Y g:i A');
 }
+
+function check_plus_format($number)
+{
+    return ($number > 0) ? "+{$number}" : $number;
+}
