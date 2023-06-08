@@ -81,12 +81,31 @@ class FootballMatch extends Model
 
     public function getOtherStatusAttribute()
     {
+
+        // other - 0 => No , other - 1 => Home (N) , other - 2 => Away (N)
+
         return $this->other == 1 ? '(N)' : '';
+    }
+
+    public function getHomeOtherStatusAttribute()
+    {
+
+        // other - 0 => No , other - 1 => Home (N) , other - 2 => Away (N)
+
+        return $this->other == 1 ? '(N)' : '';
+    }
+
+    public function getAwayOtherStatusAttribute()
+    {
+
+        // other - 0 => No , other - 1 => Home (N) , other - 2 => Away (N)
+
+        return $this->other == 2 ? '(N)' : '';
     }
 
     public function getMatchFormatAttribute()
     {
-        return "({$this->home_no}) " . $this->home?->name . " " .$this->other_status . " Vs " . "({$this->away_no}) " . $this->away?->name . " " . $this->other_status;
+        return "({$this->home_no}) " . $this->home?->name . " " .$this->home_other_status . " Vs " . "({$this->away_no}) " . $this->away?->name . " " . $this->away_other_status;
     }
 
     public function getHomeTempscoreAttribute()

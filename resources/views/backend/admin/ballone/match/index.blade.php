@@ -119,13 +119,15 @@
                                                         <td>
                                                             <a href="{{ route('match.report', $dt->match->id) }}"
                                                                 class="match-detail">
-                                                                ({{ $dt->match->home_no }})
+                                                                {{-- ({{ $dt->match->home_no }})
                                                                 {{ $dt->match->home->name }}
-                                                                {{ $dt->match->other_status }}
+                                                                {{ $dt->match->home_other_status }}
                                                                 Vs
                                                                 ({{ $dt->match->away_no }})
                                                                 {{ $dt->match->away->name }}
-                                                                {{ $dt->match->other_status }}
+                                                                {{ $dt->match->away_other_status }} --}}
+
+                                                                {{  $dt->match->match_format }}
                                                             </a>
                                                         </td>
                                                         <td>{{ get_date_time_format($dt->match) }}</td>
@@ -148,16 +150,16 @@
 
                                                         @if ($dt->match->calculate && $dt->result)
                                                             <td>
-                                                                {{ $dt->result->home }}
+                                                                {{ check_plus_format($dt->result->home) }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->result->away }}
+                                                                {{ check_plus_format($dt->result->away) }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->result->home }}
+                                                                {{ check_plus_format($dt->result->over) }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->result->home }}
+                                                                {{ check_plus_format($dt->result->under) }}
                                                             </td>
                                                         @else
                                                             <td>-</td>

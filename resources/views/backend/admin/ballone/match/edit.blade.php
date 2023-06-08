@@ -88,12 +88,24 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <div class="col-sm-6 d-flex">
+                                        <div class="col-sm-12 d-flex">
                                             <label for="other" class="control-label">
                                                 ကြားကွင်း
                                             </label>
-                                            <input type="checkbox" id="other" name="other[0]" value="1"
-                                                class="ml-2">
+
+                                            <div>
+                                                <input type="radio" id="home_other" name="other" value="1"
+                                                class="ml-2" {{ $match->other == 1 ? 'checked' : '' }}>
+                                                <label class="ml-2 align-middle" for="home_other"> Home </label>
+
+                                                <input type="radio" id="away_other" name="other" value="2"
+                                                class="ml-2" {{ $match->other == 2 ? 'checked' : '' }}>
+                                                <label class="ml-2 align-middle" for="away_other"> Away </label>
+
+                                                <input type="radio" id="no_other" name="other" value="0"
+                                                class="ml-2" {{ $match->other == 0 ? 'checked' : '' }}>
+                                                <label class="ml-2 align-middle" for="no_other"> None </label>
+                                            </div>
                                         </div>
                                     </div>
 
