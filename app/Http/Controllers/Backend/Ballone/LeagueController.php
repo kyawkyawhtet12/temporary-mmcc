@@ -19,7 +19,7 @@ class LeagueController extends Controller
 
         if ($request->ajax()) {
             $query = League::orderBy('id', 'DESC')->get();
-        
+
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('created_at', function ($league) {
@@ -27,11 +27,20 @@ class LeagueController extends Controller
                     })
                     ->addColumn('action', function ($league) {
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$league->id.'" data-original-title="Edit" class="edit btn btn-outline-warning editLeague">Edit</a>';
-                        
+
                         $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$league->id.'" data-original-title="Delete" class="btn btn-outline-danger deleteLeague">Delete</a>';
                         return $btn;
                     })
-                    
+                    ->filter(function ($instance) use ($request) {
+                        if (!empty($request->get('search'))) {
+                            $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                                if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+                                    return true;
+                                }
+                                return false;
+                            });
+                        }
+                    })
                     ->rawColumns(['action'])
                     ->make(true);
         }
@@ -45,7 +54,7 @@ class LeagueController extends Controller
             // 'country' => 'required',
             'level' => 'nullable',
         ]);
-    
+
         League::updateOrCreate([
             'id'   => $request->league_id,
         ], [
@@ -53,7 +62,7 @@ class LeagueController extends Controller
             'country' => '-',
             'level' => $request->level,
         ]);
-   
+
         return response()->json(['success'=>'League saved successfully.']);
     }
 
