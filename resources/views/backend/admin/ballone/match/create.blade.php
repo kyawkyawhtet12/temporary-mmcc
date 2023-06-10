@@ -174,7 +174,7 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <div class="col-sm-6 d-flex">
+                                            <div class="col-sm-12x d-flex">
                                                 <label for="other" class="control-label">
                                                     ကြားကွင်း
                                                 </label>

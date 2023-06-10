@@ -120,10 +120,10 @@
                                                 <td> {{ $fee?->upteam_name }} {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>
-                                                <td> {{ $fee?->result?->home }} </td>
-                                                <td> {{ $fee?->result?->away }} </td>
-                                                <td> {{ $fee?->result?->over }} </td>
-                                                <td> {{ $fee?->result?->under }} </td>
+                                                <td> {{ check_plus_format($fee?->result?->home) }} </td>
+                                                <td> {{ check_plus_format($fee?->result?->away) }} </td>
+                                                <td> {{ check_plus_format($fee?->result?->over) }} </td>
+                                                <td> {{ check_plus_format($fee?->result?->under) }} </td>
                                             </tr>
                                         @endif
                                     @endforeach
@@ -160,10 +160,10 @@
                                                 <td>{{ $maungfee?->upteam_name }} {{ $maungfee?->body }} /
                                                     {{ $maungfee?->goals }}</td>
                                                 <td> : </td>
-                                                <td> {{ $maungfee?->result?->home }} </td>
-                                                <td> {{ $maungfee?->result?->away }} </td>
-                                                <td> {{ $maungfee?->result?->over }} </td>
-                                                <td> {{ $maungfee?->result?->under }} </td>
+                                                <td> {{ check_plus_format($maungfee?->result?->home) }} </td>
+                                                <td> {{ check_plus_format($maungfee?->result?->away) }} </td>
+                                                <td> {{ check_plus_format($maungfee?->result?->over) }} </td>
+                                                <td> {{ check_plus_format($maungfee?->result?->under) }} </td>
                                             </tr>
                                         @endif
                                     @endforeach

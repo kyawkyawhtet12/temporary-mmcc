@@ -103,7 +103,7 @@ class CalculationController extends Controller
                     // $maungGroup->decrement('count', 1);
                     $maungGroup->bet->update(['net_amount' => $net_amount ]);
                 } else {
-                    $win_amount = $betAmount * ($percent / 100); // -250
+                    // $win_amount = $betAmount * ($percent / 100); // -250
 
                     if( $percent == '-100'){
                         $maung->update([ 'status' => 2 ]);
@@ -137,7 +137,7 @@ class CalculationController extends Controller
                     $win = $maungGroup->bet->net_amount;
 
                     $charge = $win * ($percent / 100);
-                    $amount = $win - $charge;
+                    $amount = (int) ($win - $charge);
 
                     $user->increment('amount', $amount);
                     $maungGroup->bet->update(['status' => 1 , 'net_amount' => $amount ]);
