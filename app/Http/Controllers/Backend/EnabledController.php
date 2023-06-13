@@ -23,4 +23,16 @@ class EnabledController extends Controller
         $enable->save();
         return response()->json(['message' => 'Lottery status changed successfully.']);
     }
+
+    // Close (or) Open For All Bets
+    public function close_all_bets()
+    {
+        $data = Enabled::find(1);
+
+        $data->update([
+            'close_all_bets' => !$data->close_all_bets
+        ]);
+
+        return back();
+    }
 }

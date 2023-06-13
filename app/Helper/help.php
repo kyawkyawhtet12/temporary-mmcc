@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Enabled;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,4 +24,10 @@ function get_date_time_format($match)
 function check_plus_format($number)
 {
     return ($number > 0) ? "+{$number}" : $number;
+}
+
+function check_close_all_bets()
+{
+    $data = Enabled::find(1)->close_all_bets;
+    return ($data) ? "Open All Bets" : "Close All Bets";
 }

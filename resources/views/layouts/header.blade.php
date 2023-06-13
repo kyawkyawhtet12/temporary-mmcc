@@ -33,7 +33,11 @@
                 </button>
             </div>
 
-            <div class="d-flex align-items-center">                
+            <div class="d-flex align-items-center">
+
+                <a href="{{  route('close-all-bets') }}" class="text-white">
+                    {{ check_close_all_bets() }}
+                </a>
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
@@ -55,7 +59,7 @@
                         <a class="dropdown-item" href="{{ route('profile') }}"><i
                                 class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
                                 class="align-middle">Profile</span></a>
-                        
+
                         <a class="dropdown-item" href="#" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                             <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                             <span class="align-middle" data-key="t-logout">Logout</span>
@@ -65,7 +69,7 @@
                         </form>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>

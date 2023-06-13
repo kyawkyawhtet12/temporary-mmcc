@@ -15,9 +15,10 @@ class CreateEnabledsTable extends Migration
     {
         Schema::create('enableds', function (Blueprint $table) {
             $table->id();
-            $table->boolean('two_thai_status')->default('0');
-            $table->boolean('two_dubai_status')->default('0');
-            $table->boolean('three_status')->default('0');
+            $table->boolean('two_thai_status')->default(0);
+            $table->boolean('two_dubai_status')->default(0);
+            $table->boolean('three_status')->default(0);
+            $table->boolean('close_all_bets')->default(0);
             $table->timestamps();
         });
     }

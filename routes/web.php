@@ -52,10 +52,10 @@ Route::group(
 ],
     function () {
         Route::get('agent-dashboard', 'AgentDashboardController@index')->name('agent.dashboard');
-        
+
         Route::get('agent-profile', 'AgentDashboardController@profile')->name('agent.profile');
         Route::get('agent-withdraw', 'AgentDashboardController@withdraw')->name('agent.withdraw');
-        
+
         // Route::get('/agent/users/list', 'Agent\UserController@index')->name('agent.users.index');
         // Route::post('/agent/users/store', 'Agent\UserController@store')->name('agent.users.store');
         Route::post('agent-store', 'Agent\WithdrawalController@store')->name('agent.withdrawal.store');
@@ -112,12 +112,12 @@ Route::group(
         // Agents
         Route::resource('agents', 'AgentController');
         Route::resource('staff', 'StaffController');
-        
+
         Route::get('agent-deposit', 'AgentDepositController@index')->name('agent-deposit.index');
         Route::get('agent-deposit/history', 'AgentDepositController@history')->name('agent-deposit.history');
         Route::post('agent-deposit/accept/{id}', 'AgentDepositController@accept');
         Route::post('agent-deposit/reject/{id}', 'AgentDepositController@reject');
-        
+
         Route::resource('agent-withdraw', 'AgentWithdrawController');
         Route::get('agent-withdrawal/history', 'AgentWithdrawController@history')->name('agent-withdraw.history');
         Route::post('agent-withdrawal/accept/{id}', 'AgentWithdrawController@accept');
@@ -138,11 +138,11 @@ Route::group(
         Route::get('two-thai-lottery', 'EnabledController@twoThaiLotteryStatus')->name('two.thai.changeStatus');
         Route::get('two-dubai-lottery', 'EnabledController@twoDubaiLotteryStatus')->name('two.dubai.changeStatus');
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
-    
+
         Route::post('two-digits/enabled-all', 'AdminController@changeTwoDigitEnable')->name('twodigits.enabled-all');
         Route::post('two-digits/disabled-all', 'AdminController@changeTwoDigitDisable')->name('twodigits.disabled-all');
         Route::post('two-digits/submit-all', 'AdminController@changeTwoDigitSubmit')->name('twodigits.submit-all');
-        
+
         // Setting
         Route::resource('three-lottery-close', 'DisableController');
 
@@ -160,7 +160,7 @@ Route::group(
         Route::put('lottery-times/edit/{id}', 'LotteryTimeController@update')->name('lottery-time.update');
 
         Route::resource('banner', 'BannerImageController');
-        
+
         // Ballone
         Route::resource('ballone/league', 'Ballone\LeagueController', ['as' => 'ballone' ]);
         Route::resource('ballone/club', 'Ballone\ClubController', ['as' => 'ballone' ]);
@@ -168,7 +168,7 @@ Route::group(
 
         Route::resource('ballone/body', 'Ballone\BodyFeesController', ['as' => 'ballone' ]);
         Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballone' ]);
-        
+
         // Ballone Maung Limit
         Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
         Route::get('ballone/maung-limit/show', 'Ballone\MaungLimitController@show')->name('ballone.maung-limit.get');
@@ -188,10 +188,10 @@ Route::group(
         // Ballone Refund
         Route::post('ballone/match/refund/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');
         Route::get('ballone/matches-refund', 'Ballone\MatchController@refundHistory')->name('ballone.match.refund.history');
-        
+
         Route::get('matches-history', 'Ballone\MatchController@matchHistory')->name('ballone.match.history');
         Route::post('matches-result', 'Ballone\MatchController@updateResult')->name('ballone.match.result');
-        
+
         Route::post('calculate-body-result', 'Ballone\CalculationController@calculateBodyResult')->name('ballone.calculate.body.result');
         Route::post('calculate-maung-result', 'Ballone\CalculationController@calculateMaungResult')->name('ballone.calculate.maung.result');
 
@@ -224,5 +224,7 @@ Route::group(
         Route::get('/3d-disable', 'ThreeDigitDisableController@index')->name('3d.disable');
         Route::post('/3d-disable', 'ThreeDigitDisableController@store')->name('3d.disable.post');
         Route::delete('/3d-disable/{id}', 'ThreeDigitDisableController@enable')->name('3d.disable.delete');
+
+        Route::get('/close-all-bets', 'EnabledController@close_all_bets')->name('close-all-bets');
     }
 );
