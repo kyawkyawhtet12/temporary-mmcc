@@ -228,11 +228,7 @@ class MatchController extends Controller
         $leagues = League::all();
         $clubs = Club::where('league_id', $match->league_id)->get();
 
-        if (count($match->bodies) == 0 && count($match->maungs) == 0 && $match->score == null) {
-            return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs'));
-        }
-
-        return redirect('/admin/ballone/match')->with('error', '* something is wrong.');
+        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs'));
     }
 
     public function update(Request $request, $id)
