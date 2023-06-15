@@ -34,4 +34,28 @@ class FootballMaungFee extends Model
             return $this->match->away->name;
         }
     }
+
+    public function getMatchStatusAttribute()
+    {
+        if( $this->match->calculate_maung  && $this->status == 0){
+            return "done-old";
+        }
+
+        if( $this->match->calculate_maung){
+            return "done";
+        }
+
+        if( $this->status == 0){
+            return "old";
+        }
+
+        if( $this->match->type == 0 ){
+            return "refund";
+        }
+
+        if( $this->match->date_time < now() )
+        {
+            return "time-old";
+        }
+    }
 }

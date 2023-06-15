@@ -53,22 +53,13 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a class="nav-link menu-link" href="#ballone-today-report" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="ballone-today-report">
                         <i class="ri-award-line"></i> <span data-key="t-apps">Ballone Today Report</span>
                     </a>
                     <div class="collapse menu-dropdown" id="ballone-today-report">
                         <ul class="nav nav-sm flex-column">
-                            {{-- <li class="nav-item">
-                                <a href="{{ route('ballone.match-body-list') }}" class="nav-link" data-key="t-calendar">
-                                    Body Match List </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('ballone.match-maung-list') }}" class="nav-link"
-                                    data-key="t-calendar">
-                                    Maung Match List </a>
-                            </li> --}}
                             <li class="nav-item">
                                 <a href="{{ route('ballone.today-report') }}" class="nav-link" data-key="t-calendar">
                                     Today Report </a>
@@ -83,7 +74,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li> --}}
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#lucky-numbers" data-bs-toggle="collapse" role="button"

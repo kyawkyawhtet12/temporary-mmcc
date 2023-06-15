@@ -11,19 +11,14 @@ use App\Http\Controllers\Controller;
 
 class AddResultController extends Controller
 {
-    public function index($id)
+    public function body($id)
     {
         $match = FootballMatch::findOrFail($id);
-        return view("backend.admin.ballone.match.result", compact("match"));
-        // if (!$match->score) {
-        //     return view("backend.admin.ballone.match.result", compact("match"));
-        // }
+        return view("backend.admin.ballone.match.body-result", compact("match"));
     }
 
-    public function add(Request $request, $id)
+    public function addBody(Request $request, $id)
     {
-        // return $request->all();
-
         $match = FootballMatch::findOrFail($id);
 
         $this->validate($request, [
@@ -31,20 +26,38 @@ class AddResultController extends Controller
             'away' => 'required'
         ]);
 
-        // $match->update([ 'temp_score' => $request->home .' '. '-' .' '. $request->away ]);
-
         $footballBodyFee = FootballBodyFee::where('match_id', $id)->get();
-        $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
 
         foreach ($footballBodyFee as $bodyFees) {
             $this->calculation($bodyFees, $request);
         }
 
+        $match->update(['body_temp_score' => $request->home .' '. '-' .' '. $request->away ]);
+
+        return back();
+    }
+
+    public function maung($id)
+    {
+        $match = FootballMatch::findOrFail($id);
+        return view("backend.admin.ballone.match.maung-result", compact("match"));
+    }
+
+    public function addMaung(Request $request, $id)
+    {
+        $match = FootballMatch::findOrFail($id);
+
+        $this->validate($request, [
+            'home' => 'required',
+            'away' => 'required'
+        ]);
+        $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
+
         foreach ($footballMaungFee as $maungFees) {
             $this->calculation($maungFees, $request);
         }
 
-        $match->update(['calculate' => 0 , 'temp_score' => $request->home .' '. '-' .' '. $request->away ]);
+        $match->update(['maung_temp_score' => $request->home .' '. '-' .' '. $request->away ]);
 
         return back();
     }

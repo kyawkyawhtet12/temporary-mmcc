@@ -1,5 +1,6 @@
 @extends('layouts.master')
 
+
 @section('css')
     <link
         href="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}"
@@ -10,12 +11,24 @@
             height: 30px;
         }
 
-        #done {
+        .done {
             background-color: #0ed318 !important;
         }
 
         .old {
             background: rgb(238 236 236) !important
+        }
+
+        .done-old{
+            background-color: #84e388 !important;
+        }
+
+        .time-old{
+            background-color: #fbe376 !important;
+        }
+
+        .refund{
+            background-color: #ffb59c !important;
         }
 
         table a.match-detail {
@@ -80,10 +93,11 @@
                                         </div>
                                     @endif
 
-                                    <div class="table-responsive">
-                                        <table id="matchese" class="table table-bordered nowrap text-center">
+                                    <div class="table-responive">
+                                        <table id="table_id" class="table table-bordered no-warp text-center">
                                             <thead>
                                                 <tr>
+                                                    <th>Round</th>
                                                     <th>Match</th>
                                                     <th class="sorting_disabled">Date Time</th>
                                                     <th class="sorting_disabled">Result</th>
@@ -100,18 +114,20 @@
                                             </thead>
                                             <tbody>
                                                 @forelse ($data as $x => $dt)
-                                                    <tr id="{{ $dt->match->calculate ? 'done' : '' }}"
-                                                        class="{{ $dt->status == 0 ? 'old' : '' }}">
+                                                    <tr class="{{ $dt->match_status }}" >
+                                                        <td> {{  $dt->match->round }} </td>
                                                         <td>
                                                             <a href="{{ route('match.report', $dt->match->id) }}"
                                                                 class="match-detail">
-                                                                ({{ $dt->match->home_no }})
+                                                                {{-- ({{ $dt->match->home_no }})
                                                                 {{ $dt->match->home->name }}
-                                                                {{ $dt->match->other_status }}
+                                                                {{ $dt->match->home_other_status }}
                                                                 Vs
                                                                 ({{ $dt->match->away_no }})
                                                                 {{ $dt->match->away->name }}
-                                                                {{ $dt->match->other_status }}
+                                                                {{ $dt->match->away_other_status }} --}}
+
+                                                                {{  $dt->match->match_format }}
                                                             </a>
                                                         </td>
                                                         <td>{{ get_date_time_format($dt->match) }}</td>
@@ -132,18 +148,18 @@
                                                             {{ $dt->goals }}
                                                         </td>
 
-                                                        @if ($dt->match->calculate)
+                                                        @if ($dt->match->calculate && $dt->result)
                                                             <td>
-                                                                {{ $dt->result->home }}
+                                                                {{ check_plus_format($dt->result->home) }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->result->away }}
+                                                                {{ check_plus_format($dt->result->away) }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->result->home }}
+                                                                {{ check_plus_format($dt->result->over) }}
                                                             </td>
                                                             <td>
-                                                                {{ $dt->result->home }}
+                                                                {{ check_plus_format($dt->result->under) }}
                                                             </td>
                                                         @else
                                                             <td>-</td>
@@ -164,14 +180,14 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->score == null)
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->score == null && $dt->match->type == 1)
                                                                 <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
                                                                     class="text-success">
                                                                     <i class="fa fa-edit text-success m-r-10"></i></a>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0)
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Delete" class="deleteMatch mr-2">
@@ -195,6 +211,11 @@
                                             </tbody>
                                         </table>
                                     </div>
+
+                                    <div class="mt-3">
+                                        {{  $data->links() }}
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -206,27 +227,14 @@
 @endsection
 
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
-    <script
-        src="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}">
-    </script>
-
     <script>
-        $(document).ready(function() {
 
+        $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-            var table = $('#matchese').DataTable({
-                paging: true
-            });
-
-
-
         });
 
         $('body').on('click', '.deleteMatch', function() {

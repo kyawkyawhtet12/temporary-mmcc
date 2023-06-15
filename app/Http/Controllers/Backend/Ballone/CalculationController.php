@@ -15,29 +15,15 @@ use App\Models\FootballMaungFeeResult;
 
 class CalculationController extends Controller
 {
-    public function index($id)
+    public function body($id)
     {
         // find match id is exist or not
         $match = FootballMatch::with('bodies')->findOrFail($id);
 
         // Body Calculation
-        $this->bodyCalculation($match->bodies);
-
-        // Maung Calculation
-        $maungs = FootballMaung::where('match_id', $id)->whereStatus(0)->get();
-        $this->maungCalculation($maungs);
-
-        // Match Calculate finish update
-        $match->update([ 'score' => $match->temp_score , 'calculate' => 1 ]);
-
-        return redirect('/admin/ballone/match')->with('success', '* calculation successfully done.');
-    }
-
-    public function bodyCalculation($bodies)
-    {
         $charge_percent = FootballBodySetting::find(1)->percentage;
 
-        foreach ($bodies as $body) {
+        foreach ($match->bodies as $body) {
             $result = FootballBodyFeeResult::where('fee_id', $body->fee_id)->first();
 
             $type = $body->type;
@@ -75,10 +61,21 @@ class CalculationController extends Controller
             $body->user->increment('amount', $net_amount);
             $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
         }
+
+        // Match Calculate finish update
+        $match->update([ 'score' => $match->body_temp_score , 'calculate_body' => 1 ]);
+
+        return redirect('/admin/ballone/body')->with('success', '* calculation successfully done.');
     }
 
-    public function maungCalculation($maungs)
+    public function maung($id)
     {
+        // find match id is exist or not
+        $match = FootballMatch::with('maungs')->findOrFail($id);
+
+        // Maung Calculation
+        $maungs = FootballMaung::where('match_id', $id)->whereStatus(0)->get();
+
         foreach ($maungs as $maung) {
             $maungGroup = FootballMaungGroup::with('bet')->find($maung->maung_group_id);
 
@@ -89,8 +86,6 @@ class CalculationController extends Controller
                 $type = $maung->type;
                 $percent =  $result->$type;
 
-                $user = User::find($maung->user_id);
-
                 $betAmount = $maungGroup->bet->net_amount == 0 ?
                                     $maungGroup->bet->amount :
                                     $maungGroup->bet->net_amount;
@@ -100,11 +95,8 @@ class CalculationController extends Controller
                                                         $betAmount :
                                                         $maungGroup->bet->net_amount;
                     $maung->update([ 'status' => 3 ]);
-                    // $maungGroup->decrement('count', 1);
                     $maungGroup->bet->update(['net_amount' => $net_amount ]);
                 } else {
-                    // $win_amount = $betAmount * ($percent / 100); // -250
-
                     if( $percent == '-100'){
                         $maung->update([ 'status' => 2 ]);
                         $maungGroup->bet->update(['status' => 2 , 'net_amount' => 0]);
@@ -114,16 +106,6 @@ class CalculationController extends Controller
                         $maung->update([ 'status' => 1 ]);
                         $maungGroup->bet->update(['net_amount' => $net_amount ]);
                     }
-
-                    // if ($win_amount > 0) {
-                    //     $amount = $betAmount + ($betAmount * ($percent / 100));
-                    //     $net_amount = $betAmount + ($amount - $betAmount);
-                    //     $maung->update([ 'status' => 1 ]);
-                    //     $maungGroup->bet->update(['net_amount' => $net_amount ]);
-                    // } else {
-                    //     $maung->update([ 'status' => 2 ]);
-                    //     $maungGroup->bet->update(['status' => 2 , 'net_amount' => 0]);
-                    // }
                 }
 
                 // တွက်ရန် အသင်း ကျန်မကျန် ရှာ
@@ -134,8 +116,8 @@ class CalculationController extends Controller
                 // မကျန်တော့ရင် အလျော်အစားလုပ်
                 if ($data == 0) {
                     $percent = FootballMaungZa::where('teams', $maungGroup->count)->first()->percent;
-                    $win = $maungGroup->bet->net_amount;
 
+                    $win = $maungGroup->bet->net_amount;
                     $charge = $win * ($percent / 100);
                     $amount = (int) ($win - $charge);
 
@@ -144,5 +126,11 @@ class CalculationController extends Controller
                 }
             }
         }
+
+        // Match Calculate finish update
+        $match->update([ 'score' => $match->maung_temp_score , 'calculate_maung' => 1 ]);
+
+        return redirect('/admin/ballone/maung')->with('success', '* calculation successfully done.');
     }
+
 }
