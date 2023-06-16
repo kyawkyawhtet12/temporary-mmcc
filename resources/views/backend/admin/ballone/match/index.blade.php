@@ -100,14 +100,7 @@
                                                     <th>Round</th>
                                                     <th>Match</th>
                                                     <th class="sorting_disabled">Date Time</th>
-                                                    <th class="sorting_disabled">Result</th>
-                                                    <th class="sorting_disabled" colspan="2">Body</th>
-                                                    <th class="sorting_disabled">Goals</th>
-                                                    <th class="sorting_disabled">Home</th>
-                                                    <th class="sorting_disabled">Away</th>
-                                                    <th class="sorting_disabled">Over</th>
-                                                    <th class="sorting_disabled">Under</th>
-                                                    <th class="sorting_disabled">Add Result</th>
+
                                                     <th class="sorting_disabled">Edit</th>
                                                     <th class="sorting_disabled">Action</th>
                                                 </tr>
@@ -117,74 +110,13 @@
                                                     <tr class="{{ $dt->match_status }}" >
                                                         <td> {{  $dt->match->round }} </td>
                                                         <td>
-                                                            <a href="{{ route('match.report', $dt->match->id) }}"
-                                                                class="match-detail">
-                                                                {{-- ({{ $dt->match->home_no }})
-                                                                {{ $dt->match->home->name }}
-                                                                {{ $dt->match->home_other_status }}
-                                                                Vs
-                                                                ({{ $dt->match->away_no }})
-                                                                {{ $dt->match->away->name }}
-                                                                {{ $dt->match->away_other_status }} --}}
-
-                                                                {{  $dt->match->match_format }}
-                                                            </a>
+                                                            {{  $dt->match->match_format }}
                                                         </td>
                                                         <td>{{ get_date_time_format($dt->match) }}</td>
-
-                                                        <td>{{ $dt->match->score }}</td>
-
                                                         <td>
-                                                            @if ($dt->up_team == 1)
-                                                                {{ $dt->body }}
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if ($dt->up_team == 2)
-                                                                {{ $dt->body }}
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            {{ $dt->goals }}
-                                                        </td>
-
-                                                        @if ($dt->match->calculate && $dt->result)
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->home) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->away) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->over) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->under) }}
-                                                            </td>
-                                                        @else
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                        @endif
-
-                                                        <td>
-                                                            @if (!$dt->match->calculate && $dt->match->type == 1)
-                                                                <a href="/admin/ballone-add-result/{{ $dt->match->id }}">
-                                                                    <i class="fa fa-plus-square text-inverse m-r-10"></i>
-                                                                </a>
-                                                            @endif
-
-                                                            @if ($dt->match->type == 0)
-                                                                Refund Match
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->score == null && $dt->match->type == 1)
-                                                                <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
-                                                                    class="text-success">
-                                                                    <i class="fa fa-edit text-success m-r-10"></i></a>
-                                                            @endif
+                                                            <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
+                                                                class="text-success">
+                                                                <i class="fa fa-edit text-success m-r-10"></i></a>
                                                         </td>
                                                         <td>
                                                             @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)
@@ -194,7 +126,7 @@
                                                                     <i class="fa fa-trash text-danger m-r-10"></i></a>
                                                             @endif
 
-                                                            @if ($dt->match->score === null && $dt->match->type == 1)
+                                                            @if (!$dt->match->score && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Refund" class="cancelMatch">

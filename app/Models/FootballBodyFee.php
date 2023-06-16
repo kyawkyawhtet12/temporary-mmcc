@@ -37,11 +37,11 @@ class FootballBodyFee extends Model
 
     public function getMatchStatusAttribute()
     {
-        if( $this->match->calculate  && $this->status == 0){
+        if( $this->match->calculate_body  && $this->status == 0){
             return "done-old";
         }
 
-        if( $this->match->calculate){
+        if( $this->match->calculate_body){
             return "done";
         }
 

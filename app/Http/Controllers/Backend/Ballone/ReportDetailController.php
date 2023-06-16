@@ -10,12 +10,26 @@ use App\Http\Controllers\Controller;
 
 class ReportDetailController extends Controller
 {
-    public function index($id)
+    // public function index($id)
+    // {
+    //     $body = FootballBody::with('user', 'agent', 'bet')->where('match_id', $id)->get();
+    //     $maung = FootballMaung::with('user', 'agent', 'bet')->where('match_id', $id)->get();
+
+    //     return view('backend.admin.ballone.report.detail', compact('body', 'maung'));
+    // }
+
+    public function bodyReport($id)
     {
         $body = FootballBody::with('user', 'agent', 'bet')->where('match_id', $id)->get();
+
+        return view('backend.admin.ballone.match.body-detail', compact('body'));
+    }
+
+    public function maungReport($id)
+    {
         $maung = FootballMaung::with('user', 'agent', 'bet')->where('match_id', $id)->get();
-        
-        return view('backend.admin.ballone.report.detail', compact('body', 'maung'));
+
+        return view('backend.admin.ballone.match.maung-detail', compact('maung'));
     }
 
     public function bodyDetail($id)

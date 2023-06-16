@@ -6,13 +6,34 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
-        #resultForm input.text {
+       #resultForm input.text {
             height: 30px;
+        }
+
+        .done {
+            background-color: #0ed318 !important;
         }
 
         .old {
             background: rgb(238 236 236) !important
         }
+
+        .done-old{
+            background-color: #84e388 !important;
+        }
+
+        .time-old{
+            background-color: #fbe376 !important;
+        }
+
+        .refund{
+            background-color: #ffb59c !important;
+        }
+
+        table a.match-detail {
+            color: black !important;
+        }
+
         .table-bordered th,
         .table-bordered td {
             border: 1px solid #e0e0ef !important;
@@ -58,40 +79,89 @@
                                                     <th>Round</th>
                                                     <th>Match</th>
                                                     <th>Date Time</th>
-                                                    <th>Body (Home)</th>
-                                                    <th>Body (Away)</th>
+                                                    <th>Result</th>
+                                                    <th colspan="2"> Body </th>
                                                     <th>Goals</th>
+                                                    <th>Home</th>
+                                                    <th>Away</th>
+                                                    <th>Over</th>
+                                                    <th>Under</th>
+                                                    <th>Add Result</th>
                                                     <th>By</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($data as $dt)
-                                                    <tr class="{{ $dt->status == 0 ? 'old' : '' }}">
-                                                        <td>{{ $dt->match->round }}</td>
+                                                    <tr class="{{ $dt->match_status }}">
+                                                        <td>{{  $dt->match->round }}</td>
                                                         <td>
-                                                            {{ $dt->match->match_format }}
+                                                            <a href="{{ route('match.maung-report', $dt->match->id) }}"
+                                                                class="match-detail">
+                                                                {{  $dt->match->match_format }}
+                                                            </a>
                                                         </td>
                                                         <td>
                                                             {{ get_date_time_format($dt->match) }}
                                                         </td>
+                                                        <td>{{ $dt->match->maung_temp_score }}</td>
+
                                                         <td>
-                                                            {{ $dt->up_team == 1 ? $dt->body : '' }}
+                                                            @if ($dt->up_team == 1)
+                                                                {{ $dt->body }}
+                                                            @endif
                                                         </td>
                                                         <td>
-                                                            {{ $dt->up_team == 2 ? $dt->body : '' }}
+                                                            @if ($dt->up_team == 2)
+                                                                {{ $dt->body }}
+                                                            @endif
                                                         </td>
                                                         <td>
                                                             {{ $dt->goals }}
+                                                        </td>
+
+                                                        @if ($dt->match->calculate_maung && $dt->result)
+                                                            <td>
+                                                                {{ check_plus_format($dt->result->home) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ check_plus_format($dt->result->away) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ check_plus_format($dt->result->over) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ check_plus_format($dt->result->under) }}
+                                                            </td>
+                                                        @else
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                        @endif
+
+                                                        <td>
+                                                            @if (!$dt->match->calculate_maung && $dt->match->type == 1)
+                                                                <a href="/admin/ballone-add-result/maung/{{ $dt->match->id }}">
+                                                                    <i class="fa fa-plus-square text-inverse m-r-10"></i>
+                                                                </a>
+                                                            @endif
+
+                                                            @if ($dt->match->type == 0)
+                                                                Refund Match
+                                                            @endif
                                                         </td>
                                                         <td>
                                                             {{ $dt->user?->name }}
                                                         </td>
                                                         <td>
+                                                            @if( !$dt->match->calculate_maung )
                                                             <a href="javascript:void(0)" data-toggle="tooltip"
                                                                 data-id=" {{ $dt->match->id }}" data-original-title="Edit"
-                                                                class="editMatch mr-2"><i
-                                                                    class="fa fa-edit text-inverse m-r-10"></i></a>
+                                                                class="editMatch mr-2">
+                                                                <i class="fa fa-edit text-inverse m-r-10"></i>
+                                                            </a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -137,7 +207,7 @@
                             <div class="input-group mb-3">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="">Body</span>
+                                        <span class="input-group-text" id="">Maung</span>
                                     </div>
                                     <input name="home_body" id="home_body" type="text" class="form-control">
 
