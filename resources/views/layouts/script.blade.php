@@ -58,5 +58,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/dropzone.js"></script>
 
 
- @yield('script')
- @stack('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript">
+     $(document).ready(function () {
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('.close-all-bets').change(function() {
+            $.ajax({
+                type: "GET",
+                url: '{{ route('close-all-bets') }}',
+                success: function(data) {
+                    toastr.options.closeButton = true;
+                    toastr.options.closeMethod = 'fadeOut';
+                    toastr.options.closeDuration = 100;
+                    toastr.success('successfully done');
+                }
+            });
+        });
+    });
+</script>
+
+@yield('script')
+@stack('scripts')
+

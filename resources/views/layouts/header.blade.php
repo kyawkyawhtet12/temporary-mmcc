@@ -35,9 +35,14 @@
 
             <div class="d-flex align-items-center">
 
-                <a href="{{  route('close-all-bets') }}" class="text-white">
-                    {{ check_close_all_bets() }}
-                </a>
+               <div class="me-5">
+                    <input class="close-all-bets" type="checkbox" data-toggle="toggle"
+                        data-onstyle="success" data-offstyle="danger"
+                        data-on="<i class='fa fa-pause'></i> Close All Bets"
+                        data-off="<i class='fa fa-play'></i> Open All Bets"
+                        {{ check_close_all_bets() }}
+                    >
+               </div>
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"

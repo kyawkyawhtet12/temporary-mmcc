@@ -29,5 +29,5 @@ function check_plus_format($number)
 function check_close_all_bets()
 {
     $data = Enabled::find(1)->close_all_bets;
-    return ($data) ? "Open All Bets" : "Close All Bets";
+    return ($data) ? '' : 'checked';
 }
