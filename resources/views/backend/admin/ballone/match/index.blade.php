@@ -116,7 +116,8 @@
                                                         <td>
                                                             <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
                                                                 class="text-success">
-                                                                <i class="fa fa-edit text-success m-r-10"></i></a>
+                                                                <i class="fa fa-edit text-success m-r-10"></i>
+                                                            </a>
                                                         </td>
                                                         <td>
                                                             @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)

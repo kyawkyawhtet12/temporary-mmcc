@@ -33,8 +33,8 @@ Route::get('/dashboard', function () {
 
 Route::get('/login/admin', 'Auth\LoginController@showAdminLoginForm')->name('login.admin');
 Route::post('/login/admin', 'Auth\LoginController@adminLogin')->name('admin.login');
-Route::get('/login/agent', 'Auth\LoginController@showAgentLoginForm')->name('login.agent');
-Route::post('/login/agent', 'Auth\LoginController@agentLogin')->name('agent.login');
+// Route::get('/login/agent', 'Auth\LoginController@showAgentLoginForm')->name('login.agent');
+// Route::post('/login/agent', 'Auth\LoginController@agentLogin')->name('agent.login');
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::post('change-password', 'Backend\AdminController@store')->name('change.password');
 
@@ -45,28 +45,28 @@ Route::group(['middleware' => ['auth:admin'], 'namespace' => 'Backend'], functio
 Route::get('/profile', 'Backend\ProfileController@index')->name('profile');
 Route::post('/profile/update', 'Backend\ProfileController@update')->name('profile.update');
 
-Route::group(
-    [
-    'middleware' => 'auth:agent',
-    'namespace' => 'Backend',
-],
-    function () {
-        Route::get('agent-dashboard', 'AgentDashboardController@index')->name('agent.dashboard');
+// Route::group(
+//     [
+//     'middleware' => 'auth:agent',
+//     'namespace' => 'Backend',
+// ],
+//     function () {
+//         Route::get('agent-dashboard', 'AgentDashboardController@index')->name('agent.dashboard');
 
-        Route::get('agent-profile', 'AgentDashboardController@profile')->name('agent.profile');
-        Route::get('agent-withdraw', 'AgentDashboardController@withdraw')->name('agent.withdraw');
+//         Route::get('agent-profile', 'AgentDashboardController@profile')->name('agent.profile');
+//         Route::get('agent-withdraw', 'AgentDashboardController@withdraw')->name('agent.withdraw');
 
-        // Route::get('/agent/users/list', 'Agent\UserController@index')->name('agent.users.index');
-        // Route::post('/agent/users/store', 'Agent\UserController@store')->name('agent.users.store');
-        Route::post('agent-store', 'Agent\WithdrawalController@store')->name('agent.withdrawal.store');
-        Route::get('/agent-withdrawal', 'Agent\WithdrawalController@index')->name('agent.withdrawal-form');
-        Route::get('/agent-withdrawal/history', 'Agent\WithdrawalController@history')->name('agent.withdrawal-history');
-    }
-);
+//         // Route::get('/agent/users/list', 'Agent\UserController@index')->name('agent.users.index');
+//         // Route::post('/agent/users/store', 'Agent\UserController@store')->name('agent.users.store');
+//         Route::post('agent-store', 'Agent\WithdrawalController@store')->name('agent.withdrawal.store');
+//         Route::get('/agent-withdrawal', 'Agent\WithdrawalController@index')->name('agent.withdrawal-form');
+//         Route::get('/agent-withdrawal/history', 'Agent\WithdrawalController@history')->name('agent.withdrawal-history');
+//     }
+// );
 
-Route::group(['middleware' => 'auth:agent', 'prefix' => 'agent' ,'namespace' => 'Backend'], function () {
-    Route::resource('users', 'Agent\UserController', ['as' => 'agent' ]);
-});
+// Route::group(['middleware' => 'auth:agent', 'prefix' => 'agent' ,'namespace' => 'Backend'], function () {
+//     Route::resource('users', 'Agent\UserController', ['as' => 'agent' ]);
+// });
 
 Route::group(
     [
@@ -161,68 +161,7 @@ Route::group(
         Route::resource('banner', 'BannerImageController');
 
         // Ballone
-        Route::resource('ballone/league', 'Ballone\LeagueController', ['as' => 'ballone' ]);
-        Route::resource('ballone/club', 'Ballone\ClubController', ['as' => 'ballone' ]);
-        Route::resource('ballone/match', 'Ballone\MatchController', ['as' => 'ballone' ]);
-
-        Route::resource('ballone/body', 'Ballone\BodyFeesController', ['as' => 'ballone' ]);
-        Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballone' ]);
-
-        // Ballone Maung Limit
-        Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
-        Route::get('ballone/maung-limit/show', 'Ballone\MaungLimitController@show')->name('ballone.maung-limit.get');
-        Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
-
-        // Ballone Maung Za
-        Route::get('ballone/maung-za', 'Ballone\MaungZaController@index')->name('ballone.maung-za.index');
-        Route::get('ballone/maung-za/show/{id}', 'Ballone\MaungZaController@show')->name('ballone.maung-za.get');
-        Route::post('ballone/maung-za/store', 'Ballone\MaungZaController@store')->name('ballone.maung-za.store');
-        Route::delete('ballone/maung-za/{id}', 'Ballone\MaungZaController@destroy')->name('ballone.maung-za.delete');
-
-        // Ballone Body Setting
-        Route::get('ballone/body-setting', 'Ballone\BodySettingController@index')->name('ballone.body-setting.index');
-        Route::get('ballone/body-setting/show', 'Ballone\BodySettingController@show')->name('ballone.body-setting.get');
-        Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
-
-        // Ballone Refund
-        Route::post('ballone/match/refund/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');
-        Route::get('ballone/matches-refund', 'Ballone\MatchController@refundHistory')->name('ballone.match.refund.history');
-
-        Route::get('matches-history', 'Ballone\MatchController@matchHistory')->name('ballone.match.history');
-        Route::post('matches-result', 'Ballone\MatchController@updateResult')->name('ballone.match.result');
-
-        Route::post('calculate-body-result', 'Ballone\CalculationController@calculateBodyResult')->name('ballone.calculate.body.result');
-        Route::post('calculate-maung-result', 'Ballone\CalculationController@calculateMaungResult')->name('ballone.calculate.maung.result');
-
-        Route::get('get-clubs/{league}', 'Ballone\MatchController@getClubs')->name('ballone.get-clubs');
-
-        // Ballone Bet Report
-        // Route::get('/ballone-today-report', 'Report\BalloneReportController@today')->name('ballone.today-report');
-        // Route::get('body-today-report', 'Ballone\ReportController@bodyTodayReport')->name('ballone.body.today-report');
-        // Route::get('maung-today-report', 'Ballone\ReportController@maungTodayReport')->name('ballone.maung.today-report');
-
-        Route::get('match-body-list', 'Ballone\ReportController@index')->name('ballone.match-body-list');
-        Route::get('match-maung-list', 'Ballone\ReportController@maung')->name('ballone.match-maung-list');
-        Route::get('match-body-report/{id}', 'Ballone\ReportController@detail')->name('ballone.body.report');
-        Route::get('match-maung-report/{id}', 'Ballone\ReportController@detail')->name('ballone.maung.report');
-
-        // Ballone Body Add Result & Calculation
-        Route::get('ballone-add-result/body/{id}', 'Ballone\AddResultController@body');
-        Route::post('ballone-add-result/body/{id}', 'Ballone\AddResultController@addBody')->name('calculate.body.result');
-        Route::get('ballone-calculate-result/body/{id}', 'Ballone\CalculationController@body')->name('ballone.calculate.body.result');
-
-         // Ballone Maung Add Result & Calculation
-        Route::get('ballone-add-result/maung/{id}', 'Ballone\AddResultController@maung');
-        Route::post('ballone-add-result/maung/{id}', 'Ballone\AddResultController@addMaung')->name('calculate.maung.result');
-        Route::get('ballone-calculate-result/maung/{id}', 'Ballone\CalculationController@maung')->name('ballone.calculate.maung.result');
-
-        // Match Report
-        Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');
-        Route::get('match/body-report/{id}', 'Ballone\ReportDetailController@bodyReport')->name('match.body-report');
-        Route::get('match/maung-report/{id}', 'Ballone\ReportDetailController@maungReport')->name('match.maung-report');
-
-        Route::get('football/body-detail/{id}', 'Ballone\ReportDetailController@bodyDetail')->name('match.body.detail.report');
-        Route::get('football/maung-detail/{id}', 'Ballone\ReportDetailController@maungDetail')->name('match.maung.detail.report');
+        Route::group([], __DIR__ . '/partials/ballone.php');
 
 
         Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');

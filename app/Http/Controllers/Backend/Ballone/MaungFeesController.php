@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
+use Carbon\Carbon;
 use App\Models\League;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
+use App\Models\FootballBodyFee;
 use App\Models\FootballMaungFee;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\FootballBodyFeeResult;
 use App\Models\FootballMaungFeeResult;
 
 class MaungFeesController extends Controller
@@ -89,5 +92,72 @@ class MaungFeesController extends Controller
     {
         $match = FootballMatch::with('maungFees', 'home', 'away')->find($id);
         return response()->json($match);
+    }
+
+    //
+
+    public function add()
+    {
+        $leagues = League::all();
+        $match = FootballMatch::latest()->first();
+        $round = $match ? $match->round : 1;
+        return view("backend.admin.ballone.match.maung-create", compact('leagues','round'));
+    }
+
+    public function create(Request $request)
+    {
+        // return $request->all();
+
+        $request->validate([
+            'round' => 'required',
+            'home_no' => 'required|array',
+            'away_no' => 'required|array',
+            'league_id' => 'required',
+            'date' => 'required|array',
+            // 'date.*' => 'required',
+            'time' => 'required|array',
+            // 'time.*' => 'required',
+            'home_id' => 'required|array',
+            // 'home_id.*' => 'required',
+            'away_id' => 'required|array',
+            // 'away_id.*' => 'required',
+        ]);
+
+        $times = $request->time;
+
+        foreach ($times as $key => $time) {
+            if ($request->date[$key] && $request->time[$key]) {
+                $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date[$key] . $request->time[$key]);
+
+                $match = FootballMatch::create([
+                            'round' => $request->round,
+                            'home_no' => $request->home_no[$key],
+                            'away_no' => $request->away_no[$key],
+                            'date_time' => $date_time,
+                            'league_id' => $request->league_id,
+                            'home_id' => $request->home_id[$key],
+                            'away_id' => $request->away_id[$key],
+                            'other' => ($request->other && array_key_exists($key, $request->other)) ? $request->other[$key] : 0
+                        ]);
+
+                $body = ($request->home_body[$key]) ?? $request->away_body[$key];
+                $up_team = ($request->home_body[$key]) ? 1 : 2;
+
+                $bodyFees = FootballBodyFee::create(['match_id' => $match->id, 'by'=> Auth::id() ]);
+
+                $maungFees = FootballMaungFee::create([
+                    'match_id' => $match->id,
+                    'body' =>  $body,
+                    'goals' => $request->goals[$key],
+                    'up_team' =>  $up_team,
+                    'by'=> Auth::id()
+                ]);
+
+                FootballBodyFeeResult::create([ 'fee_id' => $bodyFees->id ]);
+                FootballMaungFeeResult::create([ 'fee_id' => $maungFees->id ]);
+            }
+        }
+
+        return redirect('/admin/ballone/maung')->with('success', '* match successfully add.');
     }
 }

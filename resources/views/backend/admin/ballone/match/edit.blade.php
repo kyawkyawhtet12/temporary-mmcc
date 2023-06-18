@@ -22,6 +22,14 @@
             </div>
             <!-- end page title -->
 
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-success" href="{{ $status ? '/admin/ballone/maung' : '/admin/ballone/body' }}">
+                        Back
+                    </a>
+                </div>
+            </div>
+
             <div class="row my-3">
                 <div class="col-lg-6 offset-lg-3">
 
@@ -35,6 +43,8 @@
                     <form action="{{ route('ballone.match.update', $match->id) }}" method="POST" class="form-horizontal">
                         @csrf
                         @method('PUT')
+
+                        <input type="hidden" name="status" value="{{  $status }}">
 
                         <div class="card">
                             <div class="card-body">

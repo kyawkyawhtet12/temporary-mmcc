@@ -32,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('ballone.match.store') }}" method="POST" class="form-horizontal" novalidate>
+                    <form action="{{ route('ballone.maung.fees.store') }}" method="POST" class="form-horizontal" novalidate>
                         @csrf
 
                         <div class="card">
@@ -69,16 +69,16 @@
 
                                     <div class="form-group row">
                                         <div class="col-sm-6">
-                                            <label for="name" class="col-sm-12 control-label">Date</label>
-                                            <div class="col-sm-12">
+                                            <label for="name" class="control-label">Date</label>
+                                            <div>
                                                 <input type="date" id="date" class="form-control" name="date[]"
                                                     required>
                                             </div>
                                         </div>
 
                                         <div class="col-sm-6">
-                                            <label for="name" class="col-sm-12 control-label">Time</label>
-                                            <div class="col-sm-12">
+                                            <label for="name" class="control-label">Time</label>
+                                            <div>
                                                 <input type="time" id="time" class="form-control" name="time[]"
                                                     required>
                                             </div>
@@ -109,17 +109,17 @@
 
                                     <div class="form-group row">
                                         <div class="col-sm-6">
-                                            <label for="home_no" class="col-sm-6 control-label"> Home No
+                                            <label for="home_no" class="control-label"> Home No
                                             </label>
-                                            <div class="col-sm-12">
+                                            <div>
                                                 <input type="number" id="home_no" class="form-control" name="home_no[]">
                                             </div>
                                         </div>
 
                                         <div class="col-sm-6">
-                                            <label for="away_no" class="col-sm-6 control-label"> Away No
+                                            <label for="away_no" class="control-label"> Away No
                                             </label>
-                                            <div class="col-sm-12">
+                                            <div>
                                                 <input type="number" id="away_no" class="form-control" name="away_no[]">
                                             </div>
                                         </div>
@@ -127,9 +127,9 @@
 
                                     <div class="form-group row">
                                         <div class="col-sm-6">
-                                            <label for="home_id" class="col-sm-6 control-label"> Home Team
+                                            <label for="home_id" class="control-label"> Home Team
                                             </label>
-                                            <div class="col-sm-12">
+                                            <div>
                                                 <select class="form-control selectHomeTeam" name="home_id[]" id="home_id"
                                                     required style="width: 100%;">
                                                 </select>
@@ -137,15 +137,44 @@
                                         </div>
 
                                         <div class="col-sm-6">
-                                            <label for="away_id" class="col-sm-12 control-label"> Away Team
+                                            <label for="away_id" class="control-label"> Away Team
                                             </label>
-                                            <div class="col-sm-12">
+                                            <div>
                                                 <select class="form-control selectAwayTeam" name="away_id[]" id="away_id"
                                                     required style="width: 100%;">
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-12 editBet">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="">Body</span>
+                                                    </div>
+                                                    <input name="home_body[]" id="home_body" type="text" class="form-control">
+
+                                                    <input name="away_body[]" id="away_body" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-12 editBet">
+                                            <div class="input-group mb-3">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Goals</span>
+                                                    </div>
+                                                    <input name="goals[]" id="goals" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -157,16 +186,16 @@
 
                                         <div class="form-group row">
                                             <div class="col-sm-6">
-                                                <label for="name" class="col-sm-12 control-label">Date</label>
-                                                <div class="col-sm-12">
+                                                <label for="name" class="control-label">Date</label>
+                                                <div>
                                                     <input type="date" id="date" class="form-control"
                                                         name="date[]" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6">
-                                                <label for="name" class="col-sm-12 control-label">Time</label>
-                                                <div class="col-sm-12">
+                                                <label for="name" class="control-label">Time</label>
+                                                <div>
                                                     <input type="time" id="time" class="form-control"
                                                         name="time[]" required>
                                                 </div>
@@ -174,7 +203,7 @@
                                         </div>
 
                                         <div class="form-group row">
-                                            <div class="col-sm-12x d-flex">
+                                            <div class="col-sm-12 d-flex">
                                                 <label for="other" class="control-label">
                                                     ကြားကွင်း
                                                 </label>
@@ -197,18 +226,18 @@
 
                                         <div class="form-group row">
                                             <div class="col-sm-6">
-                                                <label for="home_no" class="col-sm-6 control-label"> Home No
+                                                <label for="home_no" class="control-label"> Home No
                                                 </label>
-                                                <div class="col-sm-12">
+                                                <div>
                                                     <input type="number" id="home_no" class="form-control"
                                                         name="home_no[]">
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6">
-                                                <label for="away_no" class="col-sm-6 control-label"> Away No
+                                                <label for="away_no" class="control-label"> Away No
                                                 </label>
-                                                <div class="col-sm-12">
+                                                <div>
                                                     <input type="number" id="away_no" class="form-control"
                                                         name="away_no[]">
                                                 </div>
@@ -217,9 +246,9 @@
 
                                         <div class="form-group row">
                                             <div class="col-sm-6">
-                                                <label for="home_id" class="col-sm-6 control-label"> Home Team
+                                                <label for="home_id" class="control-label"> Home Team
                                                 </label>
-                                                <div class="col-sm-12">
+                                                <div>
                                                     <select class="form-control selectHomeTeam" name="home_id[]"
                                                         id="home_id_{{ $i }}" required style="width: 100%;">
                                                     </select>
@@ -227,12 +256,40 @@
                                             </div>
 
                                             <div class="col-sm-6">
-                                                <label for="away_id" class="col-sm-12 control-label"> Away Team
+                                                <label for="away_id" class="control-label"> Away Team
                                                 </label>
-                                                <div class="col-sm-12">
+                                                <div>
                                                     <select class="form-control selectAwayTeam" name="away_id[]"
                                                         id="away_id_{{ $i }}" required style="width: 100%;">
                                                     </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-12 editBet">
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="">Body</span>
+                                                        </div>
+                                                        <input name="home_body[]" id="home_body" type="text" class="form-control">
+
+                                                        <input name="away_body[]" id="away_body" type="text" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-12 editBet">
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Goals</span>
+                                                        </div>
+                                                        <input name="goals[]" id="goals" type="text" class="form-control">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
