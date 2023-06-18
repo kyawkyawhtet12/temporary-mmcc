@@ -40,7 +40,6 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('guest:admin')->except('logout');
-        $this->middleware('guest:agent')->except('logout');
     }
 
     // Admin
@@ -52,7 +51,6 @@ class LoginController extends Controller
 
     public function adminLogin(Request $request)
     {
-        // return "Admin Login";
         $this->validate($request, [
             'email'   => 'required|email',
             'password' => 'required'
@@ -62,28 +60,5 @@ class LoginController extends Controller
             return redirect()->intended(route('dashboard.index'))->with('status', 'You are Logged in as Admin!');
         }
         return back()->withInput($request->only('email', 'remember'));
-    }
-
-    // Agent
-
-    public function showAgentLoginForm()
-    {
-        return view('auth.login', ['url' => 'agent']);
-    }
-
-    public function agentLogin(Request $request)
-    {
-        // return "Agent Login";
-        $this->validate($request, [
-            // 'phone'   => 'required|phone:MM',
-            'password' => 'required'
-        ]);
-
-        if (Auth::guard('agent')->attempt(['phone' => $request->phone, 'password' => $request->password], $request->get('remember'))) {
-            // return "agent";
-            return redirect()->intended(route('agent.dashboard'))->with('status', 'You are Logged in as Agent!');
-            ;
-        }
-        return back()->withInput($request->only('phone', 'remember'));
     }
 }

@@ -23,37 +23,14 @@
                         <div class="text-center mt-2">
                             <h5 class="text-primary">Welcome Back !</h5>
                             <p class="text-muted">
-                                Sign in to {{ isset($url) ? 'Agent' : 'Admin' }} Dashboard.
+                                Sign in to Admin Dashboard.
                             </p>
                         </div>
                         <div class="p-2 mt-4">
 
-                            @isset($url)
-                                <?php $route = route('agent.login') ?>
-                            @else
-                                <?php $route = route('admin.login') ?>
-                            @endisset
-
-                            <form method="POST" action="{{ $route }}" aria-label="{{ __('Login') }}">
+                            <form method="POST" action="{{ route('admin.login') }}" aria-label="{{ __('Login') }}">
 
                                 @csrf
-                                
-                                @isset($url)
-
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">{{ __('Phone Number') }}</label>                                    
-                                    <div class="col-md-12">
-                                        <input id="phone" type="tel" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" required autofocus>
-
-                                        @error('phone')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                @else
 
                                 <div class="mb-3">
                                     <label for="email" class="form-label">{{ __('Email Address') }}</label>
@@ -67,8 +44,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                @endif
 
                                 <div class="mb-3">
                                     <div class="float-end">
@@ -85,13 +60,8 @@
                                             </span>
                                         @enderror
                                     </div>
-
                                 </div>
 
-                                {{-- <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="auth-remember-check">
-                                    <label class="form-check-label" for="auth-remember-check">Remember me</label>
-                                </div> --}}
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
 
@@ -101,11 +71,11 @@
                                 </div>
 
                                 <div class="mt-4">
-                                    
+
                                     <button type="submit" class="btn btn-success w-100">
                                         {{ __('Login') }}
                                     </button>
-                                    
+
                                 </div>
                             </form>
                         </div>
@@ -113,9 +83,6 @@
                     <!-- end card body -->
                 </div>
                 <!-- end card -->
-
-                
-
             </div>
         </div>
         <!-- end row -->
