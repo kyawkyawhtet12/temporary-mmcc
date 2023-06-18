@@ -150,10 +150,10 @@
                                 <a href="{{ route('ballone.club.index') }}" class="nav-link"
                                     data-key="t-ballone-club"> Club </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('ballone.match.index') }}" class="nav-link"
                                     data-key="t-ballone-match"> Match </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <a href="{{ route('ballone.body.index') }}" class="nav-link"
                                     data-key="t-ballone-body"> Body Fees </a>
@@ -162,10 +162,10 @@
                                 <a href="{{ route('ballone.maung.index') }}" class="nav-link"
                                     data-key="t-ballone-maung"> Maung Fees </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('ballone.match.history') }}" class="nav-link"
                                     data-key="t-ballone-match"> Match History</a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <a href="{{ route('ballone.match.refund.history') }}" class="nav-link"
                                     data-key="t-ballone-match"> Refund Match History</a>

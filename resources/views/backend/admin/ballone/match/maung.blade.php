@@ -69,6 +69,9 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
                                 <h4 class="card-title"> Match List </h4>
+                                <a href="{{  route('ballone.maung.fees.add') }}" class="btn btn-success">
+                                    Add Maung Fees
+                                </a>
                             </div>
                             <div class="row">
                                 <div class="col-12">
@@ -87,6 +90,7 @@
                                                     <th>Over</th>
                                                     <th>Under</th>
                                                     <th>Add Result</th>
+                                                    <th>Edit Fees</th>
                                                     <th>By</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -152,15 +156,36 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            {{ $dt->user?->name }}
-                                                        </td>
-                                                        <td>
                                                             @if( !$dt->match->calculate_maung )
                                                             <a href="javascript:void(0)" data-toggle="tooltip"
                                                                 data-id=" {{ $dt->match->id }}" data-original-title="Edit"
                                                                 class="editMatch mr-2">
                                                                 <i class="fa fa-edit text-inverse m-r-10"></i>
                                                             </a>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            {{ $dt->user?->name }}
+                                                        </td>
+                                                        <td>
+                                                            <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
+                                                                class="text-success">
+                                                                <i class="fa fa-edit text-success m-1"></i>
+                                                            </a>
+
+                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)
+                                                                <a href="javascript:void(0)" data-toggle="tooltip"
+                                                                    data-id="{{ $dt->match->id }}"
+                                                                    data-original-title="Delete" class="deleteMatch mr-2">
+                                                                    <i class="fa fa-trash text-danger m-1"></i></a>
+                                                            @endif
+
+                                                            @if (!$dt->match->score && $dt->match->type == 1)
+                                                                <a href="javascript:void(0)" data-toggle="tooltip"
+                                                                    data-id="{{ $dt->match->id }}"
+                                                                    data-original-title="Refund" class="cancelMatch">
+                                                                    <i class="far fa-times-circle text-danger m-1"></i>
+                                                                </a>
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -207,7 +232,7 @@
                             <div class="input-group mb-3">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="">Maung</span>
+                                        <span class="input-group-text" id="">Body</span>
                                     </div>
                                     <input name="home_body" id="home_body" type="text" class="form-control">
 
@@ -244,40 +269,9 @@
 @endsection
 
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
-    <script
-        src="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}">
-    </script>
 
     <script>
         $(document).ready(function() {
-            $('#date-format').bootstrapMaterialDatePicker({
-                format: 'YYYY-MM-DD HH:mm:ss'
-            });
-
-            $('.selectLeague').select2({
-                dropdownParent: $('#ajaxModel')
-            });
-
-            $('.selectHomeTeam').select2({
-                dropdownParent: $('#ajaxModel')
-            });
-
-            $('.selectAwayTeam').select2({
-                dropdownParent: $('#ajaxModel')
-            });
-
-            $("input:checkbox").on('click', function() {
-                var $box = $(this);
-                if ($box.is(":checked")) {
-                    var group = "input:checkbox[name='" + $box.attr("name") + "']";
-                    $(group).prop("checked", false);
-                    $box.prop("checked", true);
-                } else {
-                    $box.prop("checked", false);
-                }
-            });
 
             $.ajaxSetup({
                 headers: {
@@ -322,5 +316,73 @@
             });
 
         });
+
+        $('body').on('click', '.deleteMatch', function() {
+
+            let id = $(this).attr('data-id');
+
+            Swal.fire({
+                text: "Are you sure to delete match ?",
+                icon: "info",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            })
+            .then(function(e) {
+                    if(e.isConfirmed){
+                        $.ajax({
+                            url: "{{ route('ballone.match.store') }}" + '/' + id,
+                            method: 'DELETE',
+                        }).done(function(res) {
+                            Swal.fire({
+                                text: "အောင်မြင်ပါသည်",
+                                icon: "success",
+                            }).then((e) => {
+                                // table.draw();
+                                location.reload();
+                            })
+                        })
+                    }
+            });
+        });
+
+        $('body').on('click', '.cancelMatch', function() {
+
+            let id = $(this).attr('data-id');
+
+            Swal.fire({
+                    text: "Are you sure to cancel match and make refund ?",
+                    icon: "info",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                })
+                .then(function(e) {
+                    if(e.isConfirmed){
+                        $.ajax({
+                            url: `/admin/ballone/match/refund/${id}`,
+                            method: 'POST',
+                        }).done(function(res) {
+                            if (res == 'error') {
+                                Swal.fire({
+                                    text: "something is wrong.",
+                                    icon: "error",
+                                })
+                            } else {
+                                Swal.fire({
+                                    text: "အောင်မြင်ပါသည်",
+                                    icon: "success",
+                                }).then((e) => {
+                                    // table.draw();
+                                    location.reload();
+                                })
+                            }
+                        })
+                    }
+                });
+        });
+
     </script>
 @endsection
