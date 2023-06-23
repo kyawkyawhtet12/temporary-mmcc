@@ -3,21 +3,13 @@
     <div class="navbar-brand-box">
         <!-- Dark Logo-->
         <a href="/" class="logo logo-dark">
-            <span class="logo-sm">
-                2D/3D
-            </span>
-            <span class="logo-lg">
-                2D/3D
-            </span>
+            <span class="logo-sm"> 2D/3D </span>
+            <span class="logo-lg"> 2D/3D </span>
         </a>
         <!-- Light Logo-->
         <a href="/" class="logo logo-light">
-            <span class="logo-sm">
-                2D/3D
-            </span>
-            <span class="logo-lg">
-                2D/3D
-            </span>
+            <span class="logo-sm"> 2D/3D </span>
+            <span class="logo-lg"> 2D/3D </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
             id="vertical-hover">
@@ -40,95 +32,82 @@
                     </a>
                 </li>
 
+                {{--  2D --}}
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('lottery.today-report') }}">
-                        <i class="ri-information-line"></i> <span data-key="t-payment-accounts">
-                            Lottery Today Report </span>
+                    <a class="nav-link menu-link" href="#two-digits-number-all" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="two-digits-number-all">
+                        <i class="ri-award-line"></i> <span data-key="t-apps"> 2D Number </span>
                     </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('3d.disable') }}">
-                        <i class="ri-information-line"></i> <span data-key="t-payment-accounts"> 3D Open/Close </span>
-                    </a>
-                </li>
-
-                {{-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="#ballone-today-report" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="ballone-today-report">
-                        <i class="ri-award-line"></i> <span data-key="t-apps">Ballone Today Report</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="ballone-today-report">
+                    <div class="collapse menu-dropdown" id="two-digits-number-all">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('ballone.today-report') }}" class="nav-link" data-key="t-calendar">
+                                <a href="{{ route('lottery.today-report') }}" class="nav-link" data-key="t-calendar">
                                     Today Report </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('ballone.body.today-report') }}" class="nav-link"
-                                    data-key="t-calendar"> Body Report </a>
+                                <a href="{{ url('admin/two_lucky_numbers') }}" class="nav-link"
+                                    data-key="t-calendar"> Lucky Numbers </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('ballone.maung.today-report') }}" class="nav-link"
-                                    data-key="t-calendar"> Maung Report </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li> --}}
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#lucky-numbers" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="lucky-numbers">
-                        <i class="ri-coupon-line"></i> <span data-key="t-apps">Lucky Numbers</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="lucky-numbers">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ url('admin/two_lucky_numbers') }}" class="nav-link" data-key="t-calendar">
-                                    2D Lucky Number </a>
+                                <a href="{{ url('admin/two_winners') }}" class="nav-link"
+                                    data-key="t-calendar"> Lucky Winners </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('admin/three_lucky_numbers') }}" class="nav-link" data-key="t-calendar">
-                                    3D Lucky Number </a>
+                                <a href="{{ route('lottery-time.index') }}" class="nav-link"
+                                    data-key="t-calendar"> Lottery Times </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('limit.amount') }}" class="nav-link"
+                                    data-key="t-calendar"> Limit Amount </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('compensate.amount') }}" class="nav-link"
+                                    data-key="t-calendar"> Limit Compensate </a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
+                {{--  3D --}}
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#lucky-winners" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="lucky-winners">
-                        <i class="ri-award-line"></i> <span data-key="t-apps">Lucky Winners</span>
+                    <a class="nav-link menu-link" href="#three-digits-number-all" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="three-digits-number-all">
+                        <i class="ri-award-line"></i> <span data-key="t-apps"> 3D Number </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="lucky-winners">
+                    <div class="collapse menu-dropdown" id="three-digits-number-all">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ url('admin/two_winners') }}" class="nav-link" data-key="t-calendar"> 2D
-                                    Digit Winners </a>
+                                <a href="{{ route('lottery.today-report') }}" class="nav-link" data-key="t-calendar">
+                                    Today Report </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('admin/three_winners') }}" class="nav-link" data-key="t-calendar">
-                                    3D
-                                    Digit Winners </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#lucky-draws" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="lucky-draws">
-                        <i class="ri-file-list-line"></i> <span data-key="t-apps">Lucky Draws</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="lucky-draws">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ url('admin/two_lucky_draws') }}" class="nav-link"
-                                    data-key="t-lucky-draws"> 2D Lucky Draw </a>
+                                <a href="{{ route('3d.disable') }}" class="nav-link">
+                                    3D Open/Close
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('admin/three_lucky_draws') }}" class="nav-link"
-                                    data-key="t-lucky-draws"> 3D Lucky Draw </a>
+                                <a href="{{ url('admin/three_lucky_numbers') }}" class="nav-link"
+                                    data-key="t-calendar"> Lucky Numbers
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('admin/three_winners') }}" class="nav-link"
+                                    data-key="t-calendar"> Lucky Winners
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('three-lottery-close.index') }}" class="nav-link"
+                                    data-key="t-lucky-draws"> 3D Lottery Setting </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('limit.amount') }}" class="nav-link"
+                                    data-key="t-calendar"> Limit Amount
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('compensate.amount') }}" class="nav-link"
+                                    data-key="t-calendar"> Limit Compensate
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -170,6 +149,20 @@
                                 <a href="{{ route('ballone.match.refund.history') }}" class="nav-link"
                                     data-key="t-ballone-match"> Refund Match History</a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('ballone.maung-limit.index') }}" class="nav-link"
+                                    data-key="t-maung-limit"> Maung Limit </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('ballone.maung-za.index') }}" class="nav-link"
+                                    data-key="t-maung-za"> Maung Za </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('ballone.body-setting.index') }}" class="nav-link"
+                                    data-key="t-body-setting"> Body Setting</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -181,7 +174,7 @@
                     </a>
                 </li>
 
-                {{-- agent start --}}
+                {{-- Agent --}}
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#agents" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="agents">
@@ -210,25 +203,17 @@
                                 <a href="{{ route('agents.football') }}" class="nav-link"
                                     data-key="t-football-lucky-draw"> Football Lucky Draw </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('agent-deposit.index') }}" class="nav-link"
+                                    data-key="t-agent-deposit">Agent Deposits </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('agent-withdraw.index') }}" class="nav-link"
+                                    data-key="t-agent-deposit">Agent Withdraws </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('agent-deposit.index') }}">
-                        <i class="ri-money-euro-circle-line"></i> <span data-key="t-users">Agent Deposits</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('agent-withdraw.index') }}">
-                        <i class="ri-file-download-line"></i> <span data-key="t-users">Agent Withdraws</span>
-                    </a>
-                </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('agent.percentage') }}">
-                        <i class="ri-percent-line"></i> <span data-key="t-users">Agent Percentage</span>
-                    </a>
-                </li> --}}
-                {{-- agent end --}}
 
                 {{-- User --}}
                 <li class="nav-item">
@@ -237,18 +222,7 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('admin/user-payments') }}" >
-                        <i class="ri-information-line"></i> <span data-key="t-users"> User Deposits </span>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('admin/cashouts') }}" >
-                        <i class="ri-file-download-line"></i> <span data-key="t-users"> User Withdrawals </span>
-                    </a>
-                </li> --}}
-
+                {{-- Payment Accoounts --}}
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('providers.index') }}">
@@ -258,67 +232,12 @@
                 </li>
 
                 {{-- Setting --}}
-
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('banner.index') }}">
                         <i class="ri-image-line"></i> <span data-key="t-banner-images">
                             Banner Image
                         </span>
                     </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#system-setting" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="system-setting">
-                        <i class="ri-settings-2-line"></i> <span data-key="t-apps">2D / 3D Setting</span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="system-setting">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a href="{{ route('lottery-time.index') }}" class="nav-link"
-                                    data-key="t-lucky-draws"> 2D Lottery Times </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('three-lottery-close.index') }}" class="nav-link"
-                                    data-key="t-lucky-draws"> 3D Lottery Setting </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('limit.amount') }}" class="nav-link" data-key="t-limit-amount">
-                                    Limit Amount </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('compensate.amount') }}" class="nav-link"
-                                    data-key="t-limit-compensate"> Limit Compensate </a>
-                            </li>
-
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="#ballone-setting" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="ballone-setting">
-                        <i class="ri-football-line"></i> <span data-key="t-ballone-setting"> Ballone Setting </span>
-                    </a>
-                    <div class="collapse menu-dropdown" id="ballone-setting">
-                        <ul class="nav nav-sm flex-column">
-
-                            <li class="nav-item">
-                                <a href="{{ route('ballone.maung-limit.index') }}" class="nav-link"
-                                    data-key="t-maung-limit"> Maung Limit </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('ballone.maung-za.index') }}" class="nav-link"
-                                    data-key="t-maung-za"> Maung Za </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('ballone.body-setting.index') }}" class="nav-link"
-                                    data-key="t-body-setting"> Body Setting</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
 
             </ul>
