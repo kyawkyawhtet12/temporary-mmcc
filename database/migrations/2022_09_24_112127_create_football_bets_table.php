@@ -20,7 +20,7 @@ class CreateFootballBetsTable extends Migration
             $table->unsignedBigInteger('body_id')->nullable();
             $table->unsignedBigInteger('maung_group_id')->nullable();
             $table->integer('amount');
-            $table->integer('net_amount');
+            $table->float('net_amount');
             $table->boolean('status')->default(0);
             $table->timestamps();
         });

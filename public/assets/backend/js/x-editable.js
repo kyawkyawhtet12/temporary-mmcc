@@ -1,9 +1,9 @@
 (function($) {
   'use strict';
-  $(function() 
+  $(function()
   {
     if ($('#editable-form').length) {
-      $.fn.editable.defaults.mode = 'inline';      
+      $.fn.editable.defaults.mode = 'inline';
       $.fn.editableform.buttons =
         '<button type="submit" class="btn btn-primary btn-sm editable-submit">' +
         '<i class="fa fa-fw fa-check"></i>' +
@@ -18,15 +18,29 @@
         }
       });
 
-      $('#min_amount').editable({
-        url: '/admin/update-min',
+      $('#two_min_amount').editable({
+        url: '/admin/2d-update-min',
         type: 'number',
         pk: 1,
         name: 'min_amount',
       });
 
-      $('#max_amount').editable({
-        url: '/admin/update-max',
+      $('#two_max_amount').editable({
+        url: '/admin/2d-update-max',
+        type: 'number',
+        pk: 1,
+        name: 'max_amount',
+      });
+
+      $('#three_min_amount').editable({
+        url: '/admin/3d-update-min',
+        type: 'number',
+        pk: 1,
+        name: 'min_amount',
+      });
+
+      $('#three_max_amount').editable({
+        url: '/admin/3d-update-max',
         type: 'number',
         pk: 1,
         name: 'max_amount',
@@ -86,7 +100,7 @@
         type: 'number',
         pk: 1,
         name: 'compensate',
-      });     
+      });
 
       $('#payment_status').editable({
         url: '/admin/paymentstatus',

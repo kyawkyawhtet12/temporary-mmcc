@@ -10,7 +10,9 @@ class LimitAmount extends Model
     use HasFactory;
 
     protected $fillable = [
-        'min_amount',
-        'max_amount',
+        'two_min_amount',
+        'two_max_amount',
+        'three_min_amount',
+        'three_max_amount'
     ];
 }

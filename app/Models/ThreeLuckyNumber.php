@@ -12,6 +12,7 @@ class ThreeLuckyNumber extends Model
     protected $fillable = [
         'three_digit_id',
         'votes',
+        'date',
         'status',
     ];
 

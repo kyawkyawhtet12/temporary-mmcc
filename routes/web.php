@@ -50,21 +50,15 @@ Route::group(
     'prefix' => 'admin'
 ],
     function () {
-        Route::get('/lottery-today-report', 'Report\LotteryReportController@today')->name('lottery.today-report');
+        Route::get('/2d-today-report', 'Report\LotteryReportController@today_2d')->name('twodigits.today-report');
+        Route::get('/3d-monthly-report', 'Report\LotteryReportController@monthly_3d')->name('threedigits.monthly-report');
 
         Route::resource('users', 'UserController');
-        // Route::resource('user-payments', 'PaymentController');
-        // Route::post('/paymentstatus', 'PaymentController@UpdateByAjax');
-
-        // Route::resource('cashouts', 'CashoutController');
-        // Route::post('changeStatus', 'CashoutController@ChangeTransferStatus')->name('cash.changeStatus');
 
         Route::resource('providers', 'PaymentProviderController');
 
         Route::get('two-lottery', 'EnabledController@twoLotteryStatus')->name('two.changeStatus');
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
-
-        Route::resource('three-lottery-close', 'DisableController');
 
         Route::post('two-digits/enabled-all', 'AdminController@changeTwoDigitEnable')->name('twodigits.enabled-all');
         Route::post('two-digits/disabled-all', 'AdminController@changeTwoDigitDisable')->name('twodigits.disabled-all');
@@ -89,39 +83,49 @@ Route::group(
         // Ballone
         Route::group([], __DIR__ . '/partials/ballone.php');
 
+
+        // 2d
+
         Route::get('two-thai-lottery', 'EnabledController@twoThaiLotteryStatus')->name('two.thai.changeStatus');
-        Route::get('two-dubai-lottery', 'EnabledController@twoDubaiLotteryStatus')->name('two.dubai.changeStatus');
-        Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
 
-        Route::post('two-digits/enabled-all', 'AdminController@changeTwoDigitEnable')->name('twodigits.enabled-all');
-        Route::post('two-digits/disabled-all', 'AdminController@changeTwoDigitDisable')->name('twodigits.disabled-all');
-        Route::post('two-digits/submit-all', 'AdminController@changeTwoDigitSubmit')->name('twodigits.submit-all');
+        Route::get('/2d-disable', 'TwoDigitDisableController@index')->name('2d.disable');
+        Route::post('two-digits/enabled-all', 'TwoDigitDisableController@changeTwoDigitEnable')->name('twodigits.enabled-all');
+        Route::post('two-digits/disabled-all', 'TwoDigitDisableController@changeTwoDigitDisable')->name('twodigits.disabled-all');
+        Route::post('two-digits/submit-all', 'TwoDigitDisableController@changeTwoDigitSubmit')->name('twodigits.submit-all');
 
-        // Setting
-        Route::resource('three-lottery-close', 'DisableController');
+        Route::get('2d-limit_amounts', 'LimitAmountController@limit_2d')->name('2d.limit.amount');
+        Route::post('2d-update-min', 'LimitAmountController@updateMin_2d');
+        Route::post('2d-update-max', 'LimitAmountController@updateMax_2d');
 
-        Route::get('limit_amounts', 'LimitAmountController@index')->name('limit.amount');
-        Route::post('/update-min', 'LimitAmountController@updateMin');
-        Route::post('/update-max', 'LimitAmountController@updateMax');
-
-        Route::get('compensate', 'TwoDigitCompensationController@index')->name('compensate.amount');
-        Route::post('/two_compensate', 'TwoDigitCompensationController@updateTwoCompensate');
-        Route::post('/three_compensate', 'TwoDigitCompensationController@updateThreeCompensate');
-        // Route::post('/vote', 'TwoDigitCompensationController@updateVote');
+        Route::get('2d-compensate', 'LimitCompensationController@limit_2d')->name('2d.compensate.amount');
+        Route::post('/two_compensate', 'LimitCompensationController@updateTwoCompensate');
 
         Route::get('lottery-times', 'LotteryTimeController@index')->name('lottery-time.index');
         Route::get('lottery-times/edit/{id}', 'LotteryTimeController@edit')->name('lottery-time.edit');
         Route::put('lottery-times/edit/{id}', 'LotteryTimeController@update')->name('lottery-time.update');
 
-        Route::resource('banner', 'BannerImageController');
+        // 3d
 
-        Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
-        // Route::get('user-deposits', [PaymentController::class, 'deposits'])->name('user-deposits');
-        // Route::get('user-withdrawals', [PaymentController::class, 'withdrawals'])->name('user-withdrawals');
+        Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
+
+        Route::get('3d-limit_amounts', 'LimitAmountController@limit_3d')->name('3d.limit.amount');
+        Route::post('3d-update-min', 'LimitAmountController@updateMin_3d');
+        Route::post('3d-update-max', 'LimitAmountController@updateMax_3d');
+
+        Route::get('3d-compensate', 'LimitCompensationController@limit_3d')->name('3d.compensate.amount');
+        Route::post('/three_compensate', 'LimitCompensationController@updateThreeCompensate');
 
         Route::get('/3d-disable', 'ThreeDigitDisableController@index')->name('3d.disable');
         Route::post('/3d-disable', 'ThreeDigitDisableController@store')->name('3d.disable.post');
         Route::delete('/3d-disable/{id}', 'ThreeDigitDisableController@enable')->name('3d.disable.delete');
+
+        Route::resource('three-lottery-close', 'DisableController');
+        //
+
+        Route::resource('banner', 'BannerImageController');
+
+        Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
+
 
         Route::get('/close-all-bets', 'EnabledController@close_all_bets')->name('close-all-bets');
     }
