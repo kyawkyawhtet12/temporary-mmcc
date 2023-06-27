@@ -27,12 +27,10 @@ class AdminController extends Controller
                                                 ['status', '=', 'Completed'],
                                                 ['created_at', '>=', Carbon::today()],
                                             ])->sum('amount');
-       
+
         $enabled = Enabled::first();
-        $two_digits = TwoDigit::all();
-        
+
         return view('backend.admin.index', compact(
-            'two_digits',
             'enabled',
             'total_amount',
             'total_agent',
@@ -58,32 +56,5 @@ class AdminController extends Controller
         return back()->with('success', 'Password change successfully.');
     }
 
-    public function changeTwoDigitEnable(Request $request)
-    {
-        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => $request->status,
-            'amount' => 0,
-            'date' => null
-        ]);
-        return response()->json('success');
-    }
 
-    public function changeTwoDigitDisable(Request $request)
-    {
-        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => $request->status,
-            'amount' => 0,
-            'date' => $request->date
-        ]);
-        return response()->json('success');
-    }
-
-    public function changeTwoDigitSubmit(Request $request)
-    {
-        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
-            'amount' => $request->amount,
-            'date' => $request->date
-        ]);
-        return response()->json('success');
-    }
 }

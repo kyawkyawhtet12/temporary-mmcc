@@ -15,8 +15,10 @@ class CreateLimitAmountsTable extends Migration
     {
         Schema::create('limit_amounts', function (Blueprint $table) {
             $table->id();
-            $table->integer('min_amount');
-            $table->integer('max_amount');
+            $table->integer('two_min_amount');
+            $table->integer('two_max_amount');
+            $table->integer('three_min_amount');
+            $table->integer('three_max_amount');
             $table->timestamps();
         });
     }

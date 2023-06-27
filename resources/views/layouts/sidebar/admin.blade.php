@@ -41,8 +41,13 @@
                     <div class="collapse menu-dropdown" id="two-digits-number-all">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('lottery.today-report') }}" class="nav-link" data-key="t-calendar">
+                                <a href="{{ route('twodigits.today-report') }}" class="nav-link" data-key="t-calendar">
                                     Today Report </a>
+                            </li>
+                            <li class="nav-item">
+                            <a href="{{ route('2d.disable') }}" class="nav-link">
+                                    2D Open/Close
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ url('admin/two_lucky_numbers') }}" class="nav-link"
@@ -57,11 +62,11 @@
                                     data-key="t-calendar"> Lottery Times </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('limit.amount') }}" class="nav-link"
+                                <a href="{{ route('2d.limit.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Amount </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('compensate.amount') }}" class="nav-link"
+                                <a href="{{ route('2d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate </a>
                             </li>
                         </ul>
@@ -77,8 +82,8 @@
                     <div class="collapse menu-dropdown" id="three-digits-number-all">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('lottery.today-report') }}" class="nav-link" data-key="t-calendar">
-                                    Today Report </a>
+                                <a href="{{ route('threedigits.monthly-report') }}" class="nav-link" data-key="t-calendar">
+                                    Monthly Report </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('3d.disable') }}" class="nav-link">
@@ -100,12 +105,12 @@
                                     data-key="t-lucky-draws"> 3D Lottery Setting </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('limit.amount') }}" class="nav-link"
+                                <a href="{{ route('3d.limit.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Amount
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('compensate.amount') }}" class="nav-link"
+                                <a href="{{ route('3d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate
                                 </a>
                             </li>

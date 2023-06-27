@@ -12,60 +12,39 @@ use App\Models\LotteryTime;
 
 class LotteryReportController extends Controller
 {
-    public function today()
+    public function today_2d()
     {
-        // Thai
-        $thai_one = TwoLuckyDraw::where([ ['lottery_time_id', '=', 1],['created_at', '>=', Carbon::today()],])
-        ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $thai_one_total = $thai_one->sum('amount');
+        $today = TwoLuckyDraw::whereDate('created_at', today())
+                                ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id, lottery_time_id')
+                                ->groupBy('two_digit_id','lottery_time_id')
+                                ->get();
 
-        $thai_two = TwoLuckyDraw::where([
-                    ['lottery_time_id', '=', 2],
-                    ['created_at', '>=', Carbon::today()],
-                ])->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
+        $thai_one = $today->where('lottery_time_id', 1);
+        $thai_two = $today->where('lottery_time_id', 2);
+
+        $thai_one_total = $thai_one->sum('amount');
         $thai_two_total = $thai_two->sum('amount');
 
-        // Dubai
-        $dubai_one = TwoLuckyDraw::where([ ['lottery_time_id', '=', 3],['created_at', '>=', Carbon::today()],])
-        ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $dubai_one_total = $dubai_one->sum('amount');
+        $two_digits = TwoDigit::all();
+        $thai_times = LotteryTime::where('type', 0)->get();
 
-        $dubai_two = TwoLuckyDraw::where([
-                    ['lottery_time_id', '=', 4],
-                    ['created_at', '>=', Carbon::today()],
-                ])->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $dubai_two_total = $dubai_two->sum('amount');
+        return view('backend.admin.report.today-2d', compact(
+            'two_digits',
+            'thai_one',
+            'thai_two',
+            'thai_one_total',
+            'thai_two_total',
+            'thai_times',
+        ));
 
-        $dubai_three = TwoLuckyDraw::where([
-            ['lottery_time_id', '=', 5],
-            ['created_at', '>=', Carbon::today()],
-        ])->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $dubai_three_total = $dubai_three->sum('amount');
+    }
 
-        $dubai_four = TwoLuckyDraw::where([
-            ['lottery_time_id', '=', 6],
-            ['created_at', '>=', Carbon::today()],
-        ])->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $dubai_four_total = $dubai_four->sum('amount');
-
-        $dubai_five = TwoLuckyDraw::where([
-            ['lottery_time_id', '=', 7],
-            ['created_at', '>=', Carbon::today()],
-        ])->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $dubai_five_total = $dubai_five->sum('amount');
-
-        $dubai_six = TwoLuckyDraw::where([
-            ['lottery_time_id', '=', 8],
-            ['created_at', '>=', Carbon::today()],
-        ])->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id')->groupBy('two_digit_id')->get();
-        $dubai_six_total = $dubai_six->sum('amount');
-
-        //
-
+    public function monthly_3d()
+    {
         $now = Carbon::now();
         $today = $now->toDateString();
         $today_last = $now->addDay('1')->toDateString();
-        
+
         $first_day = $now->firstOfMonth()->toDateString();
         $second_day = $now->firstOfMonth()->addDay('1')->toDateString();
         $first_close = $now->firstOfMonth()->addDay('16')->toDateString();
@@ -92,36 +71,12 @@ class LotteryReportController extends Controller
                                                     ->orderBy('three_digit_id', 'asc')
                                                     ->groupBy('three_digit_id')->get();
         }
-        
-        $two_digits = TwoDigit::all();
 
-        $thai_times = LotteryTime::where('type', 0)->get();
-        $dubai_times = LotteryTime::where('type', 1)->get();
-
-        return view('backend.admin.report.lottery-today', compact(
-            'two_digits',
-            'thai_one',
-            'thai_two',
-            'thai_one_total',
-            'thai_two_total',
-            'dubai_one',
-            'dubai_two',
-            'dubai_three',
-            'dubai_four',
-            'dubai_five',
-            'dubai_six',
-            'dubai_one_total',
-            'dubai_two_total',
-            'dubai_three_total',
-            'dubai_four_total',
-            'dubai_five_total',
-            'dubai_six_total',
+        return view('backend.admin.report.monthly-3d', compact(
             'three_lucky_draws',
             'three_lucky_draws_last',
             'three_total',
             'three_total_last',
-            'thai_times',
-            'dubai_times'
         ));
     }
 }

@@ -41,8 +41,9 @@
                                         <th>No.</th>
                                         <th>3 Digit Number</th>
                                         {{-- <th>Votes</th> --}}
+                                        <th>Lottery Date</th>
                                         <th>Status</th>
-                                        <th>Date</th>
+                                        <th>Created Date</th>
                                         <th>Action</th>
                                         </tr>
                                     </thead>
@@ -56,7 +57,7 @@
                     </div>
 
                 </div> <!-- end col -->
-                
+
             </div>
 
         </div>
@@ -72,7 +73,7 @@
                 <div class="modal-body">
                     <form id="numberForm" name="numberForm" class="form-horizontal">
                        <input type="hidden" name="threedigit_id" id="threedigit_id">
-    
+
                         <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Three Digit Number</label>
                           <div class="col-sm-12">
@@ -84,7 +85,7 @@
                             </select>
                           </div>
                         </div>
-    
+
                         {{-- <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Three Digit Number (Votes)</label>
                           <div class="col-sm-12">
@@ -95,7 +96,15 @@
                             </select>
                           </div>
                         </div> --}}
-    
+
+                        <div class="form-group">
+                            <label for="date" class="col-sm-12 control-label">Date</label>
+                            <div class="col-sm-12">
+                                <input type="date" class="form-control" id="date" name="date"
+                                    placeholder="Two Digit Number" value="" required="">
+                            </div>
+                        </div>
+
                         <div class="col-sm-offset-2 col-sm-10 mt-3">
                          <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
                          </button>
@@ -105,11 +114,11 @@
             </div>
         </div>
     </div>
-    
+
 @endsection
 
 @push('scripts')
-  
+
   <script type="text/javascript">
       $(document).ready(function () {
         $.ajaxSetup({
@@ -128,7 +137,7 @@
             serverSide: true,
             ajax: {
                 url: "{{ route('three_lucky_numbers.index') }}",
-                data: function (d) {                
+                data: function (d) {
                   d.search = $('input[type="search"]').val()
                 }
             },
@@ -136,6 +145,7 @@
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                 {data: 'number', name: 'number'},
                 // {data: 'votes', name: 'votes'},
+                {data: 'date', name: 'date'},
                 {data: 'status', name: 'status'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action'},
@@ -144,7 +154,7 @@
 
         $('#three_lucky_numbers').on('draw.dt', function(){
           if ($('#editable-form').length) {
-            $.fn.editable.defaults.mode = 'inline';      
+            $.fn.editable.defaults.mode = 'inline';
             $.fn.editableform.buttons =
               '<button type="submit" class="btn btn-primary btn-sm editable-submit">' +
               '<i class="fa fa-fw fa-check"></i>' +
@@ -179,7 +189,7 @@
             });
           }
         });
-         
+
         $('#createThreeNumber').click(function () {
             $('#saveBtn').val("create-number");
             $('#threedigit_id').val('');
@@ -192,7 +202,7 @@
         $('body').on('click', '.editNumber', function () {
           var threedigit_id = $(this).data('id');
           $.ajax({
-            url: "{{ route('three_lucky_numbers.index') }}" +'/' + threedigit_id +'/edit', 
+            url: "{{ route('three_lucky_numbers.index') }}" +'/' + threedigit_id +'/edit',
             dataType:"JSON",
             success:function(data)
             {
@@ -212,7 +222,7 @@
         $('#saveBtn').click(function (e) {
             e.preventDefault();
             $(this).html('Sending..');
-        
+
             $.ajax({
               data: $('#numberForm').serialize(),
               url: "{{ route('three_lucky_numbers.store') }}",
@@ -233,7 +243,7 @@
         $('body').on('click', '.deleteNumber', function () {
           if(!confirm('Are You sure want to delete !')) return;
           var threedigit_id = $(this).data("id");
-        
+
           $.ajax({
               type: "DELETE",
               url: "{{ route('three_lucky_numbers.store') }}"+'/'+threedigit_id,

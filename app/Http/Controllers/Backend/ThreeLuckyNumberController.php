@@ -19,6 +19,7 @@ class ThreeLuckyNumberController extends Controller
     public function index(Request $request)
     {
         $threedigit_numbers = ThreeDigit::select('id', 'number')->get();
+
         if ($request->ajax()) {
             $query = ThreeLuckyNumber::with('three_digit')->latest();
             return Datatables::of($query)
@@ -46,6 +47,9 @@ class ThreeLuckyNumberController extends Controller
                                         </div>
                                     </form>';
                         }
+                    })
+                    ->addColumn('date', function ($number) {
+                        return date("F j, Y", strtotime($number->date));
                     })
                     ->addColumn('created_at', function ($number) {
                         return date("F j, Y, g:i A", strtotime($number->created_at));
@@ -78,16 +82,17 @@ class ThreeLuckyNumberController extends Controller
             'threedigit_number' => 'required',
             // 'votes' => 'required',
         ]);
-        
+
 
         ThreeLuckyNumber::updateOrCreate([
             'id'   => $request->threedigit_id,
         ], [
             'three_digit_id' =>  $request->threedigit_number,
             // 'votes' => serialize($request->votes),
-            'votes' => 0
+            'votes' => 0,
+            'date' => $request->date
         ]);
-        
+
         return response()->json(['success'=>'Lucky number saved successfully.']);
     }
 
@@ -108,7 +113,7 @@ class ThreeLuckyNumberController extends Controller
         ThreeLuckyNumber::find($id)->delete();
         return response()->json(['success'=>'Lucky number deleted successfully.']);
     }
-    
+
     public function UpdateByAjax(Request $request)
     {
         if ($request->value == "Approved") {
@@ -130,8 +135,16 @@ class ThreeLuckyNumberController extends Controller
             //     ]);
             // }
 
+            // $date = Carbon::now();
+
+            $date = Carbon::parse($data->date);
+            // $test = $date->subDay(15);
+
+            // $test = $date->subDay(15);
+            // dd($test);
+
             $three_lucky_draw_id = ThreeLuckyDraw::where([
-                                            ['created_at','>=',Carbon::now()->subDay('15')],
+                                            ['created_at','>=', $date->subDay('15')],
                                             ['three_digit_id','=',$data->three_digit_id],
                                         ])->get();
 
@@ -162,11 +175,11 @@ class ThreeLuckyNumberController extends Controller
             // }
 
             $grouped = ThreeLuckyDraw::where([
-                            ['created_at','>=',Carbon::now()->subDay('15')],
+                            ['created_at','>=', $date->subDay('15')],
                             ['three_digit_id','=',$data->three_digit_id],
                         ])->selectRaw('SUM(amount) as amount, user_id as user_id, agent_id as agent_id')
                         ->groupBy('user_id', 'agent_id')->get();
-            
+
             foreach ($grouped as $key => $value) {
                 // $current_amount = User::find($value->user_id);
                 // $balance = $current_amount['amount'] + $value->amount * $za->compensate;
