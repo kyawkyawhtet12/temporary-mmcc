@@ -45,7 +45,11 @@
                                     Today Report </a>
                             </li>
                             <li class="nav-item">
-                            <a href="{{ route('2d.disable') }}" class="nav-link">
+                                <a href="{{ route('two-digits.result') }}" class="nav-link" data-key="t-2d-result">
+                                    2D Result </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('2d.disable') }}" class="nav-link">
                                     2D Open/Close
                                 </a>
                             </li>
@@ -84,6 +88,11 @@
                             <li class="nav-item">
                                 <a href="{{ route('threedigits.monthly-report') }}" class="nav-link" data-key="t-calendar">
                                     Monthly Report </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('three-digits.result') }}" class="nav-link"
+                                    data-key="t-3d-result">
+                                    3D Result </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('3d.disable') }}" class="nav-link">

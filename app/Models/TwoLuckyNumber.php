@@ -26,4 +26,9 @@ class TwoLuckyNumber extends Model
     {
         return $this->belongsTo(LotteryTime::class, 'lottery_time_id');
     }
+
+    public function winners()
+    {
+        return $this->hasMany(TwoWinner::class, 'two_lucky_number_id');
+    }
 }

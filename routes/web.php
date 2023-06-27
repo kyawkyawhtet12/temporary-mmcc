@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Backend\Report\LotteryReportController;
 use App\Http\Controllers\Backend\UserPaymentController;
 
 /*
@@ -53,16 +54,8 @@ Route::group(
         Route::get('/2d-today-report', 'Report\LotteryReportController@today_2d')->name('twodigits.today-report');
         Route::get('/3d-monthly-report', 'Report\LotteryReportController@monthly_3d')->name('threedigits.monthly-report');
 
-        Route::resource('users', 'UserController');
-
-        Route::resource('providers', 'PaymentProviderController');
-
         Route::get('two-lottery', 'EnabledController@twoLotteryStatus')->name('two.changeStatus');
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
-
-        Route::post('two-digits/enabled-all', 'AdminController@changeTwoDigitEnable')->name('twodigits.enabled-all');
-        Route::post('two-digits/disabled-all', 'AdminController@changeTwoDigitDisable')->name('twodigits.disabled-all');
-        Route::post('two-digits/submit-all', 'AdminController@changeTwoDigitSubmit')->name('twodigits.submit-all');
 
         Route::resource('two_lucky_numbers', 'TwoLuckyNumberController');
         Route::resource('three_lucky_numbers', 'ThreeLuckyNumberController');
@@ -77,15 +70,7 @@ Route::group(
         Route::get('two_winners', 'TwoWinnerController@index')->name('two_winners.index');
         Route::get('three_winners', 'ThreeWinnerController@index')->name('three_winners.index');
 
-        // Agents
-        Route::group([], __DIR__ . '/partials/agent.php');
-
-        // Ballone
-        Route::group([], __DIR__ . '/partials/ballone.php');
-
-
         // 2d
-
         Route::get('two-thai-lottery', 'EnabledController@twoThaiLotteryStatus')->name('two.thai.changeStatus');
 
         Route::get('/2d-disable', 'TwoDigitDisableController@index')->name('2d.disable');
@@ -104,6 +89,11 @@ Route::group(
         Route::get('lottery-times/edit/{id}', 'LotteryTimeController@edit')->name('lottery-time.edit');
         Route::put('lottery-times/edit/{id}', 'LotteryTimeController@update')->name('lottery-time.update');
 
+        // 2D Results and Report Detail
+        Route::get('/two-digits-results', [LotteryReportController::class, 'two_digits'])->name('two-digits.result');
+
+        Route::get('/two-digits-results/{id}', [LotteryReportController::class, 'two_digits_detail'])->name('two-digits.result.detail')->whereNumber('id');
+
         // 3d
 
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
@@ -120,12 +110,27 @@ Route::group(
         Route::delete('/3d-disable/{id}', 'ThreeDigitDisableController@enable')->name('3d.disable.delete');
 
         Route::resource('three-lottery-close', 'DisableController');
+
+        // 3D Results and Report Detail
+        Route::get('/three-digits-results', [LotteryReportController::class, 'three_digits'])->name('three-digits.result');
+
+        Route::get('/three-digits-results/{id}', [LotteryReportController::class, 'three_digits_detail'])->name('three-digits.result.detail');
+
         //
+
+        Route::resource('users', 'UserController');
+
+        Route::resource('providers', 'PaymentProviderController');
+
+        // Agents
+        Route::group([], __DIR__ . '/partials/agent.php');
+
+        // Ballone
+        Route::group([], __DIR__ . '/partials/ballone.php');
 
         Route::resource('banner', 'BannerImageController');
 
         Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
-
 
         Route::get('/close-all-bets', 'EnabledController@close_all_bets')->name('close-all-bets');
     }

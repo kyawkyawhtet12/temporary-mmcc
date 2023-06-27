@@ -20,4 +20,9 @@ class ThreeLuckyNumber extends Model
     {
         return $this->belongsTo(ThreeDigit::class, 'three_digit_id');
     }
+
+    public function winners()
+    {
+        return $this->hasMany(ThreeWinner::class, 'three_lucky_number_id');
+    }
 }
