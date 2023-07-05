@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -24,8 +25,8 @@ class UserController extends Controller
                             return ' <label class="badge badge-warning badge-pill">Not Active</label>';
                         }
                     })
-                    ->addColumn('created_at', function ($user) {
-                        return date("F j, Y, g:i A", strtotime($user->created_at));
+                    ->addColumn('days_not_logged_in', function ($user) {
+                        return Carbon::parse(Carbon::now())->diffInDays($user->last_active);
                     })
                     ->addColumn('payment', function ($user) {
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="deposit"  data-original-title="Deposit" class="edit btn btn-info btn-sm payment"> + </a>';
@@ -52,7 +53,7 @@ class UserController extends Controller
         }
         return view('backend.admin.users.index');
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -73,6 +74,7 @@ class UserController extends Controller
                 'name'     => $request->name,
                 'user_id' => $request->user_id,
                 // 'amount' => $request->amount,
+                'phone' => $request->phone,
                 'password' => Hash::make($request->password)
             ]);
         } else {
@@ -86,16 +88,17 @@ class UserController extends Controller
             $user = User::find($request->old_id);
             $user->name = $request->name;
             $user->user_id = $request->user_id;
+            $user->phone = $request->phone;
             // $user->amount = $request->amount;
             if ($request->password) {
                 $user->password = Hash::make($request->password);
             }
             $user->save();
         }
-   
+
         return response()->json(['success'=>'User saved successfully.']);
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -107,7 +110,7 @@ class UserController extends Controller
         $user = User::find($id);
         return response()->json($user);
     }
-    
+
     /**
      * Remove the specified resource from storage.
      *

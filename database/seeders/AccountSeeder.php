@@ -52,9 +52,12 @@ class AccountSeeder extends Seeder
         User::create([
             'name' => 'User',
             'user_id' => 'User123',
+            'phone' => '09123456789',
             'amount' => 100000,
             'referral_code' => 'test',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+            'initial_password' => 'password',
+            'last_active' => today()
         ]);
     }
 }

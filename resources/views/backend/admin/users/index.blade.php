@@ -32,9 +32,9 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
                                 <h4 class="card-title">User Lists</h4>
-                                <div>
+                                {{-- <div>
                                     <a class="btn btn-success" href="javascript:void(0)" id="createUser"> Create User</a>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="row">
                                 <div class="col-12">
@@ -44,10 +44,11 @@
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>No.</th>
                                                     <th>User ID</th>
-                                                    <th>Name</th>
+                                                    <th>Initial Password</th>
+                                                    <th>Phone</th>
                                                     <th>Balance</th>
                                                     <th>Status</th>
-                                                    <th>Registered Date</th>
+                                                    <th>Days not logged in</th>
                                                     <th>Payment</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -149,6 +150,14 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-12 control-label">Phone</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="phone" name="phone"
+                                    placeholder="Enter Phone" value="" required="">
+                            </div>
+                        </div>
+
                         <div class="form-group my-3">
                             <label for="current" class="col-sm-12 control-label">Current Amount</label>
                             <div class="col-sm-12">
@@ -210,8 +219,12 @@
                         name: 'user_id'
                     },
                     {
-                        data: 'name',
-                        name: 'name'
+                        data: 'initial_password',
+                        name: 'initial_password'
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone'
                     },
                     {
                         data: 'amount',
@@ -222,8 +235,8 @@
                         name: 'status'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'days_not_logged_in',
+                        name: 'days_not_logged_in'
                     },
                     {
                         data: 'payment',
