@@ -18,36 +18,24 @@ class AgentPaymentController extends Controller
     public function index(Request $request)
     {
         $agents = Agent::all();
-        
+
+        AgentPaymentAllReport::whereDate('created_at', today())->firstOrCreate();
+
         if ($request->ajax()) {
-            if ($request->agent) {
-                if ($request->agent != 'all') {
-                    if (!empty($request->from_date)) {
-                        $query = AgentPaymentReport::where('agent_id', $request->agent)->whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
-                    } else {
-                        $query = AgentPaymentReport::where('agent_id', $request->agent)->latest()->orderBy('created_at');
-                    }
+            if ($request->agent && $request->agent != 'all') {
 
-                    
-                } else {
-                    // if (!empty($request->from_date)) {
-                    //     $query = AgentPaymentReport::whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
-                    // } else {
-                    //     $query = AgentPaymentReport::latest()->orderBy('created_at');
-                    // }
+                AgentPaymentReport::whereDate('created_at', today())
+                                ->firstOrCreate([ 'agent_id' => $request->agent ]);
 
-                    if (!empty($request->from_date)) {
-                        $query = AgentPaymentAllReport::whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
-                    } else {
-                        $query = AgentPaymentAllReport::latest()->orderBy('created_at');
-                    }
-                }
+                $query = AgentPaymentReport::where('agent_id', $request->agent)->latest();
+
             } else {
-                if (!empty($request->from_date)) {
-                    $query = AgentPaymentAllReport::whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
-                } else {
-                    $query = AgentPaymentAllReport::latest()->orderBy('created_at');
-                }
+                $query = AgentPaymentAllReport::latest();
+            }
+
+            if (!empty($request->from_date)) {
+                $query = $query->whereDate('created_at', '>=', $request->from_date)
+                                ->whereDate('created_at' , '<=' , $request->to_date);
             }
 
             return Datatables::of($query)

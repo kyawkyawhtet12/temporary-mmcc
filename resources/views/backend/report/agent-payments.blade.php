@@ -100,17 +100,17 @@
 
         load_data();
 
-        function load_data(from_date = '', to_date = '') {
+        function load_data() {
             $('.data-table').DataTable({
                 processing: true,
                 "language": {
                     processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>'
                 },
                 serverSide: true,
+                searching : false,
                 ajax: {
                     url: "{{ route('agent.payment-reports') }}",
                     data: function(d) {
-                        d.lottery_time = $('.js-example-basic-single').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.agent = $('#agentSelect').val();
@@ -143,36 +143,18 @@
             });
         }
 
-        // $('#agentSelect').change(function() {
-        //     var agent = $(this).val();
-        //     if (agent != '') {
-        //         $('.data-table').DataTable().destroy();
-        //         load_data('', '', agent);
-        //     } else {
-        //         alert('Both Date is required');
-        //     }
-        // });
-
         $('#filter').click(function() {
-            var from_date = $('#from_date').val();
-            var to_date = $('#to_date').val();
-            if (from_date != '' && to_date != '') {
-                $('.data-table').DataTable().destroy();
-                load_data(from_date, to_date);
-            } else {
-                alert('Both Date is required');
-            }
+            $('.data-table').DataTable().destroy();
+            load_data();
         });
 
         $('#refresh').click(function() {
             $('#from_date').val('');
             $('#to_date').val('');
+            $('#agentSelect').val('all');
+            $("#from_date, #to_date").datepicker('setDate', null);
             $('.data-table').DataTable().destroy();
             load_data();
-        });
-
-        $('.js-example-basic-single').change(function() {
-            $('.data-table').DataTable().draw();
         });
     </script>
 @endpush
