@@ -182,7 +182,8 @@
             }
 
             function getResult(data) {
-                return (data.match.type == 0) ? "P-P" : (data.match.score) ?? '-';
+                return (data.match.type == 0) ? "P-P" :
+                    (data.match.calculate_maung) ? (data.match.maung_temp_score) : '-';
             }
 
             // For Maung Detail View

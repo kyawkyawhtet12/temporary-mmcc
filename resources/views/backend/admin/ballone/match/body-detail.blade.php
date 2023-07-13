@@ -166,7 +166,8 @@
             }
 
             function getResult(data) {
-                return (data.match.type == 0) ? "P-P" : (data.match.score) ?? '-';
+                return (data.match.type == 0) ? "P-P" :
+                    (data.match.calculate_body) ? (data.match.body_temp_score) : '-';
             }
 
             // For Body Detail View

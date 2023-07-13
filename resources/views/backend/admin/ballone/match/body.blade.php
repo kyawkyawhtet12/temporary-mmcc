@@ -102,10 +102,12 @@
                                                                 {{  $dt->match->match_format }}
                                                             </a>
                                                         </td>
+
                                                         <td>
                                                             {{ get_date_time_format($dt->match) }}
                                                         </td>
-                                                        <td>{{ $dt->match->body_temp_score }}</td>
+
+                                                        <td>{{ ($dt->match->calculate_body) ? $dt->match->body_temp_score : '' }}</td>
 
                                                         <td>
                                                             @if ($dt->up_team == 1)

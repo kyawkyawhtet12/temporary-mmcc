@@ -99,16 +99,19 @@
                                                 @foreach ($data as $dt)
                                                     <tr class="{{ $dt->match_status }}">
                                                         <td>{{  $dt->match->round }}</td>
+
                                                         <td>
                                                             <a href="{{ route('match.maung-report', $dt->match->id) }}"
                                                                 class="match-detail">
                                                                 {{  $dt->match->match_format }}
                                                             </a>
                                                         </td>
+
                                                         <td>
                                                             {{ get_date_time_format($dt->match) }}
                                                         </td>
-                                                        <td>{{ $dt->match->maung_temp_score }}</td>
+
+                                                        <td>{{ ($dt->match->calculate_maung) ? $dt->match->maung_temp_score : '' }}</td>
 
                                                         <td>
                                                             @if ($dt->up_team == 1)
