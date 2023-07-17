@@ -11,49 +11,53 @@ class ThreeDigitDisableController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = ThreeDigit::where('status', 1)->orWhere('amount', '>', 0)->get();
+        // if ($request->ajax()) {
+        //     $query = ThreeDigit::where('status', 1)->orWhere('amount', '>', 0)->get();
 
-            return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('status', function ($number) {
-                        return $number->status;
-                    })
-                    ->addColumn('action', function ($number) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="btn btn-danger deleteNumber"> Delete </a>';
-                        return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-        }
-        
-        return view("backend.admin.3d-close.index");
+        //     return Datatables::of($query)
+        //             ->addIndexColumn()
+        //             ->addColumn('status', function ($number) {
+        //                 return $number->status;
+        //             })
+        //             ->addColumn('action', function ($number) {
+        //                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="btn btn-danger deleteNumber"> Delete </a>';
+        //                 return $btn;
+        //             })
+        //             ->rawColumns(['action'])
+        //             ->make(true);
+        // }
+
+        $data = ThreeDigit::all();
+
+        return view("backend.admin.3d-close.index",compact('data'));
     }
 
-    public function store(Request $request)
+    public function changeTwoDigitEnable(Request $request)
     {
-        // return $request->all();
-        $digit = ThreeDigit::where("number", $request->three_digit_number)->first();
-        
-        if (!$digit) {
-            return back()->with('error', '* Error');
-        }
-
-        $digit->update(['status' => $request->amount ? 0 : 1 , 'amount' => $request->amount ?: 0 ]);
-
-        return back()->with('success', '* Success');
+        ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
+            'status' => $request->status,
+            'amount' => 0,
+            'date' => null
+        ]);
+        return response()->json('success');
     }
 
-    public function enable(Request $request, $id)
+    public function changeThreeDigitDisable(Request $request)
     {
-        $digit = ThreeDigit::find($id);
+        ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
+            'status' => $request->status,
+            'amount' => 0,
+            'date' => $request->date
+        ]);
+        return response()->json('success');
+    }
 
-        if (!$digit) {
-            return response()->json("error");
-        }
-
-        $digit->update([ 'status' => 0]);
-
+    public function changeThreeDigitSubmit(Request $request)
+    {
+        ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
+            'amount' => $request->amount,
+            'date' => $request->date
+        ]);
         return response()->json('success');
     }
 }

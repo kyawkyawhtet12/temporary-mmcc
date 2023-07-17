@@ -95,7 +95,6 @@ Route::group(
         Route::get('/two-digits-results/{id}', [LotteryReportController::class, 'two_digits_detail'])->name('two-digits.result.detail')->whereNumber('id');
 
         // 3d
-
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
 
         Route::get('3d-limit_amounts', 'LimitAmountController@limit_3d')->name('3d.limit.amount');
@@ -106,8 +105,9 @@ Route::group(
         Route::post('/three_compensate', 'LimitCompensationController@updateThreeCompensate');
 
         Route::get('/3d-disable', 'ThreeDigitDisableController@index')->name('3d.disable');
-        Route::post('/3d-disable', 'ThreeDigitDisableController@store')->name('3d.disable.post');
-        Route::delete('/3d-disable/{id}', 'ThreeDigitDisableController@enable')->name('3d.disable.delete');
+        Route::post('three-digits/enabled-all', 'ThreeDigitDisableController@changeThreeDigitEnable')->name('threedigits.enabled-all');
+        Route::post('three-digits/disabled-all', 'ThreeDigitDisableController@changeThreeDigitDisable')->name('threedigits.disabled-all');
+        Route::post('three-digits/submit-all', 'ThreeDigitDisableController@changeThreeDigitSubmit')->name('threedigits.submit-all');
 
         Route::resource('three-lottery-close', 'DisableController');
 

@@ -1,5 +1,16 @@
 @extends('layouts.master')
 
+@section('css')
+    <style>
+        @media (min-width: 768px) {
+            .col-md-1 {
+                flex: 0 0 9% !important;
+                max-width: 9% !important;
+            }
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -23,50 +34,74 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col">
-
-                    <form action="{{ route('3d.disable.post') }}" method="POST">
-                        @csrf
-                        <div class="d-flex orm-group col-md-6 mb-5">
-                            <input type="number" class="form-control p-2" id="three-digit-number" placeholder="Number"
-                                name="three_digit_number">
-
-                            <input type="number" class="form-control p-2 ml-3" id="three-digit-amount" placeholder="Amount"
-                                name="amount">
-
-                            <button type="submit" class="btn btn-success ml-3">
-                                Submit </button>
-                        </div>
-                    </form>
-
+                <div class="col-12 grid-margin stretch-card d-none d-md-flex">
                     <div class="card">
+                        <div class="card-header badge-dark text-white">
+                            3D (Disable & Enable Selected Numbers)
+                        </div>
                         <div class="card-body">
-                            <div class="d-flex justify-content-between mb-3">
-                                <h4 class="card-title">3D Open/Close</h4>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table id="3d-disable-table" class="table table-bordered table-hover nowrap">
-                                            <thead>
-                                                <tr class="bg-primary text-white" role="row">
-                                                    <th>No.</th>
-                                                    <th>3 Digit Number</th>
-                                                    <th>Amount</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
+                            <div class="mb-4 row align-items-end orderActionContainer" style="display: none;">
+                                <div class="form-group mb-0 col-sm-4">
+                                    <button class="btn btn-outline-success enabled-all">Enable</button>
+                                    <button class="btn btn-outline-danger disabled-all">Disable</button>
+                                </div>
+                                <div class="form-row col-sm-4">
+                                    <div class="col">
+                                        <input type="date" name="date" id="date" value="<?= date('Y-m-d') ?>"
+                                            class="form-control" placeholder="Choose Date">
+                                    </div>
+                                </div>
+                                <div class="form-row col-sm-4">
+                                    <div class="col">
+                                        <input type="number" name="amount" id="amount" autocomplete="off"
+                                            class="form-control" placeholder="Enter Amount">
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-outline-success submit-all">Submit</button>
                                     </div>
                                 </div>
                             </div>
+                            <div class="row icons-list">
+                                @foreach ($data as $digit)
+                                    @if ($digit->status === 1)
+                                        <div class="d-flex col-md-1 justify-content-between">
+                                            <div class="form-check">
+                                                <label class="form-check-label text-danger mb-1" style="font-weight: bold;">
+                                                    <input class="form-check-input checkbox" type="checkbox"
+                                                        data-id="{{ $digit->id }}">
+                                                    {{ $digit->number }}
+                                                    <i class="input-helper"></i></label>
+                                                <span>{{ $digit->date }}</span>
+                                            </div>
+                                        </div>
+                                    @elseif($digit->amount > 0)
+                                        <div class="d-flex col-md-1 justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <label class="form-check-label text-warning" style="font-weight: bold;">
+                                                    <input class="form-check-input checkbox" type="checkbox"
+                                                        data-id="{{ $digit->id }}">
+                                                    {{ $digit->number }}
+                                                    <i class="input-helper"></i></label>
+                                                <span class="btn btn-sm btn-info mb-2">{{ $digit->amount }}</span>
+                                                <span>{{ $digit->date }}</span>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="d-flex col-md-1 justify-content-between align-items-center">
+                                            <div class="form-check">
+                                                <label class="form-check-label text-success" style="font-weight: bold;">
+                                                    <input class="form-check-input checkbox" type="checkbox"
+                                                        data-id="{{ $digit->id }}">
+                                                    {{ $digit->number }}
+                                                    <i class="input-helper"></i></label>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-
-                </div> <!-- end col -->
-
+                </div>
             </div>
 
         </div>
@@ -75,62 +110,164 @@
 @endsection
 
 @push('scripts')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            var table = $('#3d-disable-table').DataTable({
-                processing: true,
-                "language": {
-                    processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>'
-                },
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('3d.disable') }}",
-                    data: function(d) {
-                        d.search = $('input[type="search"]').val()
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'number',
-                        name: 'number'
-                    },
-                    {
-                        data: 'amount',
-                        name: 'amount'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action'
-                    },
-                ],
-            });
-
-            $('body').on('click', '.deleteNumber', function() {
-                if (!confirm('Are You sure want to delete !')) return;
-                var threedigit_id = $(this).data("id");
-
-                $.ajax({
-                    type: "DELETE",
-                    url: `/admin/3d-disable/${threedigit_id}`,
-                    success: function(data) {
-                        table.draw();
-                    },
-                    error: function(data) {
-                        console.log('Error:', data);
-                    }
-                });
-            });
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
+<script>
+    $(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
-    </script>
+
+        $(document).on("click", ".checkbox", function() {
+            var idsArr = [];
+            $(".checkbox:checked").each(function() {
+                idsArr.push($(this).attr('data-id'));
+            });
+            if (idsArr.length > 0) {
+                $('.orderActionContainer').show();
+            } else {
+                $('.orderActionContainer').hide();
+            }
+            console.log(idsArr)
+        });
+
+        $('.enabled-all').on('click', function(e) {
+            var idsArr = [];
+            $(".checkbox:checked").each(function() {
+                idsArr.push($(this).attr('data-id'));
+            });
+            swal.fire({
+                title: "Enable this checked 3 digit numbers",
+                icon: 'warning',
+                text: "Are you sure, you want to proceed?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, proceed it!",
+                cancelButtonText: "No, cancel!",
+                confirmButtonColor: '#eb3422',
+                cancelButtonColor: "#fe9365",
+                reverseButtons: true
+            }).then(function(e) {
+                if (e.value === true) {
+                    var strIds = idsArr.join(",");
+                    $.ajax({
+                        url: "{{ route('threedigits.enabled-all') }}",
+                        type: "POST",
+                        dataType: "text",
+                        data: {
+                            'ids': strIds,
+                            'status': 0
+                        },
+                        success: function(data) {
+                            swal.fire("Done!",
+                                "Three digit status changed successfully!",
+                                "success")
+                            .then(function() {
+                                window.location.reload(true);
+                            });
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function(dismiss) {
+                return false
+            })
+        });
+
+        $('.disabled-all').on('click', function(e) {
+            var idsArr = [];
+            $(".checkbox:checked").each(function() {
+                idsArr.push($(this).attr('data-id'));
+            });
+            var date = $("#date").val();
+            swal.fire({
+                title: "Disable this checked 3 digit numbers",
+                icon: 'warning',
+                text: "Are you sure, you want to proceed?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, proceed it!",
+                cancelButtonText: "No, cancel!",
+                confirmButtonColor: '#eb3422',
+                cancelButtonColor: "#fe9365",
+                reverseButtons: true
+            }).then(function(e) {
+                if (e.value === true) {
+                    var strIds = idsArr.join(",");
+                    $.ajax({
+                        url: "{{ route('threedigits.disabled-all') }}",
+                        type: "POST",
+                        dataType: "text",
+                        data: {
+                            'ids': strIds,
+                            'status': 1,
+                            'date': date
+                        },
+                        success: function(data) {
+                            swal.fire("Done!",
+                                "Three digit status changed successfully!",
+                                "success")
+                            .then(function() {
+                                window.location.reload(true);
+                            });
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function(dismiss) {
+                return false
+            })
+        });
+
+        $('.submit-all').on('click', function(e) {
+            var idsArr = [];
+            $(".checkbox:checked").each(function() {
+                idsArr.push($(this).attr('data-id'));
+            });
+            var date = $("#date").val();
+            swal.fire({
+                title: "Limit amount this checked 3 digit numbers",
+                icon: 'question',
+                text: "Are you sure, you want to proceed?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, proceed it!",
+                cancelButtonText: "No, cancel!",
+                confirmButtonColor: '#eb3422',
+                cancelButtonColor: "#fe9365",
+                reverseButtons: true
+            }).then(function(e) {
+                if (e.value === true) {
+                    var strIds = idsArr.join(",");
+                    $.ajax({
+                        url: "{{ route('threedigits.submit-all') }}",
+                        type: "POST",
+                        dataType: "text",
+                        data: {
+                            'ids': strIds,
+                            'amount': $('#amount').val(),
+                            'date': date
+                        },
+                        success: function(data) {
+                            swal.fire("Done!",
+                                "Three digit status changed successfully!",
+                                "success")
+                            .then(function() {
+                                window.location.reload(true);
+                            });
+                        }
+                    });
+                } else {
+                    e.dismiss;
+                }
+            }, function(dismiss) {
+                return false
+            })
+        });
+
+    });
+</script>
 @endpush
