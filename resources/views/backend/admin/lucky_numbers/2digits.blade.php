@@ -234,17 +234,17 @@
                     $('#twodigit_number').val(data.two_digit.number);
                     $("#type").val(data.type);
 
-                    if (data.type == 1) {
-                        $('#dubai').removeClass('d-none');
-                        $('#thai').addClass('d-none');
-                        $("#lottery_time_2").val(data.lottery_time_id);
-                    } else {
-                        $('#dubai').addClass('d-none');
-                        $('#thai').removeClass('d-none');
-                        $("#lottery_time_1").val(data.lottery_time_id);
-                    }
-
-                    // $('#lottery_time').val(data.lottery_time);
+                    // if (data.type == 1) {
+                    //     $('#dubai').removeClass('d-none');
+                    //     $('#thai').addClass('d-none');
+                    //     $("#lottery_time_2").val(data.lottery_time_id);
+                    // } else {
+                    //     $('#dubai').addClass('d-none');
+                    //     $('#thai').removeClass('d-none');
+                    //     $("#lottery_time_1").val(data.lottery_time_id);
+                    // }
+                    $("#date").val(data.date);
+                    $('#lottery_time').val(data.lottery_time);
                 })
             });
 

@@ -69,9 +69,9 @@ class TwoLuckyNumberController extends Controller
                     ->rawColumns(['number','lottery_time','status','action'])
                     ->make(true);
         }
-        
+
         $times_one = LotteryTime::where('type', 0)->get();
-        
+
         return view('backend.admin.lucky_numbers.2digits', compact('times_one'));
     }
 
@@ -81,14 +81,14 @@ class TwoLuckyNumberController extends Controller
 
         $lottery_time = ($request->type == 1) ? $request->lottery_time_2 : $request->lottery_time_1;
 
-        $data = TwoLuckyNumber::whereDate('created_at', today())
+        $data = TwoLuckyNumber::whereDate('date', $request->date)
                             ->where('lottery_time_id', $lottery_time)
                             ->first();
-        
-        // if ($data) {
-        //     return response()->json(['error' => 'Lucky number is already added.']);
-        // }
-                
+
+        if (!$request->twodigit_id && $data) {
+            return response()->json(['error' => 'Lucky number is already added.']);
+        }
+
         TwoLuckyNumber::updateOrCreate([
             'id'   => $request->twodigit_id,
         ], [
@@ -97,7 +97,7 @@ class TwoLuckyNumberController extends Controller
             'lottery_time_id' => $lottery_time,
             'type' => 0
         ]);
-   
+
         return response()->json(['success'=>'Lucky number saved successfully.']);
     }
     /**
@@ -131,24 +131,24 @@ class TwoLuckyNumberController extends Controller
                                     ['lottery_time_id','=', $data->lottery_time_id],
                                     ['two_digit_id','=',$data->two_digit_id],
                                 ])->get();
-            
+
 
             // return $two_lucky_draw_id;
-            
+
             foreach ($two_lucky_draw_id as $key => $value) {
                 TwoWinner::create([
                     'two_lucky_number_id' => $data->id,
                     'two_lucky_draw_id' => $value->id
                 ]);
             }
-           
+
             $grouped = TwoLuckyDraw::where([
                         ['created_at','>=', $date ],
                         ['lottery_time_id','=',$data->lottery_time_id],
                         ['two_digit_id','=',$data->two_digit_id],
                     ])->selectRaw('SUM(amount) as amount, user_id as user_id')->groupBy('user_id')->get();
-            
-            
+
+
             $za = TwoDigitCompensation::first();
             foreach ($grouped as $key => $value) {
                 // $current_amount = User::find($value->user_id);
