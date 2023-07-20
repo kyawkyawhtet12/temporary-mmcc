@@ -14,6 +14,7 @@ class ThreeLuckyNumber extends Model
         'votes',
         'date',
         'status',
+        'round'
     ];
 
     public function three_digit()

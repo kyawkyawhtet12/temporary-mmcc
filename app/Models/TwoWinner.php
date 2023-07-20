@@ -12,6 +12,8 @@ class TwoWinner extends Model
     protected $fillable = [
         'two_lucky_number_id',
         'two_lucky_draw_id',
+        'user_id',
+        'agent_id'
     ];
 
     public function twoLuckyNumber()

@@ -231,20 +231,12 @@
                     $('#saveBtn').val("edit-number");
                     $('#ajaxModel').modal('show');
                     $('#twodigit_id').val(data.id);
-                    $('#twodigit_number').val(data.two_digit.number);
-                    $("#type").val(data.type);
 
-                    // if (data.type == 1) {
-                    //     $('#dubai').removeClass('d-none');
-                    //     $('#thai').addClass('d-none');
-                    //     $("#lottery_time_2").val(data.lottery_time_id);
-                    // } else {
-                    //     $('#dubai').addClass('d-none');
-                    //     $('#thai').removeClass('d-none');
-                    //     $("#lottery_time_1").val(data.lottery_time_id);
-                    // }
+                    $('#twodigit_number').val(data.two_digit?.number);
+
+                    $("#type").val(data.type);
                     $("#date").val(data.date);
-                    $('#lottery_time').val(data.lottery_time);
+                    $('#lottery_time_1').val(data.lottery_time_id);
                 })
             });
 
@@ -288,19 +280,5 @@
                 });
             });
         });
-    </script>
-
-    <script>
-        $("#type").on('change', function() {
-
-            if ($(this).val() == 1) {
-                $('#dubai').removeClass('d-none');
-                $('#thai').addClass('d-none');
-            } else {
-                $('#dubai').addClass('d-none');
-                $('#thai').removeClass('d-none');
-            }
-
-        })
     </script>
 @endpush

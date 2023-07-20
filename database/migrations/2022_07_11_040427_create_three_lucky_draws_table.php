@@ -19,6 +19,7 @@ class CreateThreeLuckyDrawsTable extends Migration
             $table->unsignedBigInteger('agent_id');
             $table->unsignedBigInteger('three_digit_id');
             $table->bigInteger('amount')->default('0');
+            $table->string('round')->nullable();
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('three_digit_id')->references('id')->on('three_digits')->onDelete('cascade');

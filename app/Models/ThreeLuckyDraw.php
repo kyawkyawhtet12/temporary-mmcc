@@ -16,6 +16,7 @@ class ThreeLuckyDraw extends Model
         'agent_id',
         'three_digit_id',
         'amount',
+        'round'
     ];
 
     protected $dates = [

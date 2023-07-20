@@ -37,7 +37,7 @@ Route::post('/login/admin', 'Auth\LoginController@adminLogin')->name('admin.logi
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::post('change-password', 'Backend\AdminController@store')->name('change.password');
 
-Route::group(['middleware' => ['auth:admin'], 'namespace' => 'Backend'], function () {
+Route::group(['middleware' => ['auth:admin', 'admin'], 'namespace' => 'Backend'], function () {
     Route::get('/dashboard', 'AdminController@index')->name('dashboard.index');
 });
 
@@ -46,7 +46,7 @@ Route::post('/profile/update', 'Backend\ProfileController@update')->name('profil
 
 Route::group(
     [
-    'middleware' => 'auth:admin',
+    'middleware' => ['auth:admin', 'admin'],
     'namespace' => 'Backend',
     'prefix' => 'admin'
 ],

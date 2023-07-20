@@ -25,7 +25,7 @@ class ThreeLuckyNumberController extends Controller
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('number', function ($number) {
-                        return $number->three_digit->number;
+                        return $number->three_digit?->number;
                     })
                     // ->addColumn('votes', function ($number) {
                     //     $votes = unserialize($number->votes);
@@ -35,6 +35,8 @@ class ThreeLuckyNumberController extends Controller
                     //     return $result;
                     // })
                     ->addColumn('status', function ($number) {
+                        if( !$number->three_digit) return "";
+
                         if ($number->status == "Approved") {
                             return  '<label class="badge badge-success text-white badge-pill">Approved</label>';
                         } else {
@@ -51,15 +53,14 @@ class ThreeLuckyNumberController extends Controller
                     ->addColumn('date', function ($number) {
                         return date("F j, Y", strtotime($number->date));
                     })
-                    ->addColumn('created_at', function ($number) {
-                        return date("F j, Y, g:i A", strtotime($number->created_at));
-                    })
                     ->addColumn('action', function ($number) {
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
-                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
+                        // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
+
                         if ($number->status == "Approved") {
                             return '';
                         }
+
                         return $btn;
                     })
                     ->filter(function ($instance) use ($request) {
@@ -83,6 +84,13 @@ class ThreeLuckyNumberController extends Controller
             // 'votes' => 'required',
         ]);
 
+        if( !$request->threedigit_id){
+            $check = ThreeLuckyNumber::where('status', '!=', 'Approved')->get();
+
+            if($check){
+                return response()->json(['error' => 'already added']);
+            }
+        }
 
         ThreeLuckyNumber::updateOrCreate([
             'id'   => $request->threedigit_id,
@@ -117,34 +125,16 @@ class ThreeLuckyNumberController extends Controller
     public function UpdateByAjax(Request $request)
     {
         if ($request->value == "Approved") {
+
             $data = ThreeLuckyNumber::find($request->pk);
-            // $ids = [];
-            // foreach (unserialize($data->votes) as $q) {
-            //     array_push($ids, $q);
-            // }
-            // $query = ThreeDigit::whereIn('number', $ids)->pluck('id');
 
-            // $votes = ThreeLuckyDraw::where('created_at', '>=', Carbon::now()->subDay('15'))
-            //                                         ->whereIn('three_digit_id', $query)->get();
+            $round = $data->round;
 
-            // foreach ($votes as $key => $value) {
-            //     ThreeWinner::create([
-            //         'three_lucky_number_id' => $data->id,
-            //         'three_lucky_draw_id' => $value->id,
-            //         'status' => 'Za',
-            //     ]);
-            // }
-
-            // $date = Carbon::now();
-
-            $date = Carbon::parse($data->date);
-            // $test = $date->subDay(15);
-
-            // $test = $date->subDay(15);
-            // dd($test);
+            // $date = Carbon::parse($data->date);
 
             $three_lucky_draw_id = ThreeLuckyDraw::where([
-                                            ['created_at','>=', $date->subDay('15')],
+                                            // ['created_at','>=', $date->subDay('15')],
+                                            ['round', $round ],
                                             ['three_digit_id','=',$data->three_digit_id],
                                         ])->get();
 
@@ -153,44 +143,37 @@ class ThreeLuckyNumberController extends Controller
                     'three_lucky_number_id' => $data->id,
                     'three_lucky_draw_id' => $value->id,
                     'status' => 'Full',
+                    'user_id' => $value->user_id,
+                    'agent_id' => $value->agent_id
                 ]);
             }
 
             $za = ThreeDigitCompensation::first();
 
-            // $grouped_votes = ThreeLuckyDraw::where('created_at', '>=', Carbon::now()->subDay('15'))
-            //                                         ->whereIn('three_digit_id', $query)
-            //                                         ->selectRaw('SUM(amount) as amount, user_id as user_id, agent_id as agent_id')->groupBy('user_id', 'agent_id')
-            //                                         ->get();
-
-            // foreach ($grouped_votes as $key => $value) {
-            //     // $current_amount = User::find($value->user_id);
-            //     // $balance = $current_amount['amount'] + $value->amount * $za->vote;
-            //     $amount = $value->amount * $za->vote;
-            //     if ($value->user_id) {
-            //         User::find($value->user_id)->increment('amount', $amount);
-            //     } else {
-            //         Agent::find($value->agent_id)->increment('amount', $amount);
-            //     }
-            // }
-
             $grouped = ThreeLuckyDraw::where([
-                            ['created_at','>=', $date->subDay('15')],
+                            // ['created_at','>=', $date->subDay('15')],
+                            ['round', $round ],
                             ['three_digit_id','=',$data->three_digit_id],
-                        ])->selectRaw('SUM(amount) as amount, user_id as user_id, agent_id as agent_id')
+                        ])
+                        ->selectRaw('SUM(amount) as amount, user_id as user_id, agent_id as agent_id')
                         ->groupBy('user_id', 'agent_id')->get();
 
             foreach ($grouped as $key => $value) {
-                // $current_amount = User::find($value->user_id);
-                // $balance = $current_amount['amount'] + $value->amount * $za->compensate;
-                // User::find($value->user_id)->update(['amount'=> $balance]);
+
                 $amount = $value->amount * $za->compensate;
+
                 if ($value->user_id) {
                     User::find($value->user_id)->increment('amount', $amount);
                 } else {
                     Agent::find($value->agent_id)->increment('amount', $amount);
                 }
             }
+
+            ThreeLuckyNumber::create([
+                'round' => $round + 1,
+                'date' => Carbon::parse($data->date)->addDays(15)->format('Y-m-d'),
+                'status' => 'Pending'
+            ]);
         }
         ThreeLuckyNumber::find($request->pk)->update([$request->name => $request->value]);
         return response()->json(['message' => 'Lucky number status changed successfully.']);

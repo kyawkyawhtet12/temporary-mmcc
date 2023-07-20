@@ -21,16 +21,19 @@ class TwoLuckyNumberController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = TwoLuckyNumber::with('two_digit', 'lottery_time')->orderBy('date', 'desc');
+            $query = TwoLuckyNumber::with('two_digit', 'lottery_time')->orderBy('date', 'desc')->orderBy('lottery_time_id', 'desc');
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('number', function ($number) {
-                        return '<label class="badge badge-success badge-pill">'.$number->two_digit->number.'</label>';
+                        return '<label class="badge badge-success badge-pill">'.$number->two_digit?->number.'</label>';
                     })
                     ->addColumn('lottery_time', function ($number) {
                         return '<label class="badge badge-primary badge-pill">'.$number->lottery_time->time.'</label>';
                     })
                     ->addColumn('status', function ($number) {
+
+                        if( !$number->two_digit) return "";
+
                         if ($number->status == "Approved") {
                             return  '<label class="badge badge-info badge-pill">Approved</label>';
                         } else {
@@ -138,7 +141,9 @@ class TwoLuckyNumberController extends Controller
             foreach ($two_lucky_draw_id as $key => $value) {
                 TwoWinner::create([
                     'two_lucky_number_id' => $data->id,
-                    'two_lucky_draw_id' => $value->id
+                    'two_lucky_draw_id' => $value->id,
+                    'user_id' => $value->user_id,
+                    'agent_id' => $value->agent_id
                 ]);
             }
 

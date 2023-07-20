@@ -66,7 +66,7 @@
                                     $win = $win_betting * $odds;
                                     $betting = $draw->sum('amount');
                                 @endphp
-                                <h5>Winning number : {{ $data->two_digit->number }}</h5>
+                                <h5>Winning number : {{ $data->two_digit?->number }}</h5>
                                 <h5>Number betting : {{ $win_betting }}</h5>
                                 <h5>Odds : {{ $odds }}</h5>
                                 <h5>betting : {{ $betting }} </h5>
@@ -86,14 +86,10 @@
 @push('scripts')
 
 <script>
-
-    let url = window.location.href;
-
     $("#agent").on('change', function(){
-        // console.log($(this).val());
         let agent_id = $(this).val();
         window.location.href = `?agent=${agent_id}`;
     })
-    </script>
+</script>
 
 @endpush

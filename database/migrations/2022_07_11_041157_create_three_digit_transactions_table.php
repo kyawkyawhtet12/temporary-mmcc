@@ -17,6 +17,7 @@ class CreateThreeDigitTransactionsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('three_digit_id');
             $table->bigInteger('amount')->default('0');
+            $table->string('round')->nullable();
             $table->foreign('three_digit_id')->references('id')->on('three_digits')->onDelete('cascade');
             $table->timestamps();
         });

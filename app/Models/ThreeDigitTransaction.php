@@ -12,6 +12,7 @@ class ThreeDigitTransaction extends Model
     protected $fillable = [
         'three_digit_id',
         'amount',
+        'round'
     ];
 
     public function three_digit()

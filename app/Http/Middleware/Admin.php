@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\TwoLuckyNumber;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,11 +18,16 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::guard('admin')->check()) {
-            return $next($request);
-        } else {
-            return redirect()->guest(route('login.admin'));
-        }
-        abort(403);
+        TwoLuckyNumber::firstOrCreate(
+            [ 'date' => today()->format('Y-m-d'), 'lottery_time_id' => 1 ],
+            [ 'two_digit_id' => NULL ]
+        );
+
+        TwoLuckyNumber::firstOrCreate(
+            [ 'date' => today()->format('Y-m-d'), 'lottery_time_id' => 2 ],
+            [ 'two_digit_id' => NULL ]
+        );
+
+        return $next($request);
     }
 }

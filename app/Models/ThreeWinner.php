@@ -13,6 +13,8 @@ class ThreeWinner extends Model
         'three_lucky_number_id',
         'three_lucky_draw_id',
         'status',
+        'user_id',
+        'agent_id'
     ];
 
     public function threeLuckyNumber()

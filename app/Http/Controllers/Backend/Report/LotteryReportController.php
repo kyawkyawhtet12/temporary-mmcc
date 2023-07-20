@@ -91,11 +91,12 @@ class LotteryReportController extends Controller
     public function two_digits(Request $request)
     {
         if ($request->ajax()) {
-            $query = TwoLuckyNumber::with('two_digit', 'lottery_time')->where('status', 'Approved')->orderBy('date', 'desc');
+            $query = TwoLuckyNumber::with('two_digit', 'lottery_time')->orderBy('date', 'desc'
+                                        )->orderBy('lottery_time_id', 'desc');
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('number', function ($number) {
-                        return $number->two_digit->number;
+                        return $number->two_digit?->number;
                     })
                     ->addColumn('lottery_time', function ($number) {
                         return $number->lottery_time->time;

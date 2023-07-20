@@ -39,11 +39,12 @@
                                     <thead>
                                         <tr class="bg-primary text-white" role="row">
                                         <th>No.</th>
+                                        {{-- <th>Round</th> --}}
                                         <th>3 Digit Number</th>
                                         {{-- <th>Votes</th> --}}
                                         <th>Lottery Date</th>
                                         <th>Status</th>
-                                        <th>Created Date</th>
+                                        {{-- <th>Created Date</th> --}}
                                         <th>Action</th>
                                         </tr>
                                     </thead>
@@ -143,11 +144,12 @@
             },
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                // {data: 'round', name: 'round'},
                 {data: 'number', name: 'number'},
                 // {data: 'votes', name: 'votes'},
                 {data: 'date', name: 'date'},
                 {data: 'status', name: 'status'},
-                {data: 'created_at', name: 'created_at'},
+                // {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action'},
             ],
         });
@@ -231,6 +233,7 @@
               success: function (data) {
                 $('#numberForm').trigger("reset");
                 $('#ajaxModel').modal('hide');
+                if (data.error) alert(data.error);
                 table.draw();
               },
               error: function (data) {
