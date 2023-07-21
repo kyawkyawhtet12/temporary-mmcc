@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\Agent;
 use App\Models\LimitAmount;
 use Illuminate\Http\Request;
+use App\Models\TwoLimitAmount;
+use App\Models\ThreeLimitAmount;
 use App\Http\Controllers\Controller;
 
 class LimitAmountController extends Controller
@@ -11,38 +14,38 @@ class LimitAmountController extends Controller
     // 2d
     public function limit_2d()
     {
-        $limit_amounts = LimitAmount::orderBy('id', 'DESC')->get();
-        return view('backend.admin.limit_amounts.2d', compact('limit_amounts'));
+        $agents = Agent::all();
+        return view('backend.admin.limit_amounts.2d', compact('agents'));
     }
 
-    public function updateMin_2d(Request $request)
+    public function limit_2d_post(Request $request)
     {
-        LimitAmount::find($request->pk)->update([ 'two_min_amount' => $request->value]);
-        return response()->json(['success'=>'done']);
-    }
+        $agent = Agent::findOrFail($request->agent_id);
 
-    public function updateMax_2d(Request $request)
-    {
-        LimitAmount::find($request->pk)->update([ 'two_max_amount' => $request->value]);
-        return response()->json(['success'=>'done']);
+        TwoLimitAmount::updateOrCreate(
+            ['agent_id' => $agent->id ],
+            ['min_amount' => $request->min , 'max_amount' => $request->max ]
+        );
+
+        return back()->with('success', '* Successfully Done');
     }
 
     // 3d
     public function limit_3d()
     {
-        $limit_amounts = LimitAmount::orderBy('id', 'DESC')->get();
-        return view('backend.admin.limit_amounts.3d', compact('limit_amounts'));
+        $agents = Agent::all();
+        return view('backend.admin.limit_amounts.3d', compact('agents'));
     }
 
-    public function updateMin_3d(Request $request)
+    public function limit_3d_post(Request $request)
     {
-        LimitAmount::find($request->pk)->update( ['three_min_amount'=> $request->value]);
-        return response()->json(['success'=>'done']);
-    }
+        $agent = Agent::findOrFail($request->agent_id);
 
-    public function updateMax_3d(Request $request)
-    {
-        LimitAmount::find($request->pk)->update(['three_max_amount' => $request->value]);
-        return response()->json(['success'=>'done']);
+        ThreeLimitAmount::updateOrCreate(
+            ['agent_id' => $agent->id ],
+            ['min_amount' => $request->min , 'max_amount' => $request->max ]
+        );
+
+        return back()->with('success', '* Successfully Done');
     }
 }

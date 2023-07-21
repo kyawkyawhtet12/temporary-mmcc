@@ -10,6 +10,7 @@ class LimitAmount extends Model
     use HasFactory;
 
     protected $fillable = [
+        'agent_id',
         'two_min_amount',
         'two_max_amount',
         'three_min_amount',

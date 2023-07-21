@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ThreeDigitCompensation extends Model
+class TwoLimitAmount extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'agent_id',
-        'compensate',
-        'vote',
+        'min_amount',
+        'max_amount'
     ];
 }

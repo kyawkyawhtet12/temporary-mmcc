@@ -15,7 +15,8 @@ class CreateThreeDigitCompensationTable extends Migration
     {
         Schema::create('three_digit_compensation', function (Blueprint $table) {
             $table->id();
-            $table->integer('amount');
+            $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->bigInteger('compensate');
             $table->integer('vote');
             $table->timestamps();

@@ -15,7 +15,8 @@ class CreateTwoDigitCompensationTable extends Migration
     {
         Schema::create('two_digit_compensation', function (Blueprint $table) {
             $table->id();
-            $table->integer('amount');
+            $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->bigInteger('compensate');
             $table->timestamps();
         });

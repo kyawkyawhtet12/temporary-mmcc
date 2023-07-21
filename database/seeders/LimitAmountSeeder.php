@@ -14,11 +14,11 @@ class LimitAmountSeeder extends Seeder
      */
     public function run()
     {
-        LimitAmount::create([
-            'two_min_amount' => 100,
-            'two_max_amount' => 100000,
-            'three_min_amount' => 100,
-            'three_max_amount' => 100000,
-        ]);
+        // LimitAmount::create([
+        //     'two_min_amount' => 100,
+        //     'two_max_amount' => 100000,
+        //     'three_min_amount' => 100,
+        //     'three_max_amount' => 100000,
+        // ]);
     }
 }

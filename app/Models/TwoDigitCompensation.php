@@ -10,7 +10,7 @@ class TwoDigitCompensation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'amount',
+        'agent_id',
         'compensate',
     ];
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\Agent;
 use App\Models\TwoDigit;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -12,9 +13,10 @@ class TwoDigitDisableController extends Controller
     public function index()
     {
         $two_digits = TwoDigit::all();
+        $agents = Agent::all();
 
         return view('backend.admin.2d-close.index', compact(
-            'two_digits',
+            'two_digits', 'agents'
         ));
     }
 

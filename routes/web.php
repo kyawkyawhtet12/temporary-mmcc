@@ -79,11 +79,10 @@ Route::group(
         Route::post('two-digits/submit-all', 'TwoDigitDisableController@changeTwoDigitSubmit')->name('twodigits.submit-all');
 
         Route::get('2d-limit_amounts', 'LimitAmountController@limit_2d')->name('2d.limit.amount');
-        Route::post('2d-update-min', 'LimitAmountController@updateMin_2d');
-        Route::post('2d-update-max', 'LimitAmountController@updateMax_2d');
+        Route::post('2d-limit-amounts', 'LimitAmountController@limit_2d_post')->name('2d.limit.amount.post');
 
         Route::get('2d-compensate', 'LimitCompensationController@limit_2d')->name('2d.compensate.amount');
-        Route::post('/two_compensate', 'LimitCompensationController@updateTwoCompensate');
+        Route::post('/two_compensate', 'LimitCompensationController@updateTwoCompensate')->name('2d.compensate.amount.post');
 
         Route::get('lottery-times', 'LotteryTimeController@index')->name('lottery-time.index');
         Route::get('lottery-times/edit/{id}', 'LotteryTimeController@edit')->name('lottery-time.edit');
@@ -98,11 +97,10 @@ Route::group(
         Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
 
         Route::get('3d-limit_amounts', 'LimitAmountController@limit_3d')->name('3d.limit.amount');
-        Route::post('3d-update-min', 'LimitAmountController@updateMin_3d');
-        Route::post('3d-update-max', 'LimitAmountController@updateMax_3d');
+        Route::post('3d-limit-amounts', 'LimitAmountController@limit_3d_post')->name('3d.limit.amount.post');
 
         Route::get('3d-compensate', 'LimitCompensationController@limit_3d')->name('3d.compensate.amount');
-        Route::post('/three_compensate', 'LimitCompensationController@updateThreeCompensate');
+        Route::post('/three_compensate', 'LimitCompensationController@updateThreeCompensate')->name('3d.compensate.amount.post');
 
         Route::get('/3d-disable', 'ThreeDigitDisableController@index')->name('3d.disable');
         Route::post('three-digits/enabled-all', 'ThreeDigitDisableController@changeThreeDigitEnable')->name('threedigits.enabled-all');

@@ -33,6 +33,27 @@
             </div>
             <!-- end page title -->
 
+            {{-- <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <select name="agent" id="agentSelect" class="form-control">
+                                            <option value="all">All</option>
+                                            @foreach ($agents as $agent)
+                                                <option value="{{ $agent->id }}"> {{ $agent->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+
             <div class="row">
                 <div class="col-12 grid-margin stretch-card d-none d-md-flex">
                     <div class="card">

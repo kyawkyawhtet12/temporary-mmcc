@@ -14,10 +14,10 @@ class ThreeDigitCompensationSeeder extends Seeder
      */
     public function run()
     {
-        ThreeDigitCompensation::create([
-            'amount' => 1,
-            'compensate' => 500,
-            'vote' => 10,
-        ]);
+        // ThreeDigitCompensation::create([
+        //     'amount' => 1,
+        //     'compensate' => 500,
+        //     'vote' => 10,
+        // ]);
     }
 }
