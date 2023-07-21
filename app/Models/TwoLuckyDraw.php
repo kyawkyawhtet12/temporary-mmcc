@@ -17,6 +17,7 @@ class TwoLuckyDraw extends Model
         'two_digit_id',
         'amount',
         'lottery_time_id',
+        'za'
     ];
 
     protected $dates = [

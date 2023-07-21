@@ -139,34 +139,21 @@ class TwoLuckyNumberController extends Controller
             // return $two_lucky_draw_id;
 
             foreach ($two_lucky_draw_id as $key => $value) {
+
+                $amount = $value->amount * $value->za;
+                User::find($value->user_id)->increment('amount', $amount);
+
                 TwoWinner::create([
                     'two_lucky_number_id' => $data->id,
                     'two_lucky_draw_id' => $value->id,
                     'user_id' => $value->user_id,
                     'agent_id' => $value->agent_id
                 ]);
+
             }
 
-            $grouped = TwoLuckyDraw::where([
-                        ['created_at','>=', $date ],
-                        ['lottery_time_id','=',$data->lottery_time_id],
-                        ['two_digit_id','=',$data->two_digit_id],
-                    ])->selectRaw('SUM(amount) as amount, user_id as user_id')->groupBy('user_id')->get();
-
-
-            $za = TwoDigitCompensation::first();
-            foreach ($grouped as $key => $value) {
-                // $current_amount = User::find($value->user_id);
-                // $balance = $current_amount['amount'] + $value->amount * $za->compensate;
-                // User::find($value->user_id)->update(['amount'=> $balance]);
-                $amount = $value->amount * $za->compensate;
-                if ($value->user_id) {
-                    User::find($value->user_id)->increment('amount', $amount);
-                } else {
-                    Agent::find($value->agent_id)->increment('amount', $amount);
-                }
-            }
         }
+
         TwoLuckyNumber::find($request->pk)->update([$request->name => $request->value]);
         return response()->json(['message' => 'Lucky number status changed successfully.']);
     }

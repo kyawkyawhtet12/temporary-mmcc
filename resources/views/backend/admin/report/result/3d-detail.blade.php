@@ -31,7 +31,7 @@
                         </h4>
 
                         <select name="agent" id="agent" class="form-control col-md-3">
-                                <option value="all">-- Select All --</option>
+                                {{-- <option value="all">-- Select All --</option> --}}
                             @foreach($agents as $agent)
                                 <option value="{{  $agent->id }}" {{ request()->agent == $agent->id ? 'selected' : '' }}>
                                     {{  $agent->name }}
@@ -66,7 +66,7 @@
                                     $win = $win_betting * $odds;
                                     $betting = $draw->sum('amount');
                                 @endphp
-                                <h5>Winning number : {{ $data->three_digit->number }}</h5>
+                                <h5>Winning number : {{ $data->three_digit?->number }}</h5>
                                 <h5>Number betting : {{ $win_betting }}</h5>
                                 <h5>Odds : {{ $odds }}</h5>
                                 <h5>betting : {{ $betting }} </h5>

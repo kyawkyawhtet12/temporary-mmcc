@@ -23,6 +23,9 @@ class CreateThreeLuckyDrawsTable extends Migration
             $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('three_digit_id')->references('id')->on('three_digits')->onDelete('cascade');
+
+            $table->string('za');
+
             $table->timestamps();
         });
     }

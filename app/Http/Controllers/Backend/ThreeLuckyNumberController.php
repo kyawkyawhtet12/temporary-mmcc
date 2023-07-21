@@ -130,15 +130,16 @@ class ThreeLuckyNumberController extends Controller
 
             $round = $data->round;
 
-            // $date = Carbon::parse($data->date);
-
             $three_lucky_draw_id = ThreeLuckyDraw::where([
-                                            // ['created_at','>=', $date->subDay('15')],
                                             ['round', $round ],
                                             ['three_digit_id','=',$data->three_digit_id],
                                         ])->get();
 
             foreach ($three_lucky_draw_id as $key => $value) {
+
+                $amount = $value->amount * $value->za;
+                User::find($value->user_id)->increment('amount', $amount);
+
                 ThreeWinner::create([
                     'three_lucky_number_id' => $data->id,
                     'three_lucky_draw_id' => $value->id,
@@ -148,33 +149,14 @@ class ThreeLuckyNumberController extends Controller
                 ]);
             }
 
-            $za = ThreeDigitCompensation::first();
-
-            $grouped = ThreeLuckyDraw::where([
-                            // ['created_at','>=', $date->subDay('15')],
-                            ['round', $round ],
-                            ['three_digit_id','=',$data->three_digit_id],
-                        ])
-                        ->selectRaw('SUM(amount) as amount, user_id as user_id, agent_id as agent_id')
-                        ->groupBy('user_id', 'agent_id')->get();
-
-            foreach ($grouped as $key => $value) {
-
-                $amount = $value->amount * $za->compensate;
-
-                if ($value->user_id) {
-                    User::find($value->user_id)->increment('amount', $amount);
-                } else {
-                    Agent::find($value->agent_id)->increment('amount', $amount);
-                }
-            }
-
+            // create for next lucky number
             ThreeLuckyNumber::create([
                 'round' => $round + 1,
                 'date' => Carbon::parse($data->date)->addDays(15)->format('Y-m-d'),
                 'status' => 'Pending'
             ]);
         }
+
         ThreeLuckyNumber::find($request->pk)->update([$request->name => $request->value]);
         return response()->json(['message' => 'Lucky number status changed successfully.']);
     }
