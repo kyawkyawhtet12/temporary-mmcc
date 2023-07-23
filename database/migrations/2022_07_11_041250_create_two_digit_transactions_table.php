@@ -21,6 +21,10 @@ class CreateTwoDigitTransactionsTable extends Migration
             // $table->string('lottery_time');
             $table->unsignedBigInteger('lottery_time_id');
             $table->foreign('lottery_time_id')->references('id')->on('lottery_times')->onDelete('cascade');
+
+            $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

@@ -5,21 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ThreeDigit extends Model
+class ThreeDigitStatus extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
-        'number',
+        'agent_id',
+        'three_digit_id',
         'status',
         'amount',
-        'date'
+        'date',
+        'round'
     ];
-
-    public function rs_status()
-    {
-        return $this->hasOne(ThreeDigitStatus::class, 'three_digit_id');
-    }
 }

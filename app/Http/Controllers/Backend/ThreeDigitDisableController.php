@@ -2,62 +2,74 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
+use App\Models\Agent;
 use App\Models\ThreeDigit;
-use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
+use App\Http\Controllers\Controller;
+use App\Models\ThreeDigitStatus;
 
 class ThreeDigitDisableController extends Controller
 {
     public function index(Request $request)
     {
-        // if ($request->ajax()) {
-        //     $query = ThreeDigit::where('status', 1)->orWhere('amount', '>', 0)->get();
 
-        //     return Datatables::of($query)
-        //             ->addIndexColumn()
-        //             ->addColumn('status', function ($number) {
-        //                 return $number->status;
-        //             })
-        //             ->addColumn('action', function ($number) {
-        //                 $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="btn btn-danger deleteNumber"> Delete </a>';
-        //                 return $btn;
-        //             })
-        //             ->rawColumns(['action'])
-        //             ->make(true);
-        // }
+        // $data = ThreeDigit::all();
 
-        $data = ThreeDigit::all();
+        // return view("backend.admin.3d-close.index",compact('data'));
 
-        return view("backend.admin.3d-close.index",compact('data'));
+        $select_agent = $request->agent ?: 1;
+
+        $data = ThreeDigit::with(['rs_status' => function ($query) use ($select_agent) {
+                            $query->where('agent_id', $select_agent);
+                        }])->get();
+
+        $agents = Agent::all();
+
+        return view('backend.admin.3d-close.index', compact(
+            'data', 'agents' , 'select_agent'
+        ));
     }
 
     public function changeTwoDigitEnable(Request $request)
     {
-        ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => $request->status,
-            'amount' => 0,
-            'date' => null
-        ]);
+        $ids = explode(",", $request->ids);
+
+        foreach( $ids as $id ){
+            ThreeDigitStatus::updateOrCreate(
+                ['agent_id' => $request->agent, 'three_digit_id' => $id ],
+                ['status' => $request->status, 'amount' => 0 , 'date' => null ]
+            );
+        }
+
         return response()->json('success');
     }
 
     public function changeThreeDigitDisable(Request $request)
     {
-        ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => $request->status,
-            'amount' => 0,
-            'date' => $request->date
-        ]);
+        $ids = explode(",", $request->ids);
+
+        foreach( $ids as $id ){
+            ThreeDigitStatus::updateOrCreate(
+                ['agent_id' => $request->agent, 'three_digit_id' => $id ],
+                ['status' => $request->status, 'amount' => 0  ]
+            );
+        }
+
         return response()->json('success');
     }
 
     public function changeThreeDigitSubmit(Request $request)
     {
-        ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
-            'amount' => $request->amount,
-            'date' => $request->date
-        ]);
+        $ids = explode(",", $request->ids);
+
+        foreach( $ids as $id ){
+            ThreeDigitStatus::updateOrCreate(
+                ['agent_id' => $request->agent, 'three_digit_id' => $id ],
+                ['status' => 0 , 'amount' => $request->amount ]
+            );
+        }
+
         return response()->json('success');
     }
 }

@@ -34,6 +34,27 @@
             <!-- end page title -->
 
             <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <select name="agent" id="agentSelect" class="form-control">
+                                            {{-- <option value="all">All</option> --}}
+                                            @foreach ($agents as $agent)
+                                                <option value="{{ $agent->id }}" {{ ($select_agent == $agent->id ? 'selected' : '') }}> {{ $agent->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-12 grid-margin stretch-card d-none d-md-flex">
                     <div class="card">
                         <div class="card-header badge-dark text-white">
@@ -46,10 +67,10 @@
                                     <button class="btn btn-outline-danger disabled-all">Disable</button>
                                 </div>
                                 <div class="form-row col-sm-4">
-                                    <div class="col">
+                                    {{-- <div class="col">
                                         <input type="date" name="date" id="date" value="<?= date('Y-m-d') ?>"
                                             class="form-control" placeholder="Choose Date">
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="form-row col-sm-4">
                                     <div class="col">
@@ -63,7 +84,7 @@
                             </div>
                             <div class="row icons-list">
                                 @foreach ($data as $digit)
-                                    @if ($digit->status === 1)
+                                    @if ($digit->rs_status?->status === 1)
                                         <div class="d-flex col-md-1 justify-content-between">
                                             <div class="form-check">
                                                 <label class="form-check-label text-danger mb-1" style="font-weight: bold;">
@@ -71,10 +92,10 @@
                                                         data-id="{{ $digit->id }}">
                                                     {{ $digit->number }}
                                                     <i class="input-helper"></i></label>
-                                                <span>{{ $digit->date }}</span>
+                                                <span>{{ $digit->rs_status?->date }}</span>
                                             </div>
                                         </div>
-                                    @elseif($digit->amount > 0)
+                                    @elseif($digit->rs_status?->amount > 0)
                                         <div class="d-flex col-md-1 justify-content-between align-items-center">
                                             <div class="form-check">
                                                 <label class="form-check-label text-warning" style="font-weight: bold;">
@@ -82,8 +103,8 @@
                                                         data-id="{{ $digit->id }}">
                                                     {{ $digit->number }}
                                                     <i class="input-helper"></i></label>
-                                                <span class="btn btn-sm btn-info mb-2">{{ $digit->amount }}</span>
-                                                <span>{{ $digit->date }}</span>
+                                                <span class="btn btn-sm btn-info mb-2">{{ $digit->rs_status?->amount }}</span>
+                                                <span>{{ $digit->rs_status?->date }}</span>
                                             </div>
                                         </div>
                                     @else
@@ -119,6 +140,11 @@
             }
         });
 
+        $("#agentSelect").on('change', function(){
+            let agent_id = $(this).val();
+            window.location.href = `?agent=${agent_id}`;
+        })
+
         $(document).on("click", ".checkbox", function() {
             var idsArr = [];
             $(".checkbox:checked").each(function() {
@@ -137,6 +163,9 @@
             $(".checkbox:checked").each(function() {
                 idsArr.push($(this).attr('data-id'));
             });
+
+            var agent = $("#agentSelect").val();
+
             swal.fire({
                 title: "Enable this checked 3 digit numbers",
                 icon: 'warning',
@@ -157,7 +186,8 @@
                         dataType: "text",
                         data: {
                             'ids': strIds,
-                            'status': 0
+                            'status': 0,
+                            'agent' : agent
                         },
                         success: function(data) {
                             swal.fire("Done!",
@@ -181,7 +211,10 @@
             $(".checkbox:checked").each(function() {
                 idsArr.push($(this).attr('data-id'));
             });
+
             var date = $("#date").val();
+            var agent = $("#agentSelect").val();
+
             swal.fire({
                 title: "Disable this checked 3 digit numbers",
                 icon: 'warning',
@@ -203,7 +236,8 @@
                         data: {
                             'ids': strIds,
                             'status': 1,
-                            'date': date
+                            'date': date,
+                            'agent' : agent
                         },
                         success: function(data) {
                             swal.fire("Done!",
@@ -227,7 +261,10 @@
             $(".checkbox:checked").each(function() {
                 idsArr.push($(this).attr('data-id'));
             });
+
             var date = $("#date").val();
+            var agent = $("#agentSelect").val();
+
             swal.fire({
                 title: "Limit amount this checked 3 digit numbers",
                 icon: 'question',
@@ -249,7 +286,8 @@
                         data: {
                             'ids': strIds,
                             'amount': $('#amount').val(),
-                            'date': date
+                            'date': date,
+                            'agent' : agent
                         },
                         success: function(data) {
                             swal.fire("Done!",
