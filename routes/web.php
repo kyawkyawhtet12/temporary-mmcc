@@ -6,6 +6,7 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
 use App\Http\Controllers\Backend\Report\LotteryReportController;
+use App\Http\Controllers\Record\CashController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,5 +137,8 @@ Route::group(
         // Game Record
         Route::get('recharge-record', [RechargeController::class, 'index'])->name('recharge.record');
         Route::post('recharge-record', [RechargeController::class, 'search'])->name('recharge.record.search');
+
+        Route::get('cash-record', [CashController::class, 'index'])->name('cash.record');
+        Route::post('cash-record', [CashController::class, 'search'])->name('cash.record.search');
     }
 );

@@ -257,7 +257,7 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#game_record" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="game_record">
-                        <i class="ri-file-line"></i> <span data-key="t-apps">Game</span>
+                        <i class="ri-file-line"></i> <span data-key="t-apps"> Record </span>
                     </a>
                     <div class="collapse menu-dropdown" id="game_record">
                         <ul class="nav nav-sm flex-column">
@@ -266,16 +266,16 @@
                                     Recharge Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agent.payment-reports') }}" class="nav-link"
+                                <a href="{{ route('cash.record') }}?reset=1" class="nav-link"
                                     data-key="t-agent-payment-reports">
                                     Cash Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agents.create') }}" class="nav-link" data-key="t-two-lucky-draw">
+                                <a href="#" class="nav-link" data-key="t-two-lucky-draw">
                                     Betting Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agents.three') }}" class="nav-link"
+                                <a href="#" class="nav-link"
                                     data-key="t-three-lucky-draw">
                                     Win Record
                                 </a>

@@ -80,7 +80,7 @@
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>User ID</th>
-                                                    <th>Money</th>
+                                                    <th>Amount</th>
                                                     <th>Remark</th>
                                                     <th>Time</th>
                                                 </tr>

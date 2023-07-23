@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Record;
 
 use App\Http\Controllers\Controller;
 use App\Models\Agent;
-use App\Models\Payment;
+use App\Models\Cashout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
-class RechargeController extends Controller
+class CashController extends Controller
 {
 
     public function search_session_clear()
@@ -41,7 +41,7 @@ class RechargeController extends Controller
 
         $select_agent = Session::get('agent');
 
-        $data = Payment::with('user')->where('status', 'Approved')->latest();
+        $data = Cashout::with('user')->latest();
 
         if($select_agent && $select_agent != 'all'){
             $data = $data->where('agent_id', $select_agent);
@@ -49,7 +49,7 @@ class RechargeController extends Controller
 
         $data = $this->getData($request, $data);
 
-        return view("backend.record.recharge", compact('data','agents','select_agent'));
+        return view("backend.record.cash", compact('data','agents','select_agent'));
     }
 
     public function search(Request $request)
@@ -59,13 +59,13 @@ class RechargeController extends Controller
         Session::put('agent', 'all');
         $select_agent = Session::get('agent');
 
-        $data = Payment::with('user')->where('status', 'Approved')->latest();
+        $data = Cashout::with('user')->latest();
 
         $this->search_session_put($request);
 
         $data = $this->getData($request, $data);
 
-        return view("backend.record.recharge", compact('data','agents','select_agent'));
+        return view("backend.record.cash", compact('data','agents','select_agent'));
     }
 
     public function getData($request, $data)
