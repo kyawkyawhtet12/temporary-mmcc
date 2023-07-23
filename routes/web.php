@@ -3,8 +3,9 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
-use App\Http\Controllers\Backend\Report\LotteryReportController;
+use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
+use App\Http\Controllers\Backend\Report\LotteryReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,5 +132,9 @@ Route::group(
         Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
 
         Route::get('/close-all-bets', 'EnabledController@close_all_bets')->name('close-all-bets');
+
+        // Game Record
+        Route::get('recharge-record', [RechargeController::class, 'index'])->name('recharge.record');
+        Route::post('recharge-record', [RechargeController::class, 'search'])->name('recharge.record.search');
     }
 );
