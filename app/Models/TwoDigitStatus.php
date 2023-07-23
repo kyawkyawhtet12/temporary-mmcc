@@ -5,21 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TwoDigit extends Model
+class TwoDigitStatus extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
-        'number',
+        'agent_id',
+        'two_digit_id',
         'status',
         'amount',
         'date'
     ];
-
-    public function rs_status()
-    {
-        return $this->hasOne(TwoDigitStatus::class, 'two_digit_id');
-    }
 }
