@@ -14,9 +14,8 @@ class TwoDigitCompensationSeeder extends Seeder
      */
     public function run()
     {
-        // TwoDigitCompensation::create([
-        //     'amount' => 1,
-        //     'compensate' => 80,
-        // ]);
+        TwoDigitCompensation::create([
+            'compensate' => 85,
+        ]);
     }
 }

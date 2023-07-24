@@ -35,14 +35,4 @@ class Agent extends Authenticatable
     {
         return $this->hasOne(ThreeLimitAmount::class);
     }
-
-    public function two_compensate()
-    {
-        return $this->hasOne(TwoDigitCompensation::class);
-    }
-
-    public function three_compensate()
-    {
-        return $this->hasOne(ThreeDigitCompensation::class);
-    }
 }

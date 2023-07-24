@@ -10,7 +10,6 @@ class ThreeDigitCompensation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'agent_id',
         'compensate',
         'vote',
     ];

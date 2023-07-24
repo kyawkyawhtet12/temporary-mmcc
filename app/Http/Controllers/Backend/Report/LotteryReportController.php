@@ -122,24 +122,16 @@ class LotteryReportController extends Controller
 
         $two_digits = TwoDigit::all();
 
-        // if($request->agent && $request->agent != 'all'){
-        //     $agent_id = Agent::findOrFail($request->agent)->id;
-        //     $win_betting = $data->winners->where('twoLuckyDraw.agent_id', $agent_id)
-        //                         ->sum('twoLuckyDraw.amount');
-        // }else{
-        //     $agent_id = NULL;
-        //     $win_betting = $data->winners->sum('twoLuckyDraw.amount');
-        // }
+        $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
-        $agent_id = ($request->agent) ?: 1;
-        $agent = Agent::findOrFail($agent_id);
-
-        $win_betting = $data->winners->where('twoLuckyDraw.agent_id', $agent_id)
-                                ->sum('twoLuckyDraw.amount');
+        $win_betting = $data->winners->when($agent_id, function($query, $agent_id) {
+                                        $query->where('twoLuckyDraw.agent_id', $agent_id);
+                                    })?->sum('twoLuckyDraw.amount');
 
         $draw = TwoLuckyDraw::when($agent_id, function($query, $agent_id) {
                                     $query->where('agent_id', $agent_id);
                                 })
+                                ->where('lottery_time_id', $data->lottery_time_id)
                                 ->whereDate('created_at', $data->date)
                                 ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id, za as za')
                                 ->groupBy('two_digit_id','za')
@@ -147,7 +139,7 @@ class LotteryReportController extends Controller
 
         $agents = Agent::select('id','name')->get();
 
-        $current_odds = $agent->two_compensate ? $agent->two_compensate?->compensate : 80;
+        $current_odds = TwoDigitCompensation::first()->compensate;
         $odds = count($draw) ? $draw[0]->za : $current_odds;
 
         return view('backend.admin.report.result.2d-detail', compact('two_digits', 'data', 'win_betting' ,'odds', 'draw','agents'));
@@ -184,35 +176,22 @@ class LotteryReportController extends Controller
         $data = ThreeLuckyNumber::with('three_digit','winners','winners.threeLuckyDraw')->findOrFail($id);
         $three_digits = ThreeDigit::all();
 
-        // $prev = Carbon::parse($data->date)->subDays('15')->toDateString();
-        // $current = Carbon::parse($data->date)->toDateString();
+        $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
-        // if($request->agent && $request->agent != 'all'){
-        //     $agent_id = Agent::findOrFail($request->agent)->id;
-        //     $win_betting = $data->winners->where('threeLuckyDraw.agent_id', $agent_id)
-        //                                 ->sum('threeLuckyDraw.amount');
-        // }else{
-        //     $agent_id = NULL;
-        //     $win_betting = $data->winners->sum('threeLuckyDraw.amount');
-        // }
-
-        $agent_id = ($request->agent) ?: 1;
-        $agent = Agent::findOrFail($agent_id);
-
-        $win_betting = $data->winners->where('threeLuckyDraw.agent_id', $agent_id)
-                                        ->sum('threeLuckyDraw.amount');
+        $win_betting = $data->winners->when($agent_id, function($query, $agent_id) {
+                                            $query->where('threeLuckyDraw.agent_id', $agent_id);
+                                        })?->sum('threeLuckyDraw.amount');
 
         $draw = ThreeLuckyDraw::when($agent_id, function($query, $agent_id) {
                                     $query->where('agent_id', $agent_id);
                                 })
-                                // ->whereBetween('created_at', [$prev, $current])
                                 ->where('round', $data->round)
                                 ->selectRaw('SUM(amount) as amount, three_digit_id as three_digit_id, za as za')
                                 ->groupBy('three_digit_id','za')
                                 ->get();
 
         $agents = Agent::select('id','name')->get();
-        $current_odds = $agent->three_compensate ? $agent->three_compensate?->compensate : 500;
+        $current_odds = ThreeDigitCompensation::first()->compensate;
         $odds = count($draw) ? $draw[0]->za : $current_odds;
 
         return view('backend.admin.report.result.3d-detail', compact('three_digits', 'data', 'win_betting', 'odds', 'draw', 'agents'));

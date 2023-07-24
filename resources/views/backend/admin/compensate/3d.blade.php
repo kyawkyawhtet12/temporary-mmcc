@@ -8,12 +8,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">3D Compensate Amount</h4>
+                        <h4 class="mb-sm-0">3D Limit Compensate</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboards</a></li>
-                                <li class="breadcrumb-item active">Compensate Amount</li>
+                                <li class="breadcrumb-item active">Limit Compensate</li>
                             </ol>
                         </div>
 
@@ -26,71 +26,38 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">3D Compensate Amount </h4>
+                            <h4 class="card-title">3D Limit Compensate </h4>
                             <p class="card-description">
-                                Click to change<code>compensate amount</code>
+                            Click to change<code>Compensate amount</code>
                             </p>
-                            <div class="row">
-                                <div class="col-12">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered nowrap">
-                                    <thead>
-                                        <tr class="bg-primary text-white" role="row">
-                                            <th>Agent</th>
-                                            <th>Compensate (Za)</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($agents as $key => $agent)
-                                        <tr>
-                                            <td>{{  $agent->name }}</td>
-                                            <td>
-                                                {{ $agent->three_compensate ? $agent->three_compensate->compensate : 500 }}
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0)" class="btn btn-primary edit"
-                                                    data-agent={{ $agent->id }}
-                                                    data-compensate={{ $agent->three_compensate ? $agent->three_compensate->compensate : 500 }}
-                                                > Edit </a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                    </table>
-                                </div>
-                                </div>
+                            <div class="table-responsive">
+                            <table class="table table-bordered nowrap">
+                                <thead>
+                                <tr class="bg-primary text-white" role="row">
+                                    <th>Compensate Amount</th>
+                                    <th>Updated Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <form id="editable-form" class="editable-form">
+                                                <div class="form-group row">
+                                                <div class="col-6 col-lg-8 d-flex align-items-center">
+                                                    <a href="#" id="three_compensate" data-type="number" data-pk="{{ $data->id }}">{{ $data->compensate }}</a>
+                                                </div>
+                                                </div>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            <label class="badge badge-info badge-pill">{{ date("F j, Y, g:i A", strtotime($data->updated_at)) }}</label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="ajaxModel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('3d.compensate.amount.post') }}" method="POST" id="form" name="form" class="form-horizontal">
-                        @csrf
-                        <input type="hidden" name="agent_id" id="agent_id">
-                        <div class="form-group">
-                            <label for="compensate" class="col-sm-12 control-label">Compensate Amount</label>
-                            <div class="col-sm-12">
-                                <input type="number" class="form-control" id="compensate" name="compensate"
-                                    placeholder="Amount" value="" required="">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-offset-2 col-sm-10 mt-3">
-                            <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -100,22 +67,23 @@
 @push('scripts')
 
 <script>
+  if ($('#editable-form').length) {
+    $.fn.editable.defaults.mode = 'inline';
+    $.fn.editable.defaults.send = "always";
+    $.fn.editableform.buttons =
+      '<button type="submit" class="btn btn-primary btn-sm editable-submit">' +
+      '<i class="fa fa-fw fa-check"></i>' +
+      '</button>' +
+      '<button type="button" class="btn btn-default btn-sm editable-cancel">' +
+      '<i class="fa fa-fw fa-times"></i>' +
+      '</button>';
 
-$(function() {
-    $('body').on('click', '.edit', function() {
-        let agent = $(this).data('agent');
-        let compensate = $(this).data('compensate');
-
-        $('#modelHeading').html("Edit Limit Amount");
-        $('#saveBtn').val("edit-number");
-        $('#ajaxModel').modal('show');
-
-        $('#agent_id').val(agent);
-        $("#compensate").val(compensate);
-
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+      }
     });
-
-});
+  }
 </script>
 
 @endpush

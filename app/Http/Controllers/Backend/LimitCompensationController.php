@@ -12,40 +12,28 @@ class LimitCompensationController extends Controller
 {
     public function limit_2d()
     {
-        $agents = Agent::all();
-        return view('backend.admin.compensate.2d', compact('agents'));
+        $data = TwoDigitCompensation::find(1);
+        return view('backend.admin.compensate.2d', compact('data'));
     }
 
     public function updateTwoCompensate(Request $request)
     {
-        $agent = Agent::findOrFail($request->agent_id);
-
-        TwoDigitCompensation::updateOrCreate(
-            ['agent_id' => $agent->id ],
-            ['compensate' => $request->compensate ]
-        );
-
-        return back()->with('success', '* Successfully Done');
+        TwoDigitCompensation::find($request->pk)->update(['compensate' => $request->value]);
+        return response()->json(['success'=>'done']);
     }
 
     //
 
     public function limit_3d()
     {
-        $agents = Agent::all();
-        return view('backend.admin.compensate.3d', compact('agents'));
+        $data = ThreeDigitCompensation::find(1);
+        return view('backend.admin.compensate.3d', compact('data'));
     }
 
     public function updateThreeCompensate(Request $request)
     {
-        $agent = Agent::findOrFail($request->agent_id);
-
-        ThreeDigitCompensation::updateOrCreate(
-            ['agent_id' => $agent->id ],
-            ['compensate' => $request->compensate , 'vote' => 0]
-        );
-
-        return back()->with('success', '* Successfully Done');
+        ThreeDigitCompensation::find($request->pk)->update(['compensate' => $request->value]);
+        return response()->json(['success'=>'done']);
     }
 
     // public function updateVote(Request $request)

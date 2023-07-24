@@ -31,7 +31,7 @@
                         </h4>
 
                         <select name="agent" id="agent" class="form-control col-md-3">
-                                {{-- <option value="all">-- Select All --</option> --}}
+                                <option value="all">-- Select All --</option>
                             @foreach($agents as $agent)
                                 <option value="{{  $agent->id }}" {{ request()->agent == $agent->id ? 'selected' : '' }}>
                                     {{  $agent->name }}
