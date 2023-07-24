@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use App\Models\User;
 use App\Models\Agent;
+use App\Models\WinRecord;
 use App\Models\FootballMatch;
 use App\Models\FootballMaung;
 use App\Models\FootballMaungZa;
@@ -44,8 +45,6 @@ class CalculationController extends Controller
             }else{
                 //lose
                 $status = 2;
-
-
                 $win_amount = ( $betAmount * $percent / 100 );
                 $charge = 0;
                 $net_amount = $betAmount + ( $win_amount - $charge);
@@ -53,6 +52,13 @@ class CalculationController extends Controller
 
             $body->user->increment('amount', $net_amount);
             $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
+
+            WinRecord::create([
+                'user_id' => $body->user_id,
+                'agent_id' => $body->agent_id,
+                'type' => 'Body',
+                'amount' => $net_amount
+            ]);
         }
 
         // Match Calculate finish update
@@ -116,6 +122,15 @@ class CalculationController extends Controller
 
                     $user->increment('amount', $amount);
                     $maungGroup->bet->update(['status' => 1 , 'net_amount' => $amount ]);
+
+                    if( $amount > $maungGroup->amount){
+                        WinRecord::create([
+                            'user_id' => $maung->user_id,
+                            'agent_id' => $maung->agent_id,
+                            'type' => 'Maung',
+                            'amount' => $amount
+                        ]);
+                    }
                 }
             }
         }

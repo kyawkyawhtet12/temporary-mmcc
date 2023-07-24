@@ -15,6 +15,8 @@ use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\TwoDigitCompensation;
 use App\Http\Requests\TwoLuckyNumberRequest;
+use App\Models\UserLog;
+use App\Models\WinRecord;
 
 class TwoLuckyNumberController extends Controller
 {
@@ -125,23 +127,19 @@ class TwoLuckyNumberController extends Controller
     {
         // return $request->all();
         if ($request->value == "Approved") {
+
             $data = TwoLuckyNumber::find($request->pk);
-            // $yesterday = date("Y-m-d 16:30:00", strtotime("yesterday"));
-            // return $data->lottery_time;
-            $date = $data->date;
-            $two_lucky_draw_id = TwoLuckyDraw::where([
-                                    ['created_at','>=', $date ],
-                                    ['lottery_time_id','=', $data->lottery_time_id],
-                                    ['two_digit_id','=',$data->two_digit_id],
-                                ])->get();
 
+            $two_lucky_draw_id = TwoLuckyDraw::where('two_digit_id', $data->two_digit_id)
+                                            ->where('lottery_time_id', $data->lottery_time_id)
+                                            ->whereDate('created_at', $data->date)
+                                            ->get();
 
-            // return $two_lucky_draw_id;
-
-            foreach ($two_lucky_draw_id as $key => $value) {
+            foreach ($two_lucky_draw_id as $value) {
 
                 $amount = $value->amount * $value->za;
-                User::find($value->user_id)->increment('amount', $amount);
+
+                $user = User::find($value->user_id);
 
                 TwoWinner::create([
                     'two_lucky_number_id' => $data->id,
@@ -149,6 +147,24 @@ class TwoLuckyNumberController extends Controller
                     'user_id' => $value->user_id,
                     'agent_id' => $value->agent_id
                 ]);
+
+                WinRecord::create([
+                    'user_id' => $value->user_id,
+                    'agent_id' => $value->agent_id,
+                    'type' => '2D',
+                    'amount' => $amount
+                ]);
+
+                UserLog::create([
+                    'user_id' => $value->user_id,
+                    'agent_id' => $value->agent_id,
+                    'operation' => '2D Win',
+                    'amount' => $amount,
+                    'start_balance' => $user->amount,
+                    'end_balance' => $user->amount + $amount
+                ]);
+
+                $user->increment('amount', $amount);
 
             }
 

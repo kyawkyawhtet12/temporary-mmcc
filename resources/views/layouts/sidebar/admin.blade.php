@@ -275,7 +275,7 @@
                                     Betting Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link"
+                                <a href="{{ route('win.record') }}" class="nav-link"
                                     data-key="t-three-lucky-draw">
                                     Win Record
                                 </a>

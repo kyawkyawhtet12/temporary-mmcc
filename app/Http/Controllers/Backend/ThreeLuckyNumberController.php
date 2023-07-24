@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Backend;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Agent;
+use App\Models\UserLog;
+use App\Models\WinRecord;
 use App\Models\ThreeDigit;
 use App\Models\ThreeWinner;
 use Illuminate\Http\Request;
@@ -11,7 +14,6 @@ use App\Models\ThreeLuckyDraw;
 use App\Models\ThreeLuckyNumber;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\Agent;
 use App\Models\ThreeDigitCompensation;
 
 class ThreeLuckyNumberController extends Controller
@@ -130,15 +132,15 @@ class ThreeLuckyNumberController extends Controller
 
             $round = $data->round;
 
-            $three_lucky_draw_id = ThreeLuckyDraw::where([
-                                            ['round', $round ],
-                                            ['three_digit_id','=',$data->three_digit_id],
-                                        ])->get();
+            $three_lucky_draw_id = ThreeLuckyDraw::where('round', $round)
+                                                ->where('three_digit_id', $data->three_digit_id)
+                                                ->get();
 
-            foreach ($three_lucky_draw_id as $key => $value) {
+            foreach ($three_lucky_draw_id as $value) {
 
                 $amount = $value->amount * $value->za;
-                User::find($value->user_id)->increment('amount', $amount);
+
+                $user = User::find($value->user_id);
 
                 ThreeWinner::create([
                     'three_lucky_number_id' => $data->id,
@@ -147,6 +149,24 @@ class ThreeLuckyNumberController extends Controller
                     'user_id' => $value->user_id,
                     'agent_id' => $value->agent_id
                 ]);
+
+                WinRecord::create([
+                    'user_id' => $value->user_id,
+                    'agent_id' => $value->agent_id,
+                    'type' => '3D',
+                    'amount' => $amount
+                ]);
+
+                UserLog::create([
+                    'user_id' => $value->user_id,
+                    'agent_id' => $value->agent_id,
+                    'operation' => '3D Win',
+                    'amount' => $amount,
+                    'start_balance' => $user->amount,
+                    'end_balance' => $user->amount + $amount
+                ]);
+
+                $user->increment('amount', $amount);
             }
 
             // create for next lucky number
