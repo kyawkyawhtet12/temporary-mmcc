@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use App\Models\User;
 use App\Models\Agent;
+use App\Models\UserLog;
 use App\Models\WinRecord;
 use App\Models\FootballMatch;
 use App\Models\FootballMaung;
@@ -50,8 +51,7 @@ class CalculationController extends Controller
                 $net_amount = $betAmount + ( $win_amount - $charge);
             }
 
-            $body->user->increment('amount', $net_amount);
-            $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
+
 
             WinRecord::create([
                 'user_id' => $body->user_id,
@@ -59,6 +59,18 @@ class CalculationController extends Controller
                 'type' => 'Body',
                 'amount' => $net_amount
             ]);
+
+            UserLog::create([
+                'user_id' => $body->user_id,
+                'agent_id' => $body->agent_id,
+                'operation' => 'Body Win',
+                'amount' => $net_amount,
+                'start_balance' => $body->user->amount,
+                'end_balance' => $body->user->amount + $net_amount
+            ]);
+
+            $body->user->increment('amount', $net_amount);
+            $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);
         }
 
         // Match Calculate finish update
@@ -120,9 +132,6 @@ class CalculationController extends Controller
                     $charge = $win * ($percent / 100);
                     $amount = (int) ($win - $charge);
 
-                    $user->increment('amount', $amount);
-                    $maungGroup->bet->update(['status' => 1 , 'net_amount' => $amount ]);
-
                     if( $amount > $maungGroup->amount){
                         WinRecord::create([
                             'user_id' => $maung->user_id,
@@ -131,6 +140,18 @@ class CalculationController extends Controller
                             'amount' => $amount
                         ]);
                     }
+
+                    UserLog::create([
+                        'user_id' => $maung->user_id,
+                        'agent_id' => $maung->agent_id,
+                        'operation' => 'Maung Win',
+                        'amount' => $amount,
+                        'start_balance' => $maung->user->amount,
+                        'end_balance' => $maung->user->amount + $amount
+                    ]);
+
+                    $user->increment('amount', $amount);
+                    $maungGroup->bet->update(['status' => 1 , 'net_amount' => $amount ]);
                 }
             }
         }
