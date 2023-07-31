@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Record\WinController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Record\CashController;
+use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
 use App\Http\Controllers\Backend\Report\LotteryReportController;
@@ -141,6 +142,9 @@ Route::group(
 
         Route::get('cash-record', [CashController::class, 'index'])->name('cash.record');
         Route::post('cash-record', [CashController::class, 'search'])->name('cash.record.search');
+
+        Route::get('betting-record', [BettingController::class, 'index'])->name('betting.record');
+        Route::post('betting-record', [BettingController::class, 'search'])->name('betting.record.search');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
         Route::post('win-record', [WinController::class, 'search'])->name('win.record.search');

@@ -31,3 +31,10 @@ function check_close_all_bets()
     $data = Enabled::find(1)->close_all_bets;
     return ($data) ? '' : 'checked';
 }
+
+function get_all_types()
+{
+    $data = ['2D', '3D','Body','Maung'];
+
+    return $data;
+}

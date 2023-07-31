@@ -271,11 +271,11 @@
                                     Cash Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link" data-key="t-two-lucky-draw">
+                                <a href="{{ route('betting.record') }}?reset=1" class="nav-link" data-key="t-two-lucky-draw">
                                     Betting Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('win.record') }}" class="nav-link"
+                                <a href="{{ route('win.record') }}?reset=1" class="nav-link"
                                     data-key="t-three-lucky-draw">
                                     Win Record
                                 </a>
