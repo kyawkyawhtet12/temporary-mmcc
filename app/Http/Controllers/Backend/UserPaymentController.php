@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Models\User;
 use App\Models\Cashout;
 use App\Models\Payment;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use App\Models\UserPaymentReport;
 use App\Models\AgentPaymentReport;
@@ -35,6 +36,15 @@ class UserPaymentController extends Controller
                 'status' => 'Approved'
             ]);
 
+            UserLog::create([
+                'agent_id' => $agent,
+                'user_id' => $user->id,
+                'operation' => 'Recharge',
+                'amount' => $request->amount,
+                'start_balance' => $user->amount,
+                'end_balance' => $user->amount + $request->amount
+            ]);
+
             $user->increment('amount', $request->amount);
             UserPaymentReport::addReport($payment, 'deposit', $agent);
             AgentPaymentReport::addReport($payment, 'deposit', $agent);
@@ -55,6 +65,15 @@ class UserPaymentController extends Controller
                 'agent_id' => $agent,
                 'by' => Auth::id(),
                 'status' => 'Approved'
+            ]);
+
+            UserLog::create([
+                'agent_id' => $agent,
+                'user_id' => $user->id,
+                'operation' => 'Cash',
+                'amount' => $request->amount,
+                'start_balance' => $user->amount,
+                'end_balance' => $user->amount - $request->amount
             ]);
 
             $user->decrement('amount', $request->amount);

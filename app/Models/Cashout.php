@@ -22,7 +22,7 @@ class Cashout extends Model
 
     public static function getWithdrawalCount($date, $agent = null)
     {
-        
+
         if($agent) {
             return Cashout::where('agent_id', $agent)->whereDate('created_at', $date)->where('status', 'Approved')->count();
         } else {
@@ -33,6 +33,16 @@ class Cashout extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class, 'by');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class, 'agent_id');
     }
 
     public function provider()
@@ -47,5 +57,16 @@ class Cashout extends Model
             $date = [now()->today()->format("Y-m-d"), now()->format("Y-m-d")];
         }
         return $query->whereBetween('created_at', [$date['0'] . " 00:00:00", $date['1'] . " 23:59:59"]);
+    }
+
+    public function getProviderNameAttribute()
+    {
+        if ($this->provider) {
+            return $this->provider?->name;
+        }elseif(!$this->payment_provider_id && !$this->by){
+            return "Cashout By {$this->agent->name}.";
+        }else {
+            return "Cashout By {$this->admin->name}.";
+        }
     }
 }

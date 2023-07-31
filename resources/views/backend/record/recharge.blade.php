@@ -91,7 +91,7 @@
                                                     <tr>
                                                         <td>{{ $dt->user->user_id }}</td>
                                                         <td>{{ $dt->amount }}</td>
-                                                        <td>{{ $dt->provider->name }}</td>
+                                                        <td>{{ $dt->provider_name }}</td>
                                                         <td>{{ $dt->created_at }}</td>
                                                     </tr>
                                                 @empty

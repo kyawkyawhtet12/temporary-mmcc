@@ -36,6 +36,16 @@ class Payment extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class, 'by');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class, 'agent_id');
+    }
+
     public function provider()
     {
         return $this->belongsTo(PaymentProvider::class, 'payment_provider_id');
@@ -48,5 +58,16 @@ class Payment extends Model
             $date = [now()->today()->format("Y-m-d"), now()->format("Y-m-d")];
         }
         return $query->whereBetween('created_at', [$date['0'] . " 00:00:00", $date['1'] . " 23:59:59"]);
+    }
+
+    public function getProviderNameAttribute()
+    {
+        if ($this->provider) {
+            return $this->provider?->name;
+        }elseif(!$this->payment_provider_id && !$this->by){
+            return "Recharge By {$this->agent->name}.";
+        }else {
+            return "Recharge By {$this->admin->name}.";
+        }
     }
 }
