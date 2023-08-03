@@ -126,7 +126,9 @@ class CalculationController extends Controller
 
                 // မကျန်တော့ရင် အလျော်အစားလုပ်
                 if ($data == 0) {
-                    $percent = FootballMaungZa::where('teams', $maungGroup->count)->first()->percent;
+                    $za = FootballMaungZa::where('teams', $maungGroup->count)->first();
+
+                    $percent = $za ? $za->percent : 0;
 
                     $win = $maungGroup->bet->net_amount;
                     $charge = $win * ($percent / 100);

@@ -18,7 +18,7 @@ class ReportDetailController extends Controller
 
     public function maungReport($id)
     {
-        $maung = FootballMaung::with('user', 'agent', 'bet')->where('match_id', $id)->get();
+        $maung = FootballMaung::with('user', 'agent', 'bet', 'bet.bet')->where('match_id', $id)->get();
         return view('backend.admin.ballone.match.maung-detail', compact('maung'));
     }
 

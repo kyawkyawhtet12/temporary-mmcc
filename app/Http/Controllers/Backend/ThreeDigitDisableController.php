@@ -13,11 +13,6 @@ class ThreeDigitDisableController extends Controller
 {
     public function index(Request $request)
     {
-
-        // $data = ThreeDigit::all();
-
-        // return view("backend.admin.3d-close.index",compact('data'));
-
         $select_agent = $request->agent ?: 1;
 
         $data = ThreeDigit::with(['rs_status' => function ($query) use ($select_agent) {
@@ -31,7 +26,7 @@ class ThreeDigitDisableController extends Controller
         ));
     }
 
-    public function changeTwoDigitEnable(Request $request)
+    public function changeThreeDigitEnable(Request $request)
     {
         $ids = explode(",", $request->ids);
 
