@@ -2,11 +2,11 @@
 
 @section('css')
     <style>
-        input{
+        input {
             padding: 0.6rem !important;
         }
 
-        table .done{
+        table .done {
             background-color: #dff8ff;
         }
     </style>
@@ -39,7 +39,8 @@
                     <select name="agent" id="agentSelect" class="form-control">
                         <option value="all">All</option>
                         @foreach ($agents as $agent)
-                            <option value="{{ $agent->id }}" {{ ($select_agent == $agent->id ? 'selected' : '') }}> {{ $agent->name }}</option>
+                            <option value="{{ $agent->id }}" {{ $select_agent == $agent->id ? 'selected' : '' }}>
+                                {{ $agent->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -56,7 +57,7 @@
                             @php $all_types = get_all_types() @endphp
                             <select name="type" id="type" class="form-control">
                                 <option value="all"> All Type </option>
-                                @foreach ($all_types as $type )
+                                @foreach ($all_types as $type)
                                     <option {{ $select_type == $type ? 'selected' : '' }}>{{ $type }}</option>
                                 @endforeach
                             </select>
@@ -105,8 +106,8 @@
                                             </thead>
 
                                             <tbody>
-                                                @forelse( $data as $dt )
-                                                    <tr>
+                                                @forelse($data as $dt)
+                                                    <tr class="viewDetail" data-id="{{ $dt->id }}" data-type="{{ $dt->type }}">
                                                         <td>{{ $dt->user->user_id }}</td>
                                                         <td>{{ $dt->type }}</td>
                                                         <td>{{ $dt->count }}</td>
@@ -124,8 +125,45 @@
                                 </div>
 
                                 <div class="mt-3">
-                                    {{  $data->links() }}
+                                    {{ $data->links() }}
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Betting Detail --}}
+            <div class="row grid-margin">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5> Betting Detail </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="body" class="table table-bordered nowrap text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Betting </th>
+                                            <th>Odds</th>
+                                            <th>Betting Type</th>
+                                            <th>Betting Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="betting-data">
+                                        <tr>
+                                            <td colspan="5">No Data Available.</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4">Total Amount</td>
+                                            <td id='total-betting-amount'></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -133,19 +171,131 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
-<script>
-    $(function() {
+    <script>
+        $(function() {
 
-        $("#agentSelect").on('change', function(){
-            let agent_id = $(this).val();
-            window.location.href = `?agent=${agent_id}`;
-        })
+            $("#agentSelect").on('change', function() {
+                let agent_id = $(this).val();
+                window.location.href = `?agent=${agent_id}`;
+            });
 
-    });
-</script>
+            function getUpTeam(data) {
+                return (data.upteam == 1) ? getHomeTeam(data) : getAwayTeam(data);
+            }
 
+            function getMatch(data) {
+                return `${getHomeTeam(data)} Vs ${getAwayTeam(data)}`;
+            }
+
+            function getHomeTeam(data) {
+                return `(${data.match.home_no}) ${data.match.home.name}`;
+            }
+
+            function getAwayTeam(data) {
+                return `(${data.match.away_no}) ${data.match.away.name}`;
+            }
+
+            function getFees(data) {
+                return (data.type == 'home' || data.type == 'away') ?
+                    `${getUpTeam(data)} ${data.fees.body}` :
+                    `${data.fees.goals}`;
+            }
+
+            function getType(data) {
+                switch (data.type) {
+                    case 'home':
+                        return getHomeTeam(data);
+                        break;
+                    case 'away':
+                        return getAwayTeam(data);
+                        break;
+                    case 'over':
+                        return `${getHomeTeam(data)} ( Goal Over )`;
+                        break;
+                    case 'under':
+                        return `${getHomeTeam(data)} ( Goal Under )`;
+                        break;
+                }
+            }
+
+            $('body').on('click', '.viewDetail', function() {
+                let id = $(this).data('id');
+                let type = $(this).data('type');
+
+                $('table tr').removeClass('text-danger');
+
+                $("#betting-data").html(`<tr>
+                                            <td colspan="5">No Data Available.</td>
+                                        </tr>`);
+
+                fetch(`/admin/betting-record/${type}/detail/${id}`, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: "same-origin"
+                })
+                .then((response) => response.json())
+                .then((data) => {
+
+                    let tr = '';
+
+                    if (data.type == '2D') {
+                        data.two_digit.forEach((dt, index) => {
+                            tr += `<tr>
+                                <td> ${index + 1} </td>
+                                <td> ${dt.twodigit.number} </td>
+                                <td> ${dt.za} </td>
+                                <td> 2D </td>
+                                <td> ${dt.amount} </td>
+                            </tr>`;
+                        });
+                    }
+
+                    if (data.type == '3D') {
+                        data.three_digit.forEach((dt, index) => {
+                            tr += `<tr>
+                                <td> ${index + 1} </td>
+                                <td> ${dt.threedigit.number} </td>
+                                <td> ${dt.za} </td>
+                                <td> 3D </td>
+                                <td> ${dt.amount} </td>
+                            </tr>`;
+                        });
+                    }
+
+                    if (data.type == 'Body') {
+                        data.ballone.forEach((dt, index) => {
+                            tr += `<tr>
+                                <td> ${index + 1} </td>
+                                <td> ${getType(dt.body)} </td>
+                                <td> ${getFees(dt.body)} </td>
+                                <td> Body </td>
+                                <td> ${dt.amount} </td>
+                            </tr>`;
+                        });
+                    }
+
+                    if (data.type == 'Maung') {
+                        data.ballone[0].maung.teams.forEach((dt, index) => {
+                            tr += `<tr>
+                                <td> ${index + 1} </td>
+                                <td> ${getType(dt)} </td>
+                                <td> ${getFees(dt)} </td>
+                                <td> Maung </td>
+                                <td> - </td>
+                            </tr>`;
+                        });
+                    }
+
+                    $("#betting-data").html(tr);
+                    $("#total-betting-amount").html(data.amount);
+                });
+
+                $(this).addClass('text-danger');
+            });
+        });
+    </script>
 @endpush

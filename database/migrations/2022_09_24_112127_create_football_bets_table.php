@@ -22,6 +22,10 @@ class CreateFootballBetsTable extends Migration
             $table->integer('amount');
             $table->float('net_amount');
             $table->boolean('status')->default(0);
+
+            $table->unsignedBigInteger('betting_record_id');
+            $table->foreign('betting_record_id')->references('id')->on('betting_records')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

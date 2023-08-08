@@ -26,6 +26,9 @@ class CreateThreeLuckyDrawsTable extends Migration
 
             $table->string('za');
 
+            $table->unsignedBigInteger('betting_record_id');
+            $table->foreign('betting_record_id')->references('id')->on('betting_records')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

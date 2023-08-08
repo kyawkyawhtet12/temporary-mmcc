@@ -20,4 +20,19 @@ class BettingRecord extends Model
     {
         return $this->belongsTo(Agent::class, 'agent_id');
     }
+
+    public function ballone()
+    {
+        return $this->hasMany(FootballBet::class, 'betting_record_id');
+    }
+
+    public function two_digit()
+    {
+        return $this->hasMany(TwoLuckyDraw::class, 'betting_record_id');
+    }
+
+    public function three_digit()
+    {
+        return $this->hasMany(ThreeLuckyDraw::class, 'betting_record_id');
+    }
 }

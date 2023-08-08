@@ -54,6 +54,29 @@ class BettingController extends Controller
         return view("backend.record.betting", compact('data','agents','select_agent','select_type'));
     }
 
+    public function detail($type,$id)
+    {
+        $data = BettingRecord::findOrFail($id);
+
+        if($type == '2D'){
+            $data->load('two_digit', 'two_digit.twodigit');
+        }
+
+        if( $type == '3D' ){
+            $data->load('three_digit', 'three_digit.threedigit');
+        }
+
+        if( $type == 'Body' ){
+            $data->load('ballone', 'ballone.body', 'ballone.body.fees', 'ballone.body.match', 'ballone.body.match.home', 'ballone.body.match.away');
+        }
+
+        if( $type == 'Maung' ){
+            $data->load('ballone', 'ballone.maung', 'ballone.maung.teams.fees', 'ballone.maung.teams.match', 'ballone.maung.teams.match.home', 'ballone.maung.teams.match.away');
+        }
+
+        return response()->json($data);
+    }
+
     public function search(Request $request)
     {
         $agents = Agent::select('id','name')->get();
