@@ -197,29 +197,17 @@
             });
 
             $('body').on('click', '.deleteClub', function() {
-                swal({
-                        text: "Are you sure to delete this ?",
-                        icon: "info",
-                        buttons: true,
-                        dangerMode: true,
-                    })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            var club_id = $(this).data("id");
-                            $.ajax({
-                                url: "{{ route('ballone.club.store') }}" + '/' + club_id,
-                                method: 'DELETE',
-                            }).done(function(res) {
-                                swal({
-                                    text: "အောင်မြင်ပါသည်",
-                                    icon: "success",
-                                }).then((e) => {
-                                    table.draw();
-                                })
-                            })
 
-                        }
-                    });
+                if (!confirm('Are You sure want to delete !')) return;
+
+                var club_id = $(this).data("id");
+
+                $.ajax({
+                    url: "{{ route('ballone.club.store') }}" + '/' + club_id,
+                    method: 'DELETE',
+                }).done(function(res) {
+                    table.draw();
+                })
             });
         });
     </script>

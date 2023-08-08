@@ -35,4 +35,14 @@ class Agent extends Authenticatable
     {
         return $this->hasOne(ThreeLimitAmount::class);
     }
+
+    public function body_limit()
+    {
+        return $this->hasOne(FootballBodySetting::class);
+    }
+
+    public function maung_limit()
+    {
+        return $this->hasOne(FootballMaungLimit::class);
+    }
 }

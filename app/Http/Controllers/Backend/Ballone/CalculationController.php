@@ -23,7 +23,7 @@ class CalculationController extends Controller
         $match = FootballMatch::with('bodies')->findOrFail($id);
 
         // Body Calculation
-        $charge_percent = FootballBodySetting::find(1)->percentage;
+
 
         foreach ($match->bodies as $body) {
             $result = FootballBodyFeeResult::where('fee_id', $body->fee_id)->first();
@@ -31,6 +31,10 @@ class CalculationController extends Controller
             $type = $body->type;
             $percent =  $result->$type;
             $betAmount = $body->bet->amount;
+
+            $setting = FootballBodySetting::where('agent_id', $body->agent_id)->first();
+
+            $charge_percent = ($setting) ? $setting->percentage : 5 ;
 
             if( $percent == 0 ){
                 // draw
@@ -50,8 +54,6 @@ class CalculationController extends Controller
                 $charge = 0;
                 $net_amount = $betAmount + ( $win_amount - $charge);
             }
-
-
 
             WinRecord::create([
                 'user_id' => $body->user_id,

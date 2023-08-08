@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
+use App\Models\Agent;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Models\FootballBodySetting;
@@ -11,42 +12,28 @@ class BodySettingController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = FootballBodySetting::all();
-            return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('action', function ($data) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->id.'" data-original-title="Edit" class="editBtn"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
-
-                        return $btn;
-                    })
-                    ->make(true);
-        }
-        return view('backend.admin.ballone.body.setting');
+        $agents = Agent::all();
+        return view('backend.admin.ballone.body.setting', compact('agents'));
     }
 
     public function store(Request $request)
     {
-        // return $request->all();
-
         $request->validate([
-            'min_amount' => 'required|numeric|min:0',
-            'max_amount' => 'required|numeric|min:0',
+            'min' => 'required|numeric|min:0',
+            'max' => 'required|numeric|min:0',
             'percentage' => 'required|numeric|min:0',
         ]);
 
-        FootballBodySetting::find(1)->update([
-            'min_amount' => $request->min_amount,
-            'max_amount' => $request->max_amount,
-            'percentage' => $request->percentage
-        ]);
+        $agent = Agent::findOrFail($request->agent_id);
 
-        return response()->json(['success'=>'Body setting updated successfully.']);
-    }
+        FootballBodySetting::updateOrCreate(
+            [   'agent_id' => $agent->id ],
+            [
+                'percentage' => $request->percentage,
+                'min_amount' => $request->min ,
+                'max_amount' => $request->max ]
+        );
 
-    public function show()
-    {
-        $data = FootballBodySetting::find(1);
-        return response()->json($data);
+        return back()->with('success', '* Successfully Done');
     }
 }

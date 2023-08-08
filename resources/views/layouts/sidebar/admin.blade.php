@@ -166,16 +166,20 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('ballone.maung-limit.index') }}" class="nav-link"
-                                    data-key="t-maung-limit"> Maung Limit </a>
+                                    data-key="t-maung-limit"> Maung Limit Amount</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('ballone.maung-teams-setting.index') }}" class="nav-link"
+                                    data-key="t-maung-team-setting"> Maung Team Setting </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('ballone.maung-za.index') }}" class="nav-link"
-                                    data-key="t-maung-za"> Maung Za </a>
+                                    data-key="t-maung-za"> Maung Percentage </a>
                             </li>
 
                             <li class="nav-item">
                                 <a href="{{ route('ballone.body-setting.index') }}" class="nav-link"
-                                    data-key="t-body-setting"> Body Setting</a>
+                                    data-key="t-body-setting"> Body Limit Amount </a>
                             </li>
                         </ul>
                     </div>

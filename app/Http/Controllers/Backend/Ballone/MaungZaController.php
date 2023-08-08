@@ -12,7 +12,7 @@ class MaungZaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = FootballMaungZa::all();
+            $query = FootballMaungZa::orderBy('teams', 'asc')->get();
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('action', function ($data) {
@@ -35,11 +35,11 @@ class MaungZaController extends Controller
             'teams' => 'required|numeric|min:0',
             // 'za' => 'required|numeric|min:0',
             'percent' => 'required|numeric|min:0'
-            
         ]);
 
         FootballMaungZa::updateOrCreate([
-            'id'   => $request->za_id,
+            // 'id'   => $request->za_id,
+            'teams' => $request->teams,
         ], [
             'teams'     => $request->teams,
             // 'za' => $request->za,

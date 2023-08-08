@@ -15,6 +15,8 @@ class CreateFootballBodySettingsTable extends Migration
     {
         Schema::create('football_body_settings', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->integer('percentage');
             $table->integer('min_amount');
             $table->integer('max_amount');

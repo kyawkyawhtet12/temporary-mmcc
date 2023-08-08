@@ -2,54 +2,62 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
-use App\Http\Controllers\Controller;
-use App\Models\FootballMaungLimit;
-use Yajra\DataTables\DataTables;
+use App\Models\Agent;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
+use App\Models\FootballMaungLimit;
+use App\Http\Controllers\Controller;
+use App\Models\MaungTeamSetting;
 
 class MaungLimitController extends Controller
 {
+    // Maung Minimum Maximum Amount Setting
+
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $query = FootballMaungLimit::all();
-            return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('action', function ($data) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->id.'" data-original-title="Edit" class="editLimit"><i class="fa fa-edit text-inverse m-r-10"></i></a>';
-
-                        return $btn;
-                    })
-                    ->make(true);
-        }
-        return view('backend.admin.ballone.maung.limit');
+        $agents = Agent::all();
+        return view('backend.admin.ballone.maung.limit',compact('agents'));
     }
 
     public function store(Request $request)
     {
-        // return $request->all();
+        $request->validate([
+            'min' => 'required|numeric|min:0',
+            'max' => 'required|numeric|min:0',
+        ]);
 
+        $agent = Agent::findOrFail($request->agent_id);
+
+        FootballMaungLimit::updateOrCreate(
+            [   'agent_id' => $agent->id ],
+            [
+                'min_amount' => $request->min ,
+                'max_amount' => $request->max ]
+        );
+
+        return back()->with('success', '* Successfully Done');
+    }
+
+    // Maung Minimum Maximum Teams Setting
+
+    public function teams_index(Request $request)
+    {
+        $data = MaungTeamSetting::first();
+        return view('backend.admin.ballone.maung.setting',compact('data'));
+    }
+
+    public function teams_store(Request $request)
+    {
         $request->validate([
             'min_teams' => 'required|numeric|min:0',
             'max_teams' => 'required|numeric|min:0',
-            'min_amount' => 'required|numeric|min:0',
-            'max_amount' => 'required|numeric|min:0',
-            
         ]);
 
-        FootballMaungLimit::find(1)->update([
+        MaungTeamSetting::first()->update([
             'min_teams' => $request->min_teams,
-            'max_teams' => $request->max_teams,
-            'min_amount' => $request->min_amount,
-            'max_amount' => $request->max_amount
+            'max_teams' => $request->max_teams
         ]);
 
-        return response()->json(['success'=>'Maung limit updated successfully.']);
-    }
-
-    public function show()
-    {
-        $data = FootballMaungLimit::find(1);
-        return response()->json($data);
+        return back()->with('success', '* Successfully Done');
     }
 }

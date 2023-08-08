@@ -15,8 +15,11 @@ Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->nam
 
 // Ballone Maung Limit
 Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
-Route::get('ballone/maung-limit/show', 'Ballone\MaungLimitController@show')->name('ballone.maung-limit.get');
 Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
+
+// Ballone Maung Team Minimum and Maximum Setting
+Route::get('ballone/maung-teams-setting', 'Ballone\MaungLimitController@teams_index')->name('ballone.maung-teams-setting.index');
+Route::post('ballone/maung-teams-setting/store', 'Ballone\MaungLimitController@teams_store')->name('ballone.maung-teams-setting.store');
 
 // Ballone Maung Za
 Route::get('ballone/maung-za', 'Ballone\MaungZaController@index')->name('ballone.maung-za.index');
@@ -26,7 +29,6 @@ Route::delete('ballone/maung-za/{id}', 'Ballone\MaungZaController@destroy')->nam
 
 // Ballone Body Setting
 Route::get('ballone/body-setting', 'Ballone\BodySettingController@index')->name('ballone.body-setting.index');
-Route::get('ballone/body-setting/show', 'Ballone\BodySettingController@show')->name('ballone.body-setting.get');
 Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
 
 // Ballone Refund
