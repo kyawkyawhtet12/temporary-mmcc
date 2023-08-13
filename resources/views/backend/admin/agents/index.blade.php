@@ -28,12 +28,13 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">                    
+                    <div class="card">
                         <div class="card-body">
-
+                            @if( is_admin())
                             <div class="d-flex justify-content-end">
                                 <a href='javascript:void(0)' class='btn btn-success btn-sm ml-3 my-2' id="createAgent"> Create Agent </a>
                             </div>
+                            @endif
 
                             <table id="table_id" class="display">
                                 <thead>
@@ -49,12 +50,12 @@
                                     </tr>
                                 </thead>
                             </table>
-                                                        
+
                         </div><!-- end card -->
                     </div>
                     <!-- end col -->
                 </div>
-                
+
             </div>
 
         </div>
@@ -71,49 +72,49 @@
                 <div class="modal-body">
                   <form id="agentForm" name="agentForm" class="form-horizontal">
                     <input type="hidden" name="agent_id" id="agent_id">
-      
+
                       <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Name</label>
                           <div class="col-sm-12">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="" required="">
                           </div>
                       </div>
-      
+
                       <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Phone</label>
                           <div class="col-sm-12">
                             <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter Phone" value="" required="">
                           </div>
                       </div>
-      
+
                       <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Percentage</label>
                           <div class="col-sm-12">
                             <input type="number" class="form-control" id="percentage" name="percentage" placeholder="Enter Percentage" required="">
                           </div>
                       </div>
-      
+
                       <div class="form-group" id="amou">
                           <label for="name" class="col-sm-12 control-label">Amount</label>
                           <div class="col-sm-12">
                             <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter Amount" value="" required="">
                           </div>
                       </div>
-      
+
                       <div class="form-group" id="pass">
                           <label for="password" class="col-sm-12 control-label">Password</label>
                           <div class="col-sm-12">
                             <input id="password" type="password" class="form-control" name="password">
                           </div>
                       </div>
-      
+
                       <div class="form-group" id="conpass">
                           <label for="password" class="col-sm-12 control-label">Confirm Password</label>
                           <div class="col-sm-12">
                             <input class="form-control" name="confirm-password" type="password">
                           </div>
                       </div>
-      
+
                       <div class="col-sm-offset-2 col-sm-10 mt-3">
                         <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
                         </button>
@@ -127,7 +128,7 @@
 @endsection
 
 @section('script')
-  
+
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
 
 <script>
@@ -138,7 +139,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        });    
+        });
 
         var table = $('#table_id').DataTable({
             processing: true,
@@ -146,7 +147,7 @@
             serverSide: true,
             ajax: {
                 url: "{{ route('agents.index') }}",
-                data: function (d) {                
+                data: function (d) {
                 d.search = $('input[type="search"]').val()
                 }
             },

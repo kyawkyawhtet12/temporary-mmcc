@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Route::resource('agents', 'AgentController');
-Route::resource('staff', 'StaffController');
 
 Route::get('agent-deposit', 'AgentDepositController@index')->name('agent-deposit.index');
 Route::get('agent-deposit/history', 'AgentDepositController@history')->name('agent-deposit.history');

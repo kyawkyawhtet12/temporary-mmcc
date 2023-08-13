@@ -27,7 +27,7 @@
         @if (Auth::user()->is_admin)
             @include('layouts.sidebar.admin')
         @else
-            @include('layouts.sidebar.staff')
+            @include('layouts.sidebar.admin')
         @endif
         <!-- Left Sidebar End -->
 

@@ -39,9 +39,11 @@ class AgentController extends Controller
                         return date("F j, Y, g:i A", strtotime($agent->created_at));
                     })
                     ->addColumn('action', function ($agent) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$agent->id.'" data-original-title="Edit" class="edit btn btn-info mb-1 editAgent">Edit</a>';
-                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$agent->id.'" data-original-title="Delete" class="btn btn-danger deleteAgent">Delete</a>';
-                        return $btn;
+                        if( is_admin() ){
+                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$agent->id.'" data-original-title="Edit" class="edit btn btn-info mb-1 editAgent">Edit</a>';
+                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$agent->id.'" data-original-title="Delete" class="btn btn-danger deleteAgent">Delete</a>';
+                            return $btn;
+                        }
                     })
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {
@@ -66,7 +68,7 @@ class AgentController extends Controller
                    ->selectRaw('SUM(two_lucky_draws.amount) as amount, DATE(two_lucky_draws.created_at) day, agents.name as name, agents.referral_code as referral_code')
                    ->groupBy('day', 'name', 'referral_code')
                    ->get();
-        
+
         // return $two_lucky_draws;
         return view('backend.agent.agent-two', compact('two_lucky_draws'));
     }
@@ -78,7 +80,7 @@ class AgentController extends Controller
                    ->selectRaw('SUM(three_lucky_draws.amount) as amount, DATE(three_lucky_draws.created_at) day, agents.name as name, agents.referral_code as referral_code')
                    ->groupBy('day', 'name', 'referral_code')
                    ->get();
-                   
+
         // return $three_lucky_draws;
         return view('backend.agent.agent-three', compact('three_lucky_draws'));
     }
@@ -102,7 +104,7 @@ class AgentController extends Controller
                    ->selectRaw('SUM(two_lucky_draws.amount) as amount, agents.name as name, agents.id as id')
                    ->groupBy('name', 'id')
                    ->get();
-                   
+
         $three_percentages = DB::table('agents')
                        ->join('three_lucky_draws', 'three_lucky_draws.agent_id', '=', 'agents.id')
                        ->selectRaw('SUM(three_lucky_draws.amount) as amount, agents.name as name, agents.id as id')
@@ -117,7 +119,7 @@ class AgentController extends Controller
 
         $collection = collect([$two_percentages, $three_percentages, $football_percentages])->flatten()->all();
         $result = array();
-        
+
         foreach ($collection as $k => $v) {
             $name = $v->name;
             $result[$v->id][$name][] = $v->amount;
@@ -131,7 +133,7 @@ class AgentController extends Controller
         }
 
         // return $percentages;
-        
+
         return view('backend.agent.agent-percentage', compact('percentages'));
     }
 
@@ -147,7 +149,7 @@ class AgentController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-        
+
         if (is_null($request->agent_id)) {
             $request->validate([
                 'name' => 'required|string|max:255',
@@ -164,7 +166,7 @@ class AgentController extends Controller
                 'password' => 'nullable|string|min:8|same:confirm-password',
             ]);
             $random = Agent::where('id', $request->agent_id)->value('referral_code');
-            
+
             if ($request->password) {
                 $password = Hash::make($request->password);
             } else {
@@ -181,7 +183,7 @@ class AgentController extends Controller
             'referral_code' => $random,
             'password' => $password
         ]);
-   
+
         return response()->json(['success'=>'Agent saved successfully.']);
     }
 
@@ -190,7 +192,7 @@ class AgentController extends Controller
         $agent = Agent::find($id);
         return response()->json($agent);
     }
-    
+
     public function destroy($id)
     {
         Agent::find($id)->delete();
@@ -201,7 +203,7 @@ class AgentController extends Controller
     public function payment_report(Request $request, $id)
     {
         $agent = Agent::findOrFail($id);
-        
+
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
                 $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->whereBetween('created_at', [$request->from_date, $request->to_date])->latest();

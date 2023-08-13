@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'agent' => \App\Http\Middleware\Agent::class,
         'limit_date_time' => \App\Http\Middleware\LimitDateTime::class,
         'three_limit_date_time' => \App\Http\Middleware\ThreeLimitDateTime::class,
+        'check_admin' => \App\Http\Middleware\CheckAdmin::class,
     ];
 }

@@ -28,7 +28,7 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card">                    
+                    <div class="card">
                         <div class="card-body">
 
                             <div class="d-flex justify-content-end">
@@ -52,7 +52,7 @@
                                         <td>{{ $dt->name }}</td>
                                         <td>{{ $dt->email }}</td>
                                         <td>{{ $dt->created_at }}</td>
-                                        <td>                                            
+                                        <td>
                                             <a href="javascript:void(0)" data-toggle="tooltip"  data-id="{{ $dt->id }}" data-original-title="Edit" class="edit btn btn-primary editStaff">Edit</a>
 
                                             <a href="javascript:void(0)" data-toggle="tooltip"  data-id="{{ $dt->id }}" data-original-title="Delete" class="btn btn-danger delete">Delete</a>
@@ -61,12 +61,12 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                                                        
+
                         </div><!-- end card -->
                     </div>
                     <!-- end col -->
                 </div>
-                
+
             </div>
 
         </div>
@@ -83,35 +83,28 @@
                 <div class="modal-body">
                   <form id="staffForm" name="staffForm" class="form-horizontal">
                     <input type="hidden" name="staff_id" id="staff_id">
-      
+
                       <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Name</label>
                           <div class="col-sm-12">
                             <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" value="" required="">
                           </div>
                       </div>
-      
+
                       <div class="form-group">
                           <label for="name" class="col-sm-12 control-label">Email</label>
                           <div class="col-sm-12">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Enter Email" value="" required="">
                           </div>
-                      </div>                      
-      
+                      </div>
+
                       <div class="form-group" id="pass">
                           <label for="password" class="col-sm-12 control-label">Password</label>
                           <div class="col-sm-12">
                             <input id="password" type="password" class="form-control" name="password">
                           </div>
                       </div>
-      
-                      <div class="form-group" id="conpass">
-                          <label for="password" class="col-sm-12 control-label">Confirm Password</label>
-                          <div class="col-sm-12">
-                            <input class="form-control" name="confirm-password" type="password">
-                          </div>
-                      </div>
-      
+
                       <div class="col-sm-offset-2 col-sm-10 mt-3">
                         <button type="submit" class="btn btn-primary" id="saveBtn" value="create">Save changes
                         </button>
@@ -125,7 +118,7 @@
 @endsection
 
 @section('script')
-  
+
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
 
 <script>
@@ -136,7 +129,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        });    
+        });
 
         $('#createStaff').click(function () {
             $('#amou').hide();
@@ -155,9 +148,8 @@
                 $('#saveBtn').val("edit-user");
                 $('#ajaxModel').modal('show');
                 $('#staff_id').val(data.id);
-                
+
                 $('#name').val(data.name);
-                
                 $('#email').val(data.email);
             })
         });

@@ -13,6 +13,8 @@ Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballon
 Route::get('ballone/maung/fees/add', 'Ballone\MaungFeesController@add')->name('ballone.maung.fees.add');
 Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->name('ballone.maung.fees.store');
 
+Route::middleware('check_admin')->group(function () {
+
 // Ballone Maung Limit
 Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
 Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
@@ -30,6 +32,9 @@ Route::delete('ballone/maung-za/{id}', 'Ballone\MaungZaController@destroy')->nam
 // Ballone Body Setting
 Route::get('ballone/body-setting', 'Ballone\BodySettingController@index')->name('ballone.body-setting.index');
 Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
+
+});
+
 
 // Ballone Refund
 Route::post('ballone/match/refund/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');

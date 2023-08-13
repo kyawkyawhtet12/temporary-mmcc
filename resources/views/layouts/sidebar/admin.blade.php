@@ -48,11 +48,15 @@
                                 <a href="{{ route('two-digits.result') }}" class="nav-link" data-key="t-2d-result">
                                     2D Result </a>
                             </li>
+
+                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('2d.disable') }}" class="nav-link">
                                     2D Open/Close
                                 </a>
                             </li>
+                            @endif
+
                             <li class="nav-item">
                                 <a href="{{ url('admin/two_lucky_numbers') }}" class="nav-link"
                                     data-key="t-calendar"> Lucky Numbers </a>
@@ -61,6 +65,8 @@
                                 <a href="{{ url('admin/two_winners') }}" class="nav-link"
                                     data-key="t-calendar"> Lucky Winners </a>
                             </li>
+
+                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('lottery-time.index') }}" class="nav-link"
                                     data-key="t-calendar"> Lottery Times </a>
@@ -73,6 +79,7 @@
                                 <a href="{{ route('2d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate </a>
                             </li>
+                            @endif
                         </ul>
                     </div>
                 </li>
@@ -94,11 +101,15 @@
                                     data-key="t-3d-result">
                                     3D Result </a>
                             </li>
+
+                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('3d.disable') }}" class="nav-link">
                                     3D Open/Close
                                 </a>
                             </li>
+                            @endif
+
                             <li class="nav-item">
                                 <a href="{{ url('admin/three_lucky_numbers') }}" class="nav-link"
                                     data-key="t-calendar"> Lucky Numbers
@@ -109,6 +120,8 @@
                                     data-key="t-calendar"> Lucky Winners
                                 </a>
                             </li>
+
+                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('three-lottery-close.index') }}" class="nav-link"
                                     data-key="t-lucky-draws"> 3D Lottery Setting </a>
@@ -123,6 +136,8 @@
                                     data-key="t-calendar"> Limit Compensate
                                 </a>
                             </li>
+                            @endif
+
                         </ul>
                     </div>
                 </li>
@@ -164,6 +179,7 @@
                                     data-key="t-ballone-match"> Refund Match History</a>
                             </li>
 
+                            @if( is_admin() )
                             <li class="nav-item">
                                 <a href="{{ route('ballone.maung-limit.index') }}" class="nav-link"
                                     data-key="t-maung-limit"> Maung Limit Amount</a>
@@ -181,16 +197,21 @@
                                 <a href="{{ route('ballone.body-setting.index') }}" class="nav-link"
                                     data-key="t-body-setting"> Body Limit Amount </a>
                             </li>
+                            @endif
+
                         </ul>
                     </div>
                 </li>
 
+                @if( is_admin())
+                {{-- Staff --}}
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('staff.index') }}">
                         <i class="ri-user-2-line"></i> <span data-key="t-staffs">
                             Staffs </span>
                     </a>
                 </li>
+                @endif
 
                 {{-- Agent --}}
                 <li class="nav-item">
@@ -240,8 +261,8 @@
                     </a>
                 </li>
 
+                @if( is_admin())
                 {{-- Payment Accoounts --}}
-
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('providers.index') }}">
                         <i class="ri-bank-card-line"></i> <span data-key="t-payment-accounts">
@@ -249,7 +270,6 @@
                     </a>
                 </li>
 
-                {{-- Game Record --}}
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('banner.index') }}">
                         <i class="ri-image-line"></i> <span data-key="t-banner-images">
@@ -257,7 +277,9 @@
                         </span>
                     </a>
                 </li>
+                @endif
 
+                {{-- Game Record --}}
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#game_record" data-bs-toggle="collapse" role="button"
                         aria-expanded="false" aria-controls="game_record">

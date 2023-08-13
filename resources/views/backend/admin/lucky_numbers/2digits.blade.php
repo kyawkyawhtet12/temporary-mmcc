@@ -28,10 +28,12 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
                                 <h4 class="card-title">2D Lucky Numbers</h4>
+
                                 <div>
                                     <a class="btn btn-success" href="javascript:void(0)" id="createNewNumber"> Create Lucky
                                         Number</a>
                                 </div>
+
                             </div>
                             <div class="row">
                                 <div class="col-12">

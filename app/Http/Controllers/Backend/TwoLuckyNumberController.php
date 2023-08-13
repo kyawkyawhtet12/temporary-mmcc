@@ -56,12 +56,15 @@ class TwoLuckyNumberController extends Controller
                         return date("F j, Y, g:i A", strtotime($number->created_at));
                     })
                     ->addColumn('action', function ($number) {
+
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
                         $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
                         if ($number->status == "Approved") {
                             return '';
                         }
                         return $btn;
+
+
                     })
                     // ->filter(function ($instance) use ($request) {
                     //     if (!empty($request->get('search'))) {

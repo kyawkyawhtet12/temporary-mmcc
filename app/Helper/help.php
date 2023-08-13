@@ -38,3 +38,8 @@ function get_all_types()
 
     return $data;
 }
+
+function is_admin()
+{
+    return ( Auth::user()->is_admin ) ? true : false;
+}

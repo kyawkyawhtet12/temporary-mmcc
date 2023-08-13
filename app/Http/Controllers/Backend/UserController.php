@@ -29,15 +29,19 @@ class UserController extends Controller
                         return Carbon::parse(Carbon::now())->diffInDays($user->last_active);
                     })
                     ->addColumn('payment', function ($user) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="deposit"  data-original-title="Deposit" class="edit btn btn-info btn-sm payment"> + </a>';
+                        if( is_admin() ){
+                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="deposit"  data-original-title="Deposit" class="edit btn btn-info btn-sm payment"> + </a>';
 
-                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="withdrawal" data-original-title="Withdrawal" class="btn btn-warning btn-sm payment"> - </a>';
-                        return $btn;
+                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="withdrawal" data-original-title="Withdrawal" class="btn btn-warning btn-sm payment"> - </a>';
+                            return $btn;
+                        }
                     })
                     ->addColumn('action', function ($user) {
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Edit" class="edit btn btn-warning editUser">Edit</a>';
-                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Delete" class="btn btn-danger deleteUser">Delete</a>';
-                        return $btn;
+                        if( is_admin() ){
+                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Edit" class="edit btn btn-warning editUser">Edit</a>';
+                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Delete" class="btn btn-danger deleteUser">Delete</a>';
+                            return $btn;
+                        }
                     })
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {

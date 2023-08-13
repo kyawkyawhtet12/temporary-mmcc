@@ -18,22 +18,20 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-        
+
         if (is_null($request->staff_id)) {
             $request->validate([
                 'name' => 'required|string|max:255',
-                // 'email' => 'required|email:MM|unique:agents',
-                'password' => 'required|string|min:8|same:confirm-password',
-            ]);            
+                'password' => 'required|string|min:8',
+            ]);
             $password = Hash::make($request->password);
         } else {
             $request->validate([
                 'name' => 'required|string|max:255',
-                // 'email' => 'required|email:MM|unique:agents,email,'.$request->staff_id,
                 'email' => 'required|unique:admins,email,'.$request->staff_id,
-                'password' => 'nullable|string|min:8|same:confirm-password',
-            ]);            
-            
+                'password' => 'nullable|string|min:8',
+            ]);
+
             if ($request->password) {
                 $password = Hash::make($request->password);
             } else {
@@ -47,7 +45,7 @@ class StaffController extends Controller
             'email' => $request->email,
             'password' => $password
         ]);
-   
+
         return response()->json(['success'=>'Staff saved successfully.']);
     }
 
@@ -56,7 +54,7 @@ class StaffController extends Controller
         $data = Admin::find($id);
         return response()->json($data);
     }
-    
+
     public function destroy($id)
     {
         Admin::find($id)->delete();
