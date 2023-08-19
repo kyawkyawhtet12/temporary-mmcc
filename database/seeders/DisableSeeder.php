@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use App\Models\Disable;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +16,7 @@ class DisableSeeder extends Seeder
     public function run()
     {
         Disable::create([
-            'datetime' => "2021-01-15 12:03",
+            'datetime' => Carbon::now()->addDay(15)->format('Y-m-d H:i')
         ]);
     }
 }

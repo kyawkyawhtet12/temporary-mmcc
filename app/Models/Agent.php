@@ -45,4 +45,9 @@ class Agent extends Authenticatable
     {
         return $this->hasOne(FootballMaungLimit::class);
     }
+
+    public function banners()
+    {
+        return $this->hasMany(Banner::class);
+    }
 }

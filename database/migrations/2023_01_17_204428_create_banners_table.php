@@ -15,8 +15,9 @@ class CreateBannersTable extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
             $table->text('image');
-            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }

@@ -2,39 +2,60 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\Agent;
 use App\Models\Banner;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class BannerImageController extends Controller
 {
     public function index()
     {
-        $data = Banner::where('status', 1)->first();
-        return view("backend.admin.banner.index", compact("data"));
+        $agents = Agent::withCount('banners')->paginate(15);
+        return view("backend.admin.banner.index", compact("agents"));
     }
 
-    public function store(Request $request)
+    public function edit($id)
     {
-        // return $request->all();
+        $agent = Agent::findOrFail($id);
+        return view("backend.admin.banner.edit", compact("agent"));
+    }
 
+    public function update(Request $request, $id)
+    {
         $request->validate([
-            'image' => 'required|mimes:jpg,jpeg,png'
+            'images' => 'required|array',
+            'images.*' => 'required|mimes:jpg,jpeg,png'
         ]);
-        
-        $path = $request->file('image')->store('banner');
 
-        $banner = Banner::firstOrNew([ 'id' =>  1 ]);
-        $banner->image = $path;
-        $banner->status = 1;
-        $banner->save();
+        $agent = Agent::findOrFail($id);
 
-        return back()->with('success', '* Successfully Created');
+        foreach( $request->images as $image ){
+
+            $path = $image->store('banner');
+
+            $banner = new Banner();
+            $banner->image = request()->getSchemeAndHttpHost() . '/image/'. $path;
+            $banner->agent_id = $agent->id;
+            $banner->save();
+        }
+
+        return back()->with('success', '* Successfully Added');
     }
 
-    public function destroy(Request $request, $id)
+
+    public function destroy(Request $request, Banner $banner)
     {
-        Banner::findOrFail($id)->update(['status' => 0 ]);
+        // $oldImage = $banner->getRawOriginal('image') ?? '';
+
+        $test = explode("/", $banner->image);
+
+        $oldImage = "{$test[4]}/{$test[5]}";
+
+        Storage::delete($oldImage);
+        $banner->delete();
+
         return back()->with('success', '* Successfully Deleted');
     }
 }

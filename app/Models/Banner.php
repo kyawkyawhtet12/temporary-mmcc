@@ -10,7 +10,7 @@ class Banner extends Model
 {
     use HasFactory;
 
-    protected $fillable = [ 'image', 'status' ];
+    protected $fillable = [ 'image', 'agent_id' ];
 
     protected $casts = [
         'image' => Image::class,
