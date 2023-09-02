@@ -10,16 +10,6 @@ use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
 use App\Http\Controllers\Backend\Report\LotteryReportController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -124,7 +114,6 @@ Route::group(
 
         // 3D Results and Report Detail
         Route::get('/three-digits-results', [LotteryReportController::class, 'three_digits'])->name('three-digits.result');
-
         Route::get('/three-digits-results/{id}', [LotteryReportController::class, 'three_digits_detail'])->name('three-digits.result.detail');
 
         //

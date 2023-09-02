@@ -19,7 +19,7 @@ class MaungFeesController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballMaungFee::with('match','result')
+        $data = FootballMaungFee::with('match','result','user', 'match.bodies','match.maungs')
                                 ->join('football_matches', 'football_matches.id', '=', 'football_maung_fees.match_id')
                                 ->select('football_maung_fees.*')
                                 // ->where('football_matches.calculate', 0)
@@ -29,6 +29,18 @@ class MaungFeesController extends Controller
                                 ->orderBy('football_matches.home_no','asc')
                                 ->orderBy('football_maung_fees.created_at', 'desc')
                                 ->paginate(15);
+
+        $data = FootballMaungFee::where('created_at', '>=', now()->subMonth(6))
+                                ->with([
+                                    'match' => function($q){
+                                        $q->orderBy('round', 'desc')->orderBy('home_no','asc');
+                                    },
+                                    'result','user'
+                                ])
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(15);
+
+        $request->session()->forget('page');
 
         return view('backend.admin.ballone.match.maung', compact('data'));
     }

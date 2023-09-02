@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use App\Models\Agent;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
 
@@ -12,7 +11,7 @@ class BodySettingController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::all();
+        $agents = Agent::with('body_limit')->get();
         return view('backend.admin.ballone.body.setting', compact('agents'));
     }
 
@@ -31,7 +30,8 @@ class BodySettingController extends Controller
             [
                 'percentage' => $request->percentage,
                 'min_amount' => $request->min ,
-                'max_amount' => $request->max ]
+                'max_amount' => $request->max
+            ]
         );
 
         return back()->with('success', '* Successfully Done');

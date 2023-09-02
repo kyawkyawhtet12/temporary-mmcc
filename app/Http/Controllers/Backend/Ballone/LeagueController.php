@@ -6,17 +6,12 @@ use App\Models\League;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Monarobase\CountryList\CountryListFacade;
 
 class LeagueController extends Controller
 {
     public function index(Request $request)
     {
-        // $allCountries = CountryListFacade::getList('en');
-        // return $allCountries;
-
         if ($request->ajax()) {
             $query = League::orderBy('id', 'DESC')->get();
 
@@ -51,30 +46,33 @@ class LeagueController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|max:255',
-            // 'country' => 'required',
-            'level' => 'nullable',
         ]);
 
-        League::updateOrCreate([
-            'id'   => $request->league_id,
-        ], [
-            'name'     => $request->name,
-            'country' => '-',
-            'level' => $request->level,
-        ]);
+        $check = League::whereName($request->name)
+                        ->where('id', '!=' ,$request->league_id)
+                        ->exists();
+
+        if($check){
+            return response()->json(['error' => 'League name is already added']);
+        }
+
+        League::updateOrCreate(
+            [ 'id'   => $request->league_id ],
+            [ 'name' => $request->name ]
+        );
 
         return response()->json(['success'=>'League saved successfully.']);
     }
 
     public function edit($id)
     {
-        $league = League::find($id);
+        $league = League::findOrFail($id);
         return response()->json($league);
     }
 
     public function destroy($id)
     {
-        League::find($id)->delete();
+        League::findOrFail($id)->delete();
         return response()->json(['success'=>'League deleted successfully.']);
     }
 }

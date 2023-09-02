@@ -29,36 +29,28 @@ class MaungZaController extends Controller
 
     public function store(Request $request)
     {
-        // return $request->all();
-
         $request->validate([
             'teams' => 'required|numeric|min:0',
-            // 'za' => 'required|numeric|min:0',
             'percent' => 'required|numeric|min:0'
         ]);
 
-        FootballMaungZa::updateOrCreate([
-            // 'id'   => $request->za_id,
-            'teams' => $request->teams,
-        ], [
-            'teams'     => $request->teams,
-            // 'za' => $request->za,
-            'za' => 2,
-            'percent' => $request->percent,
-        ]);
+        FootballMaungZa::updateOrCreate(
+            [ 'teams' => $request->teams ],
+            [ 'za' => 2 , 'percent' => $request->percent ]
+        );
 
         return response()->json(['success'=>'Maung Za updated successfully.']);
     }
 
     public function show($id)
     {
-        $data = FootballMaungZa::find($id);
+        $data = FootballMaungZa::findOrFail($id);
         return response()->json($data);
     }
 
     public function destroy($id)
     {
-        FootballMaungZa::find($id)->delete();
+        FootballMaungZa::findOrFail($id)->delete();
         return response()->json(['success'=>'Maung Za deleted successfully.']);
     }
 }

@@ -6,14 +6,18 @@ use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballBodyFee;
 use App\Models\FootballMaungFee;
-use App\Models\FootballBodySetting;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 
 class AddResultController extends Controller
 {
     public function body($id)
     {
         $match = FootballMatch::findOrFail($id);
+
+        $arr = explode("=", url()->previous());
+        if( array_key_exists(1, $arr)) Session::put("page", $arr[1]);
+
         return view("backend.admin.ballone.match.body-result", compact("match"));
     }
 
@@ -32,7 +36,7 @@ class AddResultController extends Controller
             $this->calculation($bodyFees, $request);
         }
 
-        $match->update(['body_temp_score' => $request->home .' '. '-' .' '. $request->away ]);
+        $match->update(['body_temp_score' => "{$request->home} - {$request->away}" ]);
 
         return back();
     }
@@ -40,6 +44,10 @@ class AddResultController extends Controller
     public function maung($id)
     {
         $match = FootballMatch::findOrFail($id);
+
+        $arr = explode("=", url()->previous());
+        if( array_key_exists(1, $arr)) Session::put("page", $arr[1]);
+
         return view("backend.admin.ballone.match.maung-result", compact("match"));
     }
 
@@ -51,13 +59,14 @@ class AddResultController extends Controller
             'home' => 'required',
             'away' => 'required'
         ]);
+
         $footballMaungFee = FootballMaungFee::where('match_id', $id)->get();
 
         foreach ($footballMaungFee as $maungFees) {
             $this->calculation($maungFees, $request);
         }
 
-        $match->update(['maung_temp_score' => $request->home .' '. '-' .' '. $request->away ]);
+        $match->update(['maung_temp_score' => "{$request->home} - {$request->away}" ]);
 
         return back();
     }
@@ -66,39 +75,38 @@ class AddResultController extends Controller
     {
         if (strpos($fees, '+')) {
             return explode('+', $fees);
-        } elseif (strpos($fees, '=') || $fees == "=") {
-            return explode('=', $fees);
-        } else {
-            return explode('-', $fees);
         }
+
+        if (strpos($fees, '=') || $fees == "=") {
+            return explode('=', $fees);
+        }
+
+        return explode('-', $fees);
     }
 
     public function getFeesType($fees)
     {
-
-        // dd($fees);
         if (strpos($fees, '+')) {
             return "+";
-        } elseif (strpos($fees, '=') || $fees == "=") {
-            return "=";
-        } else {
-            return "-";
         }
+
+        if (strpos($fees, '=') || $fees == "=") {
+            return "=";
+        }
+
+        return "-";
     }
 
     private function calculation($allFees, $request)
     {
         $upteam = $allFees->up_team;
         $fees   = $allFees->body;
+
         $fees_array = $this->getFees($fees);
         $fees_type  = $this->getFeesType($fees);
 
-        // dd($fees_array , $fees_type);
-
         $limit   =  (isset($fees_array[0]) && $fees_array[0]) ? $fees_array[0] : 0;
         $percent =  (isset($fees_array[1]) && $fees_array[1]) ? $fees_array[1] : 100;
-
-        // dd($limit, $percent);
 
         if ($upteam == 1) {
             // home
@@ -143,6 +151,7 @@ class AddResultController extends Controller
                     }
                 }
             }
+
         } else {
             // away
             $net = (int) $request->away - (int) $request->home;
@@ -189,10 +198,13 @@ class AddResultController extends Controller
         }
 
         // goals
+
         $total_goals = (int) $request->home + (int) $request->away;
         $fees = $allFees->goals;
+
         $fees_array = $this->getFees($fees);
         $fees_type = $this->getFeesType($fees);
+
         $limit   =  (isset($fees_array[0]) && $fees_array[0]) ? $fees_array[0] : 0;
         $percent =  (isset($fees_array[1]) && $fees_array[1]) ? $fees_array[1] : 100;
 

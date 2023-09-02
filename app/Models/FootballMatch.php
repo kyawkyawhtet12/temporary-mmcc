@@ -11,6 +11,8 @@ class FootballMatch extends Model
 
     protected $guarded = [];
 
+    protected $with = [ 'home' , 'away' ];
+
     // type - 0 Refund
 
     public function home()
@@ -99,7 +101,12 @@ class FootballMatch extends Model
 
     public function getMatchFormatAttribute()
     {
-        return "({$this->home_no}) " . $this->home?->name . " " .$this->home_other_status . " Vs " . "({$this->away_no}) " . $this->away?->name . " " . $this->away_other_status;
+        // return "({$this->home_no}) " . $this->home?->name . " " .$this->home_other_status .
+        //     " Vs " .
+        //     "({$this->away_no}) " . $this->away?->name . " " . $this->away_other_status;
+
+        return "({$this->home_no}) {$this->home->name} {$this->home_other_status}
+            Vs ({$this->away_no}) {$this->away?->name} {$this->away_other_status}";
     }
 
     public function getBodyHomeTempscoreAttribute()

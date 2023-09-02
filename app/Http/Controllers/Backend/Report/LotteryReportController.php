@@ -125,7 +125,7 @@ class LotteryReportController extends Controller
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
         $win_betting = $data->winners->when($agent_id, function($query, $agent_id) {
-                                        $query->where('twoLuckyDraw.agent_id', $agent_id);
+                                        return $query->where('agent_id', $agent_id);
                                     })?->sum('twoLuckyDraw.amount');
 
         $draw = TwoLuckyDraw::when($agent_id, function($query, $agent_id) {

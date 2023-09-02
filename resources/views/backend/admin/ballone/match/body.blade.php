@@ -99,7 +99,8 @@
                                                         <td>
                                                             <a href="{{ route('match.body-report', $dt->match->id) }}"
                                                                 class="match-detail">
-                                                                {{  $dt->match->match_format }}
+
+                                                                {{ $dt->match_format }}
                                                             </a>
                                                         </td>
 
@@ -144,7 +145,7 @@
                                                         @endif
 
                                                         <td>
-                                                            @if (!$dt->match->calculate_body && $dt->match->type == 1)
+                                                            @if ( !$dt->bodybetting && $dt->match->type == 1)
                                                                 <a href="/admin/ballone-add-result/body/{{ $dt->match->id }}">
                                                                     <i class="fa fa-plus-square text-inverse m-r-10"></i>
                                                                 </a>
@@ -175,7 +176,7 @@
                                                                 <i class="fa fa-edit text-success m-1"></i>
                                                             </a>
 
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)
+                                                            @if ( !$dt->bodybetting && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Delete" class="deleteMatch mr-2">

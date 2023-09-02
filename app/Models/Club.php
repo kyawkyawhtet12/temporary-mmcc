@@ -18,15 +18,6 @@ class Club extends Model
 
     public function getAllLeaguesAttribute()
     {
-        // return $this->name;
-
-        $clubs =  Club::select('league_id')->with('league')->where('name', $this->name)->get();
-        $league = "";
-
-        foreach ($clubs as $club) {
-            $league .= $club->league->name . " , ";
-        }
-
-        return rtrim($league, ' , ');
+        return self::whereName($this->name)->pluck('league_id');
     }
 }
