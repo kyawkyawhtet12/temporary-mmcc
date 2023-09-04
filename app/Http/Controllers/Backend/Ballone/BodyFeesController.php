@@ -14,12 +14,7 @@ class BodyFeesController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballBodyFee::
-                                // ->join('football_matches', 'football_matches.id', '=', 'football_body_fees.match_id')
-                                // ->select('football_body_fees.*')
-                                // ->where('football_matches.calculate', 0)
-                                // ->where('football_matches.type', 1)
-                                where('created_at', '>=', now()->subMonth(3))
+        $data = FootballBodyFee::where('created_at', '>=', now()->subMonth(6))
                                 ->with([
                                     'match' => function($q){
                                         $q->orderBy('round', 'desc')->orderBy('home_no','asc');
@@ -30,8 +25,6 @@ class BodyFeesController extends Controller
                                 ->paginate(15);
 
         $request->session()->forget('page');
-
-        // return $data;
 
         return view('backend.admin.ballone.match.body', compact('data'));
     }

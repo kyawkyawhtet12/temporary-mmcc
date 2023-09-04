@@ -11,7 +11,7 @@ class FootballMatch extends Model
 
     protected $guarded = [];
 
-    protected $with = [ 'home' , 'away' ];
+    // protected $with = [ 'home' , 'away' ];
 
     // type - 0 Refund
 
@@ -81,61 +81,43 @@ class FootballMatch extends Model
         return $this->hasMany(FootballMaung::class, 'match_id');
     }
 
-    public function getOtherStatusAttribute()
-    {
-        // other - 0 => No , other - 1 => Home (N) , other - 2 => Away (N)
-        return $this->other == 1 ? '(N)' : '';
-    }
-
-    public function getHomeOtherStatusAttribute()
-    {
-        // other - 0 => No , other - 1 => Home (N) , other - 2 => Away (N)
-        return $this->other == 1 ? '(N)' : '';
-    }
-
-    public function getAwayOtherStatusAttribute()
-    {
-        // other - 0 => No , other - 1 => Home (N) , other - 2 => Away (N)
-        return $this->other == 2 ? '(N)' : '';
-    }
-
     public function getMatchFormatAttribute()
     {
-        // return "({$this->home_no}) " . $this->home?->name . " " .$this->home_other_status .
-        //     " Vs " .
-        //     "({$this->away_no}) " . $this->away?->name . " " . $this->away_other_status;
-
-        return "({$this->home_no}) {$this->home->name} {$this->home_other_status}
-            Vs ({$this->away_no}) {$this->away?->name} {$this->away_other_status}";
+        return "{$this->home_team} Vs {$this->away_team}";
     }
 
-    public function getBodyHomeTempscoreAttribute()
+    public function getHomeTeamAttribute()
     {
-        return self::getTempScore($this->body_temp_score, 0);
+        return "({$this->home_no}) {$this->home->name} {$this->other_status(1)}";
     }
 
-    public function getBodyAwayTempscoreAttribute()
+    public function getAwayTeamAttribute()
     {
-        return self::getTempScore($this->body_temp_score, 1);
+        return "({$this->away_no}) {$this->away?->name} {$this->other_status(2)}";
     }
 
-    public function getMaungHomeTempscoreAttribute()
+    public function other_status($status)
     {
-        return self::getTempScore($this->maung_temp_score, 0);
+        return ($this->other == $status) ? '(N)' : '';
     }
 
-    public function getMaungAwayTempscoreAttribute()
+    public function upteam_name($upteam)
     {
-        return self::getTempScore($this->maung_temp_score, 1);
+        return ($upteam == 1) ? $this->home->name : $this->away->name;
     }
 
-    public static function getTempScore($score, $key)
+    public function body_score($key)
     {
-        if ($score) {
-            $array = explode("-", $score);
-            return str_replace(' ', '', $array[$key]);
-        } else {
-            return null;
-        }
+        return self::getTempScore($this->body_temp_score)[$key];
+    }
+
+    public function maung_score($key)
+    {
+        return self::getTempScore($this->maung_temp_score)[$key];
+    }
+
+    public static function getTempScore($score)
+    {
+        return array_pad( explode("-", $score) , 2, '');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Ballone;
 
 use App\Models\UserLog;
 use App\Models\WinRecord;
@@ -8,18 +8,13 @@ use App\Models\FootballMaung;
 
 class MaungService
 {
-
-
     public function calculate($maungs)
     {
         foreach ($maungs as $maung) {
-            // $maungGroup = FootballMaungGroup::with('bet')->find($maung->maung_group_id);
+
             $betting = $maung->bet->bet;
 
             if ($betting->status == 0) {
-                // calculation
-
-                // $result = FootballMaungFeeResult::where('fee_id', $maung->fee_id)->first();
 
                 $result  =  $maung->fees;
                 $type    =  $maung->type;
@@ -29,29 +24,23 @@ class MaungService
                                     $betting->amount :
                                     $betting->net_amount;
 
-                // $bettingStatus = $betting->status;
-
                 $status = 1;
                 $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
 
                 if ($percent == 0) {
                     $status = 3;
-                    // $net_amount = $betAmount;
                     $betting->net_amount = $betAmount;
                 }
 
                 if( $percent == '-100'){
                     $status = 2;
 
-                    $net_amount = 0;
-                    $bettingStatus = 2;
-
                     $betting->status = 2;
                     $betting->net_amount = 0;
                 }
 
                 $maung->update([ 'status' => $status ]);
-                // $betting->update([ 'status' => $bettingStatus , 'net_amount' => $net_amount ]);
+
                 $betting->save();
 
                 $this->calculation($betting, $maung);

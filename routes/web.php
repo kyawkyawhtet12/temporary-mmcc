@@ -21,9 +21,9 @@ Route::get('image/{filename}', [ApplicationController::class, 'image'])->where('
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return view('index');
-});
+// Route::get('/dashboard', function () {
+//     return view('index');
+// });
 
 
 Route::get('/login/admin', 'Auth\LoginController@showAdminLoginForm')->name('login.admin');
@@ -31,23 +31,24 @@ Route::post('/login/admin', 'Auth\LoginController@adminLogin')->name('admin.logi
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::post('change-password', 'Backend\AdminController@store')->name('change.password');
 
-Route::group(['middleware' => ['auth:admin', 'admin'], 'namespace' => 'Backend'], function () {
-    Route::get('/dashboard', 'AdminController@index')->name('dashboard.index');
-});
+// Route::group(['middleware' => ['auth:admin'], 'namespace' => 'Backend'], function () {
+//     Route::get('/dashboard', 'AdminController@index')->name('dashboard.index');
+// });
 
 Route::get('/profile', 'Backend\ProfileController@index')->name('profile');
 Route::post('/profile/update', 'Backend\ProfileController@update')->name('profile.update');
 
 Route::group(
     [
-    'middleware' => ['auth:admin', 'admin'],
-    'namespace' => 'Backend',
-    'prefix' => 'admin'
-],
+        'middleware' => ['auth:admin','data_manual'],
+        'namespace' => 'Backend',
+        'prefix' => 'admin'
+    ],
     function () {
 
-        // 2d
+        Route::get('/dashboard', 'AdminController@index')->name('dashboard.index');
 
+        // 2d
         Route::get('/2d-today-report', 'Report\LotteryReportController@today_2d')->name('twodigits.today-report');
         Route::get('two_lucky_draws', 'TwoLuckyDrawController@index')->name('twodigits.index');
         Route::get('two_winners', 'TwoWinnerController@index')->name('two_winners.index');
@@ -79,7 +80,6 @@ Route::group(
 
         // 2D Results and Report Detail
         Route::get('/two-digits-results', [LotteryReportController::class, 'two_digits'])->name('two-digits.result');
-
         Route::get('/two-digits-results/{id}', [LotteryReportController::class, 'two_digits_detail'])->name('two-digits.result.detail')->whereNumber('id');
 
         // 3d

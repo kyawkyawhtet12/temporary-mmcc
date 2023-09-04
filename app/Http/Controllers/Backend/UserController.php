@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = User::select('*');
+            $query = User::query();
 
             return Datatables::of($query)
                     ->addIndexColumn()
@@ -26,7 +26,7 @@ class UserController extends Controller
                         }
                     })
                     ->addColumn('days_not_logged_in', function ($user) {
-                        return Carbon::parse(Carbon::now())->diffInDays($user->last_active);
+                        return Carbon::parse(now())->diffInDays($user->last_active);
                     })
                     ->addColumn('payment', function ($user) {
                         if( is_admin() ){

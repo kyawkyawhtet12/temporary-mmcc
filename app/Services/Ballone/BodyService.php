@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Ballone;
 
 use App\Models\UserLog;
 use App\Models\WinRecord;
@@ -9,9 +9,7 @@ class BodyService
 {
     public static function calculate($bodies )
     {
-
         foreach ($bodies as $body) {
-            // $result = FootballBodyFeeResult::where('fee_id', $body->fee_id)->first();
 
             $result = $body->fees;
 
@@ -27,7 +25,6 @@ class BodyService
             }
 
             if( $percent > 0 ){
-                //win
                 $status = 1;
                 $win_amount = $win_amount -  ($win_amount * $body->agent->body_percentage );
             }

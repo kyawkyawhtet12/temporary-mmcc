@@ -28,11 +28,7 @@ class FootballMaungFee extends Model
 
     public function getUpteamNameAttribute()
     {
-        if ($this->up_team == 1) {
-            return $this->match->home->name;
-        } elseif ($this->up_team == 2) {
-            return $this->match->away->name;
-        }
+        return ($this->up_team == 1) ? $this->match->home->name : $this->match->away->name ;
     }
 
     public function getMatchStatusAttribute()

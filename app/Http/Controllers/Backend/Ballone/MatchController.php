@@ -4,17 +4,14 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use Carbon\Carbon;
 use App\Models\Club;
-use App\Models\User;
 use App\Models\League;
-use App\Models\FootballBet;
 use Illuminate\Support\Str;
 use App\Models\FootballBody;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballMaung;
-use App\Services\MaungService;
+use App\Services\Ballone\MaungService;
 use Yajra\DataTables\DataTables;
-use App\Models\FootballMaungGroup;
 use App\Http\Controllers\Controller;
 use App\Models\FootballRefundHistory;
 
@@ -30,34 +27,34 @@ class MatchController extends Controller
                 $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->latest()->get();
             }
             return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('league', function ($match) {
-                        return $match->league?->name;
-                    })
-                    ->addColumn('date_time', function ($match) {
-                        return get_date_time_format($match);
-                    })
-                    ->addColumn('match', function ($match) {
-                        return $match->match_format;
-                    })
-                    ->addColumn('goals', function ($match) {
-                        return $match->fees?->goals;
-                    })
-                    ->addColumn('body', function ($match) {
-                        return $match->fees?->body;
-                    })
-                    ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                                if (Str::contains(Str::lower($row['match']), Str::lower($request->get('search')))) {
-                                    return true;
-                                }
-                                return false;
-                            });
-                        }
-                    })
-                    ->rawColumns(['score'])
-                    ->make(true);
+                ->addIndexColumn()
+                ->addColumn('league', function ($match) {
+                    return $match->league?->name;
+                })
+                ->addColumn('date_time', function ($match) {
+                    return get_date_time_format($match);
+                })
+                ->addColumn('match', function ($match) {
+                    return $match->match_format;
+                })
+                ->addColumn('goals', function ($match) {
+                    return $match->fees?->goals;
+                })
+                ->addColumn('body', function ($match) {
+                    return $match->fees?->body;
+                })
+                ->filter(function ($instance) use ($request) {
+                    if (!empty($request->get('search'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            if (Str::contains(Str::lower($row['match']), Str::lower($request->get('search')))) {
+                                return true;
+                            }
+                            return false;
+                        });
+                    }
+                })
+                ->rawColumns(['score'])
+                ->make(true);
         }
         return view('backend.admin.ballone.match.refund');
     }
@@ -70,16 +67,14 @@ class MatchController extends Controller
             'down_team' => 'required',
         ]);
 
-        // return response()->json($request->all());
-
         FootballMatch::updateOrCreate(
-            [ 'id' => $request->match_id],
+            ['id' => $request->match_id],
             [
-              'score' => $request->up_team .' '. '-' .' '. $request->down_team,
+                'score' => $request->up_team . ' ' . '-' . ' ' . $request->down_team,
             ]
         );
 
-        return response()->json(['success'=>'Match saved successfully.']);
+        return response()->json(['success' => 'Match saved successfully.']);
     }
 
 
@@ -125,10 +120,10 @@ class MatchController extends Controller
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,
             'away_id' => $request->away_id,
-            'other' => ($request->other) ? : 0
+            'other' => ($request->other) ?: 0
         ]);
 
-        $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body' ;
+        $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body';
 
         return redirect($route)->with('success', '* match successfully updated.');
     }
@@ -136,7 +131,7 @@ class MatchController extends Controller
     public function destroy($id)
     {
         FootballMatch::find($id)->delete();
-        return response()->json(['success'=>'Match deleted successfully.']);
+        return response()->json(['success' => 'Match deleted successfully.']);
     }
 
     public function refund($id, MaungService $maungService)
@@ -147,14 +142,14 @@ class MatchController extends Controller
             return response()->json('error');
         }
 
-        $bodies = FootballBody::with("user","bet")->where('match_id', $match->id)->get();
+        $bodies = FootballBody::with("user", "bet")->where('match_id', $match->id)->get();
 
         foreach ($bodies as $body) {
 
-            $body->update([ 'refund' => 1 ]);
+            $body->update(['refund' => 1]);
 
             $body->user->increment('amount', (int)$body->bet->amount);
-            $body->bet->update(['status' => 4 ]);
+            $body->bet->update(['status' => 4]);
 
             FootballRefundHistory::create([
                 'agent_id' => $body->agent_id,
@@ -167,7 +162,7 @@ class MatchController extends Controller
 
         foreach ($maungs as $maung) {
 
-            $maung->update([ 'status' => 4 ,'refund' => 1 ]);
+            $maung->update(['status' => 4, 'refund' => 1]);
             // $maungGroup = FootballMaungGroup::find($maung->maung_group_id)->decrement('count', 1);
             // $maungGroup = FootballMaungGroup::find($maung->maung_group_id);
             $betting = $maung->bet->bet;
@@ -183,7 +178,7 @@ class MatchController extends Controller
         }
 
         // return response()->json($data);
-        $match->update([ 'type' => 0 ]);
+        $match->update(['type' => 0]);
         return response()->json(['success' => 'Match Refund successfully.']);
     }
 

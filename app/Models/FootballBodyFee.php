@@ -11,7 +11,9 @@ class FootballBodyFee extends Model
 
     protected $guarded = [];
 
-    protected $appends = [ 'match_format' ];
+    // protected $with = [ 'match' ];
+
+    // protected $appends = [ 'upteam_name' ];
 
     public function match()
     {
@@ -30,8 +32,7 @@ class FootballBodyFee extends Model
 
     public function getUpteamNameAttribute()
     {
-        // return ($this->up_team == 1) ? $this->match->home->name : $this->match->away->name ;
-        return ($this->up_team == 1) ? $this->home_team->name : $this->away_team->name ;
+        return ($this->up_team == 1) ? $this->match->home->name : $this->match->away->name ;
     }
 
     public function getMatchStatusAttribute()
@@ -68,10 +69,10 @@ class FootballBodyFee extends Model
         return $this->hasOneThrough(
             Club::class,
             FootballMatch::class,
-            'id', // refers to id column on invoices table
-            'id', // refers to id column on customers table
-            'match_id', // refers to invoice_id column on credit_notes table
-            'home_id' // refers to customer_id column on invoices table
+            'id',
+            'id',
+            'match_id',
+            'home_id'
         );
     }
 
@@ -80,10 +81,10 @@ class FootballBodyFee extends Model
         return $this->hasOneThrough(
             Club::class,
             FootballMatch::class,
-            'id', // refers to id column on invoices table
-            'id', // refers to id column on customers table
-            'match_id', // refers to invoice_id column on credit_notes table
-            'home_id' // refers to customer_id column on invoices table
+            'id',
+            'id',
+            'match_id',
+            'away_id'
         );
     }
 }

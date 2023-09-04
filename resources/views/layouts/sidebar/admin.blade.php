@@ -27,7 +27,7 @@
                 <li class="menu-title"><span data-key="t-menu">Admin Menu</span></li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ url('/dashboard') }}">
+                    <a class="nav-link menu-link" href="{{ route("dashboard.index") }}">
                         <i class="ri-information-line"></i> <span data-key="t-payment-accounts"> Dashboard </span>
                     </a>
                 </li>
