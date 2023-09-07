@@ -9,67 +9,39 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Models\UserPaymentReport;
+use App\Models\AgentPaymentReport;
 use App\Http\Controllers\Controller;
 use App\Models\AgentPaymentAllReport;
-use App\Models\AgentPaymentReport;
+use Barryvdh\Debugbar\Facades\Debugbar;
 
 class AgentPaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::all();
-
-        AgentPaymentAllReport::whereDate('created_at', today())->firstOrCreate();
-
-
-
-            $query = AgentPaymentAllReport::latest();
-
-            $total_recharge = $query->sum('deposit');
-            $total_cash = $query->sum('withdraw');
-
-            $data = $query->get();
-
         $select_agent = "all";
+        $agents = Agent::select('id','name')->get();
+        $data = AgentPaymentAllReport::latest()->get();
 
-        return view("backend.report.agent-payments", compact('agents', 'data', 'total_recharge', 'total_cash', 'select_agent'));
+        return view("backend.report.agent-payments", compact('data', 'select_agent','agents'));
     }
 
     public function search(Request $request)
     {
-        // return $request->all();
-
-        $agents = Agent::all();
-
-        if ($request->agent && $request->agent != 'all') {
-
-            AgentPaymentReport::whereDate('created_at', today())
-                            ->firstOrCreate([ 'agent_id' => $request->agent ]);
-
-            $query = AgentPaymentReport::where('agent_id', $request->agent)->latest();
-
-        } else {
-            $query = AgentPaymentAllReport::latest();
-        }
-
-        if (!empty($request->start_date)) {
-            $query = $query->whereDate('created_at', '>=', $request->start_date);
-        }
-
-        if( !empty($request->end_date)){
-            $query = $query->whereDate('created_at' , '<=' , $request->end_date);
-        }
-
-
-        // dd($query->get());
-
-        $total_recharge = $query->sum('deposit');
-        $total_cash = $query->sum('withdraw');
-
-        $data = $query->get();
-
         $select_agent = $request->agent;
+        $agents = Agent::select('id','name')->get();
 
-        return view("backend.report.agent-payments", compact('agents', 'data', 'total_recharge', 'total_cash', 'select_agent'));
+        $query = ( $select_agent && $select_agent != 'all' )
+                        ? AgentPaymentReport::where('agent_id',  $select_agent)->latest()
+                        : AgentPaymentAllReport::latest() ;
+
+        $data = $query->when($request->start_date, function($q) use ($request){
+                    $q->whereDate('created_at', '>=', $request->start_date);
+                })
+                ->when($request->end_date, function($q) use ($request){
+                    $q->whereDate('created_at', '<=', $request->end_date);
+                })
+                ->get();
+
+        return view("backend.report.agent-payments", compact('data','select_agent','agents'));
     }
 }

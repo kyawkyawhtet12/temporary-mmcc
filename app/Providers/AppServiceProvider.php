@@ -27,10 +27,6 @@ class AppServiceProvider extends ServiceProvider
     {
         view()->share('enabled', Enabled::first());
 
-        view()->composer('*', function ($view) {
-
-        });
-
         Paginator::useBootstrap();
     }
 }

@@ -21,20 +21,4 @@ class AgentPaymentReport extends Model
     {
         return $this->belongsTo(Agent::class, 'agent_id');
     }
-
-    public static function addReport($payment, $type, $agent)
-    {
-        $check = AgentPaymentReport::whereDate('created_at', today())
-                                ->where('agent_id', $agent)
-                                ->first();
-
-        if ($check) {
-            $check->increment($type, $payment->amount);
-        } else {
-            $check = AgentPaymentReport::create([
-                'agent_id' => $agent,
-                $type      => $payment->amount
-            ]);
-        }
-    }
 }

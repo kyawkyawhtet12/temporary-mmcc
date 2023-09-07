@@ -54,4 +54,19 @@ class Agent extends Model
 
         return $per / 100;
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class , 'referral_code', 'referral_code');
+    }
+
+    public function payment_reports()
+    {
+        return $this->hasMany(AgentPaymentReport::class, 'agent_id');
+    }
+
+    public function user_payment_reports()
+    {
+        return $this->users;
+    }
 }

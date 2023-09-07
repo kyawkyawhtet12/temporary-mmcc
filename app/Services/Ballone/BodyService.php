@@ -2,8 +2,8 @@
 
 namespace App\Services\Ballone;
 
-use App\Models\UserLog;
-use App\Models\WinRecord;
+use App\Services\RecordService;
+use App\Services\UserLogService;
 
 class BodyService
 {
@@ -32,22 +32,10 @@ class BodyService
             $net_amount = $betAmount + $win_amount;
 
             if( $net_amount > $betAmount ){
-                WinRecord::create([
-                    'user_id' => $body->user_id,
-                    'agent_id' => $body->agent_id,
-                    'type' => 'Body',
-                    'amount' => $net_amount
-                ]);
+                (new RecordService())->add($body->user, $net_amount, "Body");
             }
 
-            UserLog::create([
-                'user_id' => $body->user_id,
-                'agent_id' => $body->agent_id,
-                'operation' => 'Body Win',
-                'amount' => $net_amount,
-                'start_balance' => $body->user->amount,
-                'end_balance' => $body->user->amount + $net_amount
-            ]);
+            (new UserLogService())->add($body->user, $net_amount, 'Body Win');
 
             $body->user->increment('amount', $net_amount);
             $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);

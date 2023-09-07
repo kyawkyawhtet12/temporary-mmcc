@@ -48,8 +48,7 @@
                                     <div class="col-md-3">
                                         <button type="submit" name="filter" id="filter"
                                             class="btn btn-primary">Filter</button>
-                                        <button type="button" name="refresh" id="refresh"
-                                            class="btn btn-success">Refresh</button>
+                                        <a href="" class="btn btn-success">Refresh</a>
                                     </div>
                                 </form>
                             </div>
@@ -57,8 +56,8 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 my-3 d-flex">
-                                    <h6 class="mr-5"> Recharge : <span class="text-info">{{ $total_recharge }}</span></h6>
-                                    <h6 class="ml-5"> Cash : <span class="text-info">{{ $total_cash }}</span></h6>
+                                    <h6 class="mr-5"> Recharge : <span class="text-info">{{ $data->sum('deposit') }}</span></h6>
+                                    <h6 class="ml-5"> Cash : <span class="text-info">{{ $data->sum('withdraw') }}</span></h6>
                                 </div>
                                 <div class="col-12">
                                     <div class="table-responsive">
@@ -80,7 +79,7 @@
                                                         <td> {{ $dt->created_at->format('d-m-Y'); }}</td>
                                                         <td> {{ $dt->deposit }}</td>
                                                         <td> {{ $dt->withdraw }}</td>
-                                                        <td> {{ $dt->deposit - $dt->withdraw }}</td>
+                                                        <td> {{ $dt->net_amount }}</td>
                                                     </tr>
 
                                                 @endforeach
@@ -96,74 +95,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        // $('.input-daterange').datepicker({
-        //     todayBtn: 'linked',
-        //     format: 'yyyy-mm-dd',
-        //     autoclose: true
-        // });
-
-        // load_data();
-
-        function load_data() {
-            $('.data-table').DataTable({
-                processing: true,
-                "language": {
-                    processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>'
-                },
-                serverSide: true,
-                searching : false,
-                ajax: {
-                    url: "{{ route('agent.payment-reports') }}",
-                    data: function(d) {
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.agent = $('#agentSelect').val();
-                        d.search = $('input[type="search"]').val()
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
-                    },
-                    {
-                        data: 'deposit',
-                        name: 'deposit'
-                    },
-                    {
-                        data: 'withdraw',
-                        name: 'withdraw'
-                    },
-                    {
-                        data: 'net',
-                        name: 'net'
-                    },
-                ],
-            });
-        }
-
-        // $('#filter').click(function() {
-        //     $('.data-table').DataTable().destroy();
-        //     load_data();
-        // });
-
-        $('#refresh').click(function() {
-            // $('#from_date').val('');
-            // $('#to_date').val('');
-            // $('#agentSelect').val('all');
-            // $("#from_date, #to_date").datepicker('setDate', null);
-            // $('.data-table').DataTable().destroy();
-            // load_data();
-
-            window.location = "/admin/agent-payment-reports";
-        });
-    </script>
-@endpush

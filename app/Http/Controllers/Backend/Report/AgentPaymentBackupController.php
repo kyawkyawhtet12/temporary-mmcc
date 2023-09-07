@@ -19,13 +19,8 @@ class AgentPaymentController extends Controller
     {
         $agents = Agent::all();
 
-        AgentPaymentAllReport::whereDate('created_at', today())->firstOrCreate();
-
         if ($request->ajax()) {
             if ($request->agent && $request->agent != 'all') {
-
-                AgentPaymentReport::whereDate('created_at', today())
-                                ->firstOrCreate([ 'agent_id' => $request->agent ]);
 
                 $query = AgentPaymentReport::where('agent_id', $request->agent)->latest();
 

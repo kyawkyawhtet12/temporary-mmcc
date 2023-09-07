@@ -26,4 +26,14 @@ class ThreeWinner extends Model
     {
         return $this->belongsTo(ThreeLuckyDraw::class, 'three_lucky_draw_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class, 'agent_id');
+    }
 }

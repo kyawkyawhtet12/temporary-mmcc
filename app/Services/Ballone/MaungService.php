@@ -2,9 +2,9 @@
 
 namespace App\Services\Ballone;
 
-use App\Models\UserLog;
-use App\Models\WinRecord;
 use App\Models\FootballMaung;
+use App\Services\RecordService;
+use App\Services\UserLogService;
 
 class MaungService
 {
@@ -64,22 +64,10 @@ class MaungService
             $net_amount = (int) ($win_amount - ( $win_amount * $maung->charge_percent) );
 
             if ($net_amount > $betting->amount) {
-                WinRecord::create([
-                    'user_id' => $maung->user_id,
-                    'agent_id' => $maung->agent_id,
-                    'type' => 'Maung',
-                    'amount' => $net_amount
-                ]);
+                (new RecordService())->add($maung->user, $net_amount, "Maung");
             }
 
-            UserLog::create([
-                'user_id' => $maung->user_id,
-                'agent_id' => $maung->agent_id,
-                'operation' => 'Maung Win',
-                'amount' => $net_amount,
-                'start_balance' => $user->amount,
-                'end_balance' => $user->amount + $net_amount
-            ]);
+            (new UserLogService())->add($maung->user, $net_amount, 'Maung Win');
 
             $user->increment('amount', $net_amount);
 

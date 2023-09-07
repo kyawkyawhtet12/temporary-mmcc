@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers\Backend;
 
-use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Agent;
 use App\Models\TwoDigit;
 use App\Models\TwoWinner;
 use App\Models\LotteryTime;
 use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
 use App\Models\TwoLuckyNumber;
+use App\Services\RecordService;
+use App\Services\UserLogService;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\TwoDigitCompensation;
 use App\Http\Requests\TwoLuckyNumberRequest;
-use App\Models\UserLog;
-use App\Models\WinRecord;
 
 class TwoLuckyNumberController extends Controller
 {
@@ -128,10 +125,9 @@ class TwoLuckyNumberController extends Controller
 
     public function UpdateByAjax(Request $request)
     {
-        // return $request->all();
-        if ($request->value == "Approved") {
+        $data = TwoLuckyNumber::find($request->pk);
 
-            $data = TwoLuckyNumber::find($request->pk);
+        if ($request->value == "Approved") {
 
             $two_lucky_draw_id = TwoLuckyDraw::where('two_digit_id', $data->two_digit_id)
                                             ->where('lottery_time_id', $data->lottery_time_id)
@@ -142,8 +138,6 @@ class TwoLuckyNumberController extends Controller
 
                 $amount = $value->amount * $value->za;
 
-                $user = User::find($value->user_id);
-
                 TwoWinner::create([
                     'two_lucky_number_id' => $data->id,
                     'two_lucky_draw_id' => $value->id,
@@ -151,29 +145,14 @@ class TwoLuckyNumberController extends Controller
                     'agent_id' => $value->agent_id
                 ]);
 
-                WinRecord::create([
-                    'user_id' => $value->user_id,
-                    'agent_id' => $value->agent_id,
-                    'type' => '2D',
-                    'amount' => $amount
-                ]);
+                (new RecordService())->add($value->user, $amount, "2D");
+                (new UserLogService())->add($value->user, $amount, '2D Win');
 
-                UserLog::create([
-                    'user_id' => $value->user_id,
-                    'agent_id' => $value->agent_id,
-                    'operation' => '2D Win',
-                    'amount' => $amount,
-                    'start_balance' => $user->amount,
-                    'end_balance' => $user->amount + $amount
-                ]);
-
-                $user->increment('amount', $amount);
-
+                $value->user->increment('amount', $amount);
             }
-
         }
 
-        TwoLuckyNumber::find($request->pk)->update([$request->name => $request->value]);
+        $data->update([$request->name => $request->value]);
         return response()->json(['message' => 'Lucky number status changed successfully.']);
     }
 }
