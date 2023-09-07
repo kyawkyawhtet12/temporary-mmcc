@@ -96,7 +96,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($data as $dt)
+                                                @forelse ($data as $dt)
                                                     <tr class="{{ $dt->match_status }}">
                                                         <td>{{  $dt->match->round }}</td>
 
@@ -192,7 +192,11 @@
                                                             @endif
                                                         </td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="15" class="text-center"> No Data Available. </td>
+                                                    </tr>
+                                                @endforelse
                                             </tbody>
                                         </table>
                                     </div>

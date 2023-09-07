@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use App\Models\Agent;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Models\FootballMaungLimit;
 use App\Http\Controllers\Controller;
 use App\Models\MaungTeamSetting;
@@ -15,7 +14,7 @@ class MaungLimitController extends Controller
 
     public function index(Request $request)
     {
-        $agents = Agent::all();
+        $agents = Agent::with('maung_limit')->get();
         return view('backend.admin.ballone.maung.limit',compact('agents'));
     }
 
@@ -29,10 +28,8 @@ class MaungLimitController extends Controller
         $agent = Agent::findOrFail($request->agent_id);
 
         FootballMaungLimit::updateOrCreate(
-            [   'agent_id' => $agent->id ],
-            [
-                'min_amount' => $request->min ,
-                'max_amount' => $request->max ]
+            [ 'agent_id' => $agent->id ],
+            [ 'min_amount' => $request->min , 'max_amount' => $request->max ]
         );
 
         return back()->with('success', '* Successfully Done');
@@ -42,7 +39,7 @@ class MaungLimitController extends Controller
 
     public function teams_index(Request $request)
     {
-        $data = MaungTeamSetting::first();
+        $data = MaungTeamSetting::firstOrFail();
         return view('backend.admin.ballone.maung.setting',compact('data'));
     }
 
@@ -53,7 +50,7 @@ class MaungLimitController extends Controller
             'max_teams' => 'required|numeric|min:0',
         ]);
 
-        MaungTeamSetting::first()->update([
+        MaungTeamSetting::firstOrFail()->update([
             'min_teams' => $request->min_teams,
             'max_teams' => $request->max_teams
         ]);

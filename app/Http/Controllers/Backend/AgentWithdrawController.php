@@ -100,7 +100,7 @@ class AgentWithdrawController extends Controller
                     ->addColumn('created_at', function ($cashout) {
                         return date("d-m-Y, g:i A", strtotime($cashout->created_at));
                     })
-                    
+
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {
                             $instance->whereHas('provider', function ($w) use ($request) {
@@ -120,29 +120,6 @@ class AgentWithdrawController extends Controller
         }
         return view('backend.admin.agent-withdraws.history');
     }
-
-    // public function store(Request $request)
-    // {
-    //     $validateData = $request->validate([
-    //         'payment_provider_id' => ['required'],
-    //         'amount' => ['required', new LimitWithdraw],
-    //         'phone' => ['required', 'phone:MM'],
-    //         'remark' => ['required'],
-    //     ]);
-    //     $validateData['agent_id'] = Auth::guard('agent')->user()->id;
-    //     AgentWithdraw::create($validateData);
-    //     $agent = Agent::find(Auth::guard('agent')->user()->id);
-    //     Agent::find($agent->id)->update(['amount'=> $agent->amount - $validateData['amount']]);
-    //     return redirect()->route('agent.withdraw')->with('success', 'Withdraws form send successfully');
-    // }
-
-    // public function changeTransferStatus(Request $request)
-    // {
-    //     $cashout = AgentWithdraw::find($request->cashout_id);
-    //     $cashout->status = $request->status;
-    //     $cashout->save();
-    //     return response()->json(['message' => 'Withdraws status changed successfully.']);
-    // }
 
     public function accept($id)
     {

@@ -45,4 +45,12 @@ class FootballMaung extends Model
     {
         return Carbon::parse($this->created_at)->format('d-m-Y g:i A');
     }
+
+    public function getChargeAttribute()
+    {
+        $teams = $this->bet->teams()->count();
+        $za = FootballMaungZa::where('teams', $teams)->first();
+
+        return $za ? ($za->percent / 100) : 0;
+    }
 }

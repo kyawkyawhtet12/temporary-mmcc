@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Passport\HasApiTokens;
 
-class Agent extends Authenticatable
+class Agent extends Model
 {
-    use HasFactory, HasApiTokens;
-
-    // protected $guard = 'agent';
+    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -49,5 +46,27 @@ class Agent extends Authenticatable
     public function banners()
     {
         return $this->hasMany(Banner::class);
+    }
+
+    public function getBodyPercentageAttribute()
+    {
+        $per = $this->body_limit ? $this->body_limit->percentage : 5 ;
+
+        return $per / 100;
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class , 'referral_code', 'referral_code');
+    }
+
+    public function payment_reports()
+    {
+        return $this->hasMany(AgentPaymentReport::class, 'agent_id');
+    }
+
+    public function user_payment_reports()
+    {
+        return $this->users;
     }
 }

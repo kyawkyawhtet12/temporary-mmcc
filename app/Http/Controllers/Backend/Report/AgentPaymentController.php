@@ -9,63 +9,39 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Models\UserPaymentReport;
+use App\Models\AgentPaymentReport;
 use App\Http\Controllers\Controller;
 use App\Models\AgentPaymentAllReport;
-use App\Models\AgentPaymentReport;
+use Barryvdh\Debugbar\Facades\Debugbar;
 
 class AgentPaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::all();
+        $select_agent = "all";
+        $agents = Agent::select('id','name')->get();
+        $data = AgentPaymentAllReport::latest()->get();
 
-        AgentPaymentAllReport::whereDate('created_at', today())->firstOrCreate();
+        return view("backend.report.agent-payments", compact('data', 'select_agent','agents'));
+    }
 
-        if ($request->ajax()) {
-            if ($request->agent && $request->agent != 'all') {
+    public function search(Request $request)
+    {
+        $select_agent = $request->agent;
+        $agents = Agent::select('id','name')->get();
 
-                AgentPaymentReport::whereDate('created_at', today())
-                                ->firstOrCreate([ 'agent_id' => $request->agent ]);
+        $query = ( $select_agent && $select_agent != 'all' )
+                        ? AgentPaymentReport::where('agent_id',  $select_agent)->latest()
+                        : AgentPaymentAllReport::latest() ;
 
-                $query = AgentPaymentReport::where('agent_id', $request->agent)->latest();
+        $data = $query->when($request->start_date, function($q) use ($request){
+                    $q->whereDate('created_at', '>=', $request->start_date);
+                })
+                ->when($request->end_date, function($q) use ($request){
+                    $q->whereDate('created_at', '<=', $request->end_date);
+                })
+                ->get();
 
-            } else {
-                $query = AgentPaymentAllReport::latest();
-            }
-
-            if (!empty($request->from_date)) {
-                $query = $query->whereDate('created_at', '>=', $request->from_date)
-                                ->whereDate('created_at' , '<=' , $request->to_date);
-            }
-
-            return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('deposit', function ($data) {
-                        $count = Payment::getDepositCount($data->created_at, $data->agent_id);
-                        return "$data->deposit ($count)";
-                    })
-                    ->addColumn('withdraw', function ($data) {
-                        $count = Cashout::getWithdrawalCount($data->created_at, $data->agent_id);
-                        return "$data->withdraw ($count)";
-                    })
-                    ->addColumn('net', function ($data) {
-                        return $data->deposit - $data->withdraw;
-                    })
-                    ->addColumn('created_at', function ($data) {
-                        return Carbon::parse($data->created_at)->format('d-m-Y');
-                    })
-                    ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $instance->whereHas('agent', function ($w) use ($request) {
-                                $search = $request->get('search');
-                                $w->where('name', 'LIKE', "%$search%");
-                            });
-                        }
-                    })
-                    ->rawColumns(['agent'])
-                    ->make(true);
-        }
-
-        return view("backend.report.agent-payments", compact('agents'));
+        return view("backend.report.agent-payments", compact('data','select_agent','agents'));
     }
 }

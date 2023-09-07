@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
-use App\Models\League;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballBodyFee;
@@ -16,16 +14,17 @@ class BodyFeesController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballBodyFee::with('match','result')
-                                ->join('football_matches', 'football_matches.id', '=', 'football_body_fees.match_id')
-                                ->select('football_body_fees.*')
-                                // ->where('football_matches.calculate', 0)
-                                // ->where('football_matches.type', 1)
-                                ->where('football_body_fees.created_at', '>=', now()->subMonth(3))
-                                ->orderBy('football_matches.round', 'desc')
-                                ->orderBy('football_matches.home_no','asc')
-                                ->orderBy('football_body_fees.created_at', 'desc')
+        $data = FootballBodyFee::where('created_at', '>=', now()->subMonth(6))
+                                ->with([
+                                    'match' => function($q){
+                                        $q->orderBy('round', 'desc')->orderBy('home_no','asc');
+                                    },
+                                    'result','user'
+                                ])
+                                ->orderBy('created_at', 'desc')
                                 ->paginate(15);
+
+        $request->session()->forget('page');
 
         return view('backend.admin.ballone.match.body', compact('data'));
     }

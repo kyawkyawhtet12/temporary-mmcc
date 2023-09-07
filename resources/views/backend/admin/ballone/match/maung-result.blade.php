@@ -66,9 +66,9 @@
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ $match->maung_home_tempscore }}">
+                                        value="{{ $match->maung_score(0) }}">
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ $match->maung_away_tempscore }}">
+                                        value="{{ $match->maung_score(1) }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
@@ -117,7 +117,10 @@
                                     @foreach ($match->allMaungFees as $key => $fee)
                                         @if ($fee)
                                             <tr>
-                                                <td> {{ $fee?->upteam_name }} {{ $fee?->body }} / {{ $fee?->goals }}
+                                                <td>
+                                                    {{ $match->upteam_name($fee->up_team) }}
+
+                                                    {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>
                                                 <td> {{ check_plus_format($fee?->result?->home) }} </td>

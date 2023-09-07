@@ -25,4 +25,14 @@ class TwoWinner extends Model
     {
         return $this->belongsTo(TwoLuckyDraw::class, 'two_lucky_draw_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class, 'agent_id');
+    }
 }

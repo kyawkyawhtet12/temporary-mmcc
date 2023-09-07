@@ -18,6 +18,7 @@ Route::get('/agent-payment/report/{id}', 'AgentController@payment_report')->name
 // Route::get('/agent-payment-report/search/{id}', 'AgentController@payment_report_search')->name('payment.report.search');
 
 Route::get('agent-payment-reports', 'Report\AgentPaymentController@index')->name('agent.payment-reports');
+Route::post('agent-payment-reports', 'Report\AgentPaymentController@search')->name('agent.payment-reports.search');
 
 // Route::get('withdrawChangeStatus', 'AgentWithdrawController@ChangeTransferStatus')->name('agent.changeStatus');
 

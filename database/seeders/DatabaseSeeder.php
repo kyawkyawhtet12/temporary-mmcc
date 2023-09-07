@@ -20,17 +20,15 @@ class DatabaseSeeder extends Seeder
         $this->call(LotteryTimeSeeder::class);
         $this->call(ThreeDigitSeeder::class);
         $this->call(TwoDigitSeeder::class);
-        $this->call(LimitAmountSeeder::class);
+
         $this->call(TwoDigitCompensationSeeder::class);
         $this->call(ThreeDigitCompensationSeeder::class);
         $this->call(EnabledSeeder::class);
         $this->call(DisableSeeder::class);
-        
 
-       
+        $this->call(DataSeeder::class);
 
         $this->call(MaungLimitSeeder::class);
-        $this->call(FootballBodySeeder::class);
         $this->call(BalloneSeeder::class);
     }
 }

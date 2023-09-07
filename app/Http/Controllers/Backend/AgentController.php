@@ -202,13 +202,14 @@ class AgentController extends Controller
     // Payment Report
     public function payment_report(Request $request, $id)
     {
-        $agent = Agent::findOrFail($id);
+        // $agent = Agent::with('payment_reports')->findOrFail($id);
 
         if ($request->ajax()) {
             if (!empty($request->from_date)) {
-                $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
+                $query = AgentPaymentReport::where('agent_id', $id)->with('agent')
+                                            ->whereBetween('created_at', [$request->from_date, $request->to_date])->latest();
             } else {
-                $query = AgentPaymentReport::where('agent_id', $agent->id)->with('agent')->latest();
+                $query = AgentPaymentReport::where('agent_id', $id)->with('agent')->latest();
             }
 
             return Datatables::of($query)
@@ -217,18 +218,20 @@ class AgentController extends Controller
                         return $data->agent?->name;
                     })
                     ->addColumn('deposit', function ($data) {
-                        $count = UserPaymentReport::getDepositCount($data->agent_id, $data->created_at);
+                        $count = UserPaymentReport::getDepositCount($data->agent_id, $data->created_at); // change with db raw
+                        // $count = 11;
                         return "$data->deposit ($count)";
                     })
                     ->addColumn('withdraw', function ($data) {
                         $count = UserPaymentReport::getWithdrawCount($data->agent_id, $data->created_at);
+                        // $count = 12;
                         return "$data->withdraw ($count)";
                     })
                     ->addColumn('net', function ($data) {
-                        return $data->deposit - $data->withdraw;
+                        return $data->net_amount;
                     })
                     ->addColumn('created_at', function ($data) {
-                        return Carbon::parse($data->created_at)->format('d-m-Y');
+                        return $data->created_at->format('d-m-Y');
                     })
                     ->filter(function ($instance) use ($request) {
                         if (!empty($request->get('search'))) {
@@ -238,7 +241,6 @@ class AgentController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['agent'])
                     ->make(true);
         }
 

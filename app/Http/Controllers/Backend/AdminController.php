@@ -28,10 +28,7 @@ class AdminController extends Controller
                                                 ['created_at', '>=', Carbon::today()],
                                             ])->sum('amount');
 
-        $enabled = Enabled::first();
-
         return view('backend.admin.index', compact(
-            'enabled',
             'total_amount',
             'total_agent',
             'agent_withdraw',

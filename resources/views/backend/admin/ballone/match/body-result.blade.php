@@ -58,6 +58,7 @@
                             <form action="{{ route('calculate.body.result', $match->id) }}" class="my-3" method="POST">
                                 @csrf
                                 <div class="input-group">
+
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="up-team">
                                             ( {{ $match->home_no }} )
@@ -66,9 +67,10 @@
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ $match->body_home_tempscore }}">
+                                        value="{{ $match->body_score(0) }}">
+
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ $match->body_away_tempscore }}">
+                                        value="{{ $match->body_score(1) }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
@@ -114,10 +116,13 @@
 
                                 <tbody>
 
-                                    @foreach ($match->allBodyFees as $key => $fee)
+                                    @foreach ($match->allBodyFees as $fee)
                                         @if ($fee)
                                             <tr>
-                                                <td> {{ $fee?->upteam_name }} {{ $fee?->body }} / {{ $fee?->goals }}
+                                                <td>
+                                                    {{ $match->upteam_name($fee->up_team) }}
+
+                                                    {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>
                                                 <td> {{ check_plus_format($fee?->result?->home) }} </td>

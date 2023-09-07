@@ -55,4 +55,14 @@ class User extends Authenticatable
         $agent = Agent::where('referral_code', $referral_code)->first();
         return $agent ? $agent->id : null;
     }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class , 'referral_code', 'referral_code');
+    }
+
+    public function payment_reports()
+    {
+        return $this->hasMany(UserPaymentReport::class, 'user_id');
+    }
 }

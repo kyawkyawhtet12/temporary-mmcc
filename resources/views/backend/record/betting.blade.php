@@ -54,10 +54,9 @@
                         </div>
 
                         <div class="col-md-2">
-                            @php $all_types = get_all_types() @endphp
                             <select name="type" id="type" class="form-control">
                                 <option value="all"> All Type </option>
-                                @foreach ($all_types as $type)
+                                @foreach (get_all_types() as $type)
                                     <option {{ $select_type == $type ? 'selected' : '' }}>{{ $type }}</option>
                                 @endforeach
                             </select>

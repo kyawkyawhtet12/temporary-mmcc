@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Enabled;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        view()->share('enabled', Enabled::first());
+
         Paginator::useBootstrap();
     }
 }

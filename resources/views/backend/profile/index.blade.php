@@ -47,56 +47,6 @@
                                 </div>
                             </div>
 
-                            @if( Auth::guard('agent')->check())
-
-                            <div class="row mb-3">
-                                <div class="col-lg-3">
-                                    <label for="phone" class="form-label">
-                                        Phone
-                                    </label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="phone" class="form-control" id="phone" name="phone" value="{{ $user->phone }}" readonly>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-lg-3">
-                                    <label for="referral_code" class="form-label">
-                                        Referral Code
-                                    </label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="text" class="form-control" id="referral_code" name="referral_code" value="{{ $user->referral_code }}" readonly>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-lg-3">
-                                    <label for="amount" class="form-label">
-                                        Current Amount
-                                    </label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="text" class="form-control" id="amount" name="amount" value="{{ $user->amount }}" readonly>
-                                </div>
-                            </div>
-
-                            @else
-
-                            <div class="row mb-3">
-                                <div class="col-lg-3">
-                                    <label for="email" class="form-label">
-                                        Email
-                                    </label>
-                                </div>
-                                <div class="col-lg-9">
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" readonly>
-                                </div>
-                            </div>
-
-                            @endif
-
                             <div class="row mb-3">
                                 <div class="col-lg-3">
                                     <label for="password" class="form-label">

@@ -40,7 +40,6 @@
                                                 <tr>
                                                     <th>No.</th>
                                                     <th>Name</th>
-                                                    {{-- <th>Code</th> --}}
                                                     <th>League</th>
                                                     <th>Created Date</th>
                                                     <th>Action</th>
@@ -69,7 +68,9 @@
                 </div>
                 <div class="modal-body">
                     <form id="clubForm" name="clubForm" class="form-horizontal">
+
                         <input type="hidden" name="club_id" id="club_id">
+
                         <div class="form-group">
                             <label for="name" class="col-sm-12 control-label">Club Name</label>
                             <div class="col-sm-12">
@@ -104,17 +105,17 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $('.mySelect2').select2({
-                dropdownParent: $('#ajaxModel')
-            });
+
             $('.selectLeague').select2({
                 dropdownParent: $('#ajaxModel')
             });
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
             var table = $('#clubs').DataTable({
                 processing: true,
                 "language": {
@@ -135,7 +136,6 @@
                         data: 'name',
                         name: 'name'
                     },
-                    // {data: 'code', name: 'code'},
                     {
                         data: 'league',
                         name: 'league'
@@ -152,27 +152,28 @@
             });
 
             $('#createClub').click(function() {
-                $('#clubForm').trigger("reset");
-                $('#league_id').trigger('change');
+
+                $('#league_id').val('').trigger('change');
                 $('#saveBtn').val("create-club");
                 $('#club_id').val('');
                 $('#clubForm').trigger("reset");
-                $('.mySelect2').trigger("change");
+
                 $('#modelHeading').html("Create New Club");
                 $('#ajaxModel').modal('show');
-
             });
 
             $('body').on('click', '.editClub', function() {
                 var club_id = $(this).data('id');
+
                 $.get("{{ route('ballone.club.index') }}" + '/' + club_id + '/edit', function(data) {
+
+                    $('#club_id').val(club_id);
+                    $('#name').val(data.club);
+                    $('#league_id').val(data.league).trigger('change');
+
                     $('#modelHeading').html("Update Club");
                     $('#saveBtn').val("edit-club");
                     $('#ajaxModel').modal('show');
-                    $('#club_id').val(data.club.id);
-                    $('#name').val(data.club.name);
-                    // $('#code').val(data.code);
-                    $('#league_id').val(data.league).trigger('change');
                 })
             });
 
@@ -185,9 +186,13 @@
                     type: "POST",
                     dataType: 'json',
                     success: function(data) {
-                        $('#clubForm').trigger("reset");
-                        $('#ajaxModel').modal('hide');
-                        table.draw();
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            $('#clubForm').trigger("reset");
+                            $('#ajaxModel').modal('hide');
+                            table.draw();
+                        }
                     },
                     error: function(data) {
                         console.log('Error:', data);

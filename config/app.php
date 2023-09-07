@@ -177,6 +177,8 @@ return [
 
         Yajra\DataTables\DataTablesServiceProvider::class,
         Monarobase\CountryList\CountryListServiceProvider::class,
+
+        App\Providers\DailyServiceProvider::class,
     ],
 
     /*

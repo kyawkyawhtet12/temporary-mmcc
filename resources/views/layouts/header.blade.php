@@ -2,27 +2,6 @@
     <div class="layout-width">
         <div class="navbar-header">
             <div class="d-flex">
-                <!-- LOGO -->
-                <div class="navbar-brand-box horizontal-logo">
-                    <a href="index.html" class="logo logo-dark">
-                        <span class="logo-sm">
-                            <img src="{{asset('assets/images/logo-sm.png')}}" alt="" height="22">
-                        </span>
-                        <span class="logo-lg">
-                            <img src="{{asset('assets/images/logo-dark.png')}}" alt="" height="17">
-                        </span>
-                    </a>
-
-                    <a href="index.html" class="logo logo-light">
-                        <span class="logo-sm">
-                            <img src="{{asset('assets/images/logo-sm.png')}}" alt="" height="22">
-                        </span>
-                        <span class="logo-lg">
-                            <img src="{{asset('assets/images/logo-light.png')}}" alt="" height="17">
-                        </span>
-                    </a>
-                </div>
-
                 <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
                     id="topnav-hamburger-icon">
                     <span class="hamburger-icon">
@@ -36,14 +15,14 @@
             <div class="d-flex align-items-center">
 
                 @if( is_admin())
-               <div class="me-5">
-                    <input class="close-all-bets" type="checkbox" data-toggle="toggle"
-                        data-onstyle="success" data-offstyle="danger"
-                        data-on="<i class='fa fa-pause'></i> Close All Bets"
-                        data-off="<i class='fa fa-play'></i> Open All Bets"
-                        {{ check_close_all_bets() }}
-                    >
-               </div>
+                <div class="me-5">
+                        <input class="close-all-bets" type="checkbox" data-toggle="toggle"
+                            data-onstyle="success" data-offstyle="danger"
+                            data-on="<i class='fa fa-pause'></i> Close All Bets"
+                            data-off="<i class='fa fa-play'></i> Open All Bets"
+                            {{ ( $enabled->close_all_bets) ? "" : "checked" }}
+                        >
+                </div>
                @endif
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">

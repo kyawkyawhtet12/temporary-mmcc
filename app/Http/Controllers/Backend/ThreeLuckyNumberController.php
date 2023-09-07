@@ -4,17 +4,15 @@ namespace App\Http\Controllers\Backend;
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Agent;
-use App\Models\UserLog;
-use App\Models\WinRecord;
 use App\Models\ThreeDigit;
 use App\Models\ThreeWinner;
 use Illuminate\Http\Request;
 use App\Models\ThreeLuckyDraw;
+use App\Services\RecordService;
 use App\Models\ThreeLuckyNumber;
+use App\Services\UserLogService;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\ThreeDigitCompensation;
 
 class ThreeLuckyNumberController extends Controller
 {
@@ -29,13 +27,6 @@ class ThreeLuckyNumberController extends Controller
                     ->addColumn('number', function ($number) {
                         return $number->three_digit?->number;
                     })
-                    // ->addColumn('votes', function ($number) {
-                    //     $votes = unserialize($number->votes);
-                    //     foreach ($votes as $value) {
-                    //         $result[] = $value;
-                    //     }
-                    //     return $result;
-                    // })
                     ->addColumn('status', function ($number) {
                         if( !$number->three_digit) return "";
 
@@ -100,7 +91,6 @@ class ThreeLuckyNumberController extends Controller
             'id'   => $request->threedigit_id,
         ], [
             'three_digit_id' =>  $request->threedigit_number,
-            // 'votes' => serialize($request->votes),
             'votes' => 0,
             'date' => $request->date
         ]);
@@ -128,9 +118,9 @@ class ThreeLuckyNumberController extends Controller
 
     public function UpdateByAjax(Request $request)
     {
-        if ($request->value == "Approved") {
+        $data = ThreeLuckyNumber::find($request->pk);
 
-            $data = ThreeLuckyNumber::find($request->pk);
+        if ($request->value == "Approved") {
 
             $round = $data->round;
 
@@ -142,8 +132,6 @@ class ThreeLuckyNumberController extends Controller
 
                 $amount = $value->amount * $value->za;
 
-                $user = User::find($value->user_id);
-
                 ThreeWinner::create([
                     'three_lucky_number_id' => $data->id,
                     'three_lucky_draw_id' => $value->id,
@@ -152,23 +140,11 @@ class ThreeLuckyNumberController extends Controller
                     'agent_id' => $value->agent_id
                 ]);
 
-                WinRecord::create([
-                    'user_id' => $value->user_id,
-                    'agent_id' => $value->agent_id,
-                    'type' => '3D',
-                    'amount' => $amount
-                ]);
+                (new RecordService())->add($value->user, $amount, "3D");
 
-                UserLog::create([
-                    'user_id' => $value->user_id,
-                    'agent_id' => $value->agent_id,
-                    'operation' => '3D Win',
-                    'amount' => $amount,
-                    'start_balance' => $user->amount,
-                    'end_balance' => $user->amount + $amount
-                ]);
+                (new UserLogService())->add($value->user, $amount, '3D Win');
 
-                $user->increment('amount', $amount);
+                $value->user->increment('amount', $amount);
             }
 
             // create for next lucky number
@@ -179,7 +155,7 @@ class ThreeLuckyNumberController extends Controller
             ]);
         }
 
-        ThreeLuckyNumber::find($request->pk)->update([$request->name => $request->value]);
+        $data->update([$request->name => $request->value]);
         return response()->json(['message' => 'Lucky number status changed successfully.']);
     }
 }

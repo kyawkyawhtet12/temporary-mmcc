@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:agent,admin');
+        $this->middleware('auth:admin');
     }
 
     public function index()
