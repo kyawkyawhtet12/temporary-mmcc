@@ -8,7 +8,7 @@ use App\Services\UserLogService;
 
 class MaungService
 {
-    public function calculate($maungs)
+    public function handle($maungs)
     {
         foreach ($maungs as $maung) {
 
@@ -54,8 +54,6 @@ class MaungService
                             ->where('status', 0)
                             ->count();
 
-        $user = $maung->user;
-
         // မကျန်တော့ရင် အလျော်အစားလုပ်
         if ($data == 0) {
 
@@ -69,7 +67,7 @@ class MaungService
 
             (new UserLogService())->add($maung->user, $net_amount, 'Maung Win');
 
-            $user->increment('amount', $net_amount);
+            $maung->user->increment('amount', $net_amount);
 
             $betting->update(['status' => 1, 'net_amount' => $net_amount]);
         }

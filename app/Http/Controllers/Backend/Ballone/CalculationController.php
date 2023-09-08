@@ -39,7 +39,7 @@ class CalculationController extends Controller
         $match = FootballMatch::with('maungs')->findOrFail($id);
 
         $maungs = FootballMaung::with("bet")->where('match_id', $id)->whereStatus(0)->get();
-        $maungService->calculate($maungs);
+        $maungService->handle($maungs);
 
         // Match Calculate finish update
         $match->update([ 'score' => $match->maung_temp_score , 'calculate_maung' => 1 ]);

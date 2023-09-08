@@ -19,16 +19,16 @@ class MaungFeesController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballMaungFee::with('match','result','user', 'match.bodies','match.maungs')
-                                ->join('football_matches', 'football_matches.id', '=', 'football_maung_fees.match_id')
-                                ->select('football_maung_fees.*')
-                                // ->where('football_matches.calculate', 0)
-                                // ->where('football_matches.type', 1)
-                                ->where('football_maung_fees.created_at', '>=', now()->subMonth(3))
-                                ->orderBy('football_matches.round', 'desc')
-                                ->orderBy('football_matches.home_no','asc')
-                                ->orderBy('football_maung_fees.created_at', 'desc')
-                                ->paginate(15);
+        // $data = FootballMaungFee::with('match','result','user', 'match.bodies','match.maungs')
+        //                         ->join('football_matches', 'football_matches.id', '=', 'football_maung_fees.match_id')
+        //                         ->select('football_maung_fees.*')
+        //                         // ->where('football_matches.calculate', 0)
+        //                         // ->where('football_matches.type', 1)
+        //                         ->where('football_maung_fees.created_at', '>=', now()->subMonth(3))
+        //                         ->orderBy('football_matches.round', 'desc')
+        //                         ->orderBy('football_matches.home_no','asc')
+        //                         ->orderBy('football_maung_fees.created_at', 'desc')
+        //                         ->paginate(15);
 
         $data = FootballMaungFee::where('created_at', '>=', now()->subMonth(6))
                                 ->with([

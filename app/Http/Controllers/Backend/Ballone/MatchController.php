@@ -6,14 +6,12 @@ use Carbon\Carbon;
 use App\Models\Club;
 use App\Models\League;
 use Illuminate\Support\Str;
-use App\Models\FootballBody;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
-use App\Models\FootballMaung;
-use App\Services\Ballone\MaungService;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\FootballRefundHistory;
+use App\Services\Ballone\RefundService;
 
 class MatchController extends Controller
 {
@@ -134,7 +132,7 @@ class MatchController extends Controller
         return response()->json(['success' => 'Match deleted successfully.']);
     }
 
-    public function refund($id, MaungService $maungService)
+    public function refund($id)
     {
         $match = FootballMatch::find($id);
 
@@ -142,44 +140,13 @@ class MatchController extends Controller
             return response()->json('error');
         }
 
-        $bodies = FootballBody::with("user", "bet")->where('match_id', $match->id)->get();
+        DB::transaction(function () use ($match) {
 
-        foreach ($bodies as $body) {
+            (new RefundService())->handle($match);
 
-            $body->update(['refund' => 1]);
+            return response()->json(['success' => 'Match Refund successfully.']);
+        });
 
-            $body->user->increment('amount', (int)$body->bet->amount);
-            $body->bet->update(['status' => 4]);
-
-            FootballRefundHistory::create([
-                'agent_id' => $body->agent_id,
-                'user_id'  => $body->user_id,
-                'bet_id'   => $body->bet->id
-            ]);
-        }
-
-        $maungs = FootballMaung::where('match_id', $match->id)->get();
-
-        foreach ($maungs as $maung) {
-
-            $maung->update(['status' => 4, 'refund' => 1]);
-            // $maungGroup = FootballMaungGroup::find($maung->maung_group_id)->decrement('count', 1);
-            // $maungGroup = FootballMaungGroup::find($maung->maung_group_id);
-            $betting = $maung->bet->bet;
-
-            // if ($maungGroup->count == 1) {
-            //     FootballBet::where('maung_group_id', $maung->maung_group_id)->update([ 'status' => 4]);
-            //     User::findOrFail($maung->user_id)->increment('amount', (int)$maungGroup->bet->amount);
-            // }
-
-
-
-            $maungService->calculation($betting, $maung);
-        }
-
-        // return response()->json($data);
-        $match->update(['type' => 0]);
-        return response()->json(['success' => 'Match Refund successfully.']);
     }
 
     public function getClubs($league_id)
