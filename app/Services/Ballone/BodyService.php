@@ -7,11 +7,11 @@ use App\Services\UserLogService;
 
 class BodyService
 {
-    public static function calculate($bodies )
+    public static function calculate($bodies)
     {
         foreach ($bodies as $body) {
 
-            $result = $body->fees;
+            $result = $body->fees->result;
 
             $type = $body->type;
             $percent =  $result->$type;

@@ -54,4 +54,9 @@ class FootballMaungFee extends Model
             return "time-old";
         }
     }
+
+    public function get_result($result)
+    {
+        return ( $this->match->calculate_maung ) ? check_plus_format($result) : '-' ;
+    }
 }

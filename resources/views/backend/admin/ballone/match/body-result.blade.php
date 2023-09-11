@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-success" href="/admin/ballone/body">
+                    <a class="btn btn-success" href="{{  Session::get('prev_route') ?? '/admin/ballone/body' }}">
                         Back
                     </a>
                 </div>
@@ -81,6 +81,7 @@
                                 </div>
 
                                 <div class="d-flex">
+
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
                                     @if (!$match->calculate_body && $match->body_temp_score)
@@ -105,6 +106,7 @@
 
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th> Fees / Goals </th>
                                         <th> : </th>
                                         <th> Home </th>
@@ -121,7 +123,8 @@
                                             <tr>
                                                 <td>
                                                     {{ $match->upteam_name($fee->up_team) }}
-
+                                                </td>
+                                                <td>
                                                     {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>

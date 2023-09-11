@@ -14,17 +14,20 @@ class BodyFeesController extends Controller
 {
     public function index(Request $request)
     {
-        $data = FootballBodyFee::where('created_at', '>=', now()->subMonth(6))
-                                ->with([
-                                    'match' => function($q){
-                                        $q->orderBy('round', 'desc')->orderBy('home_no','asc');
-                                    },
-                                    'result','user'
-                                ])
-                                ->orderBy('created_at', 'desc')
+        $data = FootballBodyFee::with([ 'match' => function($q){
+                                    $q->withCount('bodies', 'maungs');
+                                }])
+                                ->join('football_matches', 'football_matches.id', '=', 'football_body_fees.match_id')
+                                ->join('football_body_fee_results', 'football_body_fee_results.fee_id', '=', 'football_body_fees.id')
+                                ->join('admins', 'admins.id', '=', 'football_body_fees.by')
+                                ->select('football_body_fees.*','football_body_fee_results.*','admins.name as by_user')
+                                ->where('football_body_fees.created_at', '>=', now()->subMonth(6))
+                                ->orderBy('football_matches.round', 'desc')
+                                ->orderBy('football_matches.home_no','asc')
+                                ->orderBy('football_body_fees.created_at', 'desc')
                                 ->paginate(15);
 
-        $request->session()->forget('page');
+        $request->session()->forget('prev_route');
 
         return view('backend.admin.ballone.match.body', compact('data'));
     }
@@ -44,41 +47,20 @@ class BodyFeesController extends Controller
             return response()->json(['error'=>'something is wrong.']);
         }
 
-        $body = ($request->home_body) ?? $request->away_body;
-        $up_team = ($request->home_body) ? 1 : 2;
+        FootballBodyFee::where('match_id', $match->id)->update([ 'status' => 0 ]);
 
-        $check_null = FootballBodyFee::where('match_id', $match->id)
-                                    ->whereNull('body')
-                                    ->whereNull('goals')
-                                    ->first();
+        $bodyFees = FootballBodyFee::updateOrCreate(
+            [ 'match_id' => $match->id , 'body' => NULL , 'goals' => NULL ],
+            [
+                'body'     => ($request->home_body) ?? $request->away_body,
+                'goals'    => $request->goals,
+                'up_team'  => ($request->home_body) ? 1 : 2,
+                'status'   => 1,
+                'by'       => Auth::id()
+            ]
+        );
 
-        if( $check_null ){
-
-            $check_null->update([
-                'body' => $body,
-                'goals' => $request->goals,
-                'up_team' => $up_team,
-                'by' => Auth::id()
-            ]);
-
-        }else{
-
-            $check = FootballBodyFee::where('match_id', $match->id)->count();
-
-            if ($check) {
-                FootballBodyFee::where('match_id', $match->id)->update(['status' => 0]);
-            }
-
-            $fees = FootballBodyFee::create([
-                            'match_id' => $match->id,
-                            'body'     => $body,
-                            'goals'    => $request->goals,
-                            'up_team'  => $up_team,
-                            'by'       => Auth::id()
-                        ]);
-
-            FootballBodyFeeResult::create([ 'fee_id' => $fees->id ]);
-        }
+        $bodyFees->result()->firstOrCreate();
 
         return response()->json([ 'success' => 'Match saved successfully.' ]);
     }

@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\WinRecord;
 
-class RecordService{
-
+class RecordService
+{
     public function add($user, $amount, $operation)
     {
         WinRecord::create([

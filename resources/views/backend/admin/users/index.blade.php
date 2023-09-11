@@ -72,10 +72,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
+                    <h4 class="modal-title text-capitalize py-1" id="modelHeading">
+                        Update User
+                    </h4>
                 </div>
                 <div class="modal-body">
                     <form id="userForm" name="userForm" class="form-horizontal">
+
                         <input type="hidden" name="old_id" id="old_id">
 
                         <div class="form-group">
@@ -94,6 +97,14 @@
                             </div>
                         </div>
 
+                         {{-- <div class="form-group">
+                            <label for="phone" class="col-sm-12 control-label">Phone</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" id="phone" name="phone" value=""
+                                    required="" readonly>
+                            </div>
+                        </div> --}}
+
                         {{-- <div class="form-group">
                             <label for="name" class="col-sm-12 control-label">Amount</label>
                             <div class="col-sm-12">
@@ -106,13 +117,6 @@
                             <label for="password" class="col-sm-12 control-label">Password</label>
                             <div class="col-sm-12">
                                 <input id="password" type="password" class="form-control" name="password">
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="conpass">
-                            <label for="password" class="col-sm-12 control-label">Confirm Password</label>
-                            <div class="col-sm-12">
-                                <input class="form-control" name="confirm-password" type="password">
                             </div>
                         </div>
 
@@ -130,7 +134,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modelHeading"></h4>
+                    <h4 class="modal-title text-capitalize py-1" id="modelHeading">
+                    </h4>
                 </div>
                 <div class="modal-body">
 
@@ -145,20 +150,12 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-12 control-label">Name</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="name" name="name"
+                                <input type="text" class="form-control" id="username" name="name"
                                     placeholder="Enter Name" readonly>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="phone" class="col-sm-12 control-label">Phone</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="phone" name="phone"
-                                    placeholder="Enter Phone" value="" required="">
-                            </div>
-                        </div>
-
-                        <div class="form-group my-3">
                             <label for="current" class="col-sm-12 control-label">Current Amount</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="current" name="current" value=""
@@ -166,9 +163,8 @@
                             </div>
                         </div>
 
-                        <div class="form-group my-3">
+                        <div class="form-group">
                             <label for="amount" class="col-sm-12 control-label"> Amount </label>
-
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="amount" name="amount"
                                     placeholder="Enter Amount" value="">
@@ -176,7 +172,8 @@
                         </div>
 
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-primary" id="paymentSave"> Submit
+                            <button type="submit" class="btn btn-primary" id="paymentSave">
+                                 Submit
                             </button>
                         </div>
                     </form>
@@ -184,6 +181,7 @@
             </div>
         </div>
     </div>
+
 @endsection
 
 @push('scripts')
@@ -249,90 +247,91 @@
                 ],
             });
 
-            $('#createUser').click(function() {
-                $('#saveBtn').val("create-user");
-                $('#old_id').val('');
-                $('#user_id').val('');
-                $('#userForm').trigger("reset");
-                $('#modelHeading').html("Create New User");
-                $('#ajaxModel').modal('show');
-            });
+            // $('#createUser').click(function() {
+            //     $('#saveBtn').val("create-user");
+            //     $('#old_id').val('');
+            //     $('#user_id').val('');
+            //     $('#userForm').trigger("reset");
+            //     $('#modelHeading').html("Create New User");
+            //     $('#ajaxModel').modal('show');
+            // });
+
+            // Edit User
 
             $('body').on('click', '.editUser', function() {
-                var user_id = $(this).data('id');
-                $.get("{{ route('users.index') }}" + '/' + user_id + '/edit', function(data) {
-                    $('#modelHeading').html("Update User");
-                    $('#saveBtn').val("edit-user");
-                    $('#ajaxModel').modal('show');
-                    $('#old_id').val(data.id);
-                    $('#name').val(data.name);
-                    $('#user_id').val(data.user_id);
-                    $('#amount').val(data.amount);
-                })
-            });
 
-            $('body').on('click', '.payment', function() {
-                var id = $(this).data('id');
-                var type = $(this).data('type');
-                var heading = (type == "deposit") ? " User Deposit " : " User Withdrawal ";
+                // let user_id = $(this).data('id');
+                let {id,name,user_id} = $(this).data();
 
-                $.get("{{ route('users.index') }}" + '/' + id + '/edit', function(data) {
+                $('#old_id').val(id);
+                $('#name').val(name);
+                $('#user_id').val(user_id);
 
-                    $('#paymentModel #id').val(data.id);
-                    $('#paymentModel #type').val(type);
-                    $('#paymentModel #name').val(data.name);
-                    $('#paymentModel #current').val(data.amount);
-                    $("#paymentModel #error").addClass('d-none');
+                $('#ajaxModel').modal('show');
 
-                    $('#paymentModel #modelHeading').html(heading);
-                    $('#paymentModel').modal('show');
-                })
             });
 
             $('#saveBtn').click(function(e) {
                 e.preventDefault();
-                $(this).html('Sending..');
                 $.ajax({
                     data: $('#userForm').serialize(),
                     url: "{{ route('users.store') }}",
                     type: "POST",
                     dataType: 'json',
                     success: function(data) {
-                        $('#userForm').trigger("reset");
+                        toastr.success(data.success);
                         $('#ajaxModel').modal('hide');
+                        $('#userForm').trigger("reset");
                         table.draw();
                     },
                     error: function(data) {
                         console.log('Error:', data);
-                        alert("* Something is wrong.");
-                        $('#saveBtn').html('Save Changes');
+                        swal.fire("Alert!", "* Something is wrong.Please try again later.", "error");
                     }
                 });
             });
 
+            // Payment Action
+
+            $('body').on('click', '.paymentBtn', function() {
+
+                let { id,type,title } = $(this).data();
+
+                $('#paymentModel #paymentForm').trigger("reset");
+                $('#paymentModel #modelHeading').html(title);
+
+                $.get("{{ route('users.index') }}" + '/' + id + '/edit', function(data) {
+                    $('#paymentModel #id').val(data.id);
+                    $('#paymentModel #type').val(type);
+                    $('#paymentModel #username').val(data.name);
+                    $('#paymentModel #current').val(data.amount);
+                    $('#paymentModel').modal('show');
+                })
+            });
+
             $('body').on('click', '#paymentSave', function(e) {
                 e.preventDefault();
-
                 $.ajax({
                     data: $('#paymentForm').serialize(),
                     url: "{{ route('payment.store') }}",
                     type: "POST",
                     dataType: 'json',
                     success: function(data) {
+
                         if (data.error) {
-                            $("#paymentModel #error #text").text(data.error);
-                            $("#paymentModel #error").removeClass('d-none');
-                        } else {
-                            $('#paymentForm').trigger("reset");
+                            toastr.error(data.error);
+                        }
+
+                        if(data.success){
+                            toastr.success(data.success);
                             $('#paymentModel').modal('hide');
-                            $("#paymentModel #error").addClass('d-none');
+                            $('#paymentForm').trigger("reset");
                             table.draw();
                         }
                     },
                     error: function(data) {
                         console.log('Error:', data);
-                        alert("* Something is wrong.");
-                        $('#paymentSave').html('Save Changes');
+                        swal.fire("Alert!", "* Something is wrong.Please try again later.", "error");
                     }
                 });
             });

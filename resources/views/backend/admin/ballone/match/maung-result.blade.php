@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-success" href="/admin/ballone/maung">
+                    <a class="btn btn-success"  href="{{  Session::get('prev_route') ?? '/admin/ballone/maung' }}">
                         Back
                     </a>
                 </div>
@@ -60,8 +60,7 @@
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="up-team">
-                                            ( {{ $match->home_no }} )
-                                            {{ $match->home->name }}
+                                            {{ $match->home_team }}
                                         </span>
                                     </div>
 
@@ -72,8 +71,7 @@
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
-                                            ( {{ $match->away_no }} )
-                                            {{ $match->away->name }}
+                                            {{ $match->away_team }}
                                         </span>
                                     </div>
                                 </div>
@@ -103,6 +101,7 @@
 
                                 <thead>
                                     <tr>
+                                        <th> </th>
                                         <th> Fees / Goals </th>
                                         <th> : </th>
                                         <th> Home </th>
@@ -119,7 +118,8 @@
                                             <tr>
                                                 <td>
                                                     {{ $match->upteam_name($fee->up_team) }}
-
+                                                </td>
+                                                <td>
                                                     {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>

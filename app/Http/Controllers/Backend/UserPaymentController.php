@@ -18,46 +18,61 @@ class UserPaymentController extends Controller
     {
         $user = User::with('agent')->findOrFail($request->id);
 
-        if ($request->type == 'deposit') {
-
-            DB::transaction(function () use ($request, $user) {
-
-                $payment = Payment::create([
-                    'amount' => $request->amount,
-                    'user_id' => $user->id,
-                    'agent_id' => $user->agent->id,
-                    'by' => Auth::id(),
-                    'status' => 'Approved'
-                ]);
-
-                $user->increment('amount', $request->amount);
-
-                (new UserLogService())->add($user, $request->amount, 'Recharge');
-                (new PaymentReportService())->addRecharge($payment);
-            });
-        } else {
-
-            if ($request->amount > $user->amount) {
-                return response()->json(['error' => '* invalid amount']);
-            }
-
-            DB::transaction(function () use ($request, $user) {
-                $cashout = Cashout::create([
-                    'user_id' => $user->id,
-                    'amount' => $request->amount,
-                    'remark' => "-",
-                    'agent_id' => $user->agent->id,
-                    'by' => Auth::id(),
-                    'status' => 'Approved'
-                ]);
-
-                $user->decrement('amount', $request->amount);
-
-                (new UserLogService())->add($user, $request->amount, 'Cashout');
-                (new PaymentReportService())->addCashout($cashout);
-            });
+        if( !$request->amount ){
+            return response()->json([ 'error' => '* Amount is required.' ]);
         }
 
-        return response()->json(['success' => '* Successfully done']);
+        if( $request->type == 'cashout' && $request->amount > $user->amount){
+            return response()->json([ 'error' => '* Invalid Amount' ]);
+        }
+
+        if ($request->type == 'recharge') {
+            $this->deposit($request, $user);
+            return response()->json([ 'success' => '* Successfully Done.' ]);
+        }
+
+        if( $request->type == 'cashout'){
+            $this->cashout($request, $user);
+            return response()->json([ 'success' => '* Successfully Done.' ]);
+        }
+    }
+
+    protected function deposit($request, $user)
+    {
+        DB::transaction(function () use ($request, $user) {
+
+            $payment = Payment::create([
+                'amount' => $request->amount,
+                'user_id' => $user->id,
+                'agent_id' => $user->agent->id,
+                'by' => Auth::id(),
+                'status' => 'Approved'
+            ]);
+
+            $user->increment('amount', $request->amount);
+
+            (new UserLogService())->add($user, $request->amount, 'Recharge');
+            (new PaymentReportService())->addRecharge($payment);
+        });
+    }
+
+    protected function cashout($request, $user)
+    {
+        DB::transaction(function () use ($request, $user) {
+
+            $cashout = Cashout::create([
+                'user_id' => $user->id,
+                'amount' => $request->amount,
+                'remark' => "-",
+                'agent_id' => $user->agent->id,
+                'by' => Auth::id(),
+                'status' => 'Approved'
+            ]);
+
+            $user->decrement('amount', $request->amount);
+
+            (new UserLogService())->add($user, $request->amount, 'Cashout');
+            (new PaymentReportService())->addCashout($cashout);
+        });
     }
 }

@@ -6,7 +6,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
-       #resultForm input.text {
+        #resultForm input.text {
             height: 30px;
         }
 
@@ -18,15 +18,15 @@
             background: rgb(238 236 236) !important
         }
 
-        .done-old{
+        .done-old {
             background-color: #84e388 !important;
         }
 
-        .time-old{
+        .time-old {
             background-color: #fbe376 !important;
         }
 
-        .refund{
+        .refund {
             background-color: #ffb59c !important;
         }
 
@@ -95,12 +95,12 @@
                                             <tbody>
                                                 @forelse ($data as $dt)
                                                     <tr class="{{ $dt->match_status }}">
-                                                        <td>{{  $dt->match->round }}</td>
+                                                        <td>{{ $dt->match->round }}</td>
                                                         <td>
                                                             <a href="{{ route('match.body-report', $dt->match->id) }}"
                                                                 class="match-detail">
 
-                                                                {{ $dt->match_format }}
+                                                                {{ $dt->match->match_format }}
                                                             </a>
                                                         </td>
 
@@ -108,45 +108,45 @@
                                                             {{ get_date_time_format($dt->match) }}
                                                         </td>
 
-                                                        <td>{{ ($dt->match->calculate_body) ? $dt->match->body_temp_score : '' }}</td>
+                                                        <td>{{ $dt->match->calculate_body ? $dt->match->body_temp_score : '' }}
+                                                        </td>
 
                                                         <td>
                                                             @if ($dt->up_team == 1)
                                                                 {{ $dt->body }}
                                                             @endif
                                                         </td>
+
                                                         <td>
                                                             @if ($dt->up_team == 2)
                                                                 {{ $dt->body }}
                                                             @endif
                                                         </td>
+
                                                         <td>
                                                             {{ $dt->goals }}
                                                         </td>
 
-                                                        @if ($dt->match->calculate_body && $dt->result)
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->home) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->away) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->over) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->under) }}
-                                                            </td>
-                                                        @else
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                        @endif
+                                                        <td>
+                                                            {{ $dt->get_result($dt->home) }}
+                                                        </td>
 
                                                         <td>
-                                                            @if ( !$dt->bodybetting && $dt->match->type == 1)
-                                                                <a href="/admin/ballone-add-result/body/{{ $dt->match->id }}">
+                                                            {{ $dt->get_result($dt->away) }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ $dt->get_result($dt->over) }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ $dt->get_result($dt->under) }}
+                                                        </td>
+
+                                                        <td>
+                                                            @if (!$dt->match->calculate_body && $dt->match->type == 1)
+                                                                <a
+                                                                    href="/admin/ballone-add-result/body/{{ $dt->match->id }}">
                                                                     <i class="fa fa-plus-square text-inverse m-r-10"></i>
                                                                 </a>
                                                             @endif
@@ -157,17 +157,17 @@
                                                         </td>
 
                                                         <td>
-                                                            @if( !$dt->match->calculate_body )
-                                                            <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                data-id=" {{ $dt->match->id }}" data-original-title="Edit"
-                                                                class="editMatch mr-2">
-                                                                <i class="fa fa-edit text-inverse m-r-10"></i>
-                                                            </a>
+                                                            @if (!$dt->match->calculate_body && $dt->match->type == 1)
+                                                                <a href="javascript:void(0)" data-toggle="tooltip"
+                                                                    data-id="{{ $dt->match->id }}"
+                                                                    data-original-title="Edit" class="editMatch mr-2">
+                                                                    <i class="fa fa-edit text-inverse m-r-10"></i>
+                                                                </a>
                                                             @endif
                                                         </td>
 
                                                         <td>
-                                                            {{ $dt->user?->name }}
+                                                            {{ $dt->by_user }}
                                                         </td>
 
                                                         <td>
@@ -176,7 +176,7 @@
                                                                 <i class="fa fa-edit text-success m-1"></i>
                                                             </a>
 
-                                                            @if ( !$dt->bodybetting && $dt->match->type == 1)
+                                                            @if ($dt->match->bodies_count == 0 && $dt->match->maungs_count == 0 && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Delete" class="deleteMatch mr-2">
@@ -202,7 +202,7 @@
                                     </div>
 
                                     <div class="mt-3">
-                                        {{  $data->links() }}
+                                        {{ $data->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -334,55 +334,19 @@
             let id = $(this).attr('data-id');
 
             Swal.fire({
-                text: "Are you sure to delete match ?",
-                icon: "info",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            })
-            .then(function(e) {
-                if(e.isConfirmed){
-                    $.ajax({
-                        url: "{{ route('ballone.match.store') }}" + '/' + id,
-                        method: 'DELETE',
-                    }).done(function(res) {
-                        Swal.fire({
-                            text: "အောင်မြင်ပါသည်",
-                            icon: "success",
-                        }).then((e) => {
-                            // table.draw();
-                            location.reload();
-                        })
-                    })
-                }
-            });
-        });
-
-        $('body').on('click', '.cancelMatch', function() {
-
-            let id = $(this).attr('data-id');
-
-            Swal.fire({
-                text: "Are you sure to cancel match and make refund ?",
-                icon: "info",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            })
-            .then(function(e) {
-                if(e.isConfirmed){
-                    $.ajax({
-                        url: `/admin/ballone/match/refund/${id}`,
-                        method: 'POST',
-                    }).done(function(res) {
-                        if (res == 'error') {
-                            Swal.fire({
-                                text: "something is wrong.",
-                                icon: "error",
-                            })
-                        } else {
+                    text: "Are you sure to delete match ?",
+                    icon: "info",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                })
+                .then(function(e) {
+                    if (e.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('ballone.match.store') }}" + '/' + id,
+                            method: 'DELETE',
+                        }).done(function(res) {
                             Swal.fire({
                                 text: "အောင်မြင်ပါသည်",
                                 icon: "success",
@@ -390,10 +354,46 @@
                                 // table.draw();
                                 location.reload();
                             })
-                        }
-                    })
-                }
-            });
+                        })
+                    }
+                });
+        });
+
+        $('body').on('click', '.cancelMatch', function() {
+
+            let id = $(this).attr('data-id');
+
+            Swal.fire({
+                    text: "Are you sure to cancel match and make refund ?",
+                    icon: "info",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                })
+                .then(function(e) {
+                    if (e.isConfirmed) {
+                        $.ajax({
+                            url: `/admin/ballone/match/refund/${id}`,
+                            method: 'POST',
+                        }).done(function(res) {
+                            if (res == 'error') {
+                                Swal.fire({
+                                    text: "something is wrong.",
+                                    icon: "error",
+                                })
+                            } else {
+                                Swal.fire({
+                                    text: "အောင်မြင်ပါသည်",
+                                    icon: "success",
+                                }).then((e) => {
+                                    // table.draw();
+                                    location.reload();
+                                })
+                            }
+                        })
+                    }
+                });
         });
     </script>
 @endsection

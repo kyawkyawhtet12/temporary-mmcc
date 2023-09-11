@@ -16,13 +16,11 @@ class MaungService
 
             if ($betting->status == 0) {
 
-                $result  =  $maung->fees;
+                $result  =  $maung->fees->result;
                 $type    =  $maung->type;
                 $percent =  $result->$type;
 
-                $betAmount = $betting->net_amount == 0 ?
-                                    $betting->amount :
-                                    $betting->net_amount;
+                $betAmount = $betting->net_amount == 0 ? $betting->amount : $betting->net_amount;
 
                 $status = 1;
                 $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
@@ -54,7 +52,7 @@ class MaungService
                             ->where('status', 0)
                             ->count();
 
-        // မကျန်တော့ရင် အလျော်အစားလုပ်
+        // ပွဲ မကျန်တော့ရင် အလျော်အစားလုပ်
         if ($data == 0) {
 
             $win_amount = $betting->net_amount;

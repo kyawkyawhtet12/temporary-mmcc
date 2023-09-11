@@ -15,8 +15,9 @@ class AddResultController extends Controller
     {
         $match = FootballMatch::with('league', 'home', 'away', 'allBodyFees', 'allBodyFees.result')->findOrFail($id);
 
-        $arr = explode("=", url()->previous());
-        if( array_key_exists(1, $arr)) Session::put("page", $arr[1]);
+        if( strpos( url()->previous(), 'page') ) {
+            Session::put("prev_route", url()->previous());
+        }
 
         return view("backend.admin.ballone.match.body-result", compact("match"));
     }
@@ -47,8 +48,9 @@ class AddResultController extends Controller
     {
         $match = FootballMatch::with('league', 'home', 'away', 'allMaungFees', 'allMaungFees.result')->findOrFail($id);
 
-        $arr = explode("=", url()->previous());
-        if( array_key_exists(1, $arr)) Session::put("page", $arr[1]);
+        if( strpos( url()->previous(), 'page') ) {
+            Session::put("prev_route", url()->previous());
+        }
 
         return view("backend.admin.ballone.match.maung-result", compact("match"));
     }

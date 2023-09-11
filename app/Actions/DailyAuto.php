@@ -3,26 +3,21 @@
 namespace App\Actions;
 
 use App\Models\AutoAdd;
-use App\Services\Report\AgentPaymentService;
-use App\Services\Report\UserPaymentService;
-use App\Services\TwoDigit\TwoLuckyNumberService;
 use Illuminate\Support\Facades\DB;
+use App\Services\Daily\PaymentService;
+use App\Services\Daily\LuckyNumberService;
 
 class DailyAuto
 {
     public function handle()
     {
-        if (AutoAdd::whereDate('date',today())->doesntExist()) {
+        DB::transaction(function () {
 
-            DB::transaction(function () {
+            (new LuckyNumberService())->handle();
+            (new PaymentService())->handle();
 
-                (new TwoLuckyNumberService())->handle();
-                (new AgentPaymentService())->handle();
-                (new UserPaymentService())->handle();
-
-                AutoAdd::first()->update([ 'date' => today() ]);
-            });
-        }
+            AutoAdd::first()->update([ 'date' => today() ]);
+        });
     }
 
 }

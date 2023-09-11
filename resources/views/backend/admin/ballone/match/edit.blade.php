@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-success" href="{{ $status ? '/admin/ballone/maung' : '/admin/ballone/body' }}">
+                    <a class="btn btn-success" href="{{ url()->previous() }}">
                         Back
                     </a>
                 </div>
@@ -66,9 +66,9 @@
                                         style="width: 100%;" required>
                                         <option value="">--Select League Name--</option>
                                         @foreach ($leagues as $league)
-                                            <?php $select = $league->id == $match->league_id ? 'selected' : ''; ?>
-                                            <option value="{{ $league->id }}" {{ $select }}>
-                                                {{ $league->name }}</option>
+                                            <option value="{{ $league->id }}" {{ ($league->id == $match->league_id) ? 'selected' : '' }}>
+                                                {{ $league->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -148,9 +148,9 @@
                                                 <select class="form-control selectHomeTeam" name="home_id" id="home_id"
                                                     required style="width: 100%;">
                                                     @foreach ($clubs as $club)
-                                                        <?php $select = $club->id == $match->home_id ? 'selected' : ''; ?>
-                                                        <option value="{{ $club->id }}" {{ $select }}>
-                                                            {{ $club->name }}</option>
+                                                        <option value="{{ $club->id }}" {{ ($club->id == $match->home_id ) ? 'selected' : '' }}>
+                                                            {{ $club->name }}
+                                                        </option>
                                                     @endforeach
 
                                                 </select>
@@ -165,9 +165,9 @@
                                                 <select class="form-control selectAwayTeam" name="away_id" id="away_id"
                                                     required style="width: 100%;">
                                                     @foreach ($clubs as $club)
-                                                        <?php $select = $club->id == $match->away_id ? 'selected' : ''; ?>
-                                                        <option value="{{ $club->id }}" {{ $select }}>
-                                                            {{ $club->name }}</option>
+                                                        <option value="{{ $club->id }}" {{ ($club->id == $match->away_id ) ? 'selected' : '' }}>
+                                                            {{ $club->name }}
+                                                        </option>
                                                     @endforeach
 
                                                 </select>
@@ -195,32 +195,25 @@
     <script>
         $(document).ready(function() {
             $("body").on('change', '.selectLeague', function(e) {
-
-                $(".selectHomeTeam").html('').trigger('change');
-                $('.selectAwayTeam').html('').trigger('change');
-
                 if (this.value) {
                     $.get(`/admin/get-clubs/${this.value}`, function(data) {
 
                         if (data) {
+
+                            $(".selectHomeTeam").html('').trigger('change');
+                            $('.selectAwayTeam').html('').trigger('change');
+
                             data.map(function(d) {
-                                // console.log(d)
                                 var newOption = new Option(d.name, d.id, true, true);
                                 $(".selectHomeTeam").append(newOption).trigger('change');
-                            });
 
-                            data.map(function(d) {
-                                // console.log(d)
                                 var newOption = new Option(d.name, d.id, true, true);
-                                $('.selectAwayTeam').append(newOption)
-                                    .trigger('change');
+                                $('.selectAwayTeam').append(newOption).trigger('change');
                             });
                         }
-                    })
+                    });
                 }
-
             });
-
         })
     </script>
 @endsection

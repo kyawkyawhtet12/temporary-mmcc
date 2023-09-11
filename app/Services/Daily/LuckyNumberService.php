@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\TwoDigit;
+namespace App\Services\Daily;
 
 use App\Models\TwoLuckyNumber;
 
-class TwoLuckyNumberService{
-
+class LuckyNumberService
+{
     public function handle()
     {
         TwoLuckyNumber::firstOrCreate(

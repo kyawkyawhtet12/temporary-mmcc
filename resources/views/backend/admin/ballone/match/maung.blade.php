@@ -6,7 +6,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
-       #resultForm input.text {
+        #resultForm input.text {
             height: 30px;
         }
 
@@ -18,15 +18,15 @@
             background: rgb(238 236 236) !important
         }
 
-        .done-old{
+        .done-old {
             background-color: #84e388 !important;
         }
 
-        .time-old{
+        .time-old {
             background-color: #fbe376 !important;
         }
 
-        .refund{
+        .refund {
             background-color: #ffb59c !important;
         }
 
@@ -69,7 +69,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
                                 <h4 class="card-title"> Match List </h4>
-                                <a href="{{  route('ballone.maung.fees.add') }}" class="btn btn-success">
+                                <a href="{{ route('ballone.maung.fees.add') }}" class="btn btn-success">
                                     Add Maung Fees
                                 </a>
                             </div>
@@ -98,12 +98,12 @@
                                             <tbody>
                                                 @forelse ($data as $dt)
                                                     <tr class="{{ $dt->match_status }}">
-                                                        <td>{{  $dt->match->round }}</td>
+                                                        <td>{{ $dt->match->round }}</td>
 
                                                         <td>
                                                             <a href="{{ route('match.maung-report', $dt->match->id) }}"
                                                                 class="match-detail">
-                                                                {{  $dt->match->match_format }}
+                                                                {{ $dt->match->match_format }}
                                                             </a>
                                                         </td>
 
@@ -111,7 +111,8 @@
                                                             {{ get_date_time_format($dt->match) }}
                                                         </td>
 
-                                                        <td>{{ ($dt->match->calculate_maung) ? $dt->match->maung_temp_score : '' }}</td>
+                                                        <td>{{ $dt->match->calculate_maung ? $dt->match->maung_temp_score : '' }}
+                                                        </td>
 
                                                         <td>
                                                             @if ($dt->up_team == 1)
@@ -127,29 +128,26 @@
                                                             {{ $dt->goals }}
                                                         </td>
 
-                                                        @if ($dt->match->calculate_maung && $dt->result)
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->home) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->away) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->over) }}
-                                                            </td>
-                                                            <td>
-                                                                {{ check_plus_format($dt->result->under) }}
-                                                            </td>
-                                                        @else
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                            <td>-</td>
-                                                        @endif
+                                                        <td>
+                                                            {{ $dt->get_result($dt->home) }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ $dt->get_result($dt->away) }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ $dt->get_result($dt->over) }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ $dt->get_result($dt->under) }}
+                                                        </td>
 
                                                         <td>
                                                             @if (!$dt->match->calculate_maung && $dt->match->type == 1)
-                                                                <a href="/admin/ballone-add-result/maung/{{ $dt->match->id }}">
+                                                                <a
+                                                                    href="/admin/ballone-add-result/maung/{{ $dt->match->id }}">
                                                                     <i class="fa fa-plus-square text-inverse m-r-10"></i>
                                                                 </a>
                                                             @endif
@@ -159,16 +157,16 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if( !$dt->match->calculate_maung )
-                                                            <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                data-id=" {{ $dt->match->id }}" data-original-title="Edit"
-                                                                class="editMatch mr-2">
-                                                                <i class="fa fa-edit text-inverse m-r-10"></i>
-                                                            </a>
+                                                            @if (!$dt->match->calculate_maung && $dt->match->type == 1)
+                                                                <a href="javascript:void(0)" data-toggle="tooltip"
+                                                                    data-id=" {{ $dt->match->id }}"
+                                                                    data-original-title="Edit" class="editMatch mr-2">
+                                                                    <i class="fa fa-edit text-inverse m-r-10"></i>
+                                                                </a>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            {{ $dt->user?->name }}
+                                                            {{ $dt->by_user }}
                                                         </td>
                                                         <td>
                                                             <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
@@ -176,7 +174,7 @@
                                                                 <i class="fa fa-edit text-success m-1"></i>
                                                             </a>
 
-                                                            @if (count($dt->match->bodies) == 0 && count($dt->match->maungs) == 0 && $dt->match->type == 1)
+                                                            @if ($dt->match->bodies_count == 0 && $dt->match->maungs_count == 0 && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" data-toggle="tooltip"
                                                                     data-id="{{ $dt->match->id }}"
                                                                     data-original-title="Delete" class="deleteMatch mr-2">
@@ -202,7 +200,7 @@
                                     </div>
 
                                     <div class="mt-3">
-                                        {{  $data->links() }}
+                                        {{ $data->links() }}
                                     </div>
                                 </div>
                             </div>
@@ -276,7 +274,6 @@
 @endsection
 
 @section('script')
-
     <script>
         $(document).ready(function() {
 
@@ -329,15 +326,15 @@
             let id = $(this).attr('data-id');
 
             Swal.fire({
-                text: "Are you sure to delete match ?",
-                icon: "info",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            })
-            .then(function(e) {
-                    if(e.isConfirmed){
+                    text: "Are you sure to delete match ?",
+                    icon: "info",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                })
+                .then(function(e) {
+                    if (e.isConfirmed) {
                         $.ajax({
                             url: "{{ route('ballone.match.store') }}" + '/' + id,
                             method: 'DELETE',
@@ -351,7 +348,7 @@
                             })
                         })
                     }
-            });
+                });
         });
 
         $('body').on('click', '.cancelMatch', function() {
@@ -367,7 +364,7 @@
                     cancelButtonColor: '#d33',
                 })
                 .then(function(e) {
-                    if(e.isConfirmed){
+                    if (e.isConfirmed) {
                         $.ajax({
                             url: `/admin/ballone/match/refund/${id}`,
                             method: 'POST',
@@ -390,6 +387,5 @@
                     }
                 });
         });
-
     </script>
 @endsection

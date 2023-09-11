@@ -13,7 +13,7 @@ class FootballBodyFee extends Model
 
     // protected $with = [ 'match' ];
 
-    // protected $appends = [ 'upteam_name' ];
+    protected $appends = [ 'match_format' ];
 
     public function match()
     {
@@ -86,5 +86,10 @@ class FootballBodyFee extends Model
             'match_id',
             'away_id'
         );
+    }
+
+    public function get_result($result)
+    {
+        return ( $this->match->calculate_body ) ? check_plus_format($result) : '-' ;
     }
 }

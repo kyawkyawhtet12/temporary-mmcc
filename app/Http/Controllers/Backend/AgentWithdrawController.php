@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Str;
-use App\Rules\LimitWithdraw;
 use App\Models\AgentWithdraw;
 use App\Models\Agent;
-use Illuminate\Support\Facades\Auth;
 
 class AgentWithdrawController extends Controller
 {
@@ -127,7 +124,6 @@ class AgentWithdrawController extends Controller
         if (!$data) {
             return 'error';
         }
-        // Agent::find($data->agent_id)->decrement('amount', $data->amount);
         $data->update(['status' => 1]);
         return back()->with('success', 'Withdrawal accepted successfully');
     }

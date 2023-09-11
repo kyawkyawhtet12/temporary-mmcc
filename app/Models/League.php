@@ -10,4 +10,8 @@ class League extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function clubs(){
+        return $this->hasMany(Club::class, 'league_id');
+    }
 }

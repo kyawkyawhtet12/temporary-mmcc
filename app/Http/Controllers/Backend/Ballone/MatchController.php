@@ -85,7 +85,7 @@ class MatchController extends Controller
 
     public function edit($id)
     {
-        $match = FootballMatch::findOrFail($id);
+        $match = FootballMatch::without('home','away')->findOrFail($id);
         $leagues = League::all();
         $clubs = Club::where('league_id', $match->league_id)->get();
 

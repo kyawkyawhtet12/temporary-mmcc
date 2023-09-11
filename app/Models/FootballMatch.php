@@ -11,7 +11,7 @@ class FootballMatch extends Model
 
     protected $guarded = [];
 
-    // protected $with = [ 'home' , 'away' ];
+    protected $with = [ 'home' , 'away' ];
 
     // type - 0 Refund
 
@@ -31,11 +31,6 @@ class FootballMatch extends Model
     }
 
     //
-
-    public function bodyfee()
-    {
-        return $this->hasOne(FootballBodyFee::class, 'match_id');
-    }
 
     public function bodyfees()
     {
@@ -81,6 +76,8 @@ class FootballMatch extends Model
         return $this->hasMany(FootballMaung::class, 'match_id');
     }
 
+    //
+
     public function getMatchFormatAttribute()
     {
         return "{$this->home_team} Vs {$this->away_team}";
@@ -88,7 +85,7 @@ class FootballMatch extends Model
 
     public function getHomeTeamAttribute()
     {
-        return "({$this->home_no}) {$this->home->name} {$this->other_status(1)}";
+        return "({$this->home_no}) {$this->home?->name} {$this->other_status(1)}";
     }
 
     public function getAwayTeamAttribute()
@@ -103,8 +100,10 @@ class FootballMatch extends Model
 
     public function upteam_name($upteam)
     {
-        return ($upteam == 1) ? $this->home->name : $this->away->name;
+        return ($upteam == 1) ? $this->home?->name : $this->away?->name;
     }
+
+    //
 
     public function body_score($key)
     {

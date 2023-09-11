@@ -14,7 +14,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = User::query();
+
+            $query = User::latest('id');
 
             return Datatables::of($query)
                     ->addIndexColumn()
@@ -26,21 +27,32 @@ class UserController extends Controller
                         }
                     })
                     ->addColumn('days_not_logged_in', function ($user) {
-                        return Carbon::parse(now())->diffInDays($user->last_active);
+                        return now()->diffInDays($user->last_active);
                     })
                     ->addColumn('payment', function ($user) {
                         if( is_admin() ){
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="deposit"  data-original-title="Deposit" class="edit btn btn-info btn-sm payment"> + </a>';
+                            return "
+                                <a href='javascript:void(0)' class='btn btn-info btn-sm paymentBtn' data-id='{$user->id}' data-type='recharge' data-title='Recharge For {$user->user_id}'>
+                                    +
+                                </a>
 
-                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-type="withdrawal" data-original-title="Withdrawal" class="btn btn-warning btn-sm payment"> - </a>';
-                            return $btn;
+                                <a href='javascript:void(0)' class='btn btn-warning btn-sm paymentBtn' data-id='{$user->id}' data-type='cashout' data-title='Cashout For {$user->user_id}'>
+                                    -
+                                </a>
+                            ";
                         }
                     })
                     ->addColumn('action', function ($user) {
                         if( is_admin() ){
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Edit" class="edit btn btn-warning editUser">Edit</a>';
-                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$user->id.'" data-original-title="Delete" class="btn btn-danger deleteUser">Delete</a>';
-                            return $btn;
+                            return "
+                                <a href='javascript:void(0)' class='edit btn btn-info btn-sm editUser' data-id='{$user->id}' data-name='{$user->name}' data-user_id='{$user->user_id}'>
+                                    Edit
+                                </a>
+
+                                <a href='javascript:void(0)' class='btn btn-danger btn-sm deleteUser' data-id='{$user->id}' data-name='{$user->name}' data-user_id='{$user->user_id}'>
+                                    Delete
+                                </a>
+                            ";
                         }
                     })
                     ->filter(function ($instance) use ($request) {
@@ -66,41 +78,31 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (is_null($request->old_id)) {
-            $this->validate($request, [
-                'name' => 'nullable|string|max:255',
-                // 'phone' => 'required|phone:MM|unique:users',
-                'user_id' => 'required|unique:users',
-                'password' => 'required|string|min:4|same:confirm-password',
-            ]);
+        $this->validate($request, [
+            'name' => 'nullable|string|max:255',
+            // 'phone' => 'required|phone:MM|unique:users,phone,'.$request->user_id,
+            'user_id' => 'required|unique:users,user_id,'.$request->old_id,
+            'password' => 'nullable|string|min:7',
+            'old_id' => 'required',
+        ]);
 
-            User::create([
-                'name'     => $request->name,
-                'user_id' => $request->user_id,
-                // 'amount' => $request->amount,
-                'phone' => $request->phone,
-                'password' => Hash::make($request->password)
-            ]);
-        } else {
-            $this->validate($request, [
-                'name' => 'nullable|string|max:255',
-                // 'phone' => 'required|phone:MM|unique:users,phone,'.$request->user_id,
-                'user_id' => 'required|unique:users,user_id,'.$request->old_id,
-                'password' => 'nullable|string|min:4|same:confirm-password',
-            ]);
+        $user = User::find($request->old_id);
 
-            $user = User::find($request->old_id);
-            $user->name = $request->name;
-            $user->user_id = $request->user_id;
-            $user->phone = $request->phone;
-            // $user->amount = $request->amount;
-            if ($request->password) {
-                $user->password = Hash::make($request->password);
-            }
-            $user->save();
+        if(!$user){
+            return response()->json(['error' => '* User not found.']);
         }
 
-        return response()->json(['success'=>'User saved successfully.']);
+        $user->name = $request->name;
+        $user->user_id = $request->user_id;
+        $user->phone = $request->phone;
+
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return response()->json(['success' => '* Successfully updated.']);
     }
 
     /**

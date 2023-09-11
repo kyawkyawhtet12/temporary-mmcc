@@ -1,11 +1,9 @@
 <?php
 
 namespace App\Services\Ballone;
-
 class ResultService
 {
     protected
-            $types = ['+', '-', '='],
             $format,
             $limit = 0,
             $percent = 100,
@@ -15,7 +13,7 @@ class ResultService
             $second
         ;
 
-    public function setFees($fees)
+    protected function setFees($fees)
     {
         $this->format = match (true) {
             (str_contains($fees, '+')) => '+',
@@ -31,22 +29,25 @@ class ResultService
     public function calculate($all_fees, $scores)
     {
         foreach ($all_fees as $fees) {
-
             // Body Fees Result Calculation
-            $this->setFees($fees->body);
-            $this->goal_diff = $fees->up_team == 1 ?
-                                    ($scores['home'] - $scores['away']) :
-                                    ($scores['away'] - $scores['home']);
-            $this->bodyCalculation($fees);
+            if($fees->body){
+                $this->setFees($fees->body);
+                $this->goal_diff = $fees->up_team == 1 ?
+                                        ($scores['home'] - $scores['away']) :
+                                        ($scores['away'] - $scores['home']);
+                $this->bodyCalculation($fees);
+            }
 
             // Goal Fees Result Calculation
-            $this->setFees($fees->goals);
-            $this->total_goals = $scores['home'] + $scores['away'];
-            $this->goalsCalculation($fees);
+            if($fees->goals){
+                $this->setFees($fees->goals);
+                $this->total_goals = $scores['home'] + $scores['away'];
+                $this->goalsCalculation($fees);
+            }
         }
     }
 
-    public function bodyCalculation($fees)
+    protected function bodyCalculation($fees)
     {
         if ($this->format === "=") {
             $this->percent = ($this->goal_diff == $this->limit) ? 0 : 100;
@@ -69,7 +70,7 @@ class ResultService
         ]);
     }
 
-    public function calculateBodyPercent($default_1, $default_2)
+    protected function calculateBodyPercent($default_1, $default_2)
     {
         $percent = ($this->percent ?: 100);
 
@@ -86,7 +87,7 @@ class ResultService
         };
     }
 
-    public function goalsCalculation($fees)
+    protected function goalsCalculation($fees)
     {
         if ($this->total_goals > $this->limit) {
             $over = 100;

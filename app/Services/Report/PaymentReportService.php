@@ -5,31 +5,47 @@ namespace App\Services\Report;
 use App\Models\UserPaymentReport;
 use App\Models\AgentPaymentReport;
 use App\Models\AgentPaymentAllReport;
-
-class PaymentReportService{
+class PaymentReportService
+{
+    protected $column = "";
 
     public function addRecharge($payment)
     {
-        $this->addReport('deposit', $payment);
+        $this->column = "deposit";
+        $this->handle($payment);
     }
 
     public function addCashout($payment)
     {
-        $this->addReport('withdraw', $payment);
+        $this->column = "withdraw";
+        $this->handle($payment);
     }
 
-    public function addReport($column, $payment)
+    protected function handle($payment)
+    {
+        $this->addUserPayment($payment);
+        $this->addAgentPayment($payment);
+        $this->addAgentAllPayment($payment);
+    }
+
+    protected function addAgentAllPayment($payment)
+    {
+        AgentPaymentAllReport::whereDate('created_at', today())
+                            ->increment($this->column, $payment->amount);
+    }
+
+    protected function addUserPayment($payment)
     {
         UserPaymentReport::whereDate('created_at', today())
                         ->where('user_id', $payment->user_id)
-                        ->increment($column, $payment->amount);
+                        ->increment($this->column, $payment->amount);
+    }
 
+    protected function addAgentPayment($payment)
+    {
         AgentPaymentReport::whereDate('created_at', today())
-                            ->where('agent_id', $payment->agent_id)
-                            ->increment($column, $payment->amount);
-
-        AgentPaymentAllReport::whereDate('created_at', today())
-                            ->increment($column, $payment->amount);
+                        ->where('agent_id', $payment->agent_id)
+                        ->increment($this->column, $payment->amount);
     }
 
 

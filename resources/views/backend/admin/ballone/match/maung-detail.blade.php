@@ -24,7 +24,7 @@
 
             <div class="row mb-5">
                 <div class="col">
-                    <a class="btn btn-success" href="/admin/ballone/maung">
+                    <a class="btn btn-success" href="{{ url()->previous() }}">
                         Back
                     </a>
                 </div>
