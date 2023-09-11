@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col">
-                    <a class="btn btn-success" href="{{  Session::get('prev_route') ?? '/admin/ballone/body' }}">
+                    <a class="btn btn-success" href="{{ Session::get('prev_route') ?? '/admin/ballone/body' }}">
                         Back
                     </a>
                 </div>
@@ -61,21 +61,19 @@
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="up-team">
-                                            ( {{ $match->home_no }} )
-                                            {{ $match->home->name }}
+                                            {{ $match->home_team }}
                                         </span>
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ $match->body_score(0) }}">
+                                        value="{{ Session::get('refresh') ? $match->body_score(0) : '' }}">
 
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ $match->body_score(1) }}">
+                                        value="{{ Session::get('refresh') ? $match->body_score(1) : '' }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
-                                            ( {{ $match->away_no }} )
-                                            {{ $match->away->name }}
+                                            {{ $match->away_team }}
                                         </span>
                                     </div>
                                 </div>
@@ -84,7 +82,7 @@
 
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate_body && $match->body_temp_score)
+                                    @if (!$match->calculate_body && $match->body_temp_score  && Session::get('refresh'))
                                         <a href="{{ route('ballone.calculate.body.result', $match->id) }}"
                                             class="btn btn-sm btn-success mt-3"> Done </a>
                                     @endif
@@ -128,10 +126,18 @@
                                                     {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>
-                                                <td> {{ check_plus_format($fee?->result?->home) }} </td>
-                                                <td> {{ check_plus_format($fee?->result?->away) }} </td>
-                                                <td> {{ check_plus_format($fee?->result?->over) }} </td>
-                                                <td> {{ check_plus_format($fee?->result?->under) }} </td>
+
+                                                @if (Session::get('refresh'))
+                                                    <td> {{ check_plus_format($fee?->result?->home) }} </td>
+                                                    <td> {{ check_plus_format($fee?->result?->away) }} </td>
+                                                    <td> {{ check_plus_format($fee?->result?->over) }} </td>
+                                                    <td> {{ check_plus_format($fee?->result?->under) }} </td>
+                                                @else
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                @endif
                                             </tr>
                                         @endif
                                     @endforeach

@@ -65,9 +65,9 @@
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ $match->maung_score(0) }}">
+                                        value="{{ Session::get('refresh') ? $match->maung_score(0) : '' }}">
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ $match->maung_score(1) }}">
+                                        value="{{ Session::get('refresh') ? $match->maung_score(1) : '' }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
@@ -79,7 +79,7 @@
                                 <div class="d-flex">
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate_maung && $match->maung_temp_score)
+                                    @if (!$match->calculate_maung && $match->maung_temp_score && Session::get('refresh'))
                                         <a href="{{ route('ballone.calculate.maung.result', $match->id) }}"
                                             class="btn btn-sm btn-success mt-3"> Done </a>
                                     @endif
@@ -123,10 +123,20 @@
                                                     {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
                                                 <td> : </td>
-                                                <td> {{ check_plus_format($fee?->result?->home) }} </td>
-                                                <td> {{ check_plus_format($fee?->result?->away) }} </td>
-                                                <td> {{ check_plus_format($fee?->result?->over) }} </td>
-                                                <td> {{ check_plus_format($fee?->result?->under) }} </td>
+
+                                                @if( Session::get('refresh'))
+
+                                                    <td> {{ check_plus_format($fee?->result?->home) }} </td>
+                                                    <td> {{ check_plus_format($fee?->result?->away) }} </td>
+                                                    <td> {{ check_plus_format($fee?->result?->over) }} </td>
+                                                    <td> {{ check_plus_format($fee?->result?->under) }} </td>
+
+                                                @else
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                @endif
                                             </tr>
                                         @endif
                                     @endforeach

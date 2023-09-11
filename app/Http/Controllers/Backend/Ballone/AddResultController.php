@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Session;
 
 class AddResultController extends Controller
 {
+    // Body Result
+
     public function body($id)
     {
         $match = FootballMatch::with('league', 'home', 'away', 'allBodyFees', 'allBodyFees.result')->findOrFail($id);
@@ -41,8 +43,12 @@ class AddResultController extends Controller
 
         });
 
+        Session::put('refresh', 'true');
+
         return back();
     }
+
+    // Maung Result
 
     public function maung($id)
     {
@@ -73,6 +79,8 @@ class AddResultController extends Controller
             ]);
 
         });
+
+        Session::put('refresh', 'true');
 
         return back();
     }

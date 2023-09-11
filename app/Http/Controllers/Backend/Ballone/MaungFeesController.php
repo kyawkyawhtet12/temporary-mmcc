@@ -28,7 +28,7 @@ class MaungFeesController extends Controller
                                 ->orderBy('football_maung_fees.created_at', 'desc')
                                 ->paginate(15);
 
-        $request->session()->forget('prev_route');
+        $request->session()->forget(['prev_route','refresh']);
 
         return view('backend.admin.ballone.match.maung', compact('data'));
     }
