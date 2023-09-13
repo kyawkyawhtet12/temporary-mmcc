@@ -22,14 +22,6 @@
             </div>
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col">
-                    <a class="btn btn-success" href="{{ url()->previous() }}">
-                        Back
-                    </a>
-                </div>
-            </div>
-
             <div class="row my-3">
                 <div class="col-lg-6 offset-lg-3">
 

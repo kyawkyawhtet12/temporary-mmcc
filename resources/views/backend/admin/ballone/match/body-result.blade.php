@@ -23,14 +23,6 @@
             <!-- end page title -->
 
             <div class="row">
-                <div class="col">
-                    <a class="btn btn-success" href="{{ Session::get('prev_route') ?? '/admin/ballone/body' }}">
-                        Back
-                    </a>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-lg-8 offset-lg-2">
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">

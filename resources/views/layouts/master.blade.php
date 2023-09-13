@@ -6,7 +6,7 @@
 
     <meta charset="utf-8" />
     <title> Dashboard </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> --}}
     <meta content="" name="description" />
     <meta content="" name="author" />
     <!-- CSRF Token -->
@@ -48,7 +48,7 @@
         <header id="page-topbar">
             <div class="layout-width">
                 <div class="navbar-header">
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
                         <button type="button"
                             class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
                             id="topnav-hamburger-icon">
@@ -58,6 +58,24 @@
                                 <span></span>
                             </span>
                         </button>
+
+                        <?php
+
+                            $prev_route = url()->previous();
+
+                            if( strpos(request()->url(), 'ballone-add-result/maung') ){
+                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/maung';
+                            }
+
+                            if( strpos(request()->url(), 'ballone-add-result/body') ){
+                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
+                            }
+
+                        ?>
+
+                        <a class="btn btn-sm btn-info ms-5 px-3" href="{{ $prev_route }}">
+                            Back
+                        </a>
                     </div>
 
                     <div class="d-flex align-items-center">

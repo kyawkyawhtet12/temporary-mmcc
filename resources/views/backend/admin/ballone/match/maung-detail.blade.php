@@ -22,14 +22,6 @@
             </div>
             <!-- end page title -->
 
-            <div class="row mb-5">
-                <div class="col">
-                    <a class="btn btn-success" href="{{ url()->previous() }}">
-                        Back
-                    </a>
-                </div>
-            </div>
-
             {{-- Maung Report List --}}
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
