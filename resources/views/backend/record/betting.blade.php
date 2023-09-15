@@ -110,7 +110,7 @@
                                                         <td>{{ $dt->user->user_id }}</td>
                                                         <td>{{ $dt->type }}</td>
                                                         <td>{{ $dt->count }}</td>
-                                                        <td>{{ $dt->amount }}</td>
+                                                        <td>{{ number_format($dt->amount) }}</td>
                                                         <td>{{ $dt->created_at }}</td>
                                                     </tr>
                                                 @empty

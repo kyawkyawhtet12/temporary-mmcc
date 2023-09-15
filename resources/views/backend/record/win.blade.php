@@ -94,7 +94,7 @@
                                                 @forelse( $data as $dt )
                                                     <tr>
                                                         <td>{{ $dt->user->user_id }}</td>
-                                                        <td>{{ $dt->amount }}</td>
+                                                        <td>{{ number_format($dt->amount) }}</td>
                                                         <td>{{ $dt->type }}</td>
                                                         <td>{{ $dt->created_at }}</td>
                                                     </tr>

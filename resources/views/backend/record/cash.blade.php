@@ -99,7 +99,7 @@
                                                         <td>{{ $dt->user->user_id }}</td>
                                                         <td>{{ $dt->user->name }}</td>
                                                         <td>{{ $dt->user->phone }}</td>
-                                                        <td>{{ $dt->amount }}</td>
+                                                        <td>{{ number_format($dt->amount) }}</td>
                                                         <td>{{ $dt->provider_name }}</td>
                                                         <td>{{ $dt->status }}</td>
                                                         <td>{{ $dt->created_at }}</td>

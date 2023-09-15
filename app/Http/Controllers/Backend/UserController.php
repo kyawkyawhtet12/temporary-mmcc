@@ -29,6 +29,9 @@ class UserController extends Controller
                     ->addColumn('days_not_logged_in', function ($user) {
                         return now()->diffInDays($user->last_active);
                     })
+                    ->addColumn('amount', function($user){
+                        return number_format($user->amount);
+                    })
                     ->addColumn('payment', function ($user) {
                         if( is_admin() ){
                             return "

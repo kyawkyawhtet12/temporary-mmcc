@@ -220,15 +220,17 @@ class AgentController extends Controller
                     ->addColumn('deposit', function ($data) {
                         $count = UserPaymentReport::getDepositCount($data->agent_id, $data->created_at); // change with db raw
                         // $count = 11;
-                        return "$data->deposit ($count)";
+                        $amount = number_format($data->deposit);
+                        return "{$amount} ($count)";
                     })
                     ->addColumn('withdraw', function ($data) {
                         $count = UserPaymentReport::getWithdrawCount($data->agent_id, $data->created_at);
                         // $count = 12;
-                        return "$data->withdraw ($count)";
+                        $amount = number_format($data->withdraw);
+                        return "{$amount} ($count)";
                     })
                     ->addColumn('net', function ($data) {
-                        return $data->net_amount;
+                        return number_format($data->net_amount);
                     })
                     ->addColumn('created_at', function ($data) {
                         return $data->created_at->format('d-m-Y');
