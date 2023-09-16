@@ -17,7 +17,7 @@ class PaymentService
 
     protected function addUserPayments()
     {
-        User::with('agent','payment_reports')
+        User::has('agent')->with('agent','payment_reports')
                 ->chunkById(500, function ($users) {
                     foreach ($users as $user) {
                         $user->payment_reports()->create([
