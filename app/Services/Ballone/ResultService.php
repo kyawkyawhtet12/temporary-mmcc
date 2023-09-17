@@ -22,7 +22,6 @@ class ResultService
         };
 
         list($limit, $this->percent) = explode($this->format, $fees) + [];
-
         $this->limit = (is_numeric($limit)) ? $limit : 0;
     }
 
@@ -72,18 +71,18 @@ class ResultService
 
     protected function calculateBodyPercent($default_1, $default_2)
     {
-        $percent = ($this->percent ?: 100);
+        // $percent = ($this->percent ?: 100);
 
         $this->first = match (true) {
-            ($this->goal_diff < $this->limit) => -$percent,
-            ($this->goal_diff > $this->limit) => $percent,
-            default => $default_1 . $percent,
+            ($this->goal_diff < $this->limit) => -$this->percent,
+            ($this->goal_diff > $this->limit) => $this->percent,
+            default => $default_1 . $this->percent,
         };
 
         $this->second = match (true) {
-            ($this->goal_diff < $this->limit) => $percent,
-            ($this->goal_diff > $this->limit) => -$percent,
-            default => $default_2 . $percent,
+            ($this->goal_diff < $this->limit) => $this->percent,
+            ($this->goal_diff > $this->limit) => -$this->percent,
+            default => $default_2 . $this->percent,
         };
     }
 
