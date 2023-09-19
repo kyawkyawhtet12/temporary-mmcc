@@ -23,6 +23,7 @@ class ResultService
 
         list($limit, $this->percent) = explode($this->format, $fees) + [];
         $this->limit = (is_numeric($limit)) ? $limit : 0;
+        $this->percent = $this->percent ?: 100;
     }
 
     public function calculate($all_fees, $scores)
@@ -100,6 +101,8 @@ class ResultService
 
         if ($this->total_goals == $this->limit) {
             $percent = ($this->format === "=") ? 0 : $this->percent;
+
+            // dd($this->percent);
             $over    = ($this->format === "-") ? -$percent : $percent;
             $under   = ($this->format === "+") ? -$percent : $percent;
         }
