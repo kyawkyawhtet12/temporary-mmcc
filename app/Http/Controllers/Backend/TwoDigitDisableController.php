@@ -42,6 +42,7 @@ class TwoDigitDisableController extends Controller
     public function changeTwoDigitSubmit(Request $request)
     {
         TwoDigit::whereIn('id', explode(",", $request->ids))->update([
+            'status' => 0,
             'amount' => $request->amount,
             'date' => $request->date
         ]);

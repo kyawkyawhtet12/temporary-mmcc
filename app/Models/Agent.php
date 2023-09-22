@@ -23,15 +23,43 @@ class Agent extends Model
         'password', 'remember_token',
     ];
 
+    public function bodySetting()
+    {
+        return $this->hasOne(FootballBodySetting::class)
+                    ->withDefault([
+                        'min_amount' => 1000,
+                        'max_amount' => 10000000,
+                        'percentage' => 5
+                    ]);
+    }
+
+    public function maungSetting()
+    {
+        return $this->hasOne(FootballMaungLimit::class)
+                    ->withDefault([
+                        'min_amount' => 500,
+                        'max_amount' => 10000000,
+                    ]);
+    }
+
     public function two_limit()
     {
-        return $this->hasOne(TwoLimitAmount::class);
+        return $this->hasOne(TwoLimitAmount::class)
+                    ->withDefault([
+                        'min_amount' => 100,
+                        'max_amount' => 100000,
+                    ]);
     }
 
     public function three_limit()
     {
-        return $this->hasOne(ThreeLimitAmount::class);
+        return $this->hasOne(ThreeLimitAmount::class)
+                    ->withDefault([
+                        'min_amount' => 100,
+                        'max_amount' => 100000,
+                    ]);
     }
+
 
     public function body_limit()
     {

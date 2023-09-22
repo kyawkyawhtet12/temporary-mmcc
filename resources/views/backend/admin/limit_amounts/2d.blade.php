@@ -47,16 +47,16 @@
                                         <tr>
                                             <td>{{  $agent->name }}</td>
                                             <td>
-                                                {{ $agent->two_limit ? $agent->two_limit->min_amount : 100 }}
+                                                {{ number_format($agent->two_limit->min_amount) }}
                                             </td>
                                             <td>
-                                                {{ $agent->two_limit ? $agent->two_limit->max_amount : 100000 }}
+                                                {{ number_format($agent->two_limit->max_amount) }}
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0)" class="btn btn-primary edit"
-                                                    data-agent={{ $agent->id }}
-                                                    data-min={{ $agent->two_limit ? $agent->two_limit->min_amount : 100 }}
-                                                    data-max={{ $agent->two_limit ? $agent->two_limit->max_amount : 100000 }}
+                                                    data-agent="{{ $agent->id }}"
+                                                    data-min="{{ $agent->two_limit->min_amount }}"
+                                                    data-max="{{ $agent->two_limit->max_amount }}"
                                                 > Edit </a>
                                             </td>
                                         </tr>
@@ -95,7 +95,7 @@
                             <label for="max" class="col-sm-12 control-label">Max Amount</label>
                             <div class="col-sm-12">
                                 <input type="number" class="form-control" id="max" name="max"
-                                    placeholder="Min Amount" value="" required="">
+                                    placeholder="Max Amount" value="" required="">
                             </div>
                         </div>
 
