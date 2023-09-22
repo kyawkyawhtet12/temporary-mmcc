@@ -42,6 +42,7 @@ class ThreeDigitDisableController extends Controller
     public function changeThreeDigitSubmit(Request $request)
     {
         ThreeDigit::whereIn('id', explode(",", $request->ids))->update([
+            'status' => 0,
             'amount' => $request->amount,
             'date' => $request->date
         ]);
