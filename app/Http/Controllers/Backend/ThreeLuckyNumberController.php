@@ -13,6 +13,7 @@ use App\Models\ThreeLuckyNumber;
 use App\Services\UserLogService;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Services\ThreeDigit\LuckyNumberService;
 
 class ThreeLuckyNumberController extends Controller
 {
@@ -112,8 +113,8 @@ class ThreeLuckyNumberController extends Controller
 
     public function destroy($id)
     {
-        ThreeLuckyNumber::find($id)->delete();
-        return response()->json(['success'=>'Lucky number deleted successfully.']);
+        // ThreeLuckyNumber::find($id)->delete();
+        // return response()->json(['success'=>'Lucky number deleted successfully.']);
     }
 
     public function UpdateByAjax(Request $request)
@@ -122,40 +123,13 @@ class ThreeLuckyNumberController extends Controller
 
         if ($request->value == "Approved") {
 
-            $round = $data->round;
+            (new LuckyNumberService())->handle($data);
 
-            $three_lucky_draw_id = ThreeLuckyDraw::where('round', $round)
-                                                ->where('three_digit_id', $data->three_digit_id)
-                                                ->get();
-
-            foreach ($three_lucky_draw_id as $value) {
-
-                $amount = $value->amount * $value->za;
-
-                ThreeWinner::create([
-                    'three_lucky_number_id' => $data->id,
-                    'three_lucky_draw_id' => $value->id,
-                    'status' => 'Full',
-                    'user_id' => $value->user_id,
-                    'agent_id' => $value->agent_id
-                ]);
-
-                (new RecordService())->add($value->user, $amount, "3D");
-
-                (new UserLogService())->add($value->user, $amount, '3D Win');
-
-                $value->user->increment('amount', $amount);
-            }
-
-            // create for next lucky number
-            ThreeLuckyNumber::create([
-                'round' => $round + 1,
-                'date' => Carbon::parse($data->date)->addDays(15)->format('Y-m-d'),
-                'status' => 'Pending'
-            ]);
+            $data->update([ 'status' => "Approved" ]);
         }
 
-        $data->update([$request->name => $request->value]);
+        // $data->update([$request->name => $request->value]);
+
         return response()->json(['message' => 'Lucky number status changed successfully.']);
     }
 }

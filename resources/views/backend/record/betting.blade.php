@@ -101,6 +101,8 @@
                                                     <th>Count</th>
                                                     <th>Amount</th>
                                                     <th>Time</th>
+                                                    <th>Betting Results </th>
+                                                    <th>Betting Wins </th>
                                                 </tr>
                                             </thead>
 
@@ -112,6 +114,12 @@
                                                         <td>{{ $dt->count }}</td>
                                                         <td>{{ number_format($dt->amount) }}</td>
                                                         <td>{{ $dt->created_at }}</td>
+                                                        <td>
+                                                            {{ $dt->result ?? "No Prize" }}
+                                                        </td>
+                                                        <td>
+                                                            {{ number_format($dt->win_amount ?? 0) }}
+                                                        </td>
                                                     </tr>
                                                 @empty
                                                     <tr>
@@ -248,7 +256,7 @@
                                 <td> ${dt.twodigit.number} </td>
                                 <td> ${dt.za} </td>
                                 <td> 2D </td>
-                                <td> ${dt.amount} </td>
+                                <td> ${dt.amount.toLocaleString('en-US')} </td>
                             </tr>`;
                         });
                     }
@@ -260,7 +268,7 @@
                                 <td> ${dt.threedigit.number} </td>
                                 <td> ${dt.za} </td>
                                 <td> 3D </td>
-                                <td> ${dt.amount} </td>
+                                <td> ${dt.amount.toLocaleString('en-US')} </td>
                             </tr>`;
                         });
                     }
@@ -272,7 +280,7 @@
                                 <td> ${getType(dt.body)} </td>
                                 <td> ${getFees(dt.body)} </td>
                                 <td> Body </td>
-                                <td> ${dt.amount} </td>
+                                <td> ${dt.amount.toLocaleString('en-US')} </td>
                             </tr>`;
                         });
                     }
@@ -290,7 +298,7 @@
                     }
 
                     $("#betting-data").html(tr);
-                    $("#total-betting-amount").html(data.amount);
+                    $("#total-betting-amount").html(data.amount.toLocaleString('en-US'));
                 });
 
                 $(this).addClass('text-danger');

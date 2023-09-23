@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Record;
 
-use App\Http\Controllers\Controller;
 use App\Models\Agent;
-use App\Models\BettingRecord;
+use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
+use App\Models\BettingRecord;
+use App\Models\ThreeLuckyDraw;
+use App\Http\Controllers\Controller;
+use App\Models\ThreeLuckyNumber;
 use Illuminate\Support\Facades\Session;
 
 class BettingController extends Controller
@@ -67,11 +70,11 @@ class BettingController extends Controller
         }
 
         if( $type == 'Body' ){
-            $data->load('ballone', 'ballone.body', 'ballone.body.fees', 'ballone.body.match', 'ballone.body.match.home', 'ballone.body.match.away');
+            $data->load('ballone', 'ballone.body.fees', 'ballone.body.match' );
         }
 
         if( $type == 'Maung' ){
-            $data->load('ballone', 'ballone.maung', 'ballone.maung.teams.fees', 'ballone.maung.teams.match', 'ballone.maung.teams.match.home', 'ballone.maung.teams.match.away');
+            $data->load('ballone', 'ballone.maung.teams.fees', 'ballone.maung.teams.match');
         }
 
         return response()->json($data);

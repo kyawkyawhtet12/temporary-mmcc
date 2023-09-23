@@ -95,7 +95,7 @@
                         <div class="form-group" id="thai">
                             <label class="col-sm-12 control-label">Lottery Time</label>
                             <div class="col-sm-12">
-                                <select class="form-control" id="lottery_time_1" name="lottery_time_1">
+                                <select class="form-control" id="lottery_time" name="lottery_time">
                                     @foreach ($times_one as $time)
                                         <option value="{{ $time->id }}"> {{ $time->time }}</option>
                                     @endforeach
@@ -238,7 +238,7 @@
 
                     $("#type").val(data.type);
                     $("#date").val(data.date);
-                    $('#lottery_time_1').val(data.lottery_time_id);
+                    $('#lottery_time').val(data.lottery_time_id);
                 })
             });
 

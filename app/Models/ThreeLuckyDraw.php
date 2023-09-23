@@ -40,6 +40,11 @@ class ThreeLuckyDraw extends Model
         return $this->belongsTo(ThreeDigit::class, 'three_digit_id');
     }
 
+    public function betting_record()
+    {
+        return $this->belongsTo(BettingRecord::class, 'betting_record_id');
+    }
+
     public function scopeFilterDates($query)
     {
         $date = explode(" - ", request()->input('from_to', ""));
@@ -47,5 +52,10 @@ class ThreeLuckyDraw extends Model
             $date = [now()->subDays(29)->format("Y-m-d"), now()->format("Y-m-d")];
         }
         return $query->whereBetween('created_at', $date);
+    }
+
+    public function getWinAmountAttribute()
+    {
+        return $this->amount * $this->za;
     }
 }

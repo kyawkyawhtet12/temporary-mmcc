@@ -35,4 +35,13 @@ class BettingRecord extends Model
     {
         return $this->hasMany(ThreeLuckyDraw::class, 'betting_record_id');
     }
+
+    public static function setData($draws)
+    {
+        BettingRecord::whereIn('id', $draws->pluck("betting_record_id")->unique())
+                    ->update([
+                        'result' => 'No Win',
+                        'win_amount' => 0
+                    ]);
+    }
 }

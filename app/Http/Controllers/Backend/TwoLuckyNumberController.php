@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Models\User;
 use App\Models\TwoDigit;
-use App\Models\TwoWinner;
 use App\Models\LotteryTime;
-use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
 use App\Models\TwoLuckyNumber;
-use App\Services\RecordService;
-use App\Services\UserLogService;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TwoLuckyNumberRequest;
+use App\Services\TwoDigit\LuckyNumberService;
 
 class TwoLuckyNumberController extends Controller
 {
@@ -55,12 +51,10 @@ class TwoLuckyNumberController extends Controller
                     ->addColumn('action', function ($number) {
 
                         $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
-                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
-                        if ($number->status == "Approved") {
-                            return '';
-                        }
-                        return $btn;
 
+                        $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
+
+                        return ($number->status == "Approved") ? "" : $btn;
 
                     })
                     // ->filter(function ($instance) use ($request) {
@@ -84,13 +78,19 @@ class TwoLuckyNumberController extends Controller
     {
         $two_digit_id = TwoDigit::where('number', $request->twodigit_number)->first();
 
-        $lottery_time = ($request->type == 1) ? $request->lottery_time_2 : $request->lottery_time_1;
+        if( !$two_digit_id ){
+            return response()->json(['error' => 'Lucky number is invalid.']);
+        }
 
-        $data = TwoLuckyNumber::whereDate('date', $request->date)
-                            ->where('lottery_time_id', $lottery_time)
+        $data = TwoLuckyNumber::where('date', $request->date)
+                            ->where('lottery_time_id', $request->lottery_time)
                             ->first();
 
-        if (!$request->twodigit_id && $data) {
+        if (!$request->twodigit_id && $data ) {
+            return response()->json(['error' => 'Lucky number is already added.']);
+        }
+
+        if( ($request->twodigit_id &&  $data ) && ( $request->twodigit_id != $data->id )){
             return response()->json(['error' => 'Lucky number is already added.']);
         }
 
@@ -99,7 +99,7 @@ class TwoLuckyNumberController extends Controller
         ], [
             'two_digit_id'     => $two_digit_id['id'],
             'date' => $request->date,
-            'lottery_time_id' => $lottery_time,
+            'lottery_time_id' => $request->lottery_time,
             'type' => 0
         ]);
 
@@ -119,8 +119,8 @@ class TwoLuckyNumberController extends Controller
 
     public function destroy($id)
     {
-        TwoLuckyNumber::find($id)->delete();
-        return response()->json(['success'=>'Lucky number deleted successfully.']);
+        // TwoLuckyNumber::find($id)->delete();
+        // return response()->json(['success'=>'Lucky number deleted successfully.']);
     }
 
     public function UpdateByAjax(Request $request)
@@ -129,30 +129,14 @@ class TwoLuckyNumberController extends Controller
 
         if ($request->value == "Approved") {
 
-            $two_lucky_draw_id = TwoLuckyDraw::where('two_digit_id', $data->two_digit_id)
-                                            ->where('lottery_time_id', $data->lottery_time_id)
-                                            ->whereDate('created_at', $data->date)
-                                            ->get();
+            (new LuckyNumberService())->handle($data);
 
-            foreach ($two_lucky_draw_id as $value) {
+            // $data->update([ 'status' => "Approved" ]);
 
-                $amount = $value->amount * $value->za;
-
-                TwoWinner::create([
-                    'two_lucky_number_id' => $data->id,
-                    'two_lucky_draw_id' => $value->id,
-                    'user_id' => $value->user_id,
-                    'agent_id' => $value->agent_id
-                ]);
-
-                (new RecordService())->add($value->user, $amount, "2D");
-                (new UserLogService())->add($value->user, $amount, '2D Win');
-
-                $value->user->increment('amount', $amount);
-            }
         }
 
         $data->update([$request->name => $request->value]);
+
         return response()->json(['message' => 'Lucky number status changed successfully.']);
     }
 }

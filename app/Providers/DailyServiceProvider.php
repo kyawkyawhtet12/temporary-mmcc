@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\AutoAdd;
-use App\Actions\DailyAuto;
+use App\Services\Daily\AutoService;
 use Illuminate\Support\ServiceProvider;
 
 class DailyServiceProvider extends ServiceProvider
@@ -26,7 +26,7 @@ class DailyServiceProvider extends ServiceProvider
     public function boot()
     {
         if (!$this->app->runningInConsole() && AutoAdd::whereDate('date',today())->doesntExist()) {
-            (new DailyAuto())->handle();
+            (new AutoService())->handle();
         }
     }
 }

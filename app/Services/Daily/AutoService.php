@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Actions;
+namespace App\Services\Daily;
 
 use App\Models\AutoAdd;
 use Illuminate\Support\Facades\DB;
-use App\Services\Daily\PaymentService;
-use App\Services\Daily\LuckyNumberService;
 
-class DailyAuto
+class AutoService
 {
     public function handle()
     {
@@ -19,5 +17,4 @@ class DailyAuto
             AutoAdd::first()->update([ 'date' => today() ]);
         });
     }
-
 }

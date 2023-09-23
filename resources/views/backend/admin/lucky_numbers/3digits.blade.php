@@ -202,10 +202,6 @@
                             {
                                 value: 'Approved',
                                 text: 'Approved'
-                            },
-                            {
-                                value: 'Rejected',
-                                text: 'Rejected'
                             }
                         ],
                         success: function(data) {

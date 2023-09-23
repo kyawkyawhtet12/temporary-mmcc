@@ -45,6 +45,11 @@ class TwoLuckyDraw extends Model
         return $this->belongsTo(LotteryTime::class, 'lottery_time_id');
     }
 
+    public function betting_record()
+    {
+        return $this->belongsTo(BettingRecord::class, 'betting_record_id');
+    }
+
     public function scopeFilterDates($query)
     {
         $date = explode(" - ", request()->input('date_range', ""));
@@ -59,5 +64,10 @@ class TwoLuckyDraw extends Model
         if (!empty(request()->get('lottery_time'))) {
             return $query->where('lottery_time', request()->input('lottery_time'));
         }
+    }
+
+    public function getWinAmountAttribute()
+    {
+        return $this->amount * $this->za;
     }
 }
