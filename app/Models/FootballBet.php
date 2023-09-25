@@ -31,6 +31,11 @@ class FootballBet extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function betting_record()
+    {
+        return $this->belongsTo(BettingRecord::class, 'betting_record_id');
+    }
+
     public function getStatusFormatAttribute()
     {
         switch ($this->status) {

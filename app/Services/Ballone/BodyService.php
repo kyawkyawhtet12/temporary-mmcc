@@ -13,9 +13,9 @@ class BodyService
 
             $result = $body->fees->result;
 
-            $type = $body->type;
-            $percent =  $result->$type;
-            $betAmount = $body->bet->amount;
+            $type      =  $body->type;
+            $percent   =  $result->$type;
+            $betAmount =  $body->bet->amount;
 
             $status = 2;
             $win_amount = ( $betAmount * $percent / 100 );
@@ -36,6 +36,12 @@ class BodyService
             }
 
             (new UserLogService())->add($body->user, $net_amount, 'Body Win');
+
+            $record = $body->bet->betting_record;
+            $record->increment('win_amount', $net_amount);
+            $record->update([
+                'result' => ($record->win_amount > $record->amount ) ? "Win" : "No Win"
+            ]);
 
             $body->user->increment('amount', $net_amount);
             $body->bet->update(['status' => $status , 'net_amount' => $net_amount ]);

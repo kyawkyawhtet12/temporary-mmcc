@@ -44,4 +44,9 @@ class BettingRecord extends Model
                         'win_amount' => 0
                     ]);
     }
+
+    public function pending_body()
+    {
+        return $this->hasMany(FootballBet::class, 'betting_record_id')->where('status', 0);
+    }
 }
