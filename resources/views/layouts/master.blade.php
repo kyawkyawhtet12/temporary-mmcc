@@ -71,6 +71,10 @@
                                 $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
                             }
 
+                            if( strpos(request()->url(), 'body-report') ){
+                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
+                            }
+
                         ?>
 
                         <a class="btn btn-sm btn-info ms-5 px-3" href="{{ $prev_route }}">

@@ -5,6 +5,10 @@
         input{
             padding: 0.6rem !important;
         }
+
+        table .done{
+            background-color: #dff8ff;
+        }
     </style>
 @endsection
 
@@ -16,7 +20,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Recharge Record</h4>
+                        <h4 class="mb-sm-0">Cash Record</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
@@ -40,7 +44,7 @@
                     </select>
                 </div>
 
-                <form action="{{ route('recharge.record.search') }}" method="POST" class="col-md-10 row">
+                <form action="{{ route('cash.record.search') }}" method="POST" class="col-md-10 row">
                     @csrf
                     <div class="col-md-2">
                         <input type="text" class="form-control" placeholder="User ID" name="user_id">
@@ -76,37 +80,33 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="table-responsive">
-                                        <table id="payments" class="table table-bordered table-hover nowrap">
+                                        <table id="payments" class="table table-bordered nowrap">
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>User ID</th>
+                                                    <th>Username</th>
                                                     <th>Phone</th>
                                                     <th>Amount</th>
-                                                    <th>Payment</th>
+                                                    <th>Remark</th>
                                                     <th>Status</th>
-                                                    <th>Request Time</th>
-                                                    <th>Action Time</th>
-                                                    <th>Process Time</th>
+                                                    <th>Time</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody>
                                                 @forelse( $data as $dt )
-                                                    <tr>
+                                                    <tr class="{{ $dt->status == 'Approved' ? 'done' : '' }}">
                                                         <td>{{ $dt->user->user_id }}</td>
-                                                        <td>{{ $dt->phone }}</td>
+                                                        <td>{{ $dt->user->name }}</td>
+                                                        <td>{{ $dt->user->phone }}</td>
                                                         <td>{{ number_format($dt->amount) }}</td>
                                                         <td>{{ $dt->provider_name }}</td>
                                                         <td>{{ $dt->status }}</td>
                                                         <td>{{ $dt->created_at }}</td>
-                                                        <td>{{ $dt->action_time }}</td>
-                                                        <td>
-                                                            {{ $dt->process_time }}
-                                                        </td>
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="4" class="text-center"> No Data Available. </td>
+                                                        <td colspan="7" class="text-center"> No Data Available. </td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>

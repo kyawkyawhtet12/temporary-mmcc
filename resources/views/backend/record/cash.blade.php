@@ -84,12 +84,13 @@
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>User ID</th>
-                                                    <th>Username</th>
                                                     <th>Phone</th>
                                                     <th>Amount</th>
-                                                    <th>Remark</th>
+                                                    <th>Payment</th>
                                                     <th>Status</th>
-                                                    <th>Time</th>
+                                                    <th>Request Time</th>
+                                                    <th>Action Time</th>
+                                                    <th>Process Time</th>
                                                 </tr>
                                             </thead>
 
@@ -97,16 +98,17 @@
                                                 @forelse( $data as $dt )
                                                     <tr class="{{ $dt->status == 'Approved' ? 'done' : '' }}">
                                                         <td>{{ $dt->user->user_id }}</td>
-                                                        <td>{{ $dt->user->name }}</td>
-                                                        <td>{{ $dt->user->phone }}</td>
+                                                        <td>{{ $dt->phone }}</td>
                                                         <td>{{ number_format($dt->amount) }}</td>
                                                         <td>{{ $dt->provider_name }}</td>
                                                         <td>{{ $dt->status }}</td>
                                                         <td>{{ $dt->created_at }}</td>
+                                                        <td>{{ $dt->action_time }}</td>
+                                                        <td>{{ $dt->process_time }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="7" class="text-center"> No Data Available. </td>
+                                                        <td colspan="8" class="text-center"> No Data Available. </td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>

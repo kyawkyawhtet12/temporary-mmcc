@@ -41,7 +41,7 @@ class RechargeController extends Controller
 
         $select_agent = Session::get('agent');
 
-        $data = Payment::with('user')->where('status', 'Approved')->latest();
+        $data = Payment::with('user')->latest();
 
         if($select_agent && $select_agent != 'all'){
             $data = $data->where('agent_id', $select_agent);

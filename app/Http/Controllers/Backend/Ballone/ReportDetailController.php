@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\FootballMaung;
 use App\Http\Controllers\Controller;
 use App\Services\Ballone\RefundService;
+use Illuminate\Support\Facades\Session;
 
 class ReportDetailController extends Controller
 {
@@ -14,6 +15,10 @@ class ReportDetailController extends Controller
 
     public function bodyReport($id)
     {
+        if( strpos( url()->previous(), 'page') ) {
+            Session::put("prev_route", url()->previous());
+        }
+
         $body = FootballBody::with('user', 'agent', 'bet')->where('match_id', $id)->get();
         return view('backend.admin.ballone.match.body-detail', compact('body'));
     }

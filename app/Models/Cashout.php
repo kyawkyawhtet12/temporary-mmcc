@@ -69,4 +69,22 @@ class Cashout extends Model
             return "Cashout By {$this->admin->name}.";
         }
     }
+
+    public function getActionTimeAttribute()
+    {
+        if( $this->status == 'Approved' || $this->status == 'Rejected' ){
+            return $this->updated_at;
+        }
+
+        return "-";
+    }
+
+    public function getProcessTimeAttribute()
+    {
+        if( $this->status == 'Approved' || $this->status == 'Rejected' ){
+            return $this->created_at->diffForHumans($this->updated_at);
+        }
+
+        return "-";
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -69,5 +70,23 @@ class Payment extends Model
         }else {
             return "Recharge By {$this->admin->name}.";
         }
+    }
+
+    public function getActionTimeAttribute()
+    {
+        if( $this->status == 'Approved' || $this->status == 'Rejected' ){
+            return $this->updated_at;
+        }
+
+        return "-";
+    }
+
+    public function getProcessTimeAttribute()
+    {
+        if( $this->status == 'Approved' || $this->status == 'Rejected' ){
+            return $this->created_at->diffForHumans($this->updated_at);
+        }
+
+        return "-";
     }
 }
