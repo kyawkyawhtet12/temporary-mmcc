@@ -2,12 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::resource('ballone/league', 'Ballone\LeagueController', ['as' => 'ballone' ]);
-Route::resource('ballone/club', 'Ballone\ClubController', ['as' => 'ballone' ]);
-Route::resource('ballone/match', 'Ballone\MatchController', ['as' => 'ballone' ]);
+Route::resource('ballone/league', 'Ballone\LeagueController', ['as' => 'ballone']);
+Route::resource('ballone/club', 'Ballone\ClubController', ['as' => 'ballone']);
+Route::resource('ballone/match', 'Ballone\MatchController', ['as' => 'ballone']);
 
-Route::resource('ballone/body', 'Ballone\BodyFeesController', ['as' => 'ballone' ]);
-Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballone' ]);
+Route::resource('ballone/body', 'Ballone\BodyFeesController', ['as' => 'ballone']);
+Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballone']);
 
 // Ballone Match Create With Maung Fees
 Route::get('ballone/maung/fees/add', 'Ballone\MaungFeesController@add')->name('ballone.maung.fees.add');
@@ -15,23 +15,27 @@ Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->nam
 
 Route::middleware('check_admin')->group(function () {
 
-// Ballone Maung Limit
-Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
-Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
+    // Ballone Maung Limit
+    Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
+    Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
 
-// Ballone Maung Team Minimum and Maximum Setting
-Route::get('ballone/maung-teams-setting', 'Ballone\MaungLimitController@teams_index')->name('ballone.maung-teams-setting.index');
-Route::post('ballone/maung-teams-setting/store', 'Ballone\MaungLimitController@teams_store')->name('ballone.maung-teams-setting.store');
+    // Ballone Maung Team Minimum and Maximum Setting
+    Route::get('ballone/maung-teams-setting', 'Ballone\MaungLimitController@teams_index')->name('ballone.maung-teams-setting.index');
+    Route::post('ballone/maung-teams-setting/store', 'Ballone\MaungLimitController@teams_store')->name('ballone.maung-teams-setting.store');
 
-// Ballone Maung Za
-Route::get('ballone/maung-za', 'Ballone\MaungZaController@index')->name('ballone.maung-za.index');
-Route::get('ballone/maung-za/show/{id}', 'Ballone\MaungZaController@show')->name('ballone.maung-za.get');
-Route::post('ballone/maung-za/store', 'Ballone\MaungZaController@store')->name('ballone.maung-za.store');
-Route::delete('ballone/maung-za/{id}', 'Ballone\MaungZaController@destroy')->name('ballone.maung-za.delete');
+    // Ballone Maung Za
+    Route::get('ballone/maung-za', 'Ballone\MaungZaController@index')->name('ballone.maung-za.index');
+    Route::get('ballone/maung-za/show/{id}', 'Ballone\MaungZaController@show')->name('ballone.maung-za.get');
+    Route::post('ballone/maung-za/store', 'Ballone\MaungZaController@store')->name('ballone.maung-za.store');
+    Route::delete('ballone/maung-za/{id}', 'Ballone\MaungZaController@destroy')->name('ballone.maung-za.delete');
 
-// Ballone Body Setting
-Route::get('ballone/body-setting', 'Ballone\BodySettingController@index')->name('ballone.body-setting.index');
-Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
+    // Ballone Body Setting
+    Route::get('ballone/body-setting', 'Ballone\BodySettingController@index')->name('ballone.body-setting.index');
+    Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
+
+    // Body /  Maung Cancel
+    Route::get('ballone/body-bet/{id}', 'Ballone\ReportDetailController@bodyCancel')->name('ballone.body.refund');
+    Route::get('ballone/maung-bet/{id}', 'Ballone\ReportDetailController@maungCancel')->name('ballone.maung.refund');
 
 });
 

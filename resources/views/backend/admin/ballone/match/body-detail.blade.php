@@ -40,6 +40,7 @@
                                             <th>Total Betting Amount</th>
                                             <th>Betting Result</th>
                                             <th>Betting Wins</th>
+                                            <th>Betting Cancel</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -52,6 +53,15 @@
                                                 <td>{{ $dt->bet?->amount }}</td>
                                                 <td>{{ $dt->bet?->status_format }}</td>
                                                 <td>{{ $dt->bet?->net_amount }}</td>
+                                                <td>
+                                                    @if( $dt->refund ==0 )
+                                                        <a href="{{ route('ballone.body.refund', $dt->id) }}"
+                                                            class="btn btn-danger btn-sm"
+                                                            data-id="{{ $dt->id }}">
+                                                            Cancel
+                                                        </a>
+                                                    @endif
+                                                </td>
                                                 <td>
                                                     <a href="javascript:void(0)" class="btn btn-success btn-sm viewBody"
                                                         data-id="{{ $dt->id }}">

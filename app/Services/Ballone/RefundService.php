@@ -49,7 +49,7 @@ class RefundService
             }
     }
 
-    protected function history_add($data, $betting)
+    public function history_add($data, $betting)
     {
         $data->user->increment('amount', (int)$betting->amount);
         $betting->update(['status' => 4]);

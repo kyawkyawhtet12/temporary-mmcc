@@ -6,6 +6,7 @@ use App\Models\FootballBody;
 use Illuminate\Http\Request;
 use App\Models\FootballMaung;
 use App\Http\Controllers\Controller;
+use App\Services\Ballone\RefundService;
 
 class ReportDetailController extends Controller
 {
@@ -21,6 +22,17 @@ class ReportDetailController extends Controller
     {
         $data = FootballBody::with('bet', 'fees', 'match', 'match.home', 'match.away')->findOrFail($id);
         return response()->json($data);
+    }
+
+    public function bodyCancel($id)
+    {
+        $body = FootballBody::findOrFail($id);
+
+        $body->update([ 'refund' => 1 ]);
+
+        (new RefundService())->history_add($body, $body->bet);
+
+        return back()->with(['success' => 'Match Refund successfully.']);
     }
 
     // Maung
