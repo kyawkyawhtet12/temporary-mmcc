@@ -79,7 +79,7 @@ class MaungService
 
             $maung->user->increment('amount', $net_amount);
 
-            $betting->update(['status' => 1, 'net_amount' => $net_amount]);
+            $betting->update([ 'net_amount' => $net_amount ]);
         }
     }
 }

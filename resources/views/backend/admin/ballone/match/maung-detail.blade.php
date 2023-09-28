@@ -41,6 +41,7 @@
                                             <th>Betting Count</th>
                                             <th>Betting Result</th>
                                             <th>Betting Wins</th>
+                                            {{-- <th>Betting Cancel</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -58,6 +59,15 @@
                                                 @else
                                                     <td>{{ $dt->bet?->bet?->net_amount }}</td>
                                                 @endif
+                                                {{-- <td>
+                                                    @if( $dt->refund ==0 )
+                                                        <a href="{{ route('ballone.body.refund', $dt->id) }}"
+                                                            class="btn btn-danger btn-sm"
+                                                            data-id="{{ $dt->id }}">
+                                                            Cancel
+                                                        </a>
+                                                    @endif
+                                                </td> --}}
                                                 <td>
                                                     <a href="javascript:void(0)" class="btn btn-success btn-sm viewMaung"
                                                         data-id="{{ $dt->maung_group_id }}">
