@@ -23,6 +23,7 @@ class ClubController extends Controller
             $query = DB::table('clubs')
                         ->join('leagues', 'clubs.league_id', '=', 'leagues.id')
                         ->select('clubs.id', 'clubs.name', 'clubs.created_at' , 'leagues.name as leagues')
+                        ->where('clubs.deleted_at','=',NULL)
                         ->latest()
                         ->get()
                         ->groupBy('name')
