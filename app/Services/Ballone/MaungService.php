@@ -58,7 +58,7 @@ class MaungService
                             ->count();
 
         // ပွဲ မကျန်တော့ရင် အလျော်အစားလုပ်
-        if ($data == 0) {
+        if ($data == 0 && $betting->status == 0 ) {
 
             $win_amount = $betting->net_amount;
 
@@ -79,7 +79,7 @@ class MaungService
 
             $maung->user->increment('amount', $net_amount);
 
-            $betting->update([ 'net_amount' => $net_amount ]);
+            $betting->update([ 'status' => 1 , 'net_amount' => $net_amount ]);
         }
     }
 }

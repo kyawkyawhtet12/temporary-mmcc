@@ -31,20 +31,26 @@ class PaymentReportService
     protected function addAgentAllPayment($payment)
     {
         AgentPaymentAllReport::whereDate('created_at', today())
+                            ->firstOrCreate()
                             ->increment($this->column, $payment->amount);
     }
 
     protected function addUserPayment($payment)
     {
         UserPaymentReport::whereDate('created_at', today())
-                        ->where('user_id', $payment->user_id)
+                        ->updateOrCreate([
+                            'user_id' => $payment->user_id,
+                            'agent_id' => $payment->agent_id
+                        ])
                         ->increment($this->column, $payment->amount);
     }
 
     protected function addAgentPayment($payment)
     {
         AgentPaymentReport::whereDate('created_at', today())
-                        ->where('agent_id', $payment->agent_id)
+                        ->updateOrCreate([
+                            'agent_id' => $payment->agent_id
+                        ])
                         ->increment($this->column, $payment->amount);
     }
 

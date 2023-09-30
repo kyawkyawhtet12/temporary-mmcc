@@ -20,7 +20,7 @@ class PaymentService
         User::has('agent')->with('agent','payment_reports')
                 ->chunkById(500, function ($users) {
                     foreach ($users as $user) {
-                        $user->payment_reports()->create([
+                        $user->payment_reports()->updateOrCreate([
                             'agent_id' => $user->agent?->id
                         ]);
                     }
@@ -32,7 +32,7 @@ class PaymentService
         Agent::with('payment_reports')
                 ->chunkById(500, function ($agents) {
                     foreach ($agents as $agent) {
-                        $agent->payment_reports()->create();
+                        $agent->payment_reports()->firstOrCreate();
                     }
                 });
     }
