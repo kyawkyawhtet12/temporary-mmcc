@@ -16,8 +16,13 @@ class CreateFootballRefundHistoriesTable extends Migration
         Schema::create('football_refund_histories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('agent_id')->nullable();
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
+
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->unsignedBigInteger('bet_id')->nullable();
+
             $table->timestamps();
         });
     }

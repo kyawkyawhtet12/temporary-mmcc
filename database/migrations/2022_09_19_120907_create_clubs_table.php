@@ -20,6 +20,7 @@ class CreateClubsTable extends Migration
             $table->string('code')->nullable();
             $table->foreign('league_id')->references('id')->on('leagues')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

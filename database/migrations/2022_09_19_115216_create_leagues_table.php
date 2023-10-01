@@ -19,6 +19,7 @@ class CreateLeaguesTable extends Migration
             $table->enum('level', ['I', 'II','III','IV','V'])->nullable();
             $table->string('country')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

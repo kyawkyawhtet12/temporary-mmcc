@@ -16,6 +16,8 @@ class CreateAgentSellAmountsTable extends Migration
         Schema::create('agent_sell_amounts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('agent_id');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
+
             $table->integer('amount')->default(0);
             $table->timestamps();
         });

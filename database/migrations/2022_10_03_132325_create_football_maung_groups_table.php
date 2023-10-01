@@ -16,7 +16,11 @@ class CreateFootballMaungGroupsTable extends Migration
         Schema::create('football_maung_groups', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('agent_id')->nullable();
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
+
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->integer('count');
             $table->boolean('refund')->default(0);
             $table->timestamps();
