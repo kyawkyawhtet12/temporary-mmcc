@@ -23,7 +23,7 @@ class LuckyNumberService
 
             $win_draws = $draws->where('two_digit_id', $data->two_digit_id)->get();
 
-            $this->addWin($win_draws, $data->two_digit_id);
+            $this->addWin($win_draws, $data->id);
 
         });
     }
