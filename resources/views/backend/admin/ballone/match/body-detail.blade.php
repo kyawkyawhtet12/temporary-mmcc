@@ -51,12 +51,11 @@
                                                 <td>{{ $dt->agent?->name }}</td>
                                                 <td>{{ $dt->betting_time }}</td>
                                                 <td>{{ $dt->bet?->amount }}</td>
-                                                <td>{{ $dt->bet?->status_format }}</td>
+                                                <td class="status-{{ $dt->id }}">{{ $dt->bet?->status_format }}</td>
                                                 <td>{{ $dt->bet?->net_amount }}</td>
                                                 <td>
-                                                    @if( $dt->refund ==0 )
-                                                        <a href="{{ route('ballone.body.refund', $dt->id) }}"
-                                                            class="btn btn-danger btn-sm"
+                                                    @if ($dt->refund == 0)
+                                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm cancelBet"
                                                             data-id="{{ $dt->id }}">
                                                             Cancel
                                                         </a>
@@ -136,18 +135,18 @@
                 return `${getHomeTeam(data)} Vs ${getAwayTeam(data)}`;
             }
 
-            function getHomeTeam(data){
+            function getHomeTeam(data) {
                 return `(${data.match.home_no}) ${data.match.home.name}`;
             }
 
-            function getAwayTeam(data){
+            function getAwayTeam(data) {
                 return `(${data.match.away_no}) ${data.match.away.name}`;
             }
 
             function getFees(data) {
-                return (data.type == 'home' || data.type == 'away')
-                        ? `${getUpTeam(data)} ${data.fees.body}`
-                        : data.fees.goals;
+                return (data.type == 'home' || data.type == 'away') ?
+                    `${getUpTeam(data)} ${data.fees.body}` :
+                    data.fees.goals;
             }
 
             function getType(data) {
@@ -201,6 +200,43 @@
                     });
 
                 $(this).parent().parent().addClass('text-danger');
+            });
+
+            $('body').on('click', '.cancelBet', function() {
+
+                let id = $(this).data('id');
+                let button = $(this).closest("a");
+
+                Swal.fire({
+                        text: "Are you sure to cancel this bet ?",
+                        icon: "info",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                    })
+                    .then(function(e) {
+                        if (e.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('ballone.body.refund') }}",
+                                type: "POST",
+                                dataType: 'json',
+                                data: {
+                                    'id': id
+                                }
+                            }).done(function(res) {
+                                Swal.fire({
+                                    text: "အောင်မြင်ပါသည်",
+                                    icon: "success",
+                                }).then((e) => {
+                                    button.remove();
+                                    $(`.status-${id}`).text("Refund");
+                                })
+                            })
+                        }
+                    });
             });
 
         });

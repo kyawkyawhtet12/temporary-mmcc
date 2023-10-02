@@ -29,15 +29,15 @@ class ReportDetailController extends Controller
         return response()->json($data);
     }
 
-    public function bodyCancel($id)
+    public function bodyCancel(Request $request)
     {
-        $body = FootballBody::findOrFail($id);
+        $body = FootballBody::findOrFail($request->id);
 
         $body->update([ 'refund' => 1 ]);
 
         (new RefundService())->history_add($body, $body->bet);
 
-        return back()->with(['success' => 'Match Refund successfully.']);
+        return response()->json('success');
     }
 
     // Maung

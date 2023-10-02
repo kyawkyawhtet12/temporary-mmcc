@@ -70,10 +70,10 @@
                     </a>
                     <div class="collapse menu-dropdown" id="three-digits-number-all">
                         <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('threedigits.monthly-report') }}" class="nav-link" data-key="t-calendar">
                                     Monthly Report </a>
-                            </li>
+                            </li> --}}
 
                             <li class="nav-item">
                                 <a href="{{ route('three-digits.result') }}" class="nav-link"

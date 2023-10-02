@@ -34,7 +34,7 @@ Route::middleware('check_admin')->group(function () {
     Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
 
     // Body /  Maung Cancel
-    Route::get('ballone/body-bet/{id}', 'Ballone\ReportDetailController@bodyCancel')->name('ballone.body.refund');
+    Route::post('ballone/body-bet', 'Ballone\ReportDetailController@bodyCancel')->name('ballone.body.refund');
     Route::get('ballone/maung-bet/{id}', 'Ballone\ReportDetailController@maungCancel')->name('ballone.maung.refund');
 
 });
