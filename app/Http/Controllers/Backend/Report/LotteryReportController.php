@@ -13,9 +13,11 @@ use App\Models\ThreeLuckyDraw;
 use App\Models\TwoLuckyNumber;
 use App\Models\ThreeLuckyNumber;
 use Yajra\DataTables\DataTables;
+use App\Models\ThreeDigitSetting;
 use App\Http\Controllers\Controller;
 use App\Models\TwoDigitCompensation;
 use App\Models\ThreeDigitCompensation;
+use App\Models\ThreeDigitTransaction;
 
 class LotteryReportController extends Controller
 {
@@ -150,17 +152,19 @@ class LotteryReportController extends Controller
     public function three_digits(Request $request)
     {
         if ($request->ajax()) {
-            $query = ThreeLuckyNumber::with('three_digit')->orderBy('date', 'desc');
+
+            $query = ThreeDigitSetting::with('lucky_number')->latest('id')->get();
+
             return Datatables::of($query)
                     ->addIndexColumn()
-                    ->addColumn('number', function ($number) {
-                        return $number->three_digit?->number;
+                    ->addColumn('number', function ($data) {
+                        return $data->lucky_number?->three_digit?->number;
                     })
-                    ->addColumn('date', function ($number) {
-                        return date("F j, Y", strtotime($number->created_at));
+                    ->addColumn('date', function ($data) {
+                        return date("F j, Y", strtotime($data->date));
                     })
-                    ->addColumn('action', function ($number) {
-                        $btn = "<a href='/admin/three-digits-results/$number->id' class='btn btn-success'>Detail</a>";
+                    ->addColumn('action', function ($data) {
+                        $btn = "<a href='/admin/three-digits-results/{$data->id}' class='btn btn-success'>Detail</a>";
 
                         return $btn;
                     })
@@ -173,19 +177,20 @@ class LotteryReportController extends Controller
 
     public function three_digits_detail(Request $request, $id)
     {
-        $data = ThreeLuckyNumber::with('three_digit','winners','winners.threeLuckyDraw')->findOrFail($id);
         $three_digits = ThreeDigit::all();
+
+        $data = ThreeDigitSetting::findOrFail($id);
 
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
-        $win_betting = $data->winners->when($agent_id, function($query, $agent_id) {
+        $win_betting = $data->lucky_number->winners->when($agent_id, function($query, $agent_id) {
                                             $query->where('threeLuckyDraw.agent_id', $agent_id);
                                         })?->sum('threeLuckyDraw.amount');
 
         $draw = ThreeLuckyDraw::when($agent_id, function($query, $agent_id) {
                                     $query->where('agent_id', $agent_id);
                                 })
-                                ->where('round', $data->round)
+                                ->where('round', $data->id)
                                 ->selectRaw('SUM(amount) as amount, three_digit_id as three_digit_id, za as za')
                                 ->groupBy('three_digit_id','za')
                                 ->get();

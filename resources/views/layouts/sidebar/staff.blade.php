@@ -74,17 +74,14 @@
                                 <a href="{{ route('threedigits.monthly-report') }}" class="nav-link" data-key="t-calendar">
                                     Monthly Report </a>
                             </li>
+
                             <li class="nav-item">
                                 <a href="{{ route('three-digits.result') }}" class="nav-link"
                                     data-key="t-3d-result">
                                     3D Result </a>
                             </li>
 
-                            <li class="nav-item">
-                                <a href="{{ url('admin/three_lucky_numbers') }}" class="nav-link"
-                                    data-key="t-calendar"> Lucky Numbers
-                                </a>
-                            </li>
+
                             <li class="nav-item">
                                 <a href="{{ url('admin/three_winners') }}" class="nav-link"
                                     data-key="t-calendar"> Lucky Winners

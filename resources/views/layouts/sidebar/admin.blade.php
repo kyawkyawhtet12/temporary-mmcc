@@ -110,11 +110,7 @@
                             </li>
                             @endif
 
-                            <li class="nav-item">
-                                <a href="{{ url('admin/three_lucky_numbers') }}" class="nav-link"
-                                    data-key="t-calendar"> Lucky Numbers
-                                </a>
-                            </li>
+
                             <li class="nav-item">
                                 <a href="{{ url('admin/three_winners') }}" class="nav-link"
                                     data-key="t-calendar"> Lucky Winners
@@ -123,7 +119,7 @@
 
                             @if( is_admin())
                             <li class="nav-item">
-                                <a href="{{ route('three-lottery-close.index') }}" class="nav-link"
+                                <a href="{{ route('3d.lucky-number.index') }}" class="nav-link"
                                     data-key="t-lucky-draws"> 3D Lottery Setting </a>
                             </li>
                             <li class="nav-item">

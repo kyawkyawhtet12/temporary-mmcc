@@ -25,7 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->share('enabled', Enabled::first());
+        if (!$this->app->runningInConsole()){
+            view()->share('enabled', Enabled::first());
+        }
 
         Paginator::useBootstrap();
     }

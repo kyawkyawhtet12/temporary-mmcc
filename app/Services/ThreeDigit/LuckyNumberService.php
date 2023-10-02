@@ -2,15 +2,11 @@
 
 namespace App\Services\ThreeDigit;
 
-use Carbon\Carbon;
-use App\Models\TwoWinner;
 use App\Models\ThreeWinner;
-use App\Models\TwoLuckyDraw;
 use App\Models\BettingRecord;
-use App\Models\ThreeLuckyDraw;
 use App\Services\RecordService;
-use App\Models\ThreeLuckyNumber;
 use App\Services\UserLogService;
+use App\Models\ThreeDigitSetting;
 use Illuminate\Support\Facades\DB;
 
 class LuckyNumberService
@@ -19,25 +15,24 @@ class LuckyNumberService
     {
         DB::transaction(function () use ($data) {
 
-            $draws = ThreeLuckyDraw::query()->where('round', $data->round);
+            BettingRecord::setData($data->draws);
 
-            BettingRecord::setData($draws);
+            $this->addWin($data->win_draws, $data->lucky_number->id);
 
-            $win_draws = $draws->where('three_digit_id', $data->three_digit_id)->get();
+            $data->update([ 'status' => 0 ]);
 
-            $this->addWin($win_draws, $data->three_digit_id);
+            $data->lucky_number()->update([ 'status' => "Approved" ]);
 
-            (new ThreeLuckyNumber())->add_new_round();
+            ThreeDigitSetting::addNextLuckyDate($data->date);
 
         });
     }
 
-    protected function addWin($win_draws, $number_id)
+    protected function addWin($win_draws, $lucky_number_id)
     {
         foreach ($win_draws as $draw) {
-
             ThreeWinner::create([
-                'three_lucky_number_id' => $number_id,
+                'three_lucky_number_id' => $lucky_number_id,
                 'three_lucky_draw_id' => $draw->id,
                 'status' => 'Full',
                 'user_id' => $draw->user_id,

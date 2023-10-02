@@ -12,6 +12,7 @@ use App\Services\RecordService;
 use App\Models\ThreeLuckyNumber;
 use App\Services\UserLogService;
 use Yajra\DataTables\DataTables;
+use App\Models\ThreeDigitSetting;
 use App\Http\Controllers\Controller;
 use App\Services\ThreeDigit\LuckyNumberService;
 
@@ -45,7 +46,7 @@ class ThreeLuckyNumberController extends Controller
                         }
                     })
                     ->addColumn('date', function ($number) {
-                        return date("F j, Y", strtotime($number->date));
+                        return date("F j, Y", strtotime($number->lottery->date));
                     })
                     ->addColumn('action', function ($number) {
 
@@ -80,21 +81,24 @@ class ThreeLuckyNumberController extends Controller
             // 'votes' => 'required',
         ]);
 
-        if( !$request->threedigit_id){
-            $check = ThreeLuckyNumber::where('status', '!=', 'Approved')->get();
+        // if( !$request->threedigit_id){
+        //     $check = ThreeLuckyNumber::where('status', '!=', 'Approved')->get();
 
-            if($check){
-                return response()->json(['error' => 'already added']);
-            }
-        }
+        //     if($check){
+        //         return response()->json(['error' => 'already added']);
+        //     }
+        // }
 
-        ThreeLuckyNumber::updateOrCreate([
-            'id'   => $request->threedigit_id,
-        ], [
-            'three_digit_id' =>  $request->threedigit_number,
-            'votes' => 0,
-            'date' => $request->date
-        ]);
+        // ThreeLuckyNumber::updateOrCreate([
+        //     'id'   => $request->threedigit_id,
+        // ], [
+        //     'three_digit_id' =>  $request->threedigit_number,
+        //     'votes' => 0,
+        //     'date' => $request->date
+        // ]);
+
+        ThreeDigitSetting::find(1)->lucky_number()
+        ->update([ 'three_digit_id' =>  $request->threedigit_number ]);
 
         return response()->json(['success'=>'Lucky number saved successfully.']);
     }

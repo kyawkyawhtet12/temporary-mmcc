@@ -36,11 +36,10 @@
                                   <th>No.</th>
                                   <th>User</th>
                                   <th>Agent</th>
-                                  <th>Lucky Number</th>
-                                  <th>Votes</th>
+                                  <th>Number</th>
                                   <th>Amount</th>
+                                  <th>Za</th>
                                   <th>Total</th>
-                                  <th>Status</th>
                                   <th>Date</th>
                                 </tr>
                               </thead>
@@ -76,10 +75,9 @@
           {data: 'user', name: 'user', orderable: false, searchable: false},
           {data: 'agent', name: 'agent', orderable: false, searchable: false},
           {data: 'number', name: 'number', orderable: false, searchable: false},
-          {data: 'votes', name: 'votes', orderable: false, searchable: false},
           {data: 'amount', name: 'amount', orderable: false, searchable: false},
+          {data: 'za', name: 'za', orderable: false, searchable: false},
           {data: 'total', name: 'total', orderable: false, searchable: false},
-          {data: 'status', name: 'status', orderable: false, searchable: false},
           {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
       ],
     });

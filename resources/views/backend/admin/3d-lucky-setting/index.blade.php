@@ -140,17 +140,11 @@
 @endsection
 
 @push('scripts')
-    {{-- <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script> --}}
 
     <script src="{{ asset('assets/backend/DateTimePicker.js') }}"></script>
 
     <script type="text/javascript">
-        // $('#datetime').datetimepicker({
-        //   // datepicker: { showOtherMonths: true },
-        //   format: 'yyyy-mm-dd HH:MM',
-        //   modal: true,
-        //   footer: true
-        // });
+
         $("#dtBox-start").DateTimePicker({
             defaultDate: new Date(),
             dateTimeFormat: "yyyy-mm-dd hh:mm"
@@ -179,7 +173,7 @@
                 },
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('three-lottery-close.index') }}",
+                    url: "{{ route('3d.lucky-number.index') }}",
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -219,19 +213,15 @@
             });
 
             $('body').on('click', '.editDateTime', function() {
-                let id = $(this).data('id');
-                $.get("{{ route('three-lottery-close.index') }}" + '/' + id + '/edit', function(data) {
-                    $('#modelHeading').html("Update Date/Time");
 
-                    $('#dateTimeForm').trigger("reset");
+                $('#dateTimeForm').trigger("reset");
 
-                    $('#start_time').val(data.start_time);
-                    $('#end_time').val(data.end_time);
+                $('#start_time').val($(this).data('start'));
+                $('#end_time').val($(this).data('end'));
 
-                    $('.js-example-basic-multiple').select2().trigger("change");
+                $('.js-example-basic-multiple').select2().trigger("change");
 
-                    $('#ajaxModel').modal('show');
-                })
+                $('#ajaxModel').modal('show');
             });
 
             $('#saveBtn').click(function(e) {
@@ -239,7 +229,7 @@
                 $(this).html('Sending..');
                 $.ajax({
                     data: $('#dateTimeForm').serialize(),
-                    url: "{{ route('three-lottery-close.store') }}",
+                    url: "{{ route('3d.lucky-number.update') }}",
                     type: "POST",
                     dataType: 'json',
                     success: function(data) {

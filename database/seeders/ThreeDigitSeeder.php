@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ThreeDigit;
+use App\Models\ThreeDigitSetting;
 use App\Models\ThreeLuckyNumber;
 use Illuminate\Database\Seeder;
 
@@ -21,10 +22,15 @@ class ThreeDigitSeeder extends Seeder
             ]);
         }
 
+        ThreeDigitSetting::create([
+            'date' => '2023-10-16',
+            'start_time' => today(),
+            'end_time' => '2023-10-16 14:45:00'
+        ]);
+
         ThreeLuckyNumber::create([
-            'round' => 1,
-            'date' => today()->format('Y-m-d'),
-            'status' => 'Pending'
+            'status' => 'Pending',
+            'date_id' => 1
         ]);
     }
 }

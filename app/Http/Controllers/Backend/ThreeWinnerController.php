@@ -30,28 +30,14 @@ class ThreeWinnerController extends Controller
                     ->addColumn('number', function ($digit) {
                         return '<label class="badge badge-success badge-pill">'.$digit->threeLuckyNumber->three_digit->number.'</label>';
                     })
-                    ->addColumn('status', function ($digit) {
-                        if ($digit->status == "Full") {
-                            return '<label class="badge badge-success badge-pill">Full</label>';
-                        } else {
-                            return '<label class="badge badge-primary badge-pill">Za</label>';
-                        }
-                    })
-                    ->addColumn('votes', function ($digit) {
-                        if ($digit->status == "Za") {
-                            return '<span>'.$digit->threeLuckyDraw->threedigit->number.'</span>';
-                        }
-                    })
                     ->addColumn('amount', function ($digit) {
                         return '<span>'.$digit->threeLuckyDraw->amount.' MMK</span>';
                     })
+                    ->addColumn('za', function ($digit) {
+                        return $digit->threeLuckyDraw->za;
+                    })
                     ->addColumn('total', function ($digit) {
-                        $za = ThreeDigitCompensation::first();
-                        if ($digit->status == "Full") {
-                            return '<span>'. $digit->threeLuckyDraw->amount * $za->compensate .' MMK</span>';
-                        } else {
-                            return '<span>'. $digit->threeLuckyDraw->amount * $za->vote .' MMK</span>';
-                        }
+                        return '<span>'. $digit->threeLuckyDraw->win_amount.' MMK</span>';
                     })
                     ->addColumn('created_at', function ($digit) {
                         return date("F j, Y", strtotime($digit->created_at));
@@ -66,7 +52,7 @@ class ThreeWinnerController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['status', 'votes', 'agent','number','amount','total', 'user'])
+                    ->rawColumns(['status', 'agent','number','amount','total', 'user'])
                     ->make(true);
         }
         return view('backend.admin.winners.threewinner');

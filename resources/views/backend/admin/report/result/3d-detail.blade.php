@@ -27,7 +27,7 @@
 
                     <div class="d-flex justify-content-between mb-3">
                         <h4 class="mb-3">
-                            {{ date('F j, Y', strtotime($data->created_at)) }}
+                            {{ date('F j, Y', strtotime($data->date)) }}
                         </h4>
 
                         <select name="agent" id="agent" class="form-control col-md-3">
@@ -66,7 +66,7 @@
                                     $win = $win_betting * $odds;
                                     $betting = $draw->sum('amount');
                                 @endphp
-                                <h5>Winning number : {{ $data->three_digit?->number }}</h5>
+                                <h5>Winning number : {{ $data->lucky_number->three_digit?->number }}</h5>
                                 <h5>Number betting : {{ $win_betting }}</h5>
                                 <h5>Odds : {{ $odds }}</h5>
                                 <h5>betting : {{ $betting }} </h5>

@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\ThreeDigitSetting;
 use Illuminate\Support\Facades\Auth;
 
 //
@@ -33,4 +34,10 @@ function get_all_types()
 function is_admin()
 {
     return ( Auth::user()->is_admin ) ? true : false;
+}
+
+function get3DCurrentRound()
+{
+    $setting = ThreeDigitSetting::whereStatus(1)->first();
+    return $setting ? $setting->id : 1;
 }
