@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBodyFeeResult;
+use App\Models\FootballMaungFeeResult;
+use App\Services\Ballone\ResultManualService;
 use App\Services\Ballone\ResultService;
 use Illuminate\Support\Facades\Session;
 
@@ -27,8 +30,8 @@ class AddResultController extends Controller
     public function addBody(Request $request, $id, ResultService $resultService)
     {
         $this->validate($request, [
-            'home' => 'required',
-            'away' => 'required'
+            'home' => 'required|numeric',
+            'away' => 'required|numeric'
         ]);
 
         $match = FootballMatch::with('allBodyfees.result')->findOrFail($id);
@@ -48,6 +51,16 @@ class AddResultController extends Controller
         return back();
     }
 
+    public function addBodyManual(Request $request, $result_id)
+    {
+        $result = FootballBodyFeeResult::findOrFail($result_id);
+
+        (new ResultManualService())->handle($request, $result);
+
+        return back();
+
+    }
+
     // Maung Result
 
     public function maung($id)
@@ -64,8 +77,8 @@ class AddResultController extends Controller
     public function addMaung(Request $request, $id, ResultService $resultService)
     {
         $this->validate($request, [
-            'home' => 'required',
-            'away' => 'required'
+            'home' => 'required|numeric',
+            'away' => 'required|numeric'
         ]);
 
         $match = FootballMatch::with('allMaungfees.result')->findOrFail($id);
@@ -83,6 +96,16 @@ class AddResultController extends Controller
         Session::put('refresh', 'true');
 
         return back();
+    }
+
+    public function addMaungManual(Request $request, $result_id)
+    {
+        $result = FootballMaungFeeResult::findOrFail($result_id);
+
+        (new ResultManualService())->handle($request, $result);
+
+        return back();
+
     }
 
 }

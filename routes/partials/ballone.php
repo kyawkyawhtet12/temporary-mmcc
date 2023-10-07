@@ -55,12 +55,16 @@ Route::get('get-clubs/{league}', 'Ballone\MatchController@getClubs')->name('ball
 // Ballone Body Add Result & Calculation
 Route::get('ballone-add-result/body/{id}', 'Ballone\AddResultController@body');
 Route::post('ballone-add-result/body/{id}', 'Ballone\AddResultController@addBody')->name('calculate.body.result');
-Route::get('ballone-calculate-result/body/{id}', 'Ballone\CalculationController@body')->name('ballone.calculate.body.result');
+Route::post('ballone-calculate-result/body/{id}', 'Ballone\CalculationController@body')->name('ballone.calculate.body.result');
+
+Route::post('ballone-add-result/manual/body/{id}', 'Ballone\AddResultController@addBodyManual')->name('manual.body.result');
 
 // Ballone Maung Add Result & Calculation
 Route::get('ballone-add-result/maung/{id}', 'Ballone\AddResultController@maung');
 Route::post('ballone-add-result/maung/{id}', 'Ballone\AddResultController@addMaung')->name('calculate.maung.result');
-Route::get('ballone-calculate-result/maung/{id}', 'Ballone\CalculationController@maung')->name('ballone.calculate.maung.result');
+Route::post('ballone-calculate-result/maung/{id}', 'Ballone\CalculationController@maung')->name('ballone.calculate.maung.result');
+
+Route::post('ballone-add-result/manual/maung/{id}', 'Ballone\AddResultController@addMaungManual')->name('manual.maung.result');
 
 // Match Report
 Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');

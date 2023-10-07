@@ -26,7 +26,8 @@ class CalculationController extends Controller
 
         $url = Session::get("prev_route") ?? '/admin/ballone/body';
 
-        return redirect($url);
+        // return redirect($url);
+        return response()->json(['url' => $url ]);
     }
 
     public function maung($id, MaungService $maungService)
@@ -44,7 +45,8 @@ class CalculationController extends Controller
 
         $url = Session::get("prev_route") ?? '/admin/ballone/maung';
 
-        return redirect($url);
+        // return redirect($url);
+        return response()->json(['url' => $url ]);
     }
 
 }

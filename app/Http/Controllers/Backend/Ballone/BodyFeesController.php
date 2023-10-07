@@ -8,6 +8,7 @@ use App\Models\FootballBodyFee;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Models\FootballBodyFeeResult;
+use App\Services\Ballone\FeesValidation;
 use Illuminate\Support\Facades\Auth;
 
 class BodyFeesController extends Controller
@@ -34,35 +35,34 @@ class BodyFeesController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'match_id' => 'required',
-            'home_body' => 'required_without:away_body',
-            'away_body' => 'required_without:home_body',
-            'goals' => 'required'
-        ]);
+        try{
 
-        $match = FootballMatch::find($request->match_id);
+            (new FeesValidation())->handle($request);
 
-        if (!$match) {
-            return response()->json(['error'=>'something is wrong.']);
+            $match = FootballMatch::find($request->match_id);
+
+            FootballBodyFee::where('match_id', $match->id)->update([ 'status' => 0 ]);
+
+            $bodyFees = FootballBodyFee::updateOrCreate(
+                [ 'match_id' => $match->id , 'body' => NULL , 'goals' => NULL ],
+                [
+                    'body'     => ($request->home_body) ?? $request->away_body,
+                    'goals'    => $request->goals,
+                    'up_team'  => ($request->home_body) ? 1 : 2,
+                    'status'   => 1,
+                    'by'       => Auth::id()
+                ]
+            );
+
+            $bodyFees->result()->firstOrCreate();
+
+            return response()->json([ 'success' => 'Match saved successfully.' ]);
+
+        }catch(\Exception $exception){
+
+            return response()->json([ 'error' => $exception->getMessage()]);
         }
 
-        FootballBodyFee::where('match_id', $match->id)->update([ 'status' => 0 ]);
-
-        $bodyFees = FootballBodyFee::updateOrCreate(
-            [ 'match_id' => $match->id , 'body' => NULL , 'goals' => NULL ],
-            [
-                'body'     => ($request->home_body) ?? $request->away_body,
-                'goals'    => $request->goals,
-                'up_team'  => ($request->home_body) ? 1 : 2,
-                'status'   => 1,
-                'by'       => Auth::id()
-            ]
-        );
-
-        $bodyFees->result()->firstOrCreate();
-
-        return response()->json([ 'success' => 'Match saved successfully.' ]);
     }
 
     public function edit($id)

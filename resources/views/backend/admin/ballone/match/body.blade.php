@@ -158,11 +158,13 @@
 
                                                         <td>
                                                             @if (!$dt->match->calculate_body && $dt->match->type == 1)
-                                                                <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                    data-id="{{ $dt->match->id }}"
-                                                                    data-original-title="Edit" class="editMatch mr-2">
-                                                                    <i class="fa fa-edit text-inverse m-r-10"></i>
-                                                                </a>
+                                                                <a href="javascript:void(0)" class="editMatch mr-2"
+                                                                data-id=" {{ $dt->match->id }}"
+                                                                data-home="{{ $dt->match->home_team }}"
+                                                                data-away="{{ $dt->match->away_team }}"
+                                                                >
+                                                                <i class="fa fa-edit text-inverse m-r-10"></i>
+                                                            </a>
                                                             @endif
                                                         </td>
 
@@ -241,9 +243,9 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="">Body</span>
                                     </div>
-                                    <input name="home_body" id="home_body" type="text" class="form-control">
+                                    <input name="home_body" id="home_body" type="text" class="form-control fees">
 
-                                    <input name="away_body" id="away_body" type="text" class="form-control">
+                                    <input name="away_body" id="away_body" type="text" class="form-control fees">
                                 </div>
                             </div>
                         </div>
@@ -256,12 +258,16 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Goals</span>
                                     </div>
-                                    <input name="goals" id="goals" type="text" class="form-control">
+                                    <input name="goals" id="goals" type="text" class="form-control fees">
                                 </div>
                             </div>
                         </div>
 
                         <br>
+
+                        <div id="error-box" class="text-center">
+                            <h5 class="text-danger" id="error-message"> </h5>
+                        </div>
 
                         <div class="col-sm-offset-2 col-sm-10">
                             <button type="submit" class="btn btn-primary" id="saveBtn" value="create">
@@ -278,6 +284,7 @@
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
+    <script src="{{ asset("assets/js/ballone.js") }}"></script>
     <script
         src="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}">
     </script>
@@ -294,31 +301,35 @@
             // var table = $('#matches').DataTable();
 
             $('body').on('click', '.editMatch', function() {
-                var match_id = $(this).data('id');
-                $.get("{{ route('ballone.body.index') }}" + '/' + match_id + '/edit', function(data) {
-                    console.log(data);
-                    $('#modelHeading').html("Add Body Fees");
-                    $('#ajaxModel').modal('show');
-                    $('#match_id').val(data.id);
-                    $("form #home").text(`(${data.home_no}) ${data.home.name}`);
-                    $("form #away").text(`(${data.away_no}) ${data.away.name}`);
-                })
+                $('#modelHeading').html("Add Body Fees");
+                $('#matchForm').trigger("reset");
+                $("#error-message").text('');
+                $('#ajaxModel').modal('show');
+                $('#match_id').val($(this).data('id'));
+                $("form #home").text($(this).data('home'));
+                $("form #away").text($(this).data('away'));
             });
 
             $('#saveBtn').click(function(e) {
                 e.preventDefault();
                 $(this).html('Sending..');
+                $("#error-message").text('');
                 $.ajax({
                     data: $('#matchForm').serialize(),
                     url: "{{ route('ballone.body.store') }}",
                     type: "POST",
                     dataType: 'json',
                     success: function(data) {
-                        console.log(data)
-                        $('#matchForm').trigger("reset");
-                        $('#ajaxModel').modal('hide');
-                        // table.draw();
-                        location.reload();
+
+                        if(data.error){
+                            $("#error-message").text(data.error);
+                        }
+
+                       if(data.success){
+                            $('#matchForm').trigger("reset");
+                            $('#ajaxModel').modal('hide');
+                            location.reload();
+                       }
                     },
                     error: function(data) {
                         console.log('Error:', data);

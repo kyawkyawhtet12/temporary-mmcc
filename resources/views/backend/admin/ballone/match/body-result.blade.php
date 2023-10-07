@@ -1,5 +1,14 @@
 @extends('layouts.master')
 
+@section('css')
+    <style>
+        #results input {
+            width: 70px !important;
+            padding: 7px 10px !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -22,8 +31,8 @@
             </div>
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-9">
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong> Success</strong> {{ Session::get('success') }}
@@ -74,11 +83,13 @@
 
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate_body && $match->body_temp_score  && Session::get('refresh'))
-                                        <a href="{{ route('ballone.calculate.body.result', $match->id) }}"
-                                            class="btn btn-sm btn-success mt-3"> Done </a>
+                                    @if (!$match->calculate_body && $match->body_temp_score && Session::get('refresh'))
+                                        <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
+                                            data-url="{{ route('ballone.calculate.body.result', $match->id) }}"
+                                        >
+                                            Done
+                                        </a>
                                     @endif
-
                                 </div>
                             </form>
 
@@ -87,12 +98,15 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-9">
                     <div class="card">
                         <div class="card-body">
-                            <h5> Body Fees </h5>
-                            <table class="table">
+                            <div class="d-flex justify-content-between">
+                                <h5> Body Fees </h5>
+                                <h5 class="text-danger" id="error-message">  </h5>
+                            </div>
+                            <table class="table mt-3" id="results">
 
                                 <thead>
                                     <tr>
@@ -103,6 +117,7 @@
                                         <th> Away </th>
                                         <th> Over </th>
                                         <th> Under </th>
+                                        <th></th>
                                     </tr>
                                 </thead>
 
@@ -114,21 +129,33 @@
                                                 <td>
                                                     {{ $match->upteam_name($fee->up_team) }}
                                                 </td>
+
                                                 <td>
                                                     {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
+
                                                 <td> : </td>
 
                                                 @if (Session::get('refresh'))
-                                                    <td> {{ check_plus_format($fee?->result?->home) }} </td>
-                                                    <td> {{ check_plus_format($fee?->result?->away) }} </td>
-                                                    <td> {{ check_plus_format($fee?->result?->over) }} </td>
-                                                    <td> {{ check_plus_format($fee?->result?->under) }} </td>
+                                                    <form action="{{ route('manual.body.result', $fee->result->id) }}"
+                                                        class="my-3" method="POST">
+                                                        @csrf
+
+                                                        <td> {!! $fee?->result?->check_result('home') !!} </td>
+                                                        <td> {!! $fee?->result?->check_result('away') !!} </td>
+
+                                                        <td> {!! $fee?->result?->check_result('over') !!} </td>
+                                                        <td> {!! $fee?->result?->check_result('under') !!} </td>
+
+                                                        <td> {!! $fee?->result?->check_button() !!}</td>
+
+                                                    </form>
                                                 @else
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
+                                                    <td></td>
                                                 @endif
                                             </tr>
                                         @endif
@@ -144,3 +171,5 @@
         </div>
     </div>
 @endsection
+
+@include("backend.admin.ballone.match.components.result-manual-script")

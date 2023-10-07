@@ -1,5 +1,14 @@
 @extends('layouts.master')
 
+@section('css')
+    <style>
+        #results input {
+            width: 70px !important;
+            padding: 7px 10px !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -72,8 +81,11 @@
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
                                     @if (!$match->calculate_maung && $match->maung_temp_score && Session::get('refresh'))
-                                        <a href="{{ route('ballone.calculate.maung.result', $match->id) }}"
-                                            class="btn btn-sm btn-success mt-3"> Done </a>
+                                        <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
+                                            data-url="{{ route('ballone.calculate.maung.result', $match->id) }}"
+                                        >
+                                            Done
+                                        </a>
                                     @endif
 
                                 </div>
@@ -88,8 +100,11 @@
                 <div class="col-lg-8 offset-lg-2">
                     <div class="card">
                         <div class="card-body">
-                            <h5> Maung Fees </h5>
-                            <table class="table">
+                            <div class="d-flex justify-content-between">
+                                <h5> Maung Fees </h5>
+                                <h5 class="text-danger" id="error-message"> </h5>
+                            </div>
+                            <table class="table" id="results">
 
                                 <thead>
                                     <tr>
@@ -100,6 +115,7 @@
                                         <th> Away </th>
                                         <th> Over </th>
                                         <th> Under </th>
+                                        <th></th>
                                     </tr>
                                 </thead>
 
@@ -116,30 +132,38 @@
                                                 </td>
                                                 <td> : </td>
 
-                                                @if( Session::get('refresh'))
+                                                @if (Session::get('refresh'))
+                                                    <form action="{{ route('manual.maung.result', $fee->result->id) }}"
+                                                        class="my-3" method="POST">
+                                                        @csrf
 
-                                                    <td> {{ check_plus_format($fee?->result?->home) }} </td>
-                                                    <td> {{ check_plus_format($fee?->result?->away) }} </td>
-                                                    <td> {{ check_plus_format($fee?->result?->over) }} </td>
-                                                    <td> {{ check_plus_format($fee?->result?->under) }} </td>
+                                                        <td> {!! $fee?->result?->check_result('home') !!} </td>
+                                                        <td> {!! $fee?->result?->check_result('away') !!} </td>
 
+                                                        <td> {!! $fee?->result?->check_result('over') !!} </td>
+                                                        <td> {!! $fee?->result?->check_result('under') !!} </td>
+
+                                                        <td> {!! $fee?->result?->check_button() !!}</td>
+
+                                                    </form>
                                                 @else
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
+                                                    <td></td>
                                                 @endif
                                             </tr>
                                         @endif
                                     @endforeach
                                 </tbody>
-
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection
+
+@include("backend.admin.ballone.match.components.result-manual-script")
