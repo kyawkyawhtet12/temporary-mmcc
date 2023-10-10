@@ -108,7 +108,7 @@
 
                                             <tbody>
                                                 @forelse($data as $dt)
-                                                    <tr class="viewDetail" data-id="{{ $dt->id }}" data-type="{{ $dt->type }}">
+                                                    <tr class="viewDetail" data-id="{{ $dt->id }}">
                                                         <td>{{ $dt->user->user_id }}</td>
                                                         <td>{{ $dt->type }}</td>
                                                         <td>{{ $dt->count }}</td>
@@ -148,27 +148,26 @@
                             <h5> Betting Detail </h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive" id="betting-detail">
                                 <table id="body" class="table table-bordered nowrap text-center">
-                                    <thead>
-                                        <tr>
+                                    <thead id="betting-heading">
+                                        {{-- <tr>
                                             <th>No.</th>
+                                            <th class="match-column d-none">Match</th>
                                             <th>Betting </th>
                                             <th>Odds</th>
                                             <th>Betting Type</th>
+                                            <th>Results</th>
                                             <th>Betting Amount</th>
-                                        </tr>
+                                        </tr> --}}
                                     </thead>
+
                                     <tbody id="betting-data">
-                                        <tr>
-                                            <td colspan="5">No Data Available.</td>
-                                        </tr>
+
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="4">Total Amount</td>
-                                            <td id='total-betting-amount'></td>
-                                        </tr>
+
+                                    <tfoot id="betting-total">
+
                                     </tfoot>
                                 </table>
                             </div>
@@ -184,125 +183,105 @@
     <script>
         $(function() {
 
+            const url_prefix = "/admin/betting-record/detail/";
+
+            let total_columns ;
+
+            let num = 1;
+
+            let no_match_lists = [ "2D", "3D" ];
+
+            let no_match_status = false;
+
+            const columns = [ 'No', 'Match', 'Betting', 'Odds', 'Betting Type', 'Results', 'Betting Amount' ];
+
+            add_table_heading();
+
+            add_table_body();
+
+            add_table_footer();
+
             $("#agentSelect").on('change', function() {
-                let agent_id = $(this).val();
-                window.location.href = `?agent=${agent_id}`;
+                window.location.href = `?agent=${$(this).val()}`;
             });
 
-            function getUpTeam(data) {
-                return (data.upteam == 1) ? getHomeTeam(data) : getAwayTeam(data);
+            function add_table_heading()
+            {
+                let th = '';
+
+                columns.forEach((dt,index) => {
+                    th += `<th class="${dt.toLowerCase()}-column"> ${dt} </th>`;
+                });
+
+                $("#betting-heading").html(` <tr> ${th} </tr>`);
+
+                total_columns = columns.length;
             }
 
-            function getMatch(data) {
-                return `${getHomeTeam(data)} Vs ${getAwayTeam(data)}`;
+            function add_table_body()
+            {
+                $('table tr').removeClass('text-danger');
+                $("#betting-data").html(`<tr> <td colspan="${total_columns}"> No Data Available. </td> </tr>`);
             }
 
-            function getHomeTeam(data) {
-                return `(${data.match.home_no}) ${data.match.home.name}`;
-            }
+            function add_table_footer()
+            {
+                let colspan = (no_match_status) ? total_columns - 2 : total_columns - 1;
 
-            function getAwayTeam(data) {
-                return `(${data.match.away_no}) ${data.match.away.name}`;
-            }
-
-            function getFees(data) {
-                return (data.type == 'home' || data.type == 'away') ?
-                    `${getUpTeam(data)} ${data.fees.body}` :
-                    `${data.fees.goals}`;
-            }
-
-            function getType(data) {
-                switch (data.type) {
-                    case 'home':
-                        return getHomeTeam(data);
-                        break;
-                    case 'away':
-                        return getAwayTeam(data);
-                        break;
-                    case 'over':
-                        return `${getHomeTeam(data)} ( Goal Over )`;
-                        break;
-                    case 'under':
-                        return `${getHomeTeam(data)} ( Goal Under )`;
-                        break;
-                }
+                $("#betting-total").html(`
+                                        <tr>
+                                            <td colspan="${colspan}">Total Amount</td>
+                                            <td id='betting-amount'></td>
+                                        </tr>`);
             }
 
             $('body').on('click', '.viewDetail', function() {
-                let id = $(this).data('id');
-                let type = $(this).data('type');
 
-                $('table tr').removeClass('text-danger');
+                add_table_heading();
 
-                $("#betting-data").html(`<tr>
-                                            <td colspan="5">No Data Available.</td>
-                                        </tr>`);
+                add_table_body();
 
-                fetch(`/admin/betting-record/${type}/detail/${id}`, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: "same-origin"
-                })
+                fetchData(url_prefix + $(this).data('id'));
+
+                $(this).addClass('text-danger');
+
+            });
+
+            function fetchData(url)
+            {
+                fetch(`${url}`)
                 .then((response) => response.json())
                 .then((data) => {
 
                     let tr = '';
 
-                    if (data.type == '2D') {
-                        data.two_digit.forEach((dt, index) => {
-                            tr += `<tr>
-                                <td> ${index + 1} </td>
-                                <td> ${dt.twodigit.number} </td>
-                                <td> ${dt.za} </td>
-                                <td> 2D </td>
-                                <td> ${dt.amount.toLocaleString('en-US')} </td>
-                            </tr>`;
-                        });
-                    }
+                    data.betting.forEach((dt, index) => {
 
-                    if (data.type == '3D') {
-                        data.three_digit.forEach((dt, index) => {
-                            tr += `<tr>
+                        tr += `
+                            <tr>
                                 <td> ${index + 1} </td>
-                                <td> ${dt.threedigit.number} </td>
-                                <td> ${dt.za} </td>
-                                <td> 3D </td>
-                                <td> ${dt.amount.toLocaleString('en-US')} </td>
+                                <td class="match-column"> ${dt.match} </td>
+                                <td> ${dt.betting} </td>
+                                <td> ${dt.odds} </td>
+                                <td> ${data.type} </td>
+                                <td> ${dt.result} </td>
+                                <td> ${dt.amount} </td>
                             </tr>`;
-                        });
-                    }
-
-                    if (data.type == 'Body') {
-                        data.ballone.forEach((dt, index) => {
-                            tr += `<tr>
-                                <td> ${index + 1} </td>
-                                <td> ${getType(dt.body)} </td>
-                                <td> ${getFees(dt.body)} </td>
-                                <td> Body </td>
-                                <td> ${dt.amount.toLocaleString('en-US')} </td>
-                            </tr>`;
-                        });
-                    }
-
-                    if (data.type == 'Maung') {
-                        data.ballone[0].maung.teams.forEach((dt, index) => {
-                            tr += `<tr>
-                                <td> ${index + 1} </td>
-                                <td> ${getType(dt)} </td>
-                                <td> ${getFees(dt)} </td>
-                                <td> Maung </td>
-                                <td> - </td>
-                            </tr>`;
-                        });
-                    }
+                    });
 
                     $("#betting-data").html(tr);
-                    $("#total-betting-amount").html(data.amount.toLocaleString('en-US'));
-                });
 
-                $(this).addClass('text-danger');
-            });
+                    no_match_status = no_match_lists.includes(data.type);
+
+                    if(no_match_status){
+                        $(".match-column").addClass('d-none');
+                    }
+
+                    add_table_footer();
+
+                    $("tfoot #betting-amount").html(data.amount);
+                });
+            }
         });
     </script>
 @endpush

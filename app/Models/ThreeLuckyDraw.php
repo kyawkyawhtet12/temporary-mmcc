@@ -25,6 +25,8 @@ class ThreeLuckyDraw extends Model
         'created_at',
     ];
 
+    protected $appends = [ 'lucky_number' , 'number' ];
+
     public function agent()
     {
         return $this->belongsTo(Agent::class, 'agent_id');
@@ -45,6 +47,11 @@ class ThreeLuckyDraw extends Model
         return $this->belongsTo(BettingRecord::class, 'betting_record_id');
     }
 
+    public function lucky()
+    {
+        return $this->hasOne(ThreeLuckyNumber::class, 'date_id', 'round')->where('status','Approved');
+    }
+
     public function scopeFilterDates($query)
     {
         $date = explode(" - ", request()->input('from_to', ""));
@@ -58,4 +65,15 @@ class ThreeLuckyDraw extends Model
     {
         return $this->amount * $this->za;
     }
+
+    public function getLuckyNumberAttribute()
+    {
+        return $this->lucky?->three_digit->number ?? '-';
+    }
+
+    public function getNumberAttribute()
+    {
+        return $this->threedigit?->number;
+    }
+
 }

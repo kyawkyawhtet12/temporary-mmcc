@@ -13,6 +13,8 @@ class FootballMatch extends Model
 
     protected $with = [ 'home' , 'away' ];
 
+    protected $appends = ['maung_result' , 'body_result'];
+
     // type - 0 Refund
 
     public function home()
@@ -118,5 +120,26 @@ class FootballMatch extends Model
     public static function getTempScore($score)
     {
         return array_pad( explode("-", $score) , 2, '');
+    }
+
+    public function getMaungResultAttribute()
+    {
+        return $this->getResult('maung');
+    }
+
+    public function getBodyResultAttribute()
+    {
+        return $this->getResult('body');
+    }
+
+    public function getResult($type)
+    {
+        $attr = [
+            'body'  => ($this->calculate_body)  ? $this->body_temp_score  : '-',
+            'maung' => ($this->calculate_maung) ? $this->maung_temp_score : '-'
+        ];
+
+        return ($this->type == 0) ? "P-P" : $attr[$type];
+
     }
 }

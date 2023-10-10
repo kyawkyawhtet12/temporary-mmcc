@@ -25,6 +25,8 @@ class TwoLuckyDraw extends Model
         'created_at',
     ];
 
+    protected $appends = [ 'lucky_number' , 'number' ];
+
     public function agent()
     {
         return $this->belongsTo(Agent::class, 'agent_id');
@@ -50,6 +52,11 @@ class TwoLuckyDraw extends Model
         return $this->belongsTo(BettingRecord::class, 'betting_record_id');
     }
 
+    public function winner()
+    {
+        return $this->hasone(TwoWinner::class);
+    }
+
     public function scopeFilterDates($query)
     {
         $date = explode(" - ", request()->input('date_range', ""));
@@ -69,5 +76,15 @@ class TwoLuckyDraw extends Model
     public function getWinAmountAttribute()
     {
         return $this->amount * $this->za;
+    }
+
+    public function getLuckyNumberAttribute()
+    {
+        return TwoLuckyNumber::get_lucky_number($this->created_at, $this->lottery_time_id);
+    }
+
+    public function getNumberAttribute()
+    {
+        return $this->twodigit?->number;
     }
 }

@@ -7,9 +7,12 @@ use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
 use App\Models\BettingRecord;
 use App\Models\ThreeLuckyDraw;
-use App\Http\Controllers\Controller;
 use App\Models\ThreeLuckyNumber;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
+use App\Http\Resources\BettingRecord\DetailResource;
+use App\Http\Resources\BettingRecord\BodyDetailResource;
+use App\Models\FootballBet;
 
 class BettingController extends Controller
 {
@@ -57,27 +60,10 @@ class BettingController extends Controller
         return view("backend.record.betting", compact('data','agents','select_agent','select_type'));
     }
 
-    public function detail($type,$id)
+    public function detail($id)
     {
         $data = BettingRecord::findOrFail($id);
-
-        if($type == '2D'){
-            $data->load('two_digit', 'two_digit.twodigit');
-        }
-
-        if( $type == '3D' ){
-            $data->load('three_digit', 'three_digit.threedigit');
-        }
-
-        if( $type == 'Body' ){
-            $data->load('ballone', 'ballone.body.fees', 'ballone.body.match' );
-        }
-
-        if( $type == 'Maung' ){
-            $data->load('ballone', 'ballone.maung.teams.fees', 'ballone.maung.teams.match');
-        }
-
-        return response()->json($data);
+        return response()->json(new DetailResource($data));
     }
 
     public function search(Request $request)

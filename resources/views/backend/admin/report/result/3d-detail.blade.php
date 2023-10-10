@@ -66,7 +66,7 @@
                                     $win = $win_betting * $odds;
                                     $betting = $draw->sum('amount');
                                 @endphp
-                                <h5>Winning number : {{ $data->lucky_number->three_digit?->number }}</h5>
+                                <h5>Winning number : {{ $data->approved_number }}</h5>
                                 <h5>Number betting : {{ $win_betting }}</h5>
                                 <h5>Odds : {{ $odds }}</h5>
                                 <h5>betting : {{ $betting }} </h5>

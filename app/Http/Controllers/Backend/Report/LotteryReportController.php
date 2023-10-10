@@ -158,7 +158,7 @@ class LotteryReportController extends Controller
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('number', function ($data) {
-                        return $data->lucky_number?->three_digit?->number;
+                        return $data->approved_number;
                     })
                     ->addColumn('date', function ($data) {
                         return date("F j, Y", strtotime($data->date));
