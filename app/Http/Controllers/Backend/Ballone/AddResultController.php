@@ -24,7 +24,7 @@ class AddResultController extends Controller
             Session::put("prev_route", url()->previous());
         }
 
-        return view("backend.admin.ballone.match.body-result", compact("match"));
+        return view("backend.admin.ballone.match.body.result", compact("match"));
     }
 
     public function addBody(Request $request, $id, ResultService $resultService)
@@ -71,7 +71,7 @@ class AddResultController extends Controller
             Session::put("prev_route", url()->previous());
         }
 
-        return view("backend.admin.ballone.match.maung-result", compact("match"));
+        return view("backend.admin.ballone.match.maung.result", compact("match"));
     }
 
     public function addMaung(Request $request, $id, ResultService $resultService)

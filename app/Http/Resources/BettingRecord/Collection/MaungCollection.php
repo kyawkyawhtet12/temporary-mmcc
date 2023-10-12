@@ -19,7 +19,7 @@ class MaungCollection extends JsonResource
             'betting'  => $this->betting_type,
             'odds'   => $this->betting_fees,
             'amount' => '-',
-            'result' => $this->match->maung_result,
+            'result' => $this->result_status,
             'match' => $this->match->match_format,
         ];
     }

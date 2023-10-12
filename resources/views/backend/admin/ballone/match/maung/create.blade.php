@@ -418,6 +418,10 @@
                     },
                     error: function(data) {
                         console.log('Error:', data);
+                        Swal.fire({
+                                text: "* Please fill all data correctly",
+                                icon: "error",
+                            })
                         $('#saveBtn').html('Save Changes');
                     }
                 });

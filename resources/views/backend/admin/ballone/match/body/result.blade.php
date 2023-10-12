@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Match Maung Result</h4>
+                        <h4 class="mb-sm-0">Match Body Result</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
@@ -31,8 +31,8 @@
             </div>
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-9">
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong> Success</strong> {{ Session::get('success') }}
@@ -56,9 +56,10 @@
                                 </tr>
                             </table>
 
-                            <form action="{{ route('calculate.maung.result', $match->id) }}" class="my-3" method="POST">
+                            <form action="{{ route('calculate.body.result', $match->id) }}" class="my-3" method="POST">
                                 @csrf
                                 <div class="input-group">
+
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="up-team">
                                             {{ $match->home_team }}
@@ -66,9 +67,10 @@
                                     </div>
 
                                     <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ Session::get('refresh') ? $match->maung_score(0) : '' }}">
+                                        value="{{ Session::get('refresh') ? $match->body_score(0) : '' }}">
+
                                     <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ Session::get('refresh') ? $match->maung_score(1) : '' }}">
+                                        value="{{ Session::get('refresh') ? $match->body_score(1) : '' }}">
 
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="down-team">
@@ -78,16 +80,16 @@
                                 </div>
 
                                 <div class="d-flex">
+
                                     <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate_maung && $match->maung_temp_score && Session::get('refresh'))
+                                    @if (!$match->calculate_body && $match->body_temp_score && Session::get('refresh'))
                                         <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
-                                            data-url="{{ route('ballone.calculate.maung.result', $match->id) }}"
+                                            data-url="{{ route('ballone.calculate.body.result', $match->id) }}"
                                         >
                                             Done
                                         </a>
                                     @endif
-
                                 </div>
                             </form>
 
@@ -96,19 +98,19 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2">
+            <div class="row d-flex justify-content-center">
+                <div class="col-lg-9">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <h5> Maung Fees </h5>
-                                <h5 class="text-danger" id="error-message"> </h5>
+                                <h5> Body Fees </h5>
+                                <h5 class="text-danger" id="error-message">  </h5>
                             </div>
-                            <table class="table" id="results">
+                            <table class="table mt-3" id="results">
 
                                 <thead>
                                     <tr>
-                                        <th> </th>
+                                        <th></th>
                                         <th> Fees / Goals </th>
                                         <th> : </th>
                                         <th> Home </th>
@@ -121,29 +123,43 @@
 
                                 <tbody>
 
-                                    @foreach ($match->allMaungFees as $key => $fee)
+                                    @foreach ($match->allBodyFees as $fee)
                                         @if ($fee)
                                             <tr>
                                                 <td>
                                                     {{ $match->upteam_name($fee->up_team) }}
                                                 </td>
+
                                                 <td>
                                                     {{ $fee?->body }} / {{ $fee?->goals }}
                                                 </td>
+
                                                 <td> : </td>
 
                                                 @if (Session::get('refresh'))
-                                                    <form action="{{ route('manual.maung.result', $fee->result->id) }}"
+                                                    <form action="{{ route('manual.body.result', $fee->result->id) }}"
                                                         class="my-3" method="POST">
                                                         @csrf
 
-                                                        <td> {!! $fee?->result?->check_result('home') !!} </td>
-                                                        <td> {!! $fee?->result?->check_result('away') !!} </td>
+                                                        <td>
+                                                            {!! $fee->percentage_result('home') !!}
+                                                        </td>
 
-                                                        <td> {!! $fee?->result?->check_result('over') !!} </td>
-                                                        <td> {!! $fee?->result?->check_result('under') !!} </td>
+                                                        <td>
+                                                            {!! $fee->percentage_result('away') !!}
+                                                        </td>
 
-                                                        <td> {!! $fee?->result?->check_button() !!}</td>
+                                                        <td>
+                                                            {!! $fee->percentage_result('over') !!}
+                                                        </td>
+
+                                                        <td>
+                                                            {!! $fee->percentage_result('under') !!}
+                                                        </td>
+
+                                                        <td>
+                                                            {!! $fee?->result?->check_button() !!}
+                                                        </td>
 
                                                     </form>
                                                 @else
@@ -157,6 +173,7 @@
                                         @endif
                                     @endforeach
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
@@ -164,6 +181,8 @@
             </div>
         </div>
     </div>
+
+    <x-ballone.result-manual></x-ballone.result-manual>
+
 @endsection
 
-@include("backend.admin.ballone.match.components.result-manual-script")

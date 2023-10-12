@@ -49,4 +49,11 @@ class FootballMaung extends Model
         return $za ? ($za->percent / 100) : 0;
     }
 
+    public function getResultStatusAttribute()
+    {
+        $result = ($this->match->calculate_maung) ? $this->match->maung_temp_score : '-' ;
+
+        return ($this->match->type == 0) ? "P-P" : ( $this->refund == 1 ? "Refund" : $result );
+    }
+
 }

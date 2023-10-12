@@ -6,18 +6,6 @@ trait BalloneFeesResult
 {
     public function check_result($type)
     {
-       $results = [
-            'home'  => $this->get_format('home'),
-            'away'  => $this->get_format('away'),
-            'over'  => $this->get_format('over'),
-            'under' => $this->get_format('under'),
-       ];
-
-        return $results[$type];
-    }
-
-    public function get_format($type)
-    {
         $error = ( $type == "home" || $type == "away") ? $this->body_error : $this->goal_error;
 
         $value = $this->get_result_value($type);

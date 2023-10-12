@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Backend\Ballone;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballBodyFee;
-use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-use App\Models\FootballBodyFeeResult;
 use App\Services\Ballone\FeesValidation;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,7 +28,7 @@ class BodyFeesController extends Controller
 
         $request->session()->forget(['prev_route','refresh']);
 
-        return view('backend.admin.ballone.match.body', compact('data'));
+        return view('backend.admin.ballone.match.body.index', compact('data'));
     }
 
     public function store(Request $request)

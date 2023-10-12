@@ -19,7 +19,7 @@ class BodyCollection extends JsonResource
             'betting'  => $this->body->betting_type,
             'odds'    => $this->body->betting_fees,
             'amount' => number_format($this->amount),
-            'result' => $this->body->match->body_result,
+            'result' => $this->body->result_status,
             'match' => $this->body->match->match_format,
         ];
     }

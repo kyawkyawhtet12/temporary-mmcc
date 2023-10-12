@@ -3,7 +3,9 @@
         $(document).ready(function() {
 
             $('body').on('click', '.result-done', function() {
+
                 let url = $(this).data('url');
+
                 Swal.fire({
                         text: "Are you sure ?",
                         icon: "info",

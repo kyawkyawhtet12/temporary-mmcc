@@ -31,7 +31,7 @@ class MaungFeesController extends Controller
 
         $request->session()->forget(['prev_route', 'refresh']);
 
-        return view('backend.admin.ballone.match.maung', compact('data'));
+        return view('backend.admin.ballone.match.maung.index', compact('data'));
     }
 
     public function store(Request $request)
@@ -74,7 +74,7 @@ class MaungFeesController extends Controller
         $leagues = League::all();
         $match = FootballMatch::latest()->first();
         $round = $match ? $match->round : 1;
-        return view("backend.admin.ballone.match.maung-create", compact('leagues', 'round'));
+        return view("backend.admin.ballone.match.maung.create", compact('leagues', 'round'));
     }
 
     public function create(Request $request)
@@ -127,8 +127,6 @@ class MaungFeesController extends Controller
                     }
                 }
             });
-
-            // return redirect('/admin/ballone/maung')->with('success', '* match successfully add.');
 
             return response()->json([ 'url' => '/admin/ballone/maung' ]);
 

@@ -16,8 +16,8 @@ trait BalloneBettingAttributes
         $typeAttributes = [
             'home'  => $this->match->home_team,
             'away'  => $this->match->away_team,
-            'over'  => $this->match->home_team . "( Goal Over )",
-            'under' => $this->match->home_team . "( Goal Under )"
+            'over'  => "Goal Over",
+            'under' => "Goal Under"
         ];
 
         return $typeAttributes[$this->type];

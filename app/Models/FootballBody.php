@@ -43,4 +43,11 @@ class FootballBody extends Model
         return $this->belongsTo(Agent::class, 'agent_id');
     }
 
+    public function getResultStatusAttribute()
+    {
+        $result = ($this->match->calculate_body) ? $this->match->body_temp_score : '-' ;
+
+        return ($this->match->type == 0) ? "P-P" : ( $this->refund == 1 ? "Refund" : $result );
+    }
+
 }
