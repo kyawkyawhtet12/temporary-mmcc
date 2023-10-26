@@ -18,7 +18,7 @@ class AddResultController extends Controller
 
     public function body($id)
     {
-        $match = FootballMatch::with('league', 'home', 'away', 'allBodyFees', 'allBodyFees.result')->findOrFail($id);
+        $match = FootballMatch::with('league', 'allBodyFees.result')->findOrFail($id);
 
         if( strpos( url()->previous(), 'page') ) {
             Session::put("prev_route", url()->previous());
@@ -39,33 +39,25 @@ class AddResultController extends Controller
         DB::transaction(function() use ($resultService, $match, $request)
         {
             $resultService->calculate($match->allBodyfees, $request->only('home','away'));
-
-            $match->update([
-                'body_temp_score' => "{$request->home}-{$request->away}"
-            ]);
-
+            $match->update([ 'body_temp_score' => "{$request->home}-{$request->away}" ]);
         });
 
         Session::put('refresh', 'true');
-
         return back();
     }
 
     public function addBodyManual(Request $request, $result_id)
     {
         $result = FootballBodyFeeResult::findOrFail($result_id);
-
         (new ResultManualService())->handle($request, $result);
-
         return back();
-
     }
 
     // Maung Result
 
     public function maung($id)
     {
-        $match = FootballMatch::with('league', 'home', 'away', 'allMaungFees', 'allMaungFees.result')->findOrFail($id);
+        $match = FootballMatch::with('league', 'allMaungFees.result')->findOrFail($id);
 
         if( strpos( url()->previous(), 'page') ) {
             Session::put("prev_route", url()->previous());
@@ -86,26 +78,18 @@ class AddResultController extends Controller
         DB::transaction(function() use ($resultService, $match, $request)
         {
             $resultService->calculate($match->allMaungfees, $request->only('home','away'));
-
-            $match->update([
-                'maung_temp_score' => "{$request->home}-{$request->away}"
-            ]);
-
+            $match->update([ 'maung_temp_score' => "{$request->home}-{$request->away}" ]);
         });
 
         Session::put('refresh', 'true');
-
         return back();
     }
 
     public function addMaungManual(Request $request, $result_id)
     {
         $result = FootballMaungFeeResult::findOrFail($result_id);
-
         (new ResultManualService())->handle($request, $result);
-
         return back();
-
     }
 
 }

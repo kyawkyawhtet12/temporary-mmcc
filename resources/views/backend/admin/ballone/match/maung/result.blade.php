@@ -58,37 +58,50 @@
 
                             <form action="{{ route('calculate.maung.result', $match->id) }}" class="my-3" method="POST">
                                 @csrf
+
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="up-team">
+
+                                    <div class="input-group-prepend col-4 p-0">
+                                        <span class="input-group-text w-100 justify-content-center" id="up-team">
                                             {{ $match->home_team }}
                                         </span>
                                     </div>
 
-                                    <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ Session::get('refresh') ? $match->maung_score(0) : '' }}">
-                                    <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ Session::get('refresh') ? $match->maung_score(1) : '' }}">
+                                    @if (!$match->calculate_maung)
+                                        <input type="number" name="home" class="form-control text-center" min="0"
+                                            value="{{ Session::get('refresh') ? $match->maung_score(0) : '' }}">
 
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="down-team">
+                                        <input type="number" name="away" class="form-control text-center" min="0"
+                                            value="{{ Session::get('refresh') ? $match->maung_score(1) : '' }}">
+                                    @else
+                                        <div class="input-group-prepend col-4 p-0">
+                                            <span class="input-group-text w-100 justify-content-center">
+                                                {{ $match->maung_temp_score }}
+                                            </span>
+                                        </div>
+                                    @endif
+
+                                    <div class="input-group-prepend col-4 p-0">
+                                        <span class="input-group-text w-100 justify-content-center" id="down-team">
                                             {{ $match->away_team }}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="d-flex">
-                                    <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
+                                @if (!$match->calculate_maung)
+                                    <div class="d-flex">
+                                        <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate_maung && $match->maung_temp_score && Session::get('refresh'))
-                                        <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
-                                            data-url="{{ route('ballone.calculate.maung.result', $match->id) }}"
-                                        >
-                                            Done
-                                        </a>
-                                    @endif
+                                        @if ( $match->maung_temp_score && Session::get('refresh') )
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
+                                                data-url="{{ route('ballone.calculate.maung.result', $match->id) }}"
+                                            >
+                                                Done
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endif
 
-                                </div>
                             </form>
 
                         </div>
@@ -132,7 +145,7 @@
                                                 </td>
                                                 <td> : </td>
 
-                                                @if (Session::get('refresh'))
+                                                @if (Session::get('refresh') || $match->calculate_maung == 1)
                                                     <form action="{{ route('manual.maung.result', $fee->result->id) }}"  class="my-3" method="POST">
                                                         @csrf
 

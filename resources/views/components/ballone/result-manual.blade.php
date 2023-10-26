@@ -22,12 +22,22 @@
                                 url: url,
                                 type: "POST",
                             }).done(function(res) {
-                                Swal.fire({
-                                    text: "အောင်မြင်ပါသည်",
-                                    icon: "success",
-                                }).then((e) => {
-                                    location.replace(res.url);
-                                });
+
+                                if( res.error ){
+                                    Swal.fire({
+                                        text: res.error,
+                                        icon: "error",
+                                    }).then((e) => {
+                                        location.reload();
+                                    });
+                                }else{
+                                    Swal.fire({
+                                        text: "အောင်မြင်ပါသည်",
+                                        icon: "success",
+                                    }).then((e) => {
+                                        location.replace(res.url);
+                                    });
+                                }
                             })
                         }
                     });

@@ -33,6 +33,7 @@
 
             <div class="row d-flex justify-content-center">
                 <div class="col-lg-9">
+
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong> Success</strong> {{ Session::get('success') }}
@@ -58,39 +59,51 @@
 
                             <form action="{{ route('calculate.body.result', $match->id) }}" class="my-3" method="POST">
                                 @csrf
+
                                 <div class="input-group">
 
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="up-team">
+                                    <div class="input-group-prepend col-4 p-0">
+                                        <span class="input-group-text w-100 justify-content-center" id="up-team">
                                             {{ $match->home_team }}
                                         </span>
                                     </div>
 
-                                    <input type="number" name="home" class="form-control" min="0"
-                                        value="{{ Session::get('refresh') ? $match->body_score(0) : '' }}">
+                                    @if (!$match->calculate_body)
+                                        <input type="number" name="home" class="form-control text-center" min="0"
+                                            value="{{ Session::get('refresh') ? $match->body_score(0) : '' }}">
 
-                                    <input type="number" name="away" class="form-control" min="0"
-                                        value="{{ Session::get('refresh') ? $match->body_score(1) : '' }}">
+                                        <input type="number" name="away" class="form-control text-center" min="0"
+                                            value="{{ Session::get('refresh') ? $match->body_score(1) : '' }}">
+                                    @else
+                                        <div class="input-group-prepend col-4 p-0">
+                                            <span class="input-group-text w-100 justify-content-center">
+                                                {{ $match->body_temp_score }}
+                                            </span>
+                                        </div>
+                                    @endif
 
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="down-team">
+                                    <div class="input-group-prepend col-4 p-0">
+                                        <span class="input-group-text w-100 justify-content-center" id="down-team">
                                             {{ $match->away_team }}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div class="d-flex">
+                                @if (!$match->calculate_body)
+                                    <div class="d-flex">
 
-                                    <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
+                                        <button class="btn btn-sm btn-info mt-3 mr-2"> Refresh </button>
 
-                                    @if (!$match->calculate_body && $match->body_temp_score && Session::get('refresh'))
-                                        <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
-                                            data-url="{{ route('ballone.calculate.body.result', $match->id) }}"
-                                        >
-                                            Done
-                                        </a>
-                                    @endif
-                                </div>
+                                        @if ( $match->body_temp_score && Session::get('refresh') )
+                                            <a href="javascript:void(0)" class="btn btn-sm btn-success mt-3 result-done"
+                                                data-url="{{ route('ballone.calculate.body.result', $match->id) }}"
+                                            >
+                                                Done
+                                            </a>
+                                        @endif
+
+                                    </div>
+                                @endif
                             </form>
 
                         </div>
@@ -104,7 +117,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <h5> Body Fees </h5>
-                                <h5 class="text-danger" id="error-message">  </h5>
+                                <h5 class="text-danger" id="error-message"> </h5>
                             </div>
                             <table class="table mt-3" id="results">
 
@@ -136,7 +149,7 @@
 
                                                 <td> : </td>
 
-                                                @if (Session::get('refresh'))
+                                                @if ( Session::get('refresh') || $match->calculate_body == 1 )
                                                     <form action="{{ route('manual.body.result', $fee->result->id) }}"
                                                         class="my-3" method="POST">
                                                         @csrf
@@ -185,4 +198,3 @@
     <x-ballone.result-manual></x-ballone.result-manual>
 
 @endsection
-
