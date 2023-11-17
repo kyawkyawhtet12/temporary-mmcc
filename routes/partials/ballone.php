@@ -68,8 +68,8 @@ Route::post('ballone-add-result/manual/maung/{id}', 'Ballone\AddResultController
 
 // Match Report
 Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');
-Route::get('match/body-report/{id}', 'Ballone\ReportDetailController@bodyReport')->name('match.body-report');
-Route::get('match/maung-report/{id}', 'Ballone\ReportDetailController@maungReport')->name('match.maung-report');
+Route::get('match/body-report/{id}/{fee_id}', 'Ballone\ReportDetailController@bodyReport')->name('match.body-report');
+Route::get('match/maung-report/{id}/{fee_id}', 'Ballone\ReportDetailController@maungReport')->name('match.maung-report');
 
 Route::get('football/body-detail/{id}', 'Ballone\ReportDetailController@bodyDetail')->name('match.body.detail.report');
 Route::get('football/maung-detail/{id}', 'Ballone\ReportDetailController@maungDetail')->name('match.maung.detail.report');

@@ -101,7 +101,7 @@
                                                         <td>{{ $dt->match->round }}</td>
 
                                                         <td>
-                                                            <a href="{{ route('match.maung-report', $dt->match->id) }}"
+                                                            <a href="{{ route('match.maung-report',  [$dt->match->id, $dt->fee_id]) }}"
                                                                 class="match-detail">
                                                                 {{ $dt->match->match_format }}
                                                             </a>

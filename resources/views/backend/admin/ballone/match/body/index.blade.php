@@ -97,7 +97,7 @@
                                                     <tr class="{{ $dt->match_status }}">
                                                         <td>{{ $dt->match->round }}</td>
                                                         <td>
-                                                            <a href="{{ route('match.body-report', $dt->match->id) }}"
+                                                            <a href="{{ route('match.body-report', [$dt->match->id, $dt->fee_id]) }}"
                                                                 class="match-detail">
 
                                                                 {{ $dt->match->match_format }}

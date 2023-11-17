@@ -25,7 +25,6 @@ class BodyFeesController extends Controller
                                 ->orderBy('football_matches.home_no','asc')
                                 ->orderBy('football_body_fees.created_at', 'desc')
                                 ->paginate(15);
-
         $request->session()->forget(['prev_route','refresh']);
 
         return view('backend.admin.ballone.match.body.index', compact('data'));

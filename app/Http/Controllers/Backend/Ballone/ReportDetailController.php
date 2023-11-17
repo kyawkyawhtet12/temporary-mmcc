@@ -16,13 +16,13 @@ class ReportDetailController extends Controller
 {
     // Body
 
-    public function bodyReport($id)
+    public function bodyReport($id, $fee_id)
     {
         if( strpos( url()->previous(), 'page') ) {
             Session::put("prev_route", url()->previous());
         }
 
-        $body = FootballBody::with('user', 'agent', 'bet')->where('match_id', $id)->get();
+        $body = FootballBody::with('user', 'agent', 'bet')->where('match_id', $id)->where('fee_id', $fee_id)->get();
         return view('backend.admin.ballone.match.body.detail', compact('body'));
     }
 
@@ -42,9 +42,9 @@ class ReportDetailController extends Controller
 
     // Maung
 
-    public function maungReport($id)
+    public function maungReport($id, $fee_id)
     {
-        $maung = FootballMaung::with('user', 'agent', 'bet', 'bet.bet')->where('match_id', $id)->get();
+        $maung = FootballMaung::with('user', 'agent', 'bet', 'bet.bet')->where('match_id', $id)->where('fee_id', $fee_id)->get();
         return view('backend.admin.ballone.match.maung.detail', compact('maung'));
     }
 
