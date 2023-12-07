@@ -19,11 +19,15 @@ class TwoWinnerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = TwoWinner::with('twoLuckyDraw', 'twoLuckyNumber', 'twoLuckyDraw.agent', 'twoLuckyNumber.two_digit')->latest();
+            $query = TwoWinner::with('twoLuckyDraw.agent', 'twoLuckyNumber.two_digit')->latest();
+
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('user', function ($digit) {
                         return $digit->twoLuckyDraw->user?->name;
+                    })
+                    ->addColumn('user_id', function ($digit) {
+                        return $digit->twoLuckyDraw->user?->user_id;
                     })
                     ->addColumn('agent', function ($digit) {
                         if ($digit->twoLuckyDraw->agent) {
@@ -49,12 +53,22 @@ class TwoWinnerController extends Controller
                         return date("F j, Y", strtotime($digit->twoLuckyDraw->created_at));
                     })
                     ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $instance->whereHas('twoLuckyDraw', function ($w) use ($request) {
-                                $w->whereHas('user', function ($w) use ($request) {
-                                    $search = $request->get('search');
+
+                        $search = $request->get('search');
+
+                        if (!empty($search)) {
+
+                            $instance->whereHas('twoLuckyDraw', function ($w) use ($search) {
+
+                                $w->whereHas('user', function ($w) use ($search) {
+                                    $w->where('name', 'LIKE', "%$search%");
+                                    $w->orWhere('user_id', 'LIKE', "%$search%");
+                                });
+
+                                $w->orWhereHas('agent', function ($w) use ($search) {
                                     $w->where('name', 'LIKE', "%$search%");
                                 });
+
                             });
                         }
                     })

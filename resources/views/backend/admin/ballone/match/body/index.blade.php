@@ -159,12 +159,15 @@
                                                         <td>
                                                             @if (!$dt->match->calculate_body && $dt->match->type == 1)
                                                                 <a href="javascript:void(0)" class="editMatch mr-2"
-                                                                data-id=" {{ $dt->match->id }}"
-                                                                data-home="{{ $dt->match->home_team }}"
-                                                                data-away="{{ $dt->match->away_team }}"
+                                                                    data-id=" {{ $dt->match->id }}"
+                                                                    data-home="{{ $dt->match->home_team }}"
+                                                                    data-away="{{ $dt->match->away_team }}"
+                                                                    data-up_team= "{{ $dt->match->bodyfees->up_team }}"
+                                                                    data-body-fees="{{ $dt->match->bodyfees->body }}"
+                                                                    data-goal-fees="{{ $dt->match->bodyfees->goals }}"
                                                                 >
-                                                                <i class="fa fa-edit text-inverse m-r-10"></i>
-                                                            </a>
+                                                                    <i class="fa fa-edit text-inverse m-r-10"></i>
+                                                                </a>
                                                             @endif
                                                         </td>
 
@@ -284,7 +287,7 @@
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
-    <script src="{{ asset("assets/js/ballone.js") }}"></script>
+    <script src="{{ asset('assets/js/ballone.js') }}"></script>
     <script
         src="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}">
     </script>
@@ -301,13 +304,33 @@
             // var table = $('#matches').DataTable();
 
             $('body').on('click', '.editMatch', function() {
+
                 $('#modelHeading').html("Add Body Fees");
                 $('#matchForm').trigger("reset");
                 $("#error-message").text('');
+
+                let {
+                    id,
+                    home,
+                    away,
+                    up_team,
+                    bodyFees,
+                    goalFees
+                } = $(this).data();
+
+                // console.log(id, home, away, up_team, bodyFees, goalFees);
+
+                $('form #match_id').val(id);
+                $("form #home").text(home);
+                $("form #away").text(away);
+
+                let upteamID = (up_team == 1) ? "form #home_body" : "form #away_body";
+
+                $(upteamID).val(bodyFees);
+
+                $("form #goals").val(goalFees);
+
                 $('#ajaxModel').modal('show');
-                $('#match_id').val($(this).data('id'));
-                $("form #home").text($(this).data('home'));
-                $("form #away").text($(this).data('away'));
             });
 
             $('#saveBtn').click(function(e) {
@@ -321,15 +344,15 @@
                     dataType: 'json',
                     success: function(data) {
 
-                        if(data.error){
+                        if (data.error) {
                             $("#error-message").text(data.error);
                         }
 
-                       if(data.success){
+                        if (data.success) {
                             $('#matchForm').trigger("reset");
                             $('#ajaxModel').modal('hide');
                             location.reload();
-                       }
+                        }
                     },
                     error: function(data) {
                         console.log('Error:', data);

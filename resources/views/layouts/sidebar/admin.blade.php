@@ -117,11 +117,13 @@
                                 </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('3d.lucky-number.index') }}" class="nav-link"
                                     data-key="t-lucky-draws"> 3D Lottery Setting </a>
                             </li>
+
+                            @if( is_admin())
+
                             <li class="nav-item">
                                 <a href="{{ route('3d.limit.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Amount

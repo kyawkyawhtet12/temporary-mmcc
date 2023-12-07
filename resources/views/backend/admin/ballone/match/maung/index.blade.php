@@ -162,6 +162,9 @@
                                                                     data-id=" {{ $dt->match->id }}"
                                                                     data-home="{{ $dt->match->home_team }}"
                                                                     data-away="{{ $dt->match->away_team }}"
+                                                                    data-up_team= "{{ $dt->match->maungfees->up_team }}"
+                                                                    data-body-fees="{{ $dt->match->maungfees->body }}"
+                                                                    data-goal-fees="{{ $dt->match->maungfees->goals }}"
                                                                     >
                                                                     <i class="fa fa-edit text-inverse m-r-10"></i>
                                                                 </a>
@@ -241,9 +244,11 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="">Body</span>
                                     </div>
+
                                     <input name="home_body" id="home_body" type="text" class="form-control fees">
 
                                     <input name="away_body" id="away_body" type="text" class="form-control fees">
+
                                 </div>
                             </div>
                         </div>
@@ -293,13 +298,26 @@
             // var table = $('#matches').DataTable();
 
             $('body').on('click', '.editMatch', function() {
+
                 $('#modelHeading').html("Add Maung Fees");
                 $('#matchForm').trigger("reset");
                 $("#error-message").text('');
+
+                let {id, home, away, up_team, bodyFees, goalFees } = $(this).data();
+
+                // console.log(id, home, away, up_team, bodyFees, goalFees);
+
+                $('form #match_id').val(id);
+                $("form #home").text(home);
+                $("form #away").text(away);
+
+                let upteamID =  (up_team == 1) ? "form #home_body" : "form #away_body" ;
+
+                $(upteamID).val(bodyFees);
+
+                $("form #goals").val(goalFees);
+
                 $('#ajaxModel').modal('show');
-                $('#match_id').val($(this).data('id'));
-                $("form #home").text($(this).data('home'));
-                $("form #away").text($(this).data('away'));
             });
 
             $('#saveBtn').click(function(e) {
