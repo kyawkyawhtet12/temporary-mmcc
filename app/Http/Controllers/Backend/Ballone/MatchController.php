@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use App\Models\FootballMatchStatus;
 use App\Http\Controllers\Controller;
 use App\Services\Ballone\RefundService;
 
@@ -145,6 +146,28 @@ class MatchController extends Controller
             (new RefundService())->handle($match);
 
             return response()->json(['success' => 'Match Refund successfully.']);
+        });
+
+    }
+
+    public function close($id, $type)
+    {
+        $match = FootballMatch::find($id);
+
+        if (!$match) {
+            return response()->json('error');
+        }
+
+        DB::transaction(function () use ($match, $type) {
+
+            FootballMatchStatus::updateOrCreate([
+                'match_id' => $match->id
+            ],[
+                'all_close' => ($type == 'open') ? 0 : 1,
+                'admin_id' => auth()->id()
+            ]);
+
+            return response()->json(['success' => 'Match closed successfully.']);
         });
 
     }

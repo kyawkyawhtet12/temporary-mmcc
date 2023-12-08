@@ -1,46 +1,5 @@
 @extends('layouts.master')
 
-@section('css')
-    <link
-        href="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <style>
-        #resultForm input.text {
-            height: 30px;
-        }
-
-        .done {
-            background-color: #0ed318 !important;
-        }
-
-        .old {
-            background: rgb(238 236 236) !important
-        }
-
-        .done-old {
-            background-color: #84e388 !important;
-        }
-
-        .time-old {
-            background-color: #fbe376 !important;
-        }
-
-        .refund {
-            background-color: #ffb59c !important;
-        }
-
-        table a.match-detail {
-            color: black !important;
-        }
-
-        .table-bordered th,
-        .table-bordered td {
-            border: 1px solid #e0e0ef !important;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -90,6 +49,7 @@
                                                     <th>Edit Fees</th>
                                                     <th>By</th>
                                                     <th>Action</th>
+                                                    <th>Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -108,7 +68,8 @@
                                                             {{ get_date_time_format($dt->match) }}
                                                         </td>
 
-                                                        <td>{{ $dt->match->calculate_body ? $dt->match->body_temp_score : '' }}
+                                                        <td>
+                                                            {{ $dt->match->calculate_body ? $dt->match->body_temp_score : '' }}
                                                         </td>
 
                                                         <td>
@@ -158,15 +119,14 @@
 
                                                         <td>
                                                             @if (!$dt->match->calculate_body && $dt->match->type == 1)
-                                                                <a href="javascript:void(0)" class="editMatch mr-2"
+                                                                <a href="javascript:void(0)" class="editBodyFees mr-2"
                                                                     data-id=" {{ $dt->match->id }}"
                                                                     data-home="{{ $dt->match->home_team }}"
                                                                     data-away="{{ $dt->match->away_team }}"
                                                                     data-up_team= "{{ $dt->match->bodyfees->up_team }}"
                                                                     data-body-fees="{{ $dt->match->bodyfees->body }}"
-                                                                    data-goal-fees="{{ $dt->match->bodyfees->goals }}"
-                                                                >
-                                                                    <i class="fa fa-edit text-inverse m-r-10"></i>
+                                                                    data-goal-fees="{{ $dt->match->bodyfees->goals }}">
+                                                                    <i class="fa fa-edit"></i>
                                                                 </a>
                                                             @endif
                                                         </td>
@@ -176,24 +136,41 @@
                                                         </td>
 
                                                         <td>
-                                                            <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
-                                                                class="text-success">
-                                                                <i class="fa fa-edit text-success m-1"></i>
-                                                            </a>
-
-                                                            @if ($dt->match->bodies_count == 0 && $dt->match->maungs_count == 0 && $dt->match->type == 1)
-                                                                <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                    data-id="{{ $dt->match->id }}"
-                                                                    data-original-title="Delete" class="deleteMatch mr-2">
-                                                                    <i class="fa fa-trash text-danger m-1"></i></a>
-                                                            @endif
-
-                                                            @if (!$dt->match->score && $dt->match->type == 1)
-                                                                <a href="javascript:void(0)" data-toggle="tooltip"
-                                                                    data-id="{{ $dt->match->id }}"
-                                                                    data-original-title="Refund" class="cancelMatch">
-                                                                    <i class="far fa-times-circle text-danger m-1"></i>
+                                                            @if ($dt->match->type == 1)
+                                                                <a href="{{ route('ballone.match.edit', $dt->match->id) }}"
+                                                                    class="text-success">
+                                                                    <i class="fa fa-edit text-success m-1"></i>
                                                                 </a>
+
+                                                                @if ($dt->match->check_delete())
+                                                                    <a href="javascript:void(0)"
+                                                                        data-id="{{ $dt->match->id }}" class="deleteMatch">
+                                                                        <i class="fa fa-trash text-danger m-1"></i></a>
+                                                                @endif
+
+                                                                @if (!$dt->match->score && $dt->match->type == 1)
+                                                                    <a href="javascript:void(0)"
+                                                                        data-id="{{ $dt->match->id }}" class="cancelMatch">
+                                                                        <i class="far fa-times-circle text-danger m-1"></i>
+                                                                    </a>
+                                                                @endif
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            @if ($dt->match->type == 1)
+                                                                @if (!$dt->match->matchStatus?->all_close)
+                                                                    <a href="javascript:void(0)"
+                                                                        data-id=" {{ $dt->match->id }}" data-type="close"
+                                                                        class="closeMatch text-danger">
+                                                                        <i class="fa fa-power-off m-2"></i> Close
+                                                                    </a>
+                                                                @else
+                                                                    <a href="javascript:void(0)"
+                                                                        data-id=" {{ $dt->match->id }}" data-type="open"
+                                                                        class="closeMatch text-info">
+                                                                        <i class="fa fa-power-off m-2"></i> Open
+                                                                    </a>
+                                                                @endif
                                                             @endif
                                                         </td>
                                                     </tr>
@@ -218,216 +195,6 @@
         </div>
     </div>
 
-    <div class="modal fade" id="ajaxModel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modelHeading"></h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
-                    <form id="matchForm" name="matchForm" class="form-horizontal">
-                        <input type="hidden" name="match_id" id="match_id">
+    @include('backend.admin.ballone.match.partials.fees_action')
 
-                        <div class="d-flex justify-content-between" style="width:70%;margin:0 auto">
-                            <h5 id="home"> Arsenal </h5>
-                            <h5 id="score"> Vs </h5>
-                            <h5 id="away"> Liverpool </h5>
-                        </div>
-
-                        <input type="hidden" name="type" id="type" value="0">
-
-                        <br>
-
-                        <div class="col-12 editBet">
-                            <div class="input-group mb-3">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="">Body</span>
-                                    </div>
-                                    <input name="home_body" id="home_body" type="text" class="form-control fees">
-
-                                    <input name="away_body" id="away_body" type="text" class="form-control fees">
-                                </div>
-                            </div>
-                        </div>
-
-                        <br>
-
-                        <div class="col-12 editBet">
-                            <div class="input-group mb-3">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">Goals</span>
-                                    </div>
-                                    <input name="goals" id="goals" type="text" class="form-control fees">
-                                </div>
-                            </div>
-                        </div>
-
-                        <br>
-
-                        <div id="error-box" class="text-center">
-                            <h5 class="text-danger" id="error-message"> </h5>
-                        </div>
-
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-primary" id="saveBtn" value="create">
-                                Save changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
-
-@section('script')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
-    <script src="{{ asset('assets/js/ballone.js') }}"></script>
-    <script
-        src="{{ asset('assets/backend/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js') }}">
-    </script>
-
-    <script>
-        $(document).ready(function() {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // var table = $('#matches').DataTable();
-
-            $('body').on('click', '.editMatch', function() {
-
-                $('#modelHeading').html("Add Body Fees");
-                $('#matchForm').trigger("reset");
-                $("#error-message").text('');
-
-                let {
-                    id,
-                    home,
-                    away,
-                    up_team,
-                    bodyFees,
-                    goalFees
-                } = $(this).data();
-
-                // console.log(id, home, away, up_team, bodyFees, goalFees);
-
-                $('form #match_id').val(id);
-                $("form #home").text(home);
-                $("form #away").text(away);
-
-                let upteamID = (up_team == 1) ? "form #home_body" : "form #away_body";
-
-                $(upteamID).val(bodyFees);
-
-                $("form #goals").val(goalFees);
-
-                $('#ajaxModel').modal('show');
-            });
-
-            $('#saveBtn').click(function(e) {
-                e.preventDefault();
-                $(this).html('Sending..');
-                $("#error-message").text('');
-                $.ajax({
-                    data: $('#matchForm').serialize(),
-                    url: "{{ route('ballone.body.store') }}",
-                    type: "POST",
-                    dataType: 'json',
-                    success: function(data) {
-
-                        if (data.error) {
-                            $("#error-message").text(data.error);
-                        }
-
-                        if (data.success) {
-                            $('#matchForm').trigger("reset");
-                            $('#ajaxModel').modal('hide');
-                            location.reload();
-                        }
-                    },
-                    error: function(data) {
-                        console.log('Error:', data);
-                        $('#saveBtn').html('Save Changes');
-                    }
-                });
-            });
-
-        });
-
-        $('body').on('click', '.deleteMatch', function() {
-
-            let id = $(this).attr('data-id');
-
-            Swal.fire({
-                    text: "Are you sure to delete match ?",
-                    icon: "info",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                })
-                .then(function(e) {
-                    if (e.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('ballone.match.store') }}" + '/' + id,
-                            method: 'DELETE',
-                        }).done(function(res) {
-                            Swal.fire({
-                                text: "အောင်မြင်ပါသည်",
-                                icon: "success",
-                            }).then((e) => {
-                                // table.draw();
-                                location.reload();
-                            })
-                        })
-                    }
-                });
-        });
-
-        $('body').on('click', '.cancelMatch', function() {
-
-            let id = $(this).attr('data-id');
-
-            Swal.fire({
-                    text: "Are you sure to cancel match and make refund ?",
-                    icon: "info",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                })
-                .then(function(e) {
-                    if (e.isConfirmed) {
-                        $.ajax({
-                            url: `/admin/ballone/match/refund/${id}`,
-                            method: 'POST',
-                        }).done(function(res) {
-                            if (res == 'error') {
-                                Swal.fire({
-                                    text: "something is wrong.",
-                                    icon: "error",
-                                })
-                            } else {
-                                Swal.fire({
-                                    text: "အောင်မြင်ပါသည်",
-                                    icon: "success",
-                                }).then((e) => {
-                                    // table.draw();
-                                    location.reload();
-                                })
-                            }
-                        })
-                    }
-                });
-        });
-    </script>
 @endsection

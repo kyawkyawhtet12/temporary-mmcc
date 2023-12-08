@@ -37,6 +37,8 @@ Route::middleware('check_admin')->group(function () {
     Route::post('ballone/body-bet/cancel', 'Ballone\ReportDetailController@bodyCancel')->name('ballone.body.refund');
     Route::post('ballone/maung-bet/cancel/{id}', 'Ballone\ReportDetailController@maungCancel')->name('ballone.maung.refund');
 
+    // Match Close . . all fees close
+    Route::post('ballone/match/close/{id}/{type}', 'Ballone\MatchController@close')->name('ballone.match.close');
 });
 
 

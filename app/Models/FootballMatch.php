@@ -30,6 +30,11 @@ class FootballMatch extends Model
         return $this->belongsTo(League::class, 'league_id');
     }
 
+    public function matchStatus()
+    {
+        return $this->hasOne(FootballMatchStatus::class, 'match_id');
+    }
+
     //
 
     public function bodyfees()
@@ -118,5 +123,15 @@ class FootballMatch extends Model
     public static function getTempScore($score)
     {
         return array_pad( explode("-", $score) , 2, '');
+    }
+
+    public function check_active()
+    {
+        return ( $this->date_time < now() || $this->matchStatus?->all_close ) ;
+    }
+
+    public function check_delete()
+    {
+        return ($this->bodies_count == 0 && $this->maungs_count == 0 && $this->type == 1);
     }
 }

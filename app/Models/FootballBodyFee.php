@@ -53,7 +53,7 @@ class FootballBodyFee extends Model
             return "refund";
         }
 
-        if( $this->match->date_time < now() )
+        if( $this->match->check_active() )
         {
             return "time-old";
         }

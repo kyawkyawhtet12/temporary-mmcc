@@ -113,6 +113,8 @@ class MaungFeesController extends Controller
                             'other'   => ($request->other && array_key_exists($key, $request->other)) ? $request->other[$key] : 0
                         ]);
 
+                        $match->matchStatus()->create(['admin_id' => Auth::id()]);
+
                         $bodyFees = $match->bodyfees()->create(['by' => Auth::id()]);
 
                         $maungFees = $match->maungfees()->create([
