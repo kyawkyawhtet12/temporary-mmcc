@@ -6,28 +6,19 @@ class ResultManualService
 {
     public function handle($request, $result)
     {
-        if( $result->body_error){
-            $request->validate([
-                'home' => 'required|numeric',
-                'away' => 'required|numeric'
-            ]);
 
-            $result->update([
-                'home' => $request->home,
-                'away' => $request->away
-            ]);
-        }
+        $request->validate([
+            'home' => 'required|numeric',
+            'away' => 'required|numeric',
+            'over'  => 'required|numeric',
+            'under' => 'required|numeric'
+        ]);
 
-        if( $result->goal_error){
-            $request->validate([
-                'over'  => 'required|numeric',
-                'under' => 'required|numeric'
-            ]);
-
-            $result->update([
-                'over'  => $request->over,
-                'under' => $request->under
-            ]);
-        }
+        $result->update([
+            'home' => $request->home,
+            'away' => $request->away,
+            'over'  => $request->over,
+            'under' => $request->under
+        ]);
     }
 }

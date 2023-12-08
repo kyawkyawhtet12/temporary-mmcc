@@ -72,7 +72,7 @@
                                         <div class="col-sm-6">
                                             <label for="name" class="control-label">Date</label>
                                             <div>
-                                                <input type="date" id="date" class="form-control" name="date[]"
+                                                <input type="date" id="date" class="form-control" name="date[]" value="{{ date('Y-m-d') }}"
                                                     required>
                                             </div>
                                         </div>
@@ -192,7 +192,7 @@
                                             <div class="col-sm-6">
                                                 <label for="name" class="control-label">Date</label>
                                                 <div>
-                                                    <input type="date" id="date" class="form-control"
+                                                    <input type="date" id="date" class="form-control" value="{{ date('Y-m-d') }}"
                                                         name="date[]" required>
                                                 </div>
                                             </div>

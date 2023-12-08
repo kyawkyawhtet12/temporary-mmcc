@@ -10,7 +10,9 @@ trait BalloneFeesResult
 
         $value = $this->get_result_value($type);
 
-        return ($error) ? $this->input_form($type, $value) : $value;
+        // return ($error) ? $this->input_form($type, $value) : $value;
+
+        return $this->input_form($type, $value);
     }
 
     public function get_result_value($type)
@@ -32,8 +34,9 @@ trait BalloneFeesResult
 
     public function check_button()
     {
+        return "<button type='submit' class='btn btn-success btn-sm'> Change </button>";
+
         if( $this->body_error || $this->goal_error ){
-            return "<button type='submit' class='btn btn-success btn-sm'> Refresh </button>";
         }
 
         return "";
