@@ -13,7 +13,7 @@ class FootballMaung extends Model
     protected $guarded = [];
 
     // Status
-    // 0 - Pending , 1 - Win , 2 - Lose ,
+    // 0 - Pending , 1 - Win , 2 - Lose , 3 - Draw , 4 - Cancel
     // Refund 0 - false , 1 - true
 
     public function match()

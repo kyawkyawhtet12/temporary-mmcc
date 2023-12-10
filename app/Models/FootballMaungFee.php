@@ -11,6 +11,8 @@ class FootballMaungFee extends Model
 
     protected $guarded = [];
 
+    protected $appends = [ 'match_format' ];
+
     public function match()
     {
         return $this->belongsTo(FootballMatch::class, 'match_id');
@@ -55,6 +57,11 @@ class FootballMaungFee extends Model
         }
     }
 
+    public function getMatchFormatAttribute()
+    {
+        return $this->match->match_format;
+    }
+    
     public function get_result($result)
     {
         return ( $this->match->calculate_maung ) ? check_plus_format($result) : '-' ;

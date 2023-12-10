@@ -33,7 +33,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.css">
 
     @yield('css')
@@ -60,21 +61,21 @@
                         </button>
 
                         <?php
-
-                            $prev_route = url()->previous();
-
-                            if( strpos(request()->url(), 'ballone-add-result/maung') ){
-                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/maung';
-                            }
-
-                            if( strpos(request()->url(), 'ballone-add-result/body') ){
-                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
-                            }
-
-                            if( strpos(request()->url(), 'body-report') ){
-                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
-                            }
-
+                        
+                        $prev_route = url()->previous();
+                        
+                        if (strpos(request()->url(), 'ballone-add-result/maung')) {
+                            $prev_route = Session::get('prev_route') ?? '/admin/ballone/maung';
+                        }
+                        
+                        if (strpos(request()->url(), 'ballone-add-result/body')) {
+                            $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
+                        }
+                        
+                        if (strpos(request()->url(), 'body-report')) {
+                            $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
+                        }
+                        
                         ?>
 
                         <a class="btn btn-sm btn-info ms-5 px-3" href="{{ $prev_route }}">
@@ -209,7 +210,7 @@
                 "progressBar": true,
                 "showDuration": "300",
                 "closeDuration": "100",
-                "timeOut" : "3000",
+                "timeOut": "3000",
                 "showEasing": "swing",
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",

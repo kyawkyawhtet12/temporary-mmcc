@@ -29,16 +29,11 @@ trait BalloneFeesResult
 
     public function input_form($name, $value)
     {
-        return "<input type='text' name='$name' value='$value' class='form-control' required>";
+        return "<input type='text' name='$name' value='$value' class='form-control result-input' required>";
     }
 
     public function check_button()
     {
-        return "<button type='submit' class='btn btn-success btn-sm'> Change </button>";
-
-        if( $this->body_error || $this->goal_error ){
-        }
-
-        return "";
+        return "<button type='submit' class='btn btn-primary btn-sm submit' disabled> Change </button>";
     }
 }

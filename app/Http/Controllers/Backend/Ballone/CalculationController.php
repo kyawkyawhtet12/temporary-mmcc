@@ -30,14 +30,14 @@ class CalculationController extends Controller
 
     public function maung($id, MaungService $maungService)
     {
-        $match = FootballMatch::with('maungs')->findOrFail($id);
+        $match = FootballMatch::with('pendingMaungs')->findOrFail($id);
 
         if( $match->calculate_maung == 1 ){
             return response()->json(['error' => "Calculation is already done." ]);
         }
 
         DB::transaction(function () use ($match, $maungService) {
-            $maungService->handle($match->maungs);
+            $maungService->handle($match->pendingMaungs);
             $match->update([ 'score' => $match->maung_temp_score , 'calculate_maung' => 1 ]);
         });
 

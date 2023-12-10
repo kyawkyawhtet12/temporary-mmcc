@@ -44,7 +44,7 @@
                         aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form id="feesForm" name="feesForm" class="form-horizontal" action="" >
+                <form id="feesForm" name="feesForm" class="form-horizontal" action="">
 
                     <input type="hidden" name="match_id" id="match_id">
 
@@ -110,18 +110,16 @@
     <script>
         $(document).ready(function() {
 
-            $('body').on('click', '.editMaungFees', function() {
+            $('body').on('click', '.editFees', function() {
 
-                $('#modelHeading').html("Edit Maung Fees");
-                $('#feesForm').attr("action", "{{ route('ballone.maung.store') }}");
+                let type = $(this).data("type");
 
-                feesModal($(this).data());
-            });
+                let title = (type == 'body') ? "Edit Body Fees" : "Edit Maung Fees";
+                let route = (type == 'body') ? "{{ route('ballone.body.store') }}" :
+                    "{{ route('ballone.maung.store') }}";
 
-            $('body').on('click', '.editBodyFees', function() {
-
-                $('#modelHeading').html("Edit Body Fees");
-                $('#feesForm').attr("action", "{{ route('ballone.body.store') }}");
+                $('#modelHeading').html(title);
+                $('#feesForm').attr("action", route);
 
                 feesModal($(this).data());
             });
@@ -139,8 +137,6 @@
                     bodyFees,
                     goalFees
                 } = data;
-
-                // console.log(id, home, away, up_team, bodyFees, goalFees);
 
                 $('form #match_id').val(id);
                 $("form #home").text(home);
@@ -188,6 +184,7 @@
             });
 
         });
+
         // match action
 
         $('body').on('click', '.deleteMatch', function() {
@@ -223,6 +220,7 @@
         $('body').on('click', '.cancelMatch', function() {
 
             let id = $(this).attr('data-id');
+            let type = $(this).data('type');
 
             Swal.fire({
                     text: "Are you sure to cancel match and make refund ?",
@@ -235,7 +233,7 @@
                 .then(function(e) {
                     if (e.isConfirmed) {
                         $.ajax({
-                            url: `/admin/ballone/match/refund/${id}`,
+                            url: `/admin/ballone/match/refund/${type}/${id}`,
                             method: 'POST',
                         }).done(function(res) {
                             if (res == 'error') {
@@ -259,11 +257,14 @@
 
         $('body').on('click', '.closeMatch', function() {
 
-            let id = $(this).attr('data-id');
-            let type = $(this).attr('data-type');
+            let {
+                id,
+                type,
+                status
+            } = $(this).data();
 
             Swal.fire({
-                    text: `Are you sure to ${type} this match ?`,
+                    text: `Are you sure to ${status} this match ?`,
                     icon: "info",
                     type: 'warning',
                     showCancelButton: true,
@@ -273,7 +274,7 @@
                 .then(function(e) {
                     if (e.isConfirmed) {
                         $.ajax({
-                            url: `/admin/ballone/match/close/${id}/${type}`,
+                            url: `/admin/ballone/match/${type}/${id}/${status}`,
                             method: 'POST',
                         }).done(function(res) {
                             if (res == 'error') {

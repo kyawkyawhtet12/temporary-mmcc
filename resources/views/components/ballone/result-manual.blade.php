@@ -4,8 +4,6 @@
 
             $('body').on('click', '.result-done', function() {
 
-                let url = $(this).data('url');
-
                 Swal.fire({
                         text: "Are you sure ?",
                         icon: "info",
@@ -19,18 +17,18 @@
                     .then(function(e) {
                         if (e.isConfirmed) {
                             $.ajax({
-                                url: url,
+                                url: $(this).data('url'),
                                 type: "POST",
                             }).done(function(res) {
 
-                                if( res.error ){
+                                if (res.error) {
                                     Swal.fire({
                                         text: res.error,
                                         icon: "error",
                                     }).then((e) => {
                                         location.reload();
                                     });
-                                }else{
+                                } else {
                                     Swal.fire({
                                         text: "အောင်မြင်ပါသည်",
                                         icon: "success",
@@ -44,39 +42,78 @@
             });
 
 
-            $("#results input").on("keypress", function(e) {
+            $(".result-input").on("input", function(e) {
+                let $form = $(this).closest("form");
+                validationForm($form);
+            });
 
-                $("#error-message").text('');
+            $('body').on('submit', '#results form', function(e) {
+                e.preventDefault();
 
-                let num = $(this).val();
+                if (!validationForm($(this))) {
 
-                let length = num.length;
+                    $("#results form .submit").prop('disabled', true);
 
-                let code = String.fromCharCode(e.keyCode);
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: "POST",
+                        data: $(this).serialize()
+                    }).done(function(res) {
 
-                let message = `* please add first (+) or (-) to calculate win or lose.`;
+                        if (res.success) {
+                            toastr.success(res.success);
+                        } else {
+                            toastr.error("Error !");
+                        }
 
-                if (length == 0 && code.match(/^[^0 ^+ ^-]/g)) {
-                    $("#error-message").text(message);
-                    return false;
+                    })
                 }
-
-                if (length > 0 && !(/[+-]/).test(num)) {
-                    $("#error-message").text(message);
-                    return false;
-                }
-
-                if (length > 0 && !(/[0-9]/).test(num) && code == '0') return false;
-
-                if (length > 0 && code.match(/^[^0-9]/g)) return false;
-
-                if (length >= 3 && code != '0') return false;
-
-                if (length >= 4) return false;
 
             });
 
+
+            function validationForm(form) {
+                $("#error-message").text('');
+
+                let formError = false;
+
+                // let regexFormat = /^[-+]?[0-9]+$/;
+
+                let regexFormat = /^0$|^[+-](?!0\d)\d+$/;
+
+                let $submitButton = form.find('.submit');
+
+                let input_array = ['home', 'away', 'over', 'under'];
+
+                let message =
+                    `* please fill data correctly. ( Example Format => +50 (or) -50 )`;
+
+                $.each(input_array, function(index, value) {
+
+                    let inputForm = form.find(`input[name='${value}']`);
+
+                    let inputValue = inputForm.val().trim();
+
+                    let number = parseInt(inputValue, 10);
+
+                    let isValid = regexFormat.test(inputValue);
+
+                    if (isValid && (number >= -100 && number <= 100)) {
+
+                        inputForm.removeClass('is-invalid');
+
+                    } else {
+                        inputForm.addClass('is-invalid');
+                        formError = true;
+                    }
+
+                });
+
+                $submitButton.prop('disabled', formError);
+
+                return formError;
+            }
+
         });
     </script>
-
 @endsection

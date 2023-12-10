@@ -133,7 +133,7 @@ class MatchController extends Controller
         return response()->json(['success' => 'Match deleted successfully.']);
     }
 
-    public function refund($id)
+    public function refund($type, $id)
     {
         $match = FootballMatch::find($id);
 
@@ -141,16 +141,24 @@ class MatchController extends Controller
             return response()->json('error');
         }
 
-        DB::transaction(function () use ($match) {
+        DB::transaction(function () use ($type, $match) {
 
-            (new RefundService())->handle($match);
+            if( $type == 'body'){
+                (new RefundService())->bodyRefund($match);
+                $match->matchStatus()->update([ 'body_refund' => 1 ]);
+            }
+
+            if( $type == 'maung'){
+                (new RefundService())->maungRefund($match);
+                $match->matchStatus()->update([ 'maung_refund' => 1 ]);
+            }
 
             return response()->json(['success' => 'Match Refund successfully.']);
         });
 
     }
 
-    public function close($id, $type)
+    public function close($type, $id, $status)
     {
         $match = FootballMatch::find($id);
 
@@ -158,18 +166,14 @@ class MatchController extends Controller
             return response()->json('error');
         }
 
-        DB::transaction(function () use ($match, $type) {
+        FootballMatchStatus::updateOrCreate([
+            'match_id' => $match->id
+        ],[
+            'all_close' => ($status == 'open') ? 0 : 1,
+            'admin_id'  => auth()->id()
+        ]);
 
-            FootballMatchStatus::updateOrCreate([
-                'match_id' => $match->id
-            ],[
-                'all_close' => ($type == 'open') ? 0 : 1,
-                'admin_id' => auth()->id()
-            ]);
-
-            return response()->json(['success' => 'Match closed successfully.']);
-        });
-
+        return response()->json(['success' => 'Match closed successfully.']);
     }
 
     public function getClubs($league_id)

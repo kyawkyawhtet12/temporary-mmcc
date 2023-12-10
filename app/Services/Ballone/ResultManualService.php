@@ -6,7 +6,6 @@ class ResultManualService
 {
     public function handle($request, $result)
     {
-
         $request->validate([
             'home' => 'required|numeric',
             'away' => 'required|numeric',

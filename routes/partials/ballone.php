@@ -38,12 +38,12 @@ Route::middleware('check_admin')->group(function () {
     Route::post('ballone/maung-bet/cancel/{id}', 'Ballone\ReportDetailController@maungCancel')->name('ballone.maung.refund');
 
     // Match Close . . all fees close
-    Route::post('ballone/match/close/{id}/{type}', 'Ballone\MatchController@close')->name('ballone.match.close');
+    Route::post('ballone/match/{type}/{id}/{status}', 'Ballone\MatchController@close')->name('ballone.match.close');
 });
 
 
 // Ballone Refund
-Route::post('ballone/match/refund/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');
+Route::post('ballone/match/refund/{type}/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');
 Route::get('ballone/matches-refund', 'Ballone\MatchController@refundHistory')->name('ballone.match.refund.history');
 
 Route::get('matches-history', 'Ballone\MatchController@matchHistory')->name('ballone.match.history');

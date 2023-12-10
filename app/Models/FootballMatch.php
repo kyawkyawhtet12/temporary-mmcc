@@ -11,7 +11,7 @@ class FootballMatch extends Model
 
     protected $guarded = [];
 
-    protected $with = [ 'home' , 'away' ];
+    protected $with = [ 'home' , 'away' , 'matchStatus' ];
 
     // type - 0 Refund
 
@@ -81,6 +81,11 @@ class FootballMatch extends Model
         return $this->hasMany(FootballMaung::class, 'match_id');
     }
 
+    public function pendingMaungs()
+    {
+        return $this->hasMany(FootballMaung::class, 'match_id')->where('status', 0);
+    }
+
     //
 
     public function getMatchFormatAttribute()
@@ -125,13 +130,55 @@ class FootballMatch extends Model
         return array_pad( explode("-", $score) , 2, '');
     }
 
+    public function get_result($type)
+    {
+        $result = $this->calculate_body ? $this->body_temp_score : '' ;
+
+        return $result;
+    }
+
     public function check_active()
     {
         return ( $this->date_time < now() || $this->matchStatus?->all_close ) ;
     }
 
+    public function check_action($type)
+    {
+        return ($type == 'body') ?
+                (!$this->calculate_body && !$this->check_refund('body'))
+            : (!$this->calculate_maung && !$this->check_refund('maung'));
+    }
+
     public function check_delete()
     {
         return ($this->bodies_count == 0 && $this->maungs_count == 0 && $this->type == 1);
+    }
+
+    public function check_refund($type)
+    {
+        return ( $type == 'body') ? $this->matchStatus?->body_refund : $this->matchStatus?->maung_refund;
+    }
+
+    public function getStatus($type = 'all')
+    {
+        $statusAttr = [
+            'body'  =>  $this->matchStatus?->body_close,
+            'maung' =>  $this->matchStatus?->body_close,
+            'all'   =>  $this->matchStatus?->all_close
+        ];
+
+        return ($statusAttr[$type]) ? 'open' : 'close';
+    }
+
+    public function getStatusColor($type = 'all')
+    {
+        $statusAttr = [
+            'body'  =>  $this->matchStatus?->body_close,
+            'maung' =>  $this->matchStatus?->body_close,
+            'all'   =>  $this->matchStatus?->all_close
+        ];
+
+        return ($statusAttr[$type]) ? 'text-info' : 'text-danger';
+
     }
 }

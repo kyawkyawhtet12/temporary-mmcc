@@ -44,7 +44,7 @@ class ReportDetailController extends Controller
 
     public function maungReport($id, $fee_id)
     {
-        $maung = FootballMaung::with('user', 'agent', 'bet', 'bet.bet')->where('match_id', $id)->where('fee_id', $fee_id)->get();
+        $maung = FootballMaung::with('user', 'agent','bet.bet')->where('match_id', $id)->where('fee_id', $fee_id)->get();
         return view('backend.admin.ballone.match.maung.detail', compact('maung'));
     }
 
@@ -57,7 +57,7 @@ class ReportDetailController extends Controller
     public function maungCancel(Request $request)
     {
         $maung = FootballMaung::findOrFail($request->id);
-        (new RefundService())->maungHandle($maung);
+        (new RefundService())->maungMatchRefund($maung);
         return response()->json('success');
     }
 }

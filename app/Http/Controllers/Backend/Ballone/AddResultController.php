@@ -88,8 +88,10 @@ class AddResultController extends Controller
     public function addMaungManual(Request $request, $result_id)
     {
         $result = FootballMaungFeeResult::findOrFail($result_id);
+
         (new ResultManualService())->handle($request, $result);
-        return back();
+
+        return response()->json(['success' => 'successfully done.']);
     }
 
 }

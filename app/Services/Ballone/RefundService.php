@@ -9,14 +9,8 @@ use App\Services\Ballone\MaungService;
 
 class RefundService
 {
-    public function handle($match)
-    {
-        $this->body($match);
-        $this->maung($match);
-        $match->update([ 'type' => 0 ]);
-    }
 
-    protected function body($match)
+    public function bodyRefund($match)
     {
         $bodies = FootballBody::with("user", "bet")->where('match_id', $match->id)->get();
 
@@ -28,16 +22,16 @@ class RefundService
         }
     }
 
-    protected function maung($match)
+    public function maungRefund($match)
     {
         $maungs = FootballMaung::with('user','bet')->where('match_id', $match->id)->get();
 
             foreach ($maungs as $maung) {
-                $this->maungHandle($maung);
+                $this->maungMatchRefund($maung);
             }
     }
 
-    public function maungHandle($maung)
+    public function maungMatchRefund($maung)
     {
         $maung->update(['status' => 4, 'refund' => 1]);
 
