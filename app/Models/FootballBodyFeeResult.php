@@ -17,5 +17,4 @@ class FootballBodyFeeResult extends Model
         return $this->belongsTo(FootballBodyFee::class, 'fee_id');
     }
 
-
 }

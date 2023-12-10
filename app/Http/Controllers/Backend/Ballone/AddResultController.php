@@ -18,11 +18,17 @@ class AddResultController extends Controller
 
     public function body($id)
     {
-        $match = FootballMatch::with('league', 'allBodyFees.result')->findOrFail($id);
+        $match = FootballMatch::findOrFail($id);
+
+        // if( !Session::get("refresh") && $match->calculate_body == 0 ){
+        //     FootballBodyFeeResult::reset($match->allBodyfees);
+        // }
 
         if( strpos( url()->previous(), 'page') ) {
             Session::put("prev_route", url()->previous());
         }
+
+        $match->load('allBodyfees.result');
 
         return view("backend.admin.ballone.match.body.result", compact("match"));
     }
@@ -46,22 +52,20 @@ class AddResultController extends Controller
         return back();
     }
 
-    public function addBodyManual(Request $request, $result_id)
-    {
-        $result = FootballBodyFeeResult::findOrFail($result_id);
-        (new ResultManualService())->handle($request, $result);
-        return back();
-    }
-
     // Maung Result
 
     public function maung($id)
     {
-        $match = FootballMatch::with('league', 'allMaungFees.result')->findOrFail($id);
+        $match = FootballMatch::findOrFail($id);
+
+        // if( !Session::get("refresh") && $match->calculate_maung == 0 ){
+        //     FootballMaungFeeResult::reset($match->allMaungfees);
+        // }
 
         if( strpos( url()->previous(), 'page') ) {
             Session::put("prev_route", url()->previous());
         }
+        $match->load('allMaungfees.result');
 
         return view("backend.admin.ballone.match.maung.result", compact("match"));
     }
@@ -85,9 +89,18 @@ class AddResultController extends Controller
         return back();
     }
 
-    public function addMaungManual(Request $request, $result_id)
+
+
+    // Add Result By Manual Input
+
+
+    public function addManual(Request $request, $result_id)
     {
-        $result = FootballMaungFeeResult::findOrFail($result_id);
+        if($request->type == "body"){
+            $result = FootballBodyFeeResult::findOrFail($result_id);
+        }else{
+            $result = FootballMaungFeeResult::findOrFail($result_id);
+        }
 
         (new ResultManualService())->handle($request, $result);
 

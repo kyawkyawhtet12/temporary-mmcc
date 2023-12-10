@@ -1,14 +1,5 @@
 @extends('layouts.master')
 
-@section('css')
-    <style>
-        #results input {
-            width: 70px !important;
-            padding: 7px 10px !important;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -32,7 +23,7 @@
             <!-- end page title -->
 
             <div class="row d-flex justify-content-center">
-                <div class="col-lg-9">
+                <div class="col-lg-11">
 
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -111,90 +102,10 @@
                 </div>
             </div>
 
-            <div class="row d-flex justify-content-center">
-                <div class="col-lg-9">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <h5> Body Fees </h5>
-                                <h5 class="text-danger" id="error-message"> </h5>
-                            </div>
-                            <table class="table mt-3" id="results">
+            <x-ballone.result-manual type="body" :fees="$match->allBodyFees" :isCalculationDone="$match->calculate_body" />
 
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th> Fees / Goals </th>
-                                        <th> : </th>
-                                        <th> Home </th>
-                                        <th> Away </th>
-                                        <th> Over </th>
-                                        <th> Under </th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    @foreach ($match->allBodyFees as $fee)
-                                        @if ($fee)
-                                            <tr>
-                                                <td>
-                                                    {{ $match->upteam_name($fee->up_team) }}
-                                                </td>
-
-                                                <td>
-                                                    {{ $fee?->body }} / {{ $fee?->goals }}
-                                                </td>
-
-                                                <td> : </td>
-
-                                                @if ( Session::get('refresh') || $match->calculate_body == 1 )
-                                                    <form action="{{ route('manual.body.result', $fee->result->id) }}"
-                                                        class="my-3" method="POST">
-                                                        @csrf
-
-                                                        <td>
-                                                            {!! $fee->percentage_result('home') !!}
-                                                        </td>
-
-                                                        <td>
-                                                            {!! $fee->percentage_result('away') !!}
-                                                        </td>
-
-                                                        <td>
-                                                            {!! $fee->percentage_result('over') !!}
-                                                        </td>
-
-                                                        <td>
-                                                            {!! $fee->percentage_result('under') !!}
-                                                        </td>
-
-                                                        <td>
-                                                            {!! $fee?->result?->check_button() !!}
-                                                        </td>
-
-                                                    </form>
-                                                @else
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td></td>
-                                                @endif
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <x-ballone.result-manual></x-ballone.result-manual>
 
 @endsection

@@ -9,7 +9,10 @@ Route::resource('ballone/match', 'Ballone\MatchController', ['as' => 'ballone'])
 Route::resource('ballone/body', 'Ballone\BodyFeesController', ['as' => 'ballone']);
 Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballone']);
 
+// Route::get('ballone/body/fees/testing', 'Ballone\BodyFeesController@store')->name('ballone.body.fees.add.testing');
+
 // Ballone Match Create With Maung Fees
+
 Route::get('ballone/maung/fees/add', 'Ballone\MaungFeesController@add')->name('ballone.maung.fees.add');
 Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->name('ballone.maung.fees.store');
 
@@ -66,7 +69,7 @@ Route::get('ballone-add-result/maung/{id}', 'Ballone\AddResultController@maung')
 Route::post('ballone-add-result/maung/{id}', 'Ballone\AddResultController@addMaung')->name('calculate.maung.result');
 Route::post('ballone-calculate-result/maung/{id}', 'Ballone\CalculationController@maung')->name('ballone.calculate.maung.result');
 
-Route::post('ballone-add-result/manual/maung/{id}', 'Ballone\AddResultController@addMaungManual')->name('manual.maung.result');
+Route::post('ballone-add-result/manual/{id}', 'Ballone\AddResultController@addManual')->name('manual.add.result');
 
 // Match Report
 Route::get('match/report/{id}', 'Ballone\ReportDetailController@index')->name('match.report');

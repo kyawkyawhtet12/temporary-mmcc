@@ -22,14 +22,11 @@ class MaungService
 
                 $percent =  $result->$type;
 
-                
-
                 $betAmount = $betting->net_amount == 0 ? $betting->amount : $betting->net_amount;
 
-               
-                    $status = 1;
-                    $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
-                
+                $status = 1;
+                $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
+
 
                 if ($percent == 0) {
                     $status = 3;

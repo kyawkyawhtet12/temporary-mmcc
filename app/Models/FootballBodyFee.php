@@ -92,9 +92,4 @@ class FootballBodyFee extends Model
     {
         return ( $this->match->calculate_body ) ? check_plus_format($result) : '-' ;
     }
-
-    public function percentage_result($type)
-    {
-        return $this->result?->check_result($type);
-    }
 }

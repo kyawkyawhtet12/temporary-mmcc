@@ -4,36 +4,15 @@ namespace App\Traits;
 
 trait BalloneFeesResult
 {
-    public function check_result($type)
-    {
-        $error = ( $type == "home" || $type == "away") ? $this->body_error : $this->goal_error;
-
-        $value = $this->get_result_value($type);
-
-        // return ($error) ? $this->input_form($type, $value) : $value;
-
-        return $this->input_form($type, $value);
-    }
-
-    public function get_result_value($type)
+    public function getResult($type)
     {
         $attr = [
             'home'  => check_plus_format($this->home),
             'away'  => check_plus_format($this->away),
             'over'  => check_plus_format($this->over),
-            'under' => check_plus_format($this->under),
+            'under' => check_plus_format($this->under)
         ];
 
-        return $attr[$type];
-    }
-
-    public function input_form($name, $value)
-    {
-        return "<input type='text' name='$name' value='$value' class='form-control result-input' required>";
-    }
-
-    public function check_button()
-    {
-        return "<button type='submit' class='btn btn-primary btn-sm submit' disabled> Change </button>";
+        return $attr[$type] ?? '0';
     }
 }

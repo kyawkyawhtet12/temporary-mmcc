@@ -1,8 +1,83 @@
+@section('css')
+    <style>
+        #results input {
+            /* width: 70px !important; */
+            padding: 7px 10px !important;
+        }
+
+        .resultGroup > * {
+            width: 20% !important;
+        }
+    </style>
+@endsection
+
+<div class="row justify-content-center">
+    <div class="col-lg-11">
+        <div class="card">
+            <div class="card-body  table-responsive">
+                <div class="d-flex justify-content-between">
+                    <h5 class="text-capitalize"> {{ $type }} Fees </h5>
+                    <h5 class="text-danger" id="error-message"> </h5>
+                </div>
+                <table class="table" id="results">
+
+                    <thead>
+                        <tr>
+                            <th width="150px"> </th>
+                            <th width="150px"> Fees / Goals </th>
+                            <th> : </th>
+
+                            <th>
+                                <div class="d-flex gap-3 resultGroup">
+                                    <h5> Home </h5>
+                                    <h5> Away </h5>
+                                    <h5> Over </h5>
+                                    <h5> Under </h5>
+                                    <h5> </h5>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($fees as $key => $fee)
+                            @if ($fee)
+                                <tr>
+                                    <td>
+                                        {{ $fee->up_team_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ $fee?->body }} / {{ $fee?->goals }}
+                                    </td>
+
+                                    <td> : </td>
+
+                                    <td>
+
+                                        <x-ballone.result-manual-form :result="$fee->result" isCalculationDone="{{ $isCalculationDone }}">
+                                            <input type="hidden" name="type" value="{{ $type }}">
+                                        </x-ballone.result-manual-form>
+
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section('script')
     <script>
         $(document).ready(function() {
 
-            $('body').on('click', '.result-done', function() {
+            $('body').on('click', '.result-done', function(e) {
+                e.preventDefault();
+
+                let url = $(this).data("url");
 
                 Swal.fire({
                         text: "Are you sure ?",
@@ -17,7 +92,7 @@
                     .then(function(e) {
                         if (e.isConfirmed) {
                             $.ajax({
-                                url: $(this).data('url'),
+                                url: url,
                                 type: "POST",
                             }).done(function(res) {
 
@@ -42,7 +117,7 @@
             });
 
 
-            $(".result-input").on("input", function(e) {
+            $("#results form input").on("input", function(e) {
                 let $form = $(this).closest("form");
                 validationForm($form);
             });

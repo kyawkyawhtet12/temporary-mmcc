@@ -1,14 +1,5 @@
 @extends('layouts.master')
 
-@section('css')
-    <style>
-        #results input {
-            width: 70px !important;
-            padding: 7px 10px !important;
-        }
-    </style>
-@endsection
-
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -31,8 +22,8 @@
             </div>
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2">
+            <div class="row justify-content-center">
+                <div class="col-lg-11">
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <strong> Success</strong> {{ Session::get('success') }}
@@ -108,89 +99,10 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2">
-                    <div class="card">
-                        <div class="card-body  table-responsive">
-                            <div class="d-flex justify-content-between">
-                                <h5> Maung Fees </h5>
-                                <h5 class="text-danger" id="error-message"> </h5>
-                            </div>
-                            <table class="table" id="results">
+            <x-ballone.result-manual type="maung" :fees="$match->allMaungFees" :isCalculationDone="$match->calculate_maung" />
 
-                                <thead>
-                                    <tr>
-                                        <th> </th>
-                                        <th> Fees / Goals </th>
-                                        <th> : </th>
-
-                                        <th>
-                                            <div class="d-flex gap-3">
-                                                <h5 style="width: 20%"> Home </h5>
-                                                <h5 style="width: 20%"> Away </h5>
-                                                <h5 style="width: 20%"> Over </h5>
-                                                <h5 style="width: 20%"> Under </h5>
-                                                <h5 style="width: 20%"> </h5>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    @foreach ($match->allMaungFees as $key => $fee)
-                                        @if ($fee)
-                                            <tr>
-                                                <td>
-                                                    {{ $match->upteam_name($fee->up_team) }}
-                                                </td>
-                                                <td>
-                                                    {{ $fee?->body }} / {{ $fee?->goals }}
-                                                </td>
-                                                <td> : </td>
-
-                                                <td>
-                                                    @if (Session::get('refresh') || $match->calculate_maung == 1)
-                                                        <form action="{{ route('manual.maung.result', $fee->result->id) }}"
-                                                            class="resultManualForm my-3" method="POST">
-                                                            @csrf
-                                                            <div class="d-flex gap-3">
-
-                                                                <div style="width: 20%">
-                                                                    {!! $fee->percentage_result('home') !!}
-                                                                </div>
-
-                                                                <div style="width: 20%">
-                                                                    {!! $fee->percentage_result('away') !!}
-                                                                </div>
-
-                                                                <div style="width: 20%">
-                                                                    {!! $fee->percentage_result('over') !!}
-                                                                </div>
-
-                                                                <div style="width: 20%">
-                                                                    {!! $fee->percentage_result('under') !!}
-                                                                </div>
-
-                                                                <div style="width: 20%">
-                                                                    {!! $fee?->result?->check_button() !!}
-                                                                </div>
-
-                                                            </div>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <x-ballone.result-manual></x-ballone.result-manual>
+
 @endsection

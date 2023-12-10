@@ -4,9 +4,12 @@ namespace App\Services\Ballone;
 
 use App\Models\FootballMatch;
 
+use function PHPUnit\Framework\isNull;
+
 class FeesValidation
 {
     protected $regex = "/[a-z]/i";
+    protected $regex_format = "/^[1-9][0-9]*$/";
 
     public function handle($request)
     {
@@ -17,7 +20,9 @@ class FeesValidation
             'goals'     => 'required'
         ]);
 
-        if(!$this->check_match($request->match_id)){
+        $match = $request->match_id;
+
+        if(!$this->check_match($match)){
             throw new \Exception("* Match is not found.");
         }
 
@@ -25,7 +30,9 @@ class FeesValidation
             throw new \Exception("* Invalid Body Fees");
         }
 
-        if(!$this->checkFees($request->goals)){
+        $goalFees = $request->goals;
+
+        if(!$this->checkFees($goalFees)){
             throw new \Exception("* Invalid Goal Fees");
         }
     }
@@ -75,9 +82,13 @@ class FeesValidation
 
         list($limit, $percent) = $arr + [];
 
-        $percent = $percent ?: 100;
+        $percent = ($percent === '') ? 100 : $percent;
 
         if(count($arr) != 2){
+            return false;
+        }
+
+        if(!preg_match($this->regex_format, $percent)) {
             return false;
         }
 
