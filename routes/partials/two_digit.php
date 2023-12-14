@@ -13,6 +13,8 @@ Route::middleware('check_admin')->group(function () {
     Route::get('two-thai-lottery', 'EnabledController@twoThaiLotteryStatus')->name('two.thai.changeStatus');
 
     Route::get('/2d-disable', 'TwoDigitDisableController@index')->name('2d.disable');
+    Route::post('/2d-disable', 'TwoDigitDisableController@store')->name('2d.disable.store');
+
     Route::post('two-digits/enabled-all', 'TwoDigitDisableController@changeTwoDigitEnable')->name('twodigits.enabled-all');
     Route::post('two-digits/disabled-all', 'TwoDigitDisableController@changeTwoDigitDisable')->name('twodigits.disabled-all');
     Route::post('two-digits/submit-all', 'TwoDigitDisableController@changeTwoDigitSubmit')->name('twodigits.submit-all');
