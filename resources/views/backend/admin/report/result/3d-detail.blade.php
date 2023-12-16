@@ -45,27 +45,27 @@
                         <div class="tab-pane fade show active" id="thai-1" role="tabpanel"
                             aria-labelledby="pills-home-tab-custom">
                             <div class="icons-list row">
-                                @foreach ($three_digits as $digit)
-                                    <div class="col-sm-6 col-md-4 col-lg-2 align-middle">
-                                        <button type="button" class="btn btn-info btn-rounded btn-icon">
-                                            {{ $digit->number }}
-                                        </button> &nbsp;
-                                        @foreach ($draw as $d)
-                                            @if ($digit->id == $d->three_digit_id)
-                                                <span class="badge badge-success badge-pill">
-                                                    Ks {{ $d->amount }}
-                                                </span>
-                                            @endif
-                                        @endforeach
-                                    </div>
+
+
+
+
+                                @foreach( $draw as $dra )
+
+                                <div class="col-sm-6 col-md-4 col-lg-2 align-middle">
+                                    <button type="button" class="btn btn-info btn-rounded btn-icon">
+                                        {{ sprintf("%03d", $dra->three_digit_id) }}
+                                    </button> &nbsp;
+                                    <span class="badge badge-success badge-pill">
+                                        Ks {{ $dra->amount }}
+                                    </span>
+                                </div>
+
                                 @endforeach
+
                             </div>
 
                             <div class="mt-3">
-                                @php
-                                    $win = $win_betting * $odds;
-                                    $betting = $draw->sum('amount');
-                                @endphp
+
                                 <h5>Winning number : {{ $data->lucky_number->three_digit?->number }}</h5>
                                 <h5>Number betting : {{ $win_betting }}</h5>
                                 <h5>Odds : {{ $odds }}</h5>

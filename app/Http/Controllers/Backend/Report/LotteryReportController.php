@@ -177,7 +177,6 @@ class LotteryReportController extends Controller
 
     public function three_digits_detail(Request $request, $id)
     {
-        $three_digits = ThreeDigit::all();
 
         $data = ThreeDigitSetting::findOrFail($id);
 
@@ -195,10 +194,15 @@ class LotteryReportController extends Controller
                                 ->groupBy('three_digit_id','za')
                                 ->get();
 
-        $agents = Agent::select('id','name')->get();
-        $current_odds = ThreeDigitCompensation::first()->compensate;
-        $odds = count($draw) ? $draw[0]->za : $current_odds;
+                                // return $draw;
 
-        return view('backend.admin.report.result.3d-detail', compact('three_digits', 'data', 'win_betting', 'odds', 'draw', 'agents'));
+        $agents = Agent::select('id','name')->get();
+        $odds = ThreeDigitCompensation::first()->compensate;
+        // $odds = count($draw) ? $draw[0]->za : $current_odds;
+
+        $win = $win_betting * $odds;
+        $betting = $draw->sum("amount");
+
+        return view('backend.admin.report.result.3d-detail', compact( 'data', 'win_betting', 'odds', 'draw', 'agents', 'win', 'betting'));
     }
 }
