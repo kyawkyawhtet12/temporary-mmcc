@@ -7,57 +7,56 @@ use App\Models\Agent;
 use App\Models\TwoDigit;
 use App\Models\LotteryTime;
 use Illuminate\Http\Request;
+use App\Models\TwoDigitClose;
 use App\Models\TwoDigitStatus;
 use Yajra\DataTables\DataTables;
+use App\Models\TwoDigitLimitNumber;
 use App\Http\Controllers\Controller;
 
 class TwoDigitDisableController extends Controller
 {
     public function index(Request $request)
     {
-        $two_digits = TwoDigit::get();
         $agents = Agent::select('id','name')->get();
         $users = User::select('id','name')->get();
         $times = LotteryTime::select("id", "time")->get();
 
-        return view('backend.admin.2d-close.index', compact('two_digits', 'agents', 'users', 'times'));
+        $data = TwoDigitClose::with('limit_numbers','agent','user','time','admin')->whereDate("date", today())->get();
+
+        return view('backend.admin.2d-close.index', compact('agents', 'users', 'times', 'data'));
     }
 
     public function store(Request $request)
     {
-        return $request->all();
+        // return $request->all();
+
+        foreach( $request->agent_id as $agent_id ){
+            $close = TwoDigitClose::updateOrCreate(
+                    [
+                        'agent_id' => $agent_id,
+                        'date'     => $request->date,
+                        'lottery_time_id'  => $request->time_id
+                    ],
+                    [
+                        'admin_id' => auth()->id()
+                    ]
+                );
+
+            foreach( $request->numbers as $number ){
+
+                TwoDigitLimitNumber::updateOrCreate(
+                    [
+                        'two_digit_close_id' => $close->id,
+                        'number'     => $number,
+                    ],
+                    [
+                        'amount' => $request->amount ?: 0
+                    ]
+                );
+            }
+        }
+
+        return back();
     }
 
-    public function changeTwoDigitEnable(Request $request)
-    {
-        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => $request->status,
-            'amount' => 0,
-            'date' => null
-        ]);
-
-        return response()->json('success');
-    }
-
-    public function changeTwoDigitDisable(Request $request)
-    {
-        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => $request->status,
-            'amount' => 0,
-            'date' => $request->date
-        ]);
-
-        return response()->json('success');
-    }
-
-    public function changeTwoDigitSubmit(Request $request)
-    {
-        TwoDigit::whereIn('id', explode(",", $request->ids))->update([
-            'status' => 0,
-            'amount' => $request->amount,
-            'date' => $request->date
-        ]);
-
-        return response()->json('success');
-    }
 }

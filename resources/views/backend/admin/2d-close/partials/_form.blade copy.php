@@ -3,7 +3,9 @@
 
 
         <div class="card">
-
+            <div class="card-header badge-dark text-white">
+                Add Limit Numbers
+            </div>
             <div class="card-body">
 
                 <form action="{{ route('2d.disable.store') }}" method="POST">
@@ -13,7 +15,8 @@
                     <div class="row">
                         <div class="col-md-3">
 
-                            <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
+                            <select name="agent_id[]" id="agent_id" multiple="multiple"
+                                class="3col active form-control">
                                 @foreach ($agents as $agent)
                                     <option value="{{ $agent->id }}"> {{ $agent->name }} </option>
                                 @endforeach
@@ -26,8 +29,7 @@
                                 <option value="all">All</option>
                                 @foreach ($users as $user)
                                     <option value="{{ $user->id }}">
-                                        {{ $user->name }}
-                                    </option>
+                                        {{ $user->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -38,12 +40,11 @@
                         </div>
 
                         <div class="col-md-3">
-                            <select name="time_id" id="time_id" class="form-control">
-                                <option value="" selected>--For All Time --</option>
+                            <select name="time_id[]" id="time_id" multiple="multiple"
+                                class="3col active form-control">
                                 @foreach ($times as $time)
                                     <option value="{{ $time->id }}">
-                                        {{ $time->time }}
-                                    </option>
+                                        {{ $time->time }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -51,21 +52,32 @@
 
                     <div class="row my-4">
                         <div class="col-md-6">
-                            <select name="numbers[]" id="numberSelect" class="form-control" multiple="multiple">
-                                @for ($i = 0; $i < 10; $i++)
-                                    <optgroup label="{{ $i }}">
-                                        @for ($dg = 0; $dg < 10; $dg++)
-                                            <option value="{{ "$i$dg" }}">{{ "$i$dg" }}</option>
-                                        @endfor
-                                    </optgroup>
-                                @endfor
+                            <select name="number_id[]" id="numberSelect" class="3col active form-control"
+                                multiple="multiple">
 
+                                @for ($i = 0; $i < 100; $i++)
+                                    <option>{{ sprintf('%02d', $i) }}</option>
+                                @endfor
                             </select>
 
+                            <select name="" multiple="multiple" class="ms-list-5 jqmsLoaded"
+                                style="display: none;">
+                                <optgroup label="Group 1">
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                </optgroup>
+                                <optgroup label="Group 2">
+                                    <option value="4">Option 4</option>
+                                    <option value="5">Option 5</option>
+                                    <option value="6">Option 6</option>
+                                </optgroup>
+                            </select>
                         </div>
 
                         <div class="col-md-3">
-                            <input type="number" class="form-control p-2" placeholder="Limit Amount" name="amount">
+                            <input type="number" class="form-control p-2" placeholder="Limit Amount"
+                                name="limit_amount">
                         </div>
 
                         <div class="col-md-3">
@@ -114,19 +126,19 @@
                 }
             });
 
-
-
-
             $('#numberSelect').multiselect({
-                columns: 10,
+                columns: 5,
                 placeholder: 'Select Number',
-                selectAll: true,
-                selectGroup: true
+                selectAll: true
             });
 
+            $('#time_id').multiselect({
+                // columns: 3,
+                placeholder: 'Select Time',
+                selectAll: true
+            });
 
-
-            $('.agentSelect').multiselect({
+            $('#agent_id').multiselect({
                 columns: 2,
                 placeholder: 'Select Agent',
                 search: true,
