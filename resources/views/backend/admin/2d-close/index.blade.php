@@ -2,18 +2,18 @@
 
 @section('css')
     <style>
-        @media (min-width: 768px) {
-            /* .col-1 {
-                                                                                                                                                            flex: 0 0 9% !important;
-                                                                                                                                                            max-width: 7% !important;
-                                                                                                                                                        } */
-        }
     </style>
 @endsection
 
 @section('content')
     <div class="page-content">
-        <div class="container-fluid">
+
+        <div class="d-flex justify-content-center align-items-center w-100 vh-100" id="loader">
+            <img src="{{ asset('assets/backend/images/loader.gif') }}" alt="" width="200px">
+        </div>
+
+
+        <div class="container-fluid d-none" id="mainpage">
 
             <!-- start page title -->
             <div class="row">
@@ -36,47 +36,57 @@
 
             <div class="row">
                 <div class="col-12">
+
+                    @if ($data->count())
+                        <div class="mb-3">
+                            <a href="#" class="btn btn-danger deleteLimit" data-id="all">
+                                Delete All
+                            </a>
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="card-header">
+                            <form action="{{ route('2d.disable') }}" method="GET">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="date" class="form-control p-2" placeholder="Date" name="date"
+                                            value="{{ $filtered['date'] }}">
+                                    </div>
 
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <input type="date" class="form-control p-2" placeholder="Date" name="date"
-                                        value="{{ $filtered['date'] }}">
-                                </div>
+                                    <div class="col-md-3">
+                                        <select name="time_id" id="time_id" class="form-control">
+                                            @foreach ($times as $time)
+                                                <option value="{{ $time->id }}"
+                                                    {{ $time->id == $filtered['time_id'] ? 'selected' : '' }}>
+                                                    {{ $time->time }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="col-md-3">
-                                    <select name="time_id" id="time_id" class="form-control">
-                                        @foreach ($times as $time)
-                                            <option value="{{ $time->id }}"
-                                                {{ $time->id == $filtered['time_id'] ? 'selected' : '' }}>
-                                                {{ $time->time }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                    <div class="col-md-4">
+                                        <select name="agent_id[]" id="agent_id" multiple="multiple"
+                                            class="agentSelect form-control">
+                                            @foreach ($agents as $agent)
+                                                <option value="{{ $agent->id }}"
+                                                    {{ in_array($agent->id, $filtered['agents']) ? 'selected' : '' }}>
+                                                    {{ $agent->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="col-md-4">
-                                    <select name="agent_id[]" id="agent_id" multiple="multiple"
-                                        class="agentSelect form-control">
-                                        @foreach ($agents as $agent)
-                                            <option value="{{ $agent->id }}"> {{ $agent->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary"> Filter </button>
 
-                                <div class="col-md-2">
-                                    <input type="submit" class="form-control btn btn-success btn-sm" name="submit"
-                                        value="Filter">
+                                        <a href="{{ route('2d.disable') }}" class="btn btn-warning"> Reset </a>
+                                    </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
 
                         <div class="card-body">
                             <div class="row">
-                                <div class="mb-3">
-                                    <a href="#" class="btn btn-danger deleteLimit" data-id="all"> All Clear </a>
-                                </div>
 
                                 @forelse ($data as $x => $dt)
                                     <div class="col-md-6">
@@ -117,8 +127,6 @@
                                     </div>
                                 @endforelse
 
-
-
                             </div>
                         </div>
                     </div>
@@ -133,6 +141,12 @@
 @push('scripts')
     <script>
         $(function() {
+
+            setTimeout(() => {
+                $("#loader").removeClass('d-flex').addClass('d-none');
+                $("#mainpage").removeClass('d-none');
+            }, 700);
+
             $('body').on('click', '.deleteLimit', function() {
 
                 let id = $(this).data('id');

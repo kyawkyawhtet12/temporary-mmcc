@@ -10,7 +10,7 @@ class TwoDigitLimit extends Model
     use HasFactory;
 
     protected $fillable = [
-        'agent_id', 'user_id', 'date', 'lottery_time_id', 'number' , 'amount' , 'status', 'admin_id'
+        'agent_id', 'user_id', 'date', 'lottery_time_id', 'number' , 'status', 'admin_id'
     ];
 
     public function agent()

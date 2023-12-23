@@ -4,14 +4,9 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\User;
 use App\Models\Agent;
-use App\Models\TwoDigit;
 use App\Models\LotteryTime;
 use Illuminate\Http\Request;
-use App\Models\TwoDigitClose;
 use App\Models\TwoDigitLimit;
-use App\Models\TwoDigitStatus;
-use Yajra\DataTables\DataTables;
-use App\Models\TwoDigitLimitNumber;
 use App\Http\Controllers\Controller;
 
 class TwoDigitDisableController extends Controller
@@ -22,25 +17,35 @@ class TwoDigitDisableController extends Controller
         $users = User::select('id','name')->get();
         $times = LotteryTime::select("id", "time")->get();
 
-        $data = TwoDigitClose::with('limit_numbers','agent','user','time','admin')->whereDate("date", today())->get();
 
-        // $d = TwoDigitLimit::whereDate("date", today())->get()->groupBy(['agent.name','lottery_time_id']);
+        $date = $request->date ?? today()->format('Y-m-d');
+        $time_id = $request->time_id ?? 1;
 
-        $data = TwoDigitLimit::whereDate("date", today())->where('lottery_time_id', 1)->get();
-        // $collect = collect(json_decode($data[0]->number))->sortKeys();
-        // dd($collect);
+        $data = TwoDigitLimit::with('agent')->whereDate("date",$date )->where('lottery_time_id', $time_id)
+                                ->when($request->agent_id, function($query, $agent_id){
+                                    $query->whereIn('agent_id', $agent_id);
+                                })->get();
 
         $filtered = [
-            'time_id' => 1,
-            'date' => today()->format('Y-m-d')
+            'time_id' => $time_id,
+            'date' => $date,
+            'data' => $data,
+            'agents' => $request->agent_id ?? []
         ];
 
-        return view('backend.admin.2d-close.index', compact('agents', 'users', 'times', 'data','filtered'));
+        return view('backend.admin.2d-close.index', compact('agents', 'users', 'times', 'data', 'filtered'));
     }
 
     public function store(Request $request)
     {
         // return $request->all();
+
+        $this->validate($request, [
+            'agent_id' => 'required|array',
+            'numbers' => 'required|array',
+            'time_id' => 'required|array',
+            'date' => 'required',
+        ]);
 
         foreach( $request->numbers as $number ){
             $limit[intval($number)] = $request->amount ?: 0;
@@ -70,16 +75,16 @@ class TwoDigitDisableController extends Controller
             }
 
             
-        }
+        } 
 
-        return back();
+        return back()->with('success', '* successfully added');
     }
 
     public function destroy($id)
     {
 
         if($id == 'all'){
-            TwoDigitLimit::all()->delete();
+            TwoDigitLimit::truncate();
         }else{
 
             TwoDigitLimit::find($id)->delete();
@@ -88,39 +93,4 @@ class TwoDigitDisableController extends Controller
         return response()->json('success');
     }
 
-    public function old_store(Request $request)
-    {
-        return $request->all();
-
-        return json_encode($request->numbers);
-
-        foreach( $request->agent_id as $agent_id ){
-            
-            $close = TwoDigitClose::updateOrCreate(
-                    [
-                        'agent_id' => $agent_id,
-                        'date'     => $request->date,
-                        'lottery_time_id'  => $request->time_id
-                    ],
-                    [
-                        'admin_id' => auth()->id()
-                    ]
-                );
-
-            foreach( $request->numbers as $number ){
-
-                TwoDigitLimitNumber::updateOrCreate(
-                    [
-                        'two_digit_close_id' => $close->id,
-                        'number'     => $number,
-                    ],
-                    [
-                        'amount' => $request->amount ?: 0
-                    ]
-                );
-            }
-        }
-
-        return back();
-    }
 }

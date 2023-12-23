@@ -12,17 +12,22 @@
 
                     <div class="row">
                         <div class="col-md-4">
-
                             <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
                                 @foreach ($agents as $agent)
                                     <option value="{{ $agent->id }}"> {{ $agent->name }} </option>
                                 @endforeach
                             </select>
+                            @error('agent_id')
+                                <span class="mt-2 text-small text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="col-md-4">
                             <input type="date" class="form-control p-2" placeholder="Date" name="date"
                                 value="{{ date('Y-m-d') }}">
+                            @error('date')
+                                <span class="mt-2 text-small text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="col-md-4">
@@ -33,6 +38,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('time_id')
+                                <span class="mt-2 text-small text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
@@ -47,11 +55,14 @@
                                     </optgroup>
                                 @endfor
                             </select>
-
+                            @error('numbers')
+                                <span class="mt-2 text-small text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="col-md-3">
-                            <input type="number" class="form-control p-2" placeholder="Limit Amount" name="amount">
+                            <input type="number" class="form-control p-2" placeholder="Maximum Limit Amount"
+                                name="amount">
                         </div>
 
                         <div class="col-md-3">
@@ -72,36 +83,13 @@
 @push('scripts')
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.selectAgent').select2({
-                placeholder: {
-                    id: 'all',
-                    text: '-- All Agents --'
-                }
-            });
 
-            $('.selectAgent').select2({
-                placeholder: {
-                    id: 'all',
-                    text: '-- All Agents --'
-                }
-            });
-
-            $('.selectUser').select2({
-                placeholder: {
-                    id: 'all',
-                    text: '-- All Users --'
-                }
-            });
-
-            $('.selectTime').select2({
+            $('.selectTime').multiselect({
                 placeholder: {
                     id: 'all',
                     text: '-- All Time --'
                 }
             });
-
-
-
 
             $('#numberSelect').multiselect({
                 columns: 10,
@@ -109,8 +97,6 @@
                 selectAll: true,
                 selectGroup: true
             });
-
-
 
             $('.agentSelect').multiselect({
                 columns: 2,

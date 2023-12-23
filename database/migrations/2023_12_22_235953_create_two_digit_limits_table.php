@@ -23,7 +23,6 @@ class CreateTwoDigitLimitsTable extends Migration
             $table->date('date')->nullable();
 
             $table->json('number')->nullable();
-            $table->integer('amount')->default('0');
 
             $table->boolean('status')->default(0);
             $table->foreignId('admin_id')->nullable()->constrained();
