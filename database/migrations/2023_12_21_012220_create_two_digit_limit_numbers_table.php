@@ -16,7 +16,7 @@ class CreateTwoDigitLimitNumbersTable extends Migration
     {
         Schema::create('two_digit_limit_numbers', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(TwoDigitClose::class)->nullable()->constrained();
+            $table->foreignIdFor(TwoDigitClose::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('number')->nullable();
             $table->integer('amount')->default('0');
             $table->boolean('status')->default('0');

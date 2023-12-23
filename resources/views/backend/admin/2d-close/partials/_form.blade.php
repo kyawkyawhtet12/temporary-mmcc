@@ -11,7 +11,7 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-4">
 
                             <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
                                 @foreach ($agents as $agent)
@@ -20,28 +20,15 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
-                            <select name="user_id[]" id="userSelect" class="selectUser form-control"
-                                multiple="multiple"style="width: 100%">
-                                <option value="all">All</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">
-                                        {{ $user->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <input type="date" class="form-control p-2" placeholder="Date" name="date"
                                 value="{{ date('Y-m-d') }}">
                         </div>
 
-                        <div class="col-md-3">
-                            <select name="time_id" id="time_id" class="form-control">
-                                <option value="" selected>--For All Time --</option>
+                        <div class="col-md-4">
+                            <select name="time_id[]" id="time_id" class="form-control selectTime" multiple>
                                 @foreach ($times as $time)
-                                    <option value="{{ $time->id }}">
+                                    <option value="{{ $time->id }}" selected>
                                         {{ $time->time }}
                                     </option>
                                 @endforeach
@@ -59,7 +46,6 @@
                                         @endfor
                                     </optgroup>
                                 @endfor
-
                             </select>
 
                         </div>
