@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="{{ asset('assets/backend/vendors/iconfonts/font-awesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/vendors/css/vendor.bundle.addons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/backend/vendors/multiselect/jquery.multiselect.css') }}">
+
     <link rel="stylesheet" href="{{ asset('assets/backend/css/style.css') }}">
 
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css">
@@ -122,7 +124,8 @@
                                     <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                                     <span class="align-middle" data-key="t-logout">Logout</span>
                                 </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="d-none">
                                     @csrf
                                 </form>
                             </div>
@@ -187,6 +190,8 @@
     <script src="{{ asset('assets/backend/js/date-range.js') }}"></script>
     <script src="{{ asset('assets/backend/js/jquery.tabledit.min.js') }}"></script>
     <script src="{{ asset('assets/backend/js/file-upload.js') }}"></script>
+
+    <script src="{{ asset('assets/backend/vendors/multiselect/jquery.multiselect.js') }}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

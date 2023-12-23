@@ -13,9 +13,12 @@ Route::middleware('check_admin')->group(function () {
     Route::get('two-thai-lottery', 'EnabledController@twoThaiLotteryStatus')->name('two.thai.changeStatus');
 
     Route::get('/2d-disable', 'TwoDigitDisableController@index')->name('2d.disable');
-    Route::post('two-digits/enabled-all', 'TwoDigitDisableController@changeTwoDigitEnable')->name('twodigits.enabled-all');
-    Route::post('two-digits/disabled-all', 'TwoDigitDisableController@changeTwoDigitDisable')->name('twodigits.disabled-all');
-    Route::post('two-digits/submit-all', 'TwoDigitDisableController@changeTwoDigitSubmit')->name('twodigits.submit-all');
+    Route::post('/2d-disable', 'TwoDigitDisableController@store')->name('2d.disable.store');
+    Route::delete('/2d-disable/{id}', 'TwoDigitDisableController@destroy')->name('2d.disable.delete');
+
+    // Route::post('two-digits/enabled-all', 'TwoDigitDisableController@changeTwoDigitEnable')->name('twodigits.enabled-all');
+    // Route::post('two-digits/disabled-all', 'TwoDigitDisableController@changeTwoDigitDisable')->name('twodigits.disabled-all');
+    // Route::post('two-digits/submit-all', 'TwoDigitDisableController@changeTwoDigitSubmit')->name('twodigits.submit-all');
 
     Route::get('2d-limit_amounts', 'LimitAmountController@limit_2d')->name('2d.limit.amount');
     Route::post('2d-limit-amounts', 'LimitAmountController@limit_2d_post')->name('2d.limit.amount.post');

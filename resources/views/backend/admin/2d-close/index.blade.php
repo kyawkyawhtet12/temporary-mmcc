@@ -2,18 +2,18 @@
 
 @section('css')
     <style>
-        @media (min-width: 768px) {
-            .col-md-1 {
-                flex: 0 0 9% !important;
-                max-width: 9% !important;
-            }
-        }
     </style>
 @endsection
 
 @section('content')
     <div class="page-content">
-        <div class="container-fluid">
+
+        <div class="d-flex justify-content-center align-items-center w-100 vh-100" id="loader">
+            <img src="{{ asset('assets/backend/images/loader.gif') }}" alt="" width="200px">
+        </div>
+
+
+        <div class="container-fluid d-none" id="mainpage">
 
             <!-- start page title -->
             <div class="row">
@@ -31,246 +31,151 @@
                     </div>
                 </div>
             </div>
-            <!-- end page title -->
+
+            @include('backend.admin.2d-close.partials._form')
 
             <div class="row">
-                <div class="col-12 grid-margin stretch-card d-none d-md-flex">
-                    <div class="card">
-                        <div class="card-header badge-dark text-white">
-                            2 Digit (Disable & Enable Selected Numbers)
+                <div class="col-12">
+
+                    @if ($data->count())
+                        <div class="mb-3">
+                            <a href="#" class="btn btn-danger deleteLimit" data-id="all">
+                                Delete All
+                            </a>
                         </div>
+                    @endif
+
+                    <div class="card">
+                        <div class="card-header">
+                            <form action="{{ route('2d.disable') }}" method="GET">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="date" class="form-control p-2" placeholder="Date" name="date"
+                                            value="{{ $filtered['date'] }}">
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <select name="time_id" id="time_id" class="form-control">
+                                            @foreach ($times as $time)
+                                                <option value="{{ $time->id }}"
+                                                    {{ $time->id == $filtered['time_id'] ? 'selected' : '' }}>
+                                                    {{ $time->time }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <select name="agent_id[]" id="agent_id" multiple="multiple"
+                                            class="agentSelect form-control">
+                                            @foreach ($agents as $agent)
+                                                <option value="{{ $agent->id }}"
+                                                    {{ in_array($agent->id, $filtered['agents']) ? 'selected' : '' }}>
+                                                    {{ $agent->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary"> Filter </button>
+
+                                        <a href="{{ route('2d.disable') }}" class="btn btn-warning"> Reset </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
                         <div class="card-body">
-                            <div class="mb-4 row align-items-end orderActionContainer" style="display: none;">
-                                <div class="form-group mb-0 col-sm-4">
-                                    <button class="btn btn-outline-success enabled-all">Enable</button>
-                                    <button class="btn btn-outline-danger disabled-all">Disable</button>
-                                </div>
-                                <div class="form-row col-sm-4">
-                                    <div class="col">
-                                        <input type="date" name="date" id="date" value="<?= date('Y-m-d') ?>"
-                                            class="form-control" placeholder="Choose Date">
-                                    </div>
-                                </div>
-                                <div class="form-row col-sm-4">
-                                    <div class="col">
-                                        <input type="number" name="amount" id="amount" autocomplete="off"
-                                            class="form-control" placeholder="Enter Amount">
-                                    </div>
-                                    <div class="col">
-                                        <button class="btn btn-outline-success submit-all">Submit</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row icons-list">
-                                @foreach ($two_digits as $digit)
-                                    @if ($digit->status === 1)
-                                        <div class="d-flex col-md-1 justify-content-between">
-                                            <div class="form-check">
-                                                <label class="form-check-label text-danger mb-1" style="font-weight: bold;">
-                                                    <input class="form-check-input checkbox" type="checkbox"
-                                                        data-id="{{ $digit->id }}">
-                                                    {{ $digit->number }}
-                                                    <i class="input-helper"></i></label>
-                                                <span>{{ $digit->date }}</span>
+                            <div class="row">
+
+                                @forelse ($data as $x => $dt)
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header d-flex justify-content-between">
+                                                <p> {{ $dt->agent->name }} </p>
+
+                                                <div>
+                                                    <a href="#" class="btn btn-danger btn-sm deleteLimit"
+                                                        data-id="{{ $dt->id }}">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row  justify-content-center gap-3">
+                                                    @foreach ($dt->limit_number_group as $number => $amount)
+                                                        <div class="col-2 text-center"
+                                                            style="border: 1px solid lightgray; padding: 5px;">
+                                                            <p style="margin-bottom: 5px">
+                                                                {{ sprintf('%02d', $number) }}
+                                                            </p>
+                                                            <span class="btn btn-danger btn-sm"
+                                                                style="padding:6px;font-size: 11px">
+                                                                {{ $amount }}
+                                                            </span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
-                                    @elseif($digit->amount > 0)
-                                        <div class="d-flex col-md-1 justify-content-between align-items-center">
-                                            <div class="form-check">
-                                                <label class="form-check-label text-warning" style="font-weight: bold;">
-                                                    <input class="form-check-input checkbox" type="checkbox"
-                                                        data-id="{{ $digit->id }}">
-                                                    {{ $digit->number }}
-                                                    <i class="input-helper"></i></label>
-                                                <span class="btn btn-sm btn-info mb-2">{{ $digit->amount }}</span>
-                                                <span>{{ $digit->date }}</span>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="d-flex col-md-1 justify-content-between align-items-center">
-                                            <div class="form-check">
-                                                <label class="form-check-label text-success" style="font-weight: bold;">
-                                                    <input class="form-check-input checkbox" type="checkbox"
-                                                        data-id="{{ $digit->id }}">
-                                                    {{ $digit->number }}
-                                                    <i class="input-helper"></i></label>
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
+
+                                    </div>
+
+                                @empty
+                                    <div>
+                                        <p class="text-center"> No Data Available.</p>
+                                    </div>
+                                @endforelse
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
-        <!-- container-fluid -->
+
+    </div>
     </div>
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
-<script>
-    $(function() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+    <script>
+        $(function() {
 
-        $(document).on("click", ".checkbox", function() {
-            var idsArr = [];
-            $(".checkbox:checked").each(function() {
-                idsArr.push($(this).attr('data-id'));
-            });
-            if (idsArr.length > 0) {
-                $('.orderActionContainer').show();
-            } else {
-                $('.orderActionContainer').hide();
-            }
-            console.log(idsArr)
-        });
+            setTimeout(() => {
+                $("#loader").removeClass('d-flex').addClass('d-none');
+                $("#mainpage").removeClass('d-none');
+            }, 700);
 
-        $('.enabled-all').on('click', function(e) {
-            var idsArr = [];
-            $(".checkbox:checked").each(function() {
-                idsArr.push($(this).attr('data-id'));
-            });
+            $('body').on('click', '.deleteLimit', function() {
 
-            swal.fire({
-                title: "Enable this checked 2 digit numbers",
-                icon: 'warning',
-                text: "Are you sure, you want to proceed?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Yes, proceed it!",
-                cancelButtonText: "No, cancel!",
-                confirmButtonColor: '#eb3422',
-                cancelButtonColor: "#fe9365",
-                reverseButtons: true
-            }).then(function(e) {
-                if (e.value === true) {
-                    var strIds = idsArr.join(",");
-                    $.ajax({
-                        url: "{{ route('twodigits.enabled-all') }}",
-                        type: "POST",
-                        dataType: "text",
-                        data: {
-                            'ids': strIds,
-                            'status': 0,
-                        },
-                        success: function(data) {
-                            swal.fire("Done!",
-                                "Two digit status changed successfully!",
-                                "success")
-                            .then(function() {
-                                window.location.reload(true);
-                            });
+                let id = $(this).data('id');
+
+                Swal.fire({
+                        text: "Are you sure to delete ?",
+                        icon: "info",
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                    })
+                    .then(function(e) {
+                        if (e.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('2d.disable') }}" + '/' + id,
+                                method: 'DELETE',
+                            }).done(function(res) {
+                                Swal.fire({
+                                    text: "အောင်မြင်ပါသည်",
+                                    icon: "success",
+                                }).then((e) => {
+                                    // table.draw();
+                                    location.reload();
+                                })
+                            })
                         }
                     });
-                } else {
-                    e.dismiss;
-                }
-            }, function(dismiss) {
-                return false
-            })
-        });
-
-        $('.disabled-all').on('click', function(e) {
-            var idsArr = [];
-            $(".checkbox:checked").each(function() {
-                idsArr.push($(this).attr('data-id'));
             });
-            var date = $("#date").val();
-
-            swal.fire({
-                title: "Disable this checked 2 digit numbers",
-                icon: 'warning',
-                text: "Are you sure, you want to proceed?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Yes, proceed it!",
-                cancelButtonText: "No, cancel!",
-                confirmButtonColor: '#eb3422',
-                cancelButtonColor: "#fe9365",
-                reverseButtons: true
-            }).then(function(e) {
-                if (e.value === true) {
-                    var strIds = idsArr.join(",");
-                    $.ajax({
-                        url: "{{ route('twodigits.disabled-all') }}",
-                        type: "POST",
-                        dataType: "text",
-                        data: {
-                            'ids': strIds,
-                            'status': 1,
-                            'date': date,
-                        },
-                        success: function(data) {
-                            swal.fire("Done!",
-                                "Two digit status changed successfully!",
-                                "success")
-                            .then(function() {
-                                window.location.reload(true);
-                            });
-                        }
-                    });
-                } else {
-                    e.dismiss;
-                }
-            }, function(dismiss) {
-                return false
-            })
-        });
-
-        $('.submit-all').on('click', function(e) {
-            var idsArr = [];
-            $(".checkbox:checked").each(function() {
-                idsArr.push($(this).attr('data-id'));
-            });
-            var date = $("#date").val();
-
-            swal.fire({
-                title: "Limit amount this checked 2 digit numbers",
-                icon: 'question',
-                text: "Are you sure, you want to proceed?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Yes, proceed it!",
-                cancelButtonText: "No, cancel!",
-                confirmButtonColor: '#eb3422',
-                cancelButtonColor: "#fe9365",
-                reverseButtons: true
-            }).then(function(e) {
-                if (e.value === true) {
-                    var strIds = idsArr.join(",");
-                    $.ajax({
-                        url: "{{ route('twodigits.submit-all') }}",
-                        type: "POST",
-                        dataType: "text",
-                        data: {
-                            'ids': strIds,
-                            'amount': $('#amount').val(),
-                            'date': date,
-                        },
-                        success: function(data) {
-                            swal.fire("Done!",
-                                "Two digit status changed successfully!",
-                                "success")
-                            .then(function() {
-                                window.location.reload(true);
-                            });
-                        }
-                    });
-                } else {
-                    e.dismiss;
-                }
-            }, function(dismiss) {
-                return false
-            })
-        });
-
-    });
-</script>
+        })
+    </script>
 @endpush
