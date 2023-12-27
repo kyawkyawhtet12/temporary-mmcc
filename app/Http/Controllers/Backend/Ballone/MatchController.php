@@ -138,7 +138,7 @@ class MatchController extends Controller
         $match = FootballMatch::find($id);
 
         if (!$match) {
-            return response()->json('error');
+            return response()->json('error match');
         }
 
         DB::transaction(function () use ($type, $match) {
@@ -153,8 +153,9 @@ class MatchController extends Controller
                 $match->matchStatus()->update([ 'maung_refund' => 1 ]);
             }
 
-            return response()->json(['success' => 'Match Refund successfully.']);
         });
+
+        return response()->json(['success' => 'Match Refund successfully.']);
 
     }
 

@@ -31,6 +31,7 @@ class DetailResource extends JsonResource
             'id'     => $this->id,
             'amount' => number_format($this->amount),
             'type'   => $this->type,
+            'win_amount' => number_format($this->win_amount),
             'betting' => $collections
         ];
     }

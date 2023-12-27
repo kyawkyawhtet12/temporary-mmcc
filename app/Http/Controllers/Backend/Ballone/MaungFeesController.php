@@ -115,7 +115,15 @@ class MaungFeesController extends Controller
 
                         $match->matchStatus()->create(['admin_id' => Auth::id()]);
 
-                        $bodyFees = $match->bodyfees()->create(['by' => Auth::id()]);
+                        // $bodyFees = $match->bodyfees()->create(['by' => Auth::id()]);
+
+                        $bodyFees = $match->bodyFees()->create([
+                            'body'     => ($request->home_body[$key]) ?? $request->away_body[$key],
+                            'goals'    => $request->goals[$key],
+                            'up_team'  => ($request->home_body[$key]) ? 1 : 2,
+                            'status' => 0,
+                            'by' => Auth::id()
+                        ]);
 
                         $maungFees = $match->maungfees()->create([
                             'body'     => ($request->home_body[$key]) ?? $request->away_body[$key],

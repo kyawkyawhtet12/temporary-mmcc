@@ -19,7 +19,8 @@ class NumberCollection extends JsonResource
             'betting' => $this->number,
             'odds'    => $this->za,
             'amount'  => number_format($this->amount),
-            'result'  => $this->lucky_number
+            'result'  => $this->lucky_number,
+            'win'     => ($this->number == $this->lucky_number ) ? number_format($this->win_amount) : 0
         ];
     }
 }

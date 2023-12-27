@@ -21,6 +21,7 @@ class BodyCollection extends JsonResource
             'amount' => number_format($this->amount),
             'result' => $this->body->result_status,
             'match' => $this->body->match->match_format,
+            'win'   => number_format($this->net_amount)
         ];
     }
 }

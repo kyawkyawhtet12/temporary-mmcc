@@ -10,6 +10,7 @@ Route::resource('ballone/body', 'Ballone\BodyFeesController', ['as' => 'ballone'
 Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballone']);
 
 // Route::get('ballone/body/fees/testing', 'Ballone\BodyFeesController@store')->name('ballone.body.fees.add.testing');
+Route::get('ballone/body-fees/enabled', 'Ballone\BodyFeesController@bodyFeesEnable')->name('ballone.body-fees.enabled');
 
 // Ballone Match Create With Maung Fees
 
@@ -46,7 +47,7 @@ Route::middleware('check_admin')->group(function () {
 
 
 // Ballone Refund
-Route::post('ballone/match/refund/{type}/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');
+Route::post('ballone/match-refund/{type}/{id}', 'Ballone\MatchController@refund')->name('ballone.match.refund');
 Route::get('ballone/matches-refund', 'Ballone\MatchController@refundHistory')->name('ballone.match.refund.history');
 
 Route::get('matches-history', 'Ballone\MatchController@matchHistory')->name('ballone.match.history');

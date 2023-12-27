@@ -151,15 +151,6 @@
                             <div class="table-responsive" id="betting-detail">
                                 <table id="body" class="table table-bordered nowrap text-center">
                                     <thead id="betting-heading">
-                                        {{-- <tr>
-                                            <th>No.</th>
-                                            <th class="match-column d-none">Match</th>
-                                            <th>Betting </th>
-                                            <th>Odds</th>
-                                            <th>Betting Type</th>
-                                            <th>Results</th>
-                                            <th>Betting Amount</th>
-                                        </tr> --}}
                                     </thead>
 
                                     <tbody id="betting-data">
@@ -193,7 +184,7 @@
 
             let no_match_status = false;
 
-            const columns = [ 'No', 'Match', 'Betting', 'Odds', 'Betting Type', 'Results', 'Betting Amount' ];
+            const columns = [ 'No', 'Match', 'Betting', 'Odds', 'Betting Type', 'Results', 'Betting Amount' , 'Betting Wins' ];
 
             add_table_heading();
 
@@ -226,12 +217,13 @@
 
             function add_table_footer()
             {
-                let colspan = (no_match_status) ? total_columns - 2 : total_columns - 1;
+                let colspan = (no_match_status) ? total_columns - 3 : total_columns - 2;
 
                 $("#betting-total").html(`
                                         <tr>
                                             <td colspan="${colspan}">Total Amount</td>
                                             <td id='betting-amount'></td>
+                                            <td id='win-amount'> </td>
                                         </tr>`);
             }
 
@@ -266,6 +258,7 @@
                                 <td> ${data.type} </td>
                                 <td> ${dt.result} </td>
                                 <td> ${dt.amount} </td>
+                                <td> ${dt.win}</td>
                             </tr>`;
                     });
 
@@ -280,6 +273,7 @@
                     add_table_footer();
 
                     $("tfoot #betting-amount").html(data.amount);
+                    $("tfoot #win-amount").html(data.win_amount);
                 });
             }
         });

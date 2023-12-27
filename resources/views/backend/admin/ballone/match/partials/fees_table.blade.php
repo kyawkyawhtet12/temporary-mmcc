@@ -97,11 +97,12 @@
                             </td>
 
                             <td>
-                                @if ($dt->match->check_action($feesType))
+
                                     <a href="{{ route('ballone.match.edit', $dt->match->id) }}" class="text-success">
                                         <i class="fa fa-edit text-success m-1"></i>
                                     </a>
 
+                                @if ($dt->match->check_action($feesType))
                                     @if ($dt->match->check_delete())
                                         <a href="javascript:void(0)" data-id="{{ $dt->match->id }}"
                                             class="deleteMatch">

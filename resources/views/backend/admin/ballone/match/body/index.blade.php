@@ -28,6 +28,17 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
                                 <h4 class="card-title"> Match List </h4>
+
+                                @if( $enabled->body_status )
+                                <a href="{{ route('ballone.body-fees.enabled') }}" class="btn btn-success">
+                                    Close Body Fees
+                                </a>
+                                @else
+                                <a href="{{ route('ballone.body-fees.enabled') }}" class="btn btn-danger">
+                                    Open Body Fees
+                                 </a>
+                                @endif
+
                             </div>
 
                             @include('backend.admin.ballone.match.partials.fees_table', [

@@ -233,7 +233,7 @@
                 .then(function(e) {
                     if (e.isConfirmed) {
                         $.ajax({
-                            url: `/admin/ballone/match/refund/${type}/${id}`,
+                            url: `/admin/ballone/match-refund/${type}/${id}`,
                             method: 'POST',
                         }).done(function(res) {
                             if (res == 'error') {

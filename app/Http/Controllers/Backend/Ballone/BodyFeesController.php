@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballBodyFee;
 use App\Http\Controllers\Controller;
+use App\Models\Enabled;
 use App\Services\Ballone\FeesValidation;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,5 +68,14 @@ class BodyFeesController extends Controller
     {
         $match = FootballMatch::with('bodyFees', 'home', 'away')->find($id);
         return response()->json($match);
+    }
+
+    public function bodyFeesEnable()
+    {
+        $enable = Enabled::first();
+
+        $enable->update([ 'body_status' => !$enable->body_status ]);
+
+        return back()->with('success', 'success');
     }
 }

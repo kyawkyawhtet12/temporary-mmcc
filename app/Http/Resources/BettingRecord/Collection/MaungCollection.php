@@ -21,6 +21,7 @@ class MaungCollection extends JsonResource
             'amount' => '-',
             'result' => $this->result_status,
             'match' => $this->match->match_format,
+            'win'   => 0
         ];
     }
 }
