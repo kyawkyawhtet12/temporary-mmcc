@@ -53,7 +53,7 @@
 
                                 <div class="col-sm-6 col-md-4 col-lg-2 align-middle">
                                     <button type="button" class="btn btn-info btn-rounded btn-icon">
-                                        {{ sprintf("%03d", $dra->three_digit_id) }}
+                                        {{ sprintf("%03d", ($dra->three_digit_id - 1)) }}
                                     </button> &nbsp;
                                     <span class="badge badge-success badge-pill">
                                         Ks {{ $dra->amount }}
