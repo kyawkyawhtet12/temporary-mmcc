@@ -121,7 +121,7 @@ class MaungFeesController extends Controller
                             'body'     => ($request->home_body[$key]) ?? $request->away_body[$key],
                             'goals'    => $request->goals[$key],
                             'up_team'  => ($request->home_body[$key]) ? 1 : 2,
-                            'status' => 0,
+                            'status'   => 1,
                             'by' => Auth::id()
                         ]);
 
