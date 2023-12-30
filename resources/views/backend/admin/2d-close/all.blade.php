@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">2D Open/Close For Agent</h4>
+                        <h4 class="mb-sm-0">2D Open/Close For All</h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            @include('backend.admin.2d-close.partials._form')
+            @include('backend.admin.2d-close.partials._form_all')
 
             <div class="row">
                 <div class="col-12">
@@ -38,14 +38,15 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <form action="{{ route('2d.disable') }}" method="GET">
+                            <form action="{{ route('2d.disable.all') }}" method="GET">
+
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <input type="date" class="form-control p-2" placeholder="Date" name="date"
                                             value="{{ $filtered['date'] }}">
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <select name="time_id" id="time_id" class="form-control">
                                             @foreach ($times as $time)
                                                 <option value="{{ $time->id }}"
@@ -56,21 +57,9 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <select name="agent_id[]" id="agent_id" multiple="multiple"
-                                            class="agentSelect form-control">
-                                            @foreach ($agents as $agent)
-                                                <option value="{{ $agent->id }}"
-                                                    {{ in_array($agent->id, $filtered['agents']) ? 'selected' : '' }}>
-                                                    {{ $agent->name }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
                                     <div class="col-md-2">
                                         <button type="submit" class="btn btn-primary"> Filter </button>
-
-                                        <a href="{{ route('2d.disable') }}" class="btn btn-warning"> Reset </a>
+                                        <a href="{{ route('2d.disable.all') }}" class="btn btn-warning"> Reset </a>
                                     </div>
                                 </div>
                             </form>
@@ -80,11 +69,9 @@
                             <div class="row">
 
                                 @forelse ($data as $x => $dt)
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="card">
                                             <div class="card-header d-flex justify-content-between">
-                                                <p> {{ $dt->agent->name }} </p>
-
                                                 <div>
                                                     <a href="#" class="btn btn-danger btn-sm deleteLimit"
                                                         data-id="{{ $dt->id }}">
@@ -152,7 +139,7 @@
                     .then(function(e) {
                         if (e.isConfirmed) {
                             $.ajax({
-                                url: "{{ route('2d.disable') }}" + '/' + id,
+                                url: "{{ route('2d.disable.all') }}" + '/' + id,
                                 method: 'DELETE',
                             }).done(function(res) {
                                 Swal.fire({

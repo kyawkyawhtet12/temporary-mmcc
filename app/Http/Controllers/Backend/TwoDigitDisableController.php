@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Models\User;
 use App\Models\Agent;
+use App\Models\TwoDigit;
 use App\Models\LotteryTime;
 use Illuminate\Http\Request;
 use App\Models\TwoDigitLimit;
@@ -11,17 +12,16 @@ use App\Http\Controllers\Controller;
 
 class TwoDigitDisableController extends Controller
 {
+    // Per Agent
     public function index(Request $request)
     {
         $agents = Agent::select('id','name')->get();
-        $users = User::select('id','name')->get();
         $times = LotteryTime::select("id", "time")->get();
-
 
         $date = $request->date ?? today()->format('Y-m-d');
         $time_id = $request->time_id ?? 1;
 
-        $data = TwoDigitLimit::with('agent')->whereDate("date",$date )->where('lottery_time_id', $time_id)
+        $data = TwoDigitLimit::with('agent')->whereNotNull('agent_id')->whereDate("date",$date )->where('lottery_time_id', $time_id)
                                 ->when($request->agent_id, function($query, $agent_id){
                                     $query->whereIn('agent_id', $agent_id);
                                 })->get();
@@ -33,7 +33,7 @@ class TwoDigitDisableController extends Controller
             'agents' => $request->agent_id ?? []
         ];
 
-        return view('backend.admin.2d-close.index', compact('agents', 'users', 'times', 'data', 'filtered'));
+        return view('backend.admin.2d-close.index', compact('agents', 'times', 'data', 'filtered'));
     }
 
     public function store(Request $request)
@@ -74,8 +74,8 @@ class TwoDigitDisableController extends Controller
                     );
             }
 
-            
-        } 
+
+        }
 
         return back()->with('success', '* successfully added');
     }
@@ -85,6 +85,83 @@ class TwoDigitDisableController extends Controller
 
         if($id == 'all'){
             TwoDigitLimit::truncate();
+        }else{
+
+            TwoDigitLimit::find($id)->delete();
+        }
+
+        return response()->json('success');
+    }
+
+    // For All
+    public function disable_all(Request $request)
+    {
+        $times = LotteryTime::select("id", "time")->get();
+
+        $date = $request->date ?? today()->format('Y-m-d');
+        $time_id = $request->time_id ?? 1;
+
+        // $data = TwoDigit::whereDate("date", $date )->where('lottery_time_id', $time_id)->get();
+        $data = TwoDigitLimit::whereNull('agent_id')->whereDate("date", $date )->where('lottery_time_id', $time_id)->get();
+// return $data;
+
+        $filtered = [
+            'time_id' => $time_id,
+            'date' => $date,
+            'data' => $data
+        ];
+
+        // return $data;
+
+        return view('backend.admin.2d-close.all', compact('times', 'data', 'filtered'));
+    }
+
+    public function store_all(Request $request)
+    {
+        // return $request->all();
+
+        $this->validate($request, [
+            'numbers' => 'required|array',
+            'time_id' => 'required|array',
+            'date' => 'required',
+        ]);
+
+        // $time_id = count($request->time_id) == 2 ? NULL : $request->time_id[0] ;
+
+        foreach( $request->numbers as $number ){
+            $limit[intval($number)] = $request->amount ?: 0;
+        }
+
+
+            foreach( $request->time_id as $time ){
+
+                $close = TwoDigitLimit::firstOrCreate([
+                    'agent_id' => NULL,
+                    'date'     => $request->date,
+                    'lottery_time_id'  => $time
+                ],[
+                    'number' => json_encode($limit, true)
+                ]);
+
+                $new = $limit + json_decode($close->number, true);
+
+                $close->update(
+                        [
+                            'admin_id' => auth()->id(),
+                            'number' => json_encode($new, true),
+                            'amount' => $request->amount ?: 0
+                        ]
+                    );
+            }
+
+        return back()->with('success', '* successfully added');
+    }
+
+    public function destroy_all($id)
+    {
+
+        if($id == 'all'){
+            TwoDigitLimit::whereNull('agent_id')->delete();
         }else{
 
             TwoDigitLimit::find($id)->delete();

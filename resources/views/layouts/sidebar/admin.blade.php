@@ -51,8 +51,14 @@
 
                             @if( is_admin())
                             <li class="nav-item">
+                                <a href="{{ route('2d.disable.all') }}" class="nav-link">
+                                    2D Open/Close For All
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a href="{{ route('2d.disable') }}" class="nav-link">
-                                    2D Open/Close
+                                    2D Open/Close For Agent
                                 </a>
                             </li>
                             @endif
