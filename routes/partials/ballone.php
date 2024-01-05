@@ -11,6 +11,7 @@ Route::resource('ballone/maung', 'Ballone\MaungFeesController', ['as' => 'ballon
 
 // Route::get('ballone/body/fees/testing', 'Ballone\BodyFeesController@store')->name('ballone.body.fees.add.testing');
 Route::get('ballone/body-fees/enabled', 'Ballone\BodyFeesController@bodyFeesEnable')->name('ballone.body-fees.enabled');
+Route::get('ballone/maung-fees/enabled', 'Ballone\MaungFeesController@maungFeesEnable')->name('ballone.maung-fees.enabled');
 
 // Ballone Match Create With Maung Fees
 

@@ -45,12 +45,12 @@ class FootballBodyFee extends Model
             return "done";
         }
 
-        if( $this->status == 0){
-            return "old";
+        if( $this->match->matchStatus->body_refund == 1 ){
+            return "refund";
         }
 
-        if( $this->match->type == 0 ){
-            return "refund";
+        if( $this->status == 0){
+            return "old";
         }
 
         if( $this->match->check_active() )

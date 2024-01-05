@@ -28,9 +28,22 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
                                 <h4 class="card-title"> Match List </h4>
-                                <a href="{{ route('ballone.maung.fees.add') }}" class="btn btn-success">
-                                    Add Maung Fees
-                                </a>
+
+                                <div>
+                                    @if( $enabled->maung_status )
+                                    <a href="{{ route('ballone.maung-fees.enabled') }}" class="btn btn-success">
+                                        Close Maung Fees
+                                    </a>
+                                    @else
+                                    <a href="{{ route('ballone.maung-fees.enabled') }}" class="btn btn-danger">
+                                        Open Maung Fees
+                                     </a>
+                                    @endif
+
+                                    <a href="{{ route('ballone.maung.fees.add') }}" class="btn btn-primary ml-3">
+                                        Add Maung Fees
+                                    </a>
+                                </div>
                             </div>
 
                             @include('backend.admin.ballone.match.partials.fees_table', [

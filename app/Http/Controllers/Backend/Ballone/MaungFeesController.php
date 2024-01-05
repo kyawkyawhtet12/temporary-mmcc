@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Ballone;
 
 use Carbon\Carbon;
 use App\Models\League;
+use App\Models\Enabled;
 use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use App\Models\FootballMaungFee;
@@ -144,5 +145,14 @@ class MaungFeesController extends Controller
 
             return response()->json([ 'error' => $exception->getMessage() ]);
         }
+    }
+
+    public function maungFeesEnable()
+    {
+        $enable = Enabled::first();
+
+        $enable->update([ 'maung_status' => !$enable->maung_status ]);
+
+        return back()->with('success', 'success');
     }
 }
