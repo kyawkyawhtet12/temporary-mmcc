@@ -10,100 +10,62 @@ use Illuminate\Support\Facades\Session;
 
 class RechargeController extends Controller
 {
+    protected $search;
 
-    public function search_session_clear()
+    public function __construct(Request $request)
     {
-        Session::forget(['user_id', 'name', 'phone','start_date','end_date']);
-    }
+        Session::put('search.agent_id', $request->agent_id ?? []);
+        Session::put('search.user_id', $request->user_id ?? NULL);
+        Session::put('search.name', $request->name ?? NULL);
+        Session::put('search.phone', $request->phone ?? NULL );
+        Session::put('search.start_date', $request->start_date ?? NULL);
+        Session::put('search.end_date', $request->end_date ?? NULL);
 
-    public function search_session_put($request)
-    {
-        Session::put('user_id', $request->user_id);
-        Session::put('name', $request->name);
-        Session::put('phone', $request->phone);
-        Session::put('start_date', $request->start_date);
-        Session::put('end_date', $request->end_date);
+        $this->search = Session::get('search');
+
     }
 
     public function index(Request $request)
     {
         $agents = Agent::select('id','name')->get();
 
-        if($request->agent){
-            Session::put('agent', $request->agent);
-            $this->search_session_clear();
+        $data = Payment::with('user','admin')->latest();
+
+        if( $agent_id = $this->search['agent_id'] ){
+            $data = $data->whereIn("agent_id", $agent_id );
         }
 
-        if($request->agent == 'all' || $request->reset == 1){
-            Session::put('agent', 'all');
-            $this->search_session_clear();
-        }
-
-        $select_agent = Session::get('agent');
-
-        $data = Payment::with('user')->latest();
-
-        if($select_agent && $select_agent != 'all'){
-            $data = $data->where('agent_id', $select_agent);
-        }
-
-        $data = $this->getData($request, $data);
-
-        return view("backend.record.recharge", compact('data','agents','select_agent'));
-    }
-
-    public function search(Request $request)
-    {
-        $agents = Agent::select('id','name')->get();
-
-        Session::put('agent', 'all');
-        $select_agent = Session::get('agent');
-
-        $data = Payment::with('user')->where('status', 'Approved')->latest();
-
-        $this->search_session_put($request);
-
-        $data = $this->getData($request, $data);
-
-        return view("backend.record.recharge", compact('data','agents','select_agent'));
-    }
-
-    public function getData($request, $data)
-    {
-        $user_id = Session::get('user_id');
-        $name = Session::get('name');
-        $phone = Session::get('phone');
-        $start_date = Session::get('start_date');
-        $end_date = Session::get('end_date');
-
-        if (!empty($user_id)){
+        if ($user_id = $this->search['user_id']){
             $data = $data->whereHas('user', function ($query) use ($user_id) {
-                        $query->where('user_id', 'like', $user_id.'%');
+                         $query->where('user_id', 'like', $user_id.'%');
                     });
         }
 
-        if (!empty($name)){
+        if ($name = $this->search['name']){
             $data = $data->whereHas('user', function ($query) use ($name) {
                         $query->where('name', 'like', $name.'%');
                     });
         }
 
-        if (!empty($phone)){
+        if ($phone = $this->search['phone']){
             $data = $data->whereHas('user', function ($query) use ($phone) {
                         $query->where('phone', 'like', $phone.'%');
                     });
         }
 
-        if (!empty($start_date)){
+        if ($start_date = $this->search['start_date']){
             $data = $data->whereDate('created_at', '>=', $start_date);
         }
 
-        if (!empty($end_date)){
+        if ($end_date = $this->search['end_date']){
             $data = $data->whereDate('created_at', '<=', $end_date);
         }
 
         $data = $data->paginate(15);
 
-        return $data;
+        Session::put("search", $this->search);
+
+        return view("backend.record.recharge", compact('data','agents'));
     }
+
 }
