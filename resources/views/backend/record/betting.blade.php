@@ -14,7 +14,12 @@
 
 @section('content')
     <div class="page-content">
-        <div class="container-fluid">
+
+        <div class="d-flex justify-content-center align-items-center w-100 vh-100" id="loader">
+            <img src="{{ asset('assets/backend/images/loader.gif') }}" alt="" width="200px">
+        </div>
+
+        <div class="container-fluid d-none" id="mainpage">
 
             <!-- start page title -->
             <div class="row">
@@ -35,51 +40,62 @@
             <!-- end page title -->
 
             <div class="row mb-3 d-flex">
-                <div class="col-md-2">
-                    <select name="agent" id="agentSelect" class="form-control">
-                        <option value="all">All</option>
-                        @foreach ($agents as $agent)
-                            <option value="{{ $agent->id }}" {{ $select_agent == $agent->id ? 'selected' : '' }}>
-                                {{ $agent->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <form action="{{ route('betting.record.search') }}" method="POST" class="col-md-10 row pr-0">
+                <form action="{{ route('betting.record.search') }}" method="POST" class="row">
+
                     @csrf
 
-                    <div class="col-md-11 row">
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" placeholder="User ID" name="user_id">
-                        </div>
-
-                        <div class="col-md-2">
-                            <select name="type" id="type" class="form-control">
-                                <option value="all"> All Type </option>
-                                @foreach (get_all_types() as $type)
-                                    <option {{ $select_type == $type ? 'selected' : '' }}>{{ $type }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-2">
-                            <input type="number" class="form-control" placeholder="Min Amount" name="min">
-                        </div>
-
-                        <div class="col-md-2">
-                            <input type="number" class="form-control" placeholder="Max Amount" name="max">
-                        </div>
-
-                        <div class="col-md-2">
-                            <input type="date" class="form-control" placeholder="Start Date" name="start_date">
-                        </div>
-
-                        <div class="col-md-2">
-                            <input type="date" class="form-control" placeholder="End Date" name="end_date">
-                        </div>
+                    <div class="col-md-2">
+                        <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
+                            @foreach ($agents as $agent)
+                                <option value="{{ $agent->id }}"
+                                    {{ in_array($agent->id, Session::get('search.agent_id')) ? 'selected' : '' }}>
+                                    {{ $agent->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    <div class="col-md-1">
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="User ID" name="user_id"
+                            value="{{ Session::get('search.user_id') }}">
+                    </div>
+
+
+                    <div class="col">
+                        <select name="type" id="type" class="form-control">
+                            <option value=""> All Type </option>
+                            @foreach (get_all_types() as $type)
+                                <option {{ $type == Session::get('search.type') ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <input type="number" class="form-control" placeholder="Min Amount" name="min"
+                        value="{{ Session::get('search.min') }}"
+                        >
+                    </div>
+
+                    <div class="col">
+                        <input type="number" class="form-control" placeholder="Max Amount" name="max"
+                        value="{{ Session::get('search.max') }}"
+                        >
+                    </div>
+
+                    <div class="col">
+                        <input type="date" class="form-control" placeholder="Start Date" name="start_date"
+                            value="{{ Session::get('search.start_date') }}">
+                    </div>
+
+                    <div class="col">
+                        <input type="date" class="form-control" placeholder="End Date" name="end_date"
+                            value="{{ Session::get('search.end_date') }}">
+                    </div>
+
+                    <div class="col">
                         <input type="submit" class="form-control btn btn-primary btn-sm" name="search" value="Search">
                     </div>
                 </form>
@@ -174,6 +190,21 @@
     <script>
         $(function() {
 
+            setTimeout(() => {
+                $("#loader").removeClass('d-flex').addClass('d-none');
+                $("#mainpage").removeClass('d-none');
+            }, 700);
+
+            $('.agentSelect').multiselect({
+                columns: 1,
+                placeholder: 'Select Agent',
+                search: true,
+                searchOptions: {
+                    'default': 'Search Agents'
+                },
+                selectAll: true
+            });
+
             const url_prefix = "/admin/betting-record/detail/";
 
             let total_columns ;
@@ -191,10 +222,6 @@
             add_table_body();
 
             add_table_footer();
-
-            $("#agentSelect").on('change', function() {
-                window.location.href = `?agent=${$(this).val()}`;
-            });
 
             function add_table_heading()
             {

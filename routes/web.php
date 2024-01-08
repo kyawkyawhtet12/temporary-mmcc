@@ -80,7 +80,7 @@ Route::group(
         Route::post('cash-record', [CashController::class, 'index'])->name('cash.record.search');
 
         Route::get('betting-record', [BettingController::class, 'index'])->name('betting.record');
-        Route::post('betting-record', [BettingController::class, 'search'])->name('betting.record.search');
+        Route::post('betting-record', [BettingController::class, 'index'])->name('betting.record.search');
         Route::get('betting-record/detail/{id}', [BettingController::class, 'detail'])->name('betting.record.detail');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');

@@ -28,20 +28,11 @@
             <div class="row">
                 <div class="col-12">
 
-                    @if ($data->count())
-                        <div class="mb-3">
-                            <a href="#" class="btn btn-danger deleteLimit" data-id="all">
-                                Delete All
-                            </a>
-                        </div>
-                    @endif
-
                     <div class="card">
 
                         <div class="card-body">
                             <div class="row">
-
-
+                                    @if( $data )
                                     <div class="col-md-12">
                                         <div class="card">
                                             <div class="card-header d-flex justify-content-between">
@@ -71,11 +62,11 @@
                                         </div>
 
                                     </div>
-
-                                    {{-- <div>
+                                    @else
+                                    <div>
                                         <p class="text-center"> No Data Available.</p>
-                                    </div> --}}
-
+                                    </div>
+                                    @endif
                             </div>
                         </div>
                     </div>

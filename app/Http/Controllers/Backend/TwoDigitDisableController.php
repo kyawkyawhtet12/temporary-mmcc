@@ -99,10 +99,6 @@ class TwoDigitDisableController extends Controller
 
         $data = TwoDigitLimit::whereNull('agent_id')->first();
 
-        $filtered = [
-            'data' => $data
-        ];
-
         return view('backend.admin.2d-close.all', compact('data'));
     }
 
