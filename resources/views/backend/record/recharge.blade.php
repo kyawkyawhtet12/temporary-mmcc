@@ -5,6 +5,10 @@
         input {
             padding: 0.6rem !important;
         }
+
+        .multiSelect button{
+            padding: 0.6rem !important;
+        }
     </style>
 @endsection
 
@@ -40,7 +44,7 @@
 
                     @csrf
 
-                    <div class="col-md-3">
+                    <div class="col-md-3 multiSelect">
                         <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
                             @foreach ($agents as $agent)
                                 <option value="{{ $agent->id }}"
