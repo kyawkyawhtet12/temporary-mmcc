@@ -37,51 +37,24 @@
                     @endif
 
                     <div class="card">
-                        <div class="card-header">
-                            <form action="{{ route('2d.disable.all') }}" method="GET">
-
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <input type="date" class="form-control p-2" placeholder="Date" name="date"
-                                            value="{{ $filtered['date'] }}">
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <select name="time_id" id="time_id" class="form-control">
-                                            @foreach ($times as $time)
-                                                <option value="{{ $time->id }}"
-                                                    {{ $time->id == $filtered['time_id'] ? 'selected' : '' }}>
-                                                    {{ $time->time }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary"> Filter </button>
-                                        <a href="{{ route('2d.disable.all') }}" class="btn btn-warning"> Reset </a>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
 
                         <div class="card-body">
                             <div class="row">
 
-                                @forelse ($data as $x => $dt)
+
                                     <div class="col-md-12">
                                         <div class="card">
                                             <div class="card-header d-flex justify-content-between">
                                                 <div>
                                                     <a href="#" class="btn btn-danger btn-sm deleteLimit"
-                                                        data-id="{{ $dt->id }}">
+                                                        data-id="{{ $data->id }}">
                                                         <i class="fa fa-trash"></i>
                                                     </a>
                                                 </div>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row  justify-content-center gap-3">
-                                                    @foreach ($dt->limit_number_group as $number => $amount)
+                                                    @foreach ($data->limit_number_group as $number => $amount)
                                                         <div class="col-2 text-center"
                                                             style="border: 1px solid lightgray; padding: 5px;">
                                                             <p style="margin-bottom: 5px">
@@ -99,11 +72,9 @@
 
                                     </div>
 
-                                @empty
-                                    <div>
+                                    {{-- <div>
                                         <p class="text-center"> No Data Available.</p>
-                                    </div>
-                                @endforelse
+                                    </div> --}}
 
                             </div>
                         </div>

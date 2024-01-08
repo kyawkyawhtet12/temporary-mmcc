@@ -10,37 +10,8 @@
 
                     @csrf
 
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <input type="date" class="form-control p-2" placeholder="Date" name="date"
-                                value="{{ date('Y-m-d') }}">
-                            @error('date')
-                                <span class="mt-2 text-small text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <select name="time_id[]" id="time_id" class="form-control selectTime" multiple>
-                                @foreach ($times as $time)
-                                    <option value="{{ $time->id }}" selected>
-                                        {{ $time->time }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('time_id')
-                                <span class="mt-2 text-small text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <input type="number" class="form-control p-2" placeholder="Maximum Limit Amount"
-                                name="amount">
-                        </div>
-                    </div>
-
                     <div class="row my-4">
-                        <div class="col-md-9">
+                        <div class="col-md-7">
                             <select name="numbers[]" id="numberSelect" class="form-control" multiple="multiple">
                                 @for ($i = 0; $i < 10; $i++)
                                     <optgroup label="{{ $i }}">
@@ -56,6 +27,11 @@
                         </div>
 
                         <div class="col-md-3">
+                            <input type="number" class="form-control p-2" placeholder="Maximum Limit Amount"
+                                name="amount">
+                        </div>
+
+                        <div class="col-md-2">
                             <input type="submit" class="form-control btn btn-success btn-sm" name="submit"
                                 value="Add">
                         </div>
@@ -74,28 +50,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            $('.selectTime').multiselect({
-                placeholder: {
-                    id: 'all',
-                    text: '-- All Time --'
-                }
-            });
-
             $('#numberSelect').multiselect({
                 columns: 10,
                 placeholder: 'Select Number',
                 selectAll: true,
                 selectGroup: true
-            });
-
-            $('.agentSelect').multiselect({
-                columns: 2,
-                placeholder: 'Select Agent',
-                search: true,
-                searchOptions: {
-                    'default': 'Search Agents'
-                },
-                selectAll: true
             });
 
         });
