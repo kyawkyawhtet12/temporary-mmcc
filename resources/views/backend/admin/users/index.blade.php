@@ -2,6 +2,14 @@
 
 @section('css')
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+
+    <style>
+
+        .multiSelect button{
+            padding: 0.6rem !important;
+        }
+
+    </style>
 @endsection
 
 @section('content')
@@ -26,12 +34,34 @@
             </div>
             <!-- end page title -->
 
+            <div class="row mb-5">
+
+                <div class="col-md-5 multiSelect">
+                    <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
+                        @foreach ($agents as $agent)
+                            <option value="{{ $agent->referral_code }}" >
+                                {{ $agent->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary" id="filterBtn">
+                        Filter
+                    </button>
+                    <a href="#" class="btn btn-outline-danger" id="resetBtn">
+                        Reset
+                    </a>
+                </div>
+
+            </div>
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-3">
-                                <h4 class="card-title">User Lists</h4>
                                 {{-- <div>
                                     <a class="btn btn-success" href="javascript:void(0)" id="createUser"> Create User</a>
                                 </div> --}}
@@ -188,6 +218,16 @@
     <script type="text/javascript">
         $(function() {
 
+            $('.agentSelect').multiselect({
+                columns: 2,
+                placeholder: 'Select Agent',
+                search: true,
+                searchOptions: {
+                    'default': 'Search Agents'
+                },
+                selectAll: true
+            });
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -203,7 +243,8 @@
                 ajax: {
                     url: "{{ route('users.index') }}",
                     data: function(d) {
-                        d.search = $('input[type="search"]').val()
+                        d.search = $('input[type="search"]').val(),
+                        d.agent_id = $('#agent_id').val()
                     }
                 },
                 columns: [{
@@ -349,6 +390,19 @@
                         console.log('Error:', data);
                     }
                 });
+            });
+
+            $('body').on('click', '#filterBtn', function(e){
+                e.preventDefault();
+                table.ajax.reload();
+            });
+
+            $('body').on('click', '#resetBtn', function(e){
+                e.preventDefault();
+
+                $("#agent_id").val('');
+                $('.agentSelect').multiselect('reload');
+                table.ajax.reload();
             });
         });
     </script>
