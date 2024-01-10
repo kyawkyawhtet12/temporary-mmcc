@@ -9,22 +9,28 @@ use App\Models\LotteryTime;
 use Illuminate\Http\Request;
 use App\Models\TwoDigitLimit;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TwoDigitLimitAddRequest;
 
 class TwoDigitDisableController extends Controller
 {
     // Per Agent
     public function index(Request $request)
     {
-        $agents = Agent::select('id','name')->get();
+        $agents = Agent::select('id', 'name')->get();
         $times = LotteryTime::select("id", "time")->get();
 
         $date = $request->date ?? today()->format('Y-m-d');
         $time_id = $request->time_id ?? 1;
 
-        $data = TwoDigitLimit::with('agent')->whereNotNull('agent_id')->whereDate("date",$date )->where('lottery_time_id', $time_id)
-                                ->when($request->agent_id, function($query, $agent_id){
-                                    $query->whereIn('agent_id', $agent_id);
-                                })->get();
+        $data = TwoDigitLimit::with("agent")->whereNotNull('agent_id')
+            ->whereDate("date", $date)
+            ->where('lottery_time_id', $time_id)
+            ->when($request->agent_id, function ($query, $agent_id) {
+                $query->whereIn('agent_id', $agent_id);
+            })
+            ->orderBy('status', 'desc')
+            ->get()
+            ->groupBy('agent.name');
 
         $filtered = [
             'time_id' => $time_id,
@@ -36,45 +42,42 @@ class TwoDigitDisableController extends Controller
         return view('backend.admin.2d-close.index', compact('agents', 'times', 'data', 'filtered'));
     }
 
-    public function store(Request $request)
+    public function store(TwoDigitLimitAddRequest $request)
     {
-        // return $request->all();
+        if ($request->type == 1) {
 
-        $this->validate($request, [
-            'agent_id' => 'required|array',
-            'numbers' => 'required|array',
-            'time_id' => 'required|array',
-            'date' => 'required',
-        ]);
+            foreach ($request->numbers as $number) {
+                $limit[intval($number)] = $request->amount ?: 0;
+            }
 
-        foreach( $request->numbers as $number ){
-            $limit[intval($number)] = $request->amount ?: 0;
+            $status = 1;
+        } else {
+            $limit = $request->frontNumbers;
+            $status = 2;
         }
 
-        foreach( $request->agent_id as $agent_id ){
+        foreach ($request->agent_id as $agent_id) {
 
-            foreach( $request->time_id as $time ){
+            foreach ($request->time_id as $time) {
 
                 $close = TwoDigitLimit::firstOrCreate([
                     'agent_id' => $agent_id,
                     'date'     => $request->date,
-                    'lottery_time_id'  => $time
-                ],[
+                    'lottery_time_id'  => $time,
+                    'status' => $status
+                ], [
                     'number' => json_encode($limit, true)
                 ]);
 
                 $new = $limit + json_decode($close->number, true);
 
                 $close->update(
-                        [
-                            'admin_id' => auth()->id(),
-                            'number' => json_encode($new, true),
-                            'amount' => $request->amount ?: 0
-                        ]
-                    );
+                    [
+                        'admin_id' => auth()->id(),
+                        'number' => json_encode($new, true)
+                    ]
+                );
             }
-
-
         }
 
         return back()->with('success', '* successfully added');
@@ -83,9 +86,9 @@ class TwoDigitDisableController extends Controller
     public function destroy($id)
     {
 
-        if($id == 'all'){
-            TwoDigitLimit::truncate();
-        }else{
+        if ($id == 'all') {
+            TwoDigitLimit::whereNotNull('agent_id')->delete();
+        } else {
 
             TwoDigitLimit::find($id)->delete();
         }
@@ -110,37 +113,36 @@ class TwoDigitDisableController extends Controller
             'numbers' => 'required|array'
         ]);
 
-        foreach( $request->numbers as $number ){
+        foreach ($request->numbers as $number) {
             $limit[intval($number)] = $request->amount ?: 0;
         }
 
         $close = TwoDigitLimit::firstOrCreate(
-            [ 'agent_id' => NULL ],
-            [ 'number' => json_encode($limit, true) ]
+            ['agent_id' => NULL],
+            ['number' => json_encode($limit, true)]
         );
 
         $new = $limit + json_decode($close->number, true);
 
         $close->update(
-                [
-                    'admin_id' => auth()->id(),
-                    'number'   => json_encode($new, true),
-                    'amount'   => $request->amount ?: 0
-                ]
-            );
+            [
+                'admin_id' => auth()->id(),
+                'number'   => json_encode($new, true),
+                'amount'   => $request->amount ?: 0
+            ]
+        );
 
         return back()->with('success', '* successfully added');
     }
 
     public function destroy_all($id)
     {
-        if($id == 'all'){
+        if ($id == 'all') {
             TwoDigitLimit::whereNull('agent_id')->delete();
-        }else{
+        } else {
             TwoDigitLimit::find($id)->delete();
         }
 
         return response()->json('success');
     }
-
 }
