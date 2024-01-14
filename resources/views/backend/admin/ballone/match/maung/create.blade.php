@@ -72,8 +72,8 @@
                                         <div class="col-sm-6">
                                             <label for="name" class="control-label">Date</label>
                                             <div>
-                                                <input type="date" id="date" class="form-control" name="date[]" value="{{ date('Y-m-d') }}"
-                                                    required>
+                                                <input type="date" id="date" class="form-control" name="date[]"
+                                                    value="{{ date('Y-m-d') }}" required>
                                             </div>
                                         </div>
 
@@ -179,6 +179,20 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <select class="form-control" name="limit_group_id[]"
+                                                style="width: 100%;" required>
+                                                <option value="">-- Select Body Limit Group --</option>
+                                                @foreach ($groups as $group)
+                                                    <option value="{{ $group->id }}">
+                                                        {{ $group->name }} : {{ number_format($group->max_amount) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -192,8 +206,8 @@
                                             <div class="col-sm-6">
                                                 <label for="name" class="control-label">Date</label>
                                                 <div>
-                                                    <input type="date" id="date" class="form-control" value="{{ date('Y-m-d') }}"
-                                                        name="date[]" required>
+                                                    <input type="date" id="date" class="form-control"
+                                                        value="{{ date('Y-m-d') }}" name="date[]" required>
                                                 </div>
                                             </div>
 
@@ -302,6 +316,20 @@
                                             </div>
                                         </div>
 
+                                        <div class="form-group row">
+                                            <div class="col-12">
+                                                <select class="form-control" name="limit_group_id[]"
+                                                    style="width: 100%;" required>
+                                                    <option value="">-- Select Body Limit Group --</option>
+                                                    @foreach ($groups as $group)
+                                                        <option value="{{ $group->id }}">
+                                                            {{ $group->name }} : {{ number_format($group->max_amount) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="d-flex justify-content-end">
                                             <a href="javascript:void(0)" data-group="group_{{ $i }}"
                                                 class="deleteMatch"> Delete </a>
@@ -333,7 +361,7 @@
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
-    <script src="{{ asset("assets/js/ballone.js") }}"></script>
+    <script src="{{ asset('assets/js/ballone.js') }}"></script>
 
     <script>
         $(document).ready(function() {
@@ -401,27 +429,27 @@
                     dataType: 'json',
                     success: function(data) {
 
-                        if(data.error){
+                        if (data.error) {
                             swal.fire(
                                 "Error!", data.error, "error"
                             );
                         }
 
-                       if(data.url){
+                        if (data.url) {
                             Swal.fire({
                                 text: "အောင်မြင်ပါသည်",
                                 icon: "success",
                             }).then((e) => {
                                 location.replace(data.url);
                             });
-                       }
+                        }
                     },
                     error: function(data) {
                         console.log('Error:', data);
                         Swal.fire({
-                                text: "* Please fill all data correctly",
-                                icon: "error",
-                            })
+                            text: "* Please fill all data correctly",
+                            icon: "error",
+                        })
                         $('#saveBtn').html('Save Changes');
                     }
                 });

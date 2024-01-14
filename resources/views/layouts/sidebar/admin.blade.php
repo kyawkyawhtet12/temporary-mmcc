@@ -201,6 +201,11 @@
                                 <a href="{{ route('ballone.body-setting.index') }}" class="nav-link"
                                     data-key="t-body-setting"> Body Limit Amount </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('ballone.body-limit-group.index') }}" class="nav-link"
+                                    data-key="t-body-setting"> Body Limit Amount Group </a>
+                            </li>
                             @endif
 
                         </ul>

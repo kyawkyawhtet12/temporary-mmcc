@@ -11,6 +11,7 @@ use App\Models\FootballMaungFee;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\FootballBodyLimitGroup;
 use App\Services\Ballone\FeesValidation;
 
 class MaungFeesController extends Controller
@@ -75,7 +76,9 @@ class MaungFeesController extends Controller
         $leagues = League::all();
         $match = FootballMatch::latest()->first();
         $round = $match ? $match->round : 1;
-        return view("backend.admin.ballone.match.maung.create", compact('leagues', 'round'));
+        $groups = FootballBodyLimitGroup::select('id', 'name', 'max_amount')->orderBy("max_amount")->get();
+
+        return view("backend.admin.ballone.match.maung.create", compact('leagues', 'round', 'groups'));
     }
 
     public function create(Request $request)
@@ -111,7 +114,8 @@ class MaungFeesController extends Controller
                             'league_id' => $request->league_id,
                             'home_id' => $request->home_id[$key],
                             'away_id' => $request->away_id[$key],
-                            'other'   => ($request->other && array_key_exists($key, $request->other)) ? $request->other[$key] : 0
+                            'other'   => ($request->other && array_key_exists($key, $request->other)) ? $request->other[$key] : 0,
+                            'body_limit' => $request->limit_group_id[$key]
                         ]);
 
                         $match->matchStatus()->create(['admin_id' => Auth::id()]);
@@ -139,11 +143,10 @@ class MaungFeesController extends Controller
                 }
             });
 
-            return response()->json([ 'url' => '/admin/ballone/maung' ]);
-
+            return response()->json(['url' => '/admin/ballone/maung']);
         } catch (\Exception $exception) {
 
-            return response()->json([ 'error' => $exception->getMessage() ]);
+            return response()->json(['error' => $exception->getMessage()]);
         }
     }
 
@@ -151,7 +154,7 @@ class MaungFeesController extends Controller
     {
         $enable = Enabled::first();
 
-        $enable->update([ 'maung_status' => !$enable->maung_status ]);
+        $enable->update(['maung_status' => !$enable->maung_status]);
 
         return back()->with('success', 'success');
     }

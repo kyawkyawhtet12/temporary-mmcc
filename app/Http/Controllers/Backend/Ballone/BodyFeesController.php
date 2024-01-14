@@ -28,7 +28,7 @@ class BodyFeesController extends Controller
                                 ->paginate(15);
 
         $request->session()->forget(['prev_route','refresh']);
-        // return $data;
+        // return $data[0]->match->body_limit_group;
         return view('backend.admin.ballone.match.body.index', compact('data'));
     }
 

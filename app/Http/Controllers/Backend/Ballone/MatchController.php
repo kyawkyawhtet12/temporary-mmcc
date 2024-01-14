@@ -12,6 +12,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Models\FootballMatchStatus;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBodyLimitGroup;
 use App\Services\Ballone\RefundService;
 
 class MatchController extends Controller
@@ -89,10 +90,11 @@ class MatchController extends Controller
         $match = FootballMatch::without('home','away')->findOrFail($id);
         $leagues = League::all();
         $clubs = Club::where('league_id', $match->league_id)->get();
+        $groups = FootballBodyLimitGroup::select('id', 'name', 'max_amount')->orderBy("max_amount")->get();
 
         $status = str_contains(url()->previous(), 'maung') ?  1 : 0;
 
-        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs', 'status'));
+        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs', 'status', 'groups'));
     }
 
     public function update(Request $request, $id)
@@ -107,6 +109,7 @@ class MatchController extends Controller
             'time' => 'required',
             'home_id' => 'required',
             'away_id' => 'required',
+            'limit_group_id' => 'required'
         ]);
 
         $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
@@ -119,7 +122,8 @@ class MatchController extends Controller
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,
             'away_id' => $request->away_id,
-            'other' => ($request->other) ?: 0
+            'other' => ($request->other) ?: 0,
+            'body_limit' => $request->limit_group_id
         ]);
 
         $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body';

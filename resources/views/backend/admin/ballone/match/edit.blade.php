@@ -74,18 +74,14 @@
                                     <div class="form-group row">
                                         <div class="col-sm-6">
                                             <label for="name" class="col-sm-12 control-label">Date</label>
-                                            <div class="col-sm-12">
-                                                <input type="date" id="date" class="form-control" name="date"
-                                                    value="{{ get_date_format($match) }}" required>
-                                            </div>
+                                            <input type="date" id="date" class="form-control" name="date"
+                                                value="{{ get_date_format($match) }}" required>
                                         </div>
 
                                         <div class="col-sm-6">
                                             <label for="name" class="col-sm-12 control-label">Time</label>
-                                            <div class="col-sm-12">
-                                                <input type="time" id="time" class="form-control" name="time"
-                                                    value={{ get_time_format($match) }} required>
-                                            </div>
+                                            <input type="time" id="time" class="form-control" name="time"
+                                                value={{ get_time_format($match) }} required>
                                         </div>
                                     </div>
 
@@ -115,19 +111,15 @@
                                         <div class="col-sm-6">
                                             <label for="home_no" class="col-sm-6 control-label"> Home No
                                             </label>
-                                            <div class="col-sm-12">
-                                                <input type="number" id="home_no" class="form-control" name="home_no"
-                                                    value="{{ $match->home_no }}">
-                                            </div>
+                                            <input type="number" id="home_no" class="form-control" name="home_no"
+                                                value="{{ $match->home_no }}">
                                         </div>
 
                                         <div class="col-sm-6">
                                             <label for="away_no" class="col-sm-6 control-label"> Away No
                                             </label>
-                                            <div class="col-sm-12">
-                                                <input type="number" id="away_no" class="form-control" name="away_no"
-                                                    value="{{ $match->away_no }}">
-                                            </div>
+                                            <input type="number" id="away_no" class="form-control" name="away_no"
+                                                value="{{ $match->away_no }}">
                                         </div>
                                     </div>
 
@@ -136,34 +128,44 @@
                                             <label for="home_id" class="col-sm-6 control-label">
                                                 Home Team
                                             </label>
-                                            <div class="col-sm-12">
-                                                <select class="form-control selectHomeTeam" name="home_id" id="home_id"
-                                                    required style="width: 100%;">
-                                                    @foreach ($clubs as $club)
-                                                        <option value="{{ $club->id }}" {{ ($club->id == $match->home_id ) ? 'selected' : '' }}>
-                                                            {{ $club->name }}
-                                                        </option>
-                                                    @endforeach
+                                            <select class="form-control selectHomeTeam" name="home_id" id="home_id"
+                                                required style="width: 100%;">
+                                                @foreach ($clubs as $club)
+                                                    <option value="{{ $club->id }}" {{ ($club->id == $match->home_id ) ? 'selected' : '' }}>
+                                                        {{ $club->name }}
+                                                    </option>
+                                                @endforeach
 
-                                                </select>
-                                            </div>
+                                            </select>
                                         </div>
 
                                         <div class="col-sm-6">
                                             <label for="away_id" class="col-sm-12 control-label">
                                                 Away Team
                                             </label>
-                                            <div class="col-sm-12">
-                                                <select class="form-control selectAwayTeam" name="away_id" id="away_id"
-                                                    required style="width: 100%;">
-                                                    @foreach ($clubs as $club)
-                                                        <option value="{{ $club->id }}" {{ ($club->id == $match->away_id ) ? 'selected' : '' }}>
-                                                            {{ $club->name }}
-                                                        </option>
-                                                    @endforeach
+                                            <select class="form-control selectAwayTeam" name="away_id" id="away_id"
+                                                required style="width: 100%;">
+                                                @foreach ($clubs as $club)
+                                                    <option value="{{ $club->id }}" {{ ($club->id == $match->away_id ) ? 'selected' : '' }}>
+                                                        {{ $club->name }}
+                                                    </option>
+                                                @endforeach
 
-                                                </select>
-                                            </div>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <select class="form-control" name="limit_group_id"
+                                                style="width: 100%;" required>
+                                                <option value="">-- Select Body Limit Group --</option>
+                                                @foreach ($groups as $group)
+                                                    <option value="{{ $group->id }}" {{ $match->body_limit == $group->id ? "selected" : "" }}>
+                                                        {{ $group->name }} : {{ number_format($group->max_amount) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

@@ -36,6 +36,11 @@ class FootballMatch extends Model
         return $this->hasOne(FootballMatchStatus::class, 'match_id');
     }
 
+    public function bodyLimit()
+    {
+        return $this->belongsTo(FootballBodyLimitGroup::class, 'body_limit');
+    }
+
     //
 
     public function bodyfees()
@@ -88,6 +93,24 @@ class FootballMatch extends Model
     }
 
     //
+
+    public function getBodyLimitGroupAttribute()
+    {
+        return $this->bodyLimit ?
+                "<p> ( {$this->limit_name} ) </p>
+                 <span class='mt-2'> {$this->limit_amount} </span>"
+                : "";
+    }
+
+    public function getLimitNameAttribute()
+    {
+        return $this->bodyLimit?->name;
+    }
+
+    public function getLimitAmountAttribute()
+    {
+        return number_format($this->bodyLimit?->max_amount);
+    }
 
 
 }

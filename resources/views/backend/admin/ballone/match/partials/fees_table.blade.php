@@ -19,6 +19,8 @@
                         <th>By</th>
                         <th>Action</th>
                         <th>Status</th>
+
+                        <th>Body Limit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,6 +129,10 @@
                                         {{ $dt->match->getStatus() }}
                                     </a>
                                 @endif
+                            </td>
+
+                            <td>
+                                {!! $dt->match->body_limit_group !!}
                             </td>
                         </tr>
                     @empty
