@@ -80,6 +80,7 @@
                                                     <th>Status</th>
                                                     <th>Days not logged in</th>
                                                     <th>Payment</th>
+                                                    <th>Amount Details</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
@@ -280,6 +281,10 @@
                     {
                         data: 'payment',
                         name: 'payment'
+                    },
+                    {
+                        data: 'amount_details',
+                        name: 'amount_details'
                     },
                     {
                         data: 'action',

@@ -8,6 +8,7 @@ use App\Http\Controllers\Record\CashController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
+use App\Http\Controllers\Backend\Report\UserLogController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -71,6 +72,9 @@ Route::group(
 
         Route::resource('users', 'UserController');
 
+        // User Amount Details
+        Route::get('amount-details/{id}', [UserLogController::class, 'index']);
+        Route::post('amount-details/{id}', [UserLogController::class, 'filter'])->name('amount_details.filter');
 
         // Game Record
         Route::get('recharge-record', [RechargeController::class, 'index'])->name('recharge.record');

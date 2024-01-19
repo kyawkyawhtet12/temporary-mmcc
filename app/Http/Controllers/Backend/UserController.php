@@ -60,6 +60,13 @@ class UserController extends Controller
                             ";
                         }
                     })
+                    ->addColumn('amount_details', function($user){
+                        return "
+                            <a href='/admin/amount-details/{$user->id}' class='btn btn-success'>
+                                Amount Details
+                            </a>
+                        ";
+                    })
                     ->addColumn('action', function ($user) {
                         if( is_admin() ){
                             return "
@@ -87,7 +94,7 @@ class UserController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['status','action','payment'])
+                    ->rawColumns(['status','action','payment','amount_details'])
                     ->make(true);
         }
         return view('backend.admin.users.index', compact("agents"));
