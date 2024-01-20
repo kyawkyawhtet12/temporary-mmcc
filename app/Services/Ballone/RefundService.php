@@ -39,11 +39,14 @@ class RefundService
 
         $betting = $maung->bet->bet;
 
-        if( $maung->bet->count == 1 ){
-            $this->history_add($maung, $betting);
-        }else{
-            (new MaungService())->calculation($betting, $maung);
-        }
+
+        (new MaungService())->calculation($betting, $maung);
+
+        // if( $maung->bet->count == 1 ){
+        //     $this->history_add($maung, $betting);
+        // }else{
+        //     (new MaungService())->calculation($betting, $maung);
+        // }
     }
 
     public function history_add($data, $betting)
