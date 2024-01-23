@@ -12,7 +12,7 @@ class FootballMatch extends Model
 
     protected $guarded = [];
 
-    protected $with = [ 'home' , 'away' , 'matchStatus' ];
+    protected $with = [ 'home' , 'away' , 'matchStatus' , 'bodyLimit' ];
 
     // type - 0 Refund
 

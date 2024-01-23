@@ -17,15 +17,18 @@ use App\Services\Ballone\RefundService;
 
 class MatchController extends Controller
 {
-
     public function refundHistory(Request $request)
     {
         if ($request->ajax()) {
+
             if (!empty($request->from_date)) {
-                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->get();
+                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))
+                                    ->whereBetween('date_time', [$request->from_date, $request->to_date]);
             } else {
-                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->latest()->get();
+                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))
+                                    ->latest();
             }
+
             return Datatables::of($query)
                 ->addIndexColumn()
                 ->addColumn('league', function ($match) {
@@ -53,9 +56,12 @@ class MatchController extends Controller
                         });
                     }
                 })
+
                 ->rawColumns(['score'])
+
                 ->make(true);
         }
+
         return view('backend.admin.ballone.match.refund');
     }
 
@@ -77,11 +83,10 @@ class MatchController extends Controller
         return response()->json(['success' => 'Match saved successfully.']);
     }
 
-
-    //
     public function show($id)
     {
-        $match = FootballMatch::with('home', 'away', 'allBodyFees', 'allBodyFees.match', 'allMaungFees', 'allMaungFees.match')->find($id);
+        $match = FootballMatch::with('home', 'away', 'allBodyFees.match', 'allMaungFees.match')
+                            ->find($id);
         return response()->json($match);
     }
 
@@ -156,11 +161,9 @@ class MatchController extends Controller
                 (new RefundService())->maungRefund($match);
                 $match->matchStatus()->update([ 'maung_refund' => 1 ]);
             }
-
         });
 
         return response()->json(['success' => 'Match Refund successfully.']);
-
     }
 
     public function close($type, $id, $status)

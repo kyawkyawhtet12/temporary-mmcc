@@ -422,6 +422,8 @@
             $('#save').click(function(e) {
                 e.preventDefault();
 
+                $("#save").attr("disabled", true);
+
                 $.ajax({
                     data: $('#form').serialize(),
                     url: "{{ route('ballone.maung.fees.store') }}",
@@ -433,6 +435,7 @@
                             swal.fire(
                                 "Error!", data.error, "error"
                             );
+                            $("#save").attr("disabled", false);
                         }
 
                         if (data.url) {
@@ -446,11 +449,13 @@
                     },
                     error: function(data) {
                         console.log('Error:', data);
+
                         Swal.fire({
                             text: "* Please fill all data correctly",
                             icon: "error",
                         })
-                        $('#saveBtn').html('Save Changes');
+
+                        $("#save").attr("disabled", false);
                     }
                 });
             });
