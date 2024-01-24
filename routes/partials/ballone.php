@@ -18,7 +18,8 @@ Route::get('ballone/maung-fees/enabled', 'Ballone\MaungFeesController@maungFeesE
 Route::get('ballone/maung/fees/add', 'Ballone\MaungFeesController@add')->name('ballone.maung.fees.add');
 Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->name('ballone.maung.fees.store');
 
-Route::middleware('check_admin')->group(function () {
+// Route::middleware('check_admin')->group(function () {});
+
 
     // Ballone Maung Limit
     Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
@@ -48,7 +49,7 @@ Route::middleware('check_admin')->group(function () {
 
     // Match Close . . all fees close
     Route::post('ballone/match/{type}/{id}/{status}', 'Ballone\MatchController@close')->name('ballone.match.close');
-});
+
 
 
 // Ballone Refund

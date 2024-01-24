@@ -7,7 +7,6 @@ Route::get('three_winners', 'ThreeWinnerController@index')->name('three_winners.
 // Route::resource('three_lucky_numbers', 'ThreeLuckyNumberController');
 // Route::post('/three_lucky_no_status', 'ThreeLuckyNumberController@UpdateByAjax');
 
-Route::middleware('check_admin')->group(function () {
 
     Route::get('three-lottery', 'EnabledController@threeLotteryStatus')->name('three.changeStatus');
 
@@ -25,7 +24,7 @@ Route::middleware('check_admin')->group(function () {
     Route::get('/three_lucky_number_setting', 'ThreeDigitLuckySettingController@index')->name('3d.lucky-number.index');
     Route::post('/three_lucky_number_setting', 'ThreeDigitLuckySettingController@update')->name('3d.lucky-number.update');
     Route::post('/three_lucky_number_finish', 'ThreeDigitLuckySettingController@approve')->name('3d.lucky-number.approve');
-});
+
 
 // 3D Results and Report Detail
 

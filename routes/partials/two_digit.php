@@ -6,7 +6,6 @@ Route::resource('two_lucky_numbers', 'TwoLuckyNumberController');
 
 Route::post('/two_lucky_no_status', 'TwoLuckyNumberController@UpdateByAjax');
 
-Route::middleware('check_admin')->group(function () {
 
     Route::get('two-lottery', 'EnabledController@twoLotteryStatus')->name('two.changeStatus');
 
@@ -33,7 +32,7 @@ Route::middleware('check_admin')->group(function () {
     Route::get('lottery-times', 'LotteryTimeController@index')->name('lottery-time.index');
     Route::get('lottery-times/edit/{id}', 'LotteryTimeController@edit')->name('lottery-time.edit');
     Route::put('lottery-times/edit/{id}', 'LotteryTimeController@update')->name('lottery-time.update');
-});
+
 
 // 2D Results and Report Detail
 Route::get('/2d-today-report', 'Report\LotteryReportController@today_2d')->name('twodigits.today-report');

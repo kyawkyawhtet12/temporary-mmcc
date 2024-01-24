@@ -49,7 +49,6 @@
                                     2D Result </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('2d.disable.all') }}" class="nav-link">
                                     2D Open/Close For All
@@ -61,7 +60,6 @@
                                     2D Open/Close For Agent
                                 </a>
                             </li>
-                            @endif
 
                             <li class="nav-item">
                                 <a href="{{ url('admin/two_lucky_numbers') }}" class="nav-link"
@@ -72,7 +70,6 @@
                                     data-key="t-calendar"> Lucky Winners </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('lottery-time.index') }}" class="nav-link"
                                     data-key="t-calendar"> Lottery Times </a>
@@ -85,7 +82,6 @@
                                 <a href="{{ route('2d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate </a>
                             </li>
-                            @endif
                         </ul>
                     </div>
                 </li>
@@ -108,14 +104,11 @@
                                     3D Result </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('3d.disable') }}" class="nav-link">
                                     3D Open/Close
                                 </a>
                             </li>
-                            @endif
-
 
                             <li class="nav-item">
                                 <a href="{{ url('admin/three_winners') }}" class="nav-link"
@@ -128,8 +121,6 @@
                                     data-key="t-lucky-draws"> 3D Lottery Setting </a>
                             </li>
 
-                            @if( is_admin())
-
                             <li class="nav-item">
                                 <a href="{{ route('3d.limit.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Amount
@@ -140,7 +131,6 @@
                                     data-key="t-calendar"> Limit Compensate
                                 </a>
                             </li>
-                            @endif
 
                         </ul>
                     </div>
@@ -183,7 +173,7 @@
                                     data-key="t-ballone-match"> Refund Match History</a>
                             </li>
 
-                            @if( is_admin() )
+
                             <li class="nav-item">
                                 <a href="{{ route('ballone.maung-limit.index') }}" class="nav-link"
                                     data-key="t-maung-limit"> Maung Limit Amount</a>
@@ -206,7 +196,6 @@
                                 <a href="{{ route('ballone.body-limit-group.index') }}" class="nav-link"
                                     data-key="t-body-setting"> Body Limit Amount Group </a>
                             </li>
-                            @endif
 
                         </ul>
                     </div>
