@@ -53,11 +53,13 @@
                                                 {{ $agent->maung_limit ? $agent->maung_limit->max_amount : 1000000 }}
                                             </td>
                                             <td>
+                                                @if( is_admin())
                                                 <a href="javascript:void(0)" class="btn btn-primary edit"
                                                     data-agent={{ $agent->id }}
                                                     data-min={{ $agent->maung_limit ? $agent->maung_limit->min_amount : 500 }}
                                                     data-max={{ $agent->maung_limit ? $agent->maung_limit->max_amount : 1000000 }}
                                                 > Edit </a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach

@@ -23,145 +23,152 @@
                 </div>
             </div>
 
-            @include('backend.admin.2d-close.partials._form')
+            @includeWhen(is_admin(), 'backend.admin.2d-close.partials._form')
 
-<div class="row">
-    <div class="col-12">
+            <div class="row">
+                <div class="col-12">
 
-        @if ($data->count())
-            <div class="mb-3">
-                <a href="#" class="btn btn-danger deleteLimit" data-id="all">
-                    Delete All
-                </a>
-            </div>
-        @endif
-
-        <div class="card">
-            <div class="card-header">
-                <form action="{{ route('2d.disable') }}" method="GET">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="date" class="form-control p-2" placeholder="Date" name="date"
-                                value="{{ $filtered['date'] }}">
+                    @if ($data->count() && is_admin())
+                        <div class="mb-3">
+                            <a href="#" class="btn btn-danger deleteLimit" data-id="all">
+                                Delete All
+                            </a>
                         </div>
+                    @endif
 
-                        <div class="col-md-3">
-                            <select name="time_id" id="time_id" class="form-control">
-                                @foreach ($times as $time)
-                                    <option value="{{ $time->id }}"
-                                        {{ $time->id == $filtered['time_id'] ? 'selected' : '' }}>
-                                        {{ $time->time }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <form action="{{ route('2d.disable') }}" method="GET">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="date" class="form-control p-2" placeholder="Date" name="date"
+                                            value="{{ $filtered['date'] }}">
+                                    </div>
 
-                        <div class="col-md-4">
-                            <select name="agent_id[]" id="agent_id" multiple="multiple"
-                                class="agentSelect form-control">
-                                @foreach ($agents as $agent)
-                                    <option value="{{ $agent->id }}"
-                                        {{ in_array($agent->id, $filtered['agents']) ? 'selected' : '' }}>
-                                        {{ $agent->name }} </option>
-                                @endforeach
-                            </select>
-                        </div>
+                                    <div class="col-md-3">
+                                        <select name="time_id" id="time_id" class="form-control">
+                                            @foreach ($times as $time)
+                                                <option value="{{ $time->id }}"
+                                                    {{ $time->id == $filtered['time_id'] ? 'selected' : '' }}>
+                                                    {{ $time->time }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary"> Filter </button>
+                                    <div class="col-md-4">
+                                        <select name="agent_id[]" id="agent_id" multiple="multiple"
+                                            class="agentSelect form-control">
+                                            @foreach ($agents as $agent)
+                                                <option value="{{ $agent->id }}"
+                                                    {{ in_array($agent->id, $filtered['agents']) ? 'selected' : '' }}>
+                                                    {{ $agent->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                            <a href="{{ route('2d.disable') }}" class="btn btn-warning"> Reset </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary"> Filter </button>
 
-            <div class="card-body">
-                <div class="row">
-
-                    @forelse ($data as $agent => $dt)
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between">
-                                    <h6> {{ $agent }} </h6>
+                                        <a href="{{ route('2d.disable') }}" class="btn btn-warning"> Reset </a>
+                                    </div>
                                 </div>
-                                <div class="card-body">
+                            </form>
+                        </div>
 
-                                    @php
+                        <div class="card-body">
+                            <div class="row">
 
-                                        $fronts = $dt->where('status', 2)->first();
-                                        $others = $dt->where('status', 1)->first();
+                                @forelse ($data as $agent => $dt)
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-header d-flex justify-content-between">
+                                                <h6> {{ $agent }} </h6>
+                                            </div>
+                                            <div class="card-body">
 
-                                    @endphp
+                                                @php
 
-                                    <div class="row pb-1" style="border-bottom: 1px solid lightgray">
-                                        <div class="col-12">
+                                                    $fronts = $dt->where('status', 2)->first();
+                                                    $others = $dt->where('status', 1)->first();
 
-                                            <p class="mb-1">
-                                                ထိပ်စီးပိတ်ထားသောနံပါတ်များ
-                                            </p>
+                                                @endphp
 
-                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="row pb-1" style="border-bottom: 1px solid lightgray">
+                                                    <div class="col-12">
 
-                                                @if ($fronts)
-                                                    <h6 class="text-danger">
-                                                        {{ $fronts->limit_number_group->implode(" , ") }}
-                                                    </h6>
+                                                        <p class="mb-1">
+                                                            ထိပ်စီးပိတ်ထားသောနံပါတ်များ
+                                                        </p>
 
-                                                    <a href="#" class="text-danger deleteLimit" data-id="{{ $fronts->id }}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                @else
-                                                    <h6> - </h6>
+                                                        <div class="d-flex justify-content-between align-items-center">
+
+                                                            @if ($fronts)
+                                                                <h6 class="text-danger">
+                                                                    {{ $fronts->limit_number_group->implode(' , ') }}
+                                                                </h6>
+
+                                                                @if( is_admin())
+                                                                <a href="#" class="text-danger deleteLimit"
+                                                                    data-id="{{ $fronts->id }}">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </a>
+                                                                @endif
+                                                            @else
+                                                                <h6> - </h6>
+                                                            @endif
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                @if ($others)
+                                                    <div class="row mt-3">
+                                                        <div
+                                                            class="col-12 d-flex justify-content-between align-items-center">
+                                                            <p class="mb-0">
+                                                                Limit ကန့်ထားသောနံပါတ်များ
+                                                            </p>
+                                                            @if(is_admin())
+                                                            <a href="#" class="text-danger deleteLimit"
+                                                                data-id="{{ $others->id }}">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-4 justify-content-center gap-3">
+                                                        @foreach ($others->limit_number_group as $number => $amount)
+                                                            <div class="col-2 text-center"
+                                                                style="border: 1px solid lightgray; padding: 5px;">
+                                                                <p style="margin-bottom: 5px">
+                                                                    {{ sprintf('%02d', $number) }}
+                                                                </p>
+                                                                <span class="btn btn-danger btn-sm"
+                                                                    style="padding:6px;font-size: 11px">
+                                                                    {{ $amount }}
+                                                                </span>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
                                                 @endif
                                             </div>
-
                                         </div>
+
                                     </div>
 
-                                    @if( $others)
-                                    <div class="row mt-3">
-                                        <div class="col-12 d-flex justify-content-between align-items-center">
-                                            <p class="mb-0">
-                                             Limit ကန့်ထားသောနံပါတ်များ
-                                            </p>
-
-                                            <a href="#" class="text-danger deleteLimit" data-id="{{ $others->id }}">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </div>
+                                @empty
+                                    <div>
+                                        <p class="text-center"> No Data Available.</p>
                                     </div>
+                                @endforelse
 
-                                    <div class="row mt-4 justify-content-center gap-3">
-                                        @foreach ($others->limit_number_group as $number => $amount)
-                                            <div class="col-2 text-center"
-                                                style="border: 1px solid lightgray; padding: 5px;">
-                                                <p style="margin-bottom: 5px">
-                                                    {{ sprintf('%02d', $number) }}
-                                                </p>
-                                                <span class="btn btn-danger btn-sm" style="padding:6px;font-size: 11px">
-                                                    {{ $amount }}
-                                                </span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    @endif
-                                </div>
                             </div>
-
                         </div>
-
-                    @empty
-                        <div>
-                            <p class="text-center"> No Data Available.</p>
-                        </div>
-                    @endforelse
-
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
 
         </div>
@@ -177,6 +184,36 @@
                 $("#loader").removeClass('d-flex').addClass('d-none');
                 $("#mainpage").removeClass('d-none');
             }, 700);
+
+            $('.selectTime').multiselect({
+                placeholder: {
+                    id: 'all',
+                    text: '-- All Time --'
+                }
+            });
+
+            $('#numberSelect').multiselect({
+                columns: 10,
+                placeholder: 'Select Numbers',
+                selectAll: true,
+                selectGroup: true
+            });
+
+            $('#frontNumberSelect').multiselect({
+                columns: 10,
+                placeholder: 'Select Front Number to close',
+                selectAll: true
+            });
+
+            $('.agentSelect').multiselect({
+                columns: 2,
+                placeholder: 'Select Agent',
+                search: true,
+                searchOptions: {
+                    'default': 'Search Agents'
+                },
+                selectAll: true
+            });
 
             $('body').on('click', '.deleteLimit-old', function() {
 
@@ -248,9 +285,9 @@
                 $("#allNumbers").toggleClass("d-none");
                 $("#frontNumbers").toggleClass("d-none");
 
-                if( $(this).val() == 1){
+                if ($(this).val() == 1) {
 
-                }else{
+                } else {
 
                 }
 

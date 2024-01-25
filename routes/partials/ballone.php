@@ -18,12 +18,19 @@ Route::get('ballone/maung-fees/enabled', 'Ballone\MaungFeesController@maungFeesE
 Route::get('ballone/maung/fees/add', 'Ballone\MaungFeesController@add')->name('ballone.maung.fees.add');
 Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->name('ballone.maung.fees.store');
 
-// Route::middleware('check_admin')->group(function () {});
+Route::middleware('check_admin')->group(function () {
+
+    Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
+
+    Route::post('ballone/body-limit-group', 'Ballone\BodyLimitGroupController@store')->name('ballone.body-limit-group.store');
+    Route::delete('ballone/body-limit-group/{id}', 'Ballone\BodyLimitGroupController@destroy')->name('ballone.body-limit-group.destroy');
+
+    Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
+});
 
 
     // Ballone Maung Limit
     Route::get('ballone/maung-limit', 'Ballone\MaungLimitController@index')->name('ballone.maung-limit.index');
-    Route::post('ballone/maung-limit/store', 'Ballone\MaungLimitController@store')->name('ballone.maung-limit.store');
 
     // Ballone Maung Team Minimum and Maximum Setting
     Route::get('ballone/maung-teams-setting', 'Ballone\MaungLimitController@teams_index')->name('ballone.maung-teams-setting.index');
@@ -37,11 +44,11 @@ Route::post('ballone/maung/fees/add', 'Ballone\MaungFeesController@create')->nam
 
     // Ballone Body Setting
     Route::get('ballone/body-setting', 'Ballone\BodySettingController@index')->name('ballone.body-setting.index');
-    Route::post('ballone/body-setting/store', 'Ballone\BodySettingController@store')->name('ballone.body-setting.store');
+
+
     // Body Limit Per Group
     Route::get('ballone/body-limit-group', 'Ballone\BodyLimitGroupController@index')->name('ballone.body-limit-group.index');
-    Route::post('ballone/body-limit-group', 'Ballone\BodyLimitGroupController@store')->name('ballone.body-limit-group.store');
-    Route::delete('ballone/body-limit-group/{id}', 'Ballone\BodyLimitGroupController@destroy')->name('ballone.body-limit-group.destroy');
+
 
     // Body /  Maung Cancel
     Route::post('ballone/body-bet/cancel', 'Ballone\ReportDetailController@bodyCancel')->name('ballone.body.refund');

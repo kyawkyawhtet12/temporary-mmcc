@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            @include('backend.admin.2d-close.partials._form_all')
+            @includeWhen(is_admin(), 'backend.admin.2d-close.partials._form_all')
 
             <div class="row">
                 <div class="col-12">
@@ -35,6 +35,7 @@
                                     @if( $data )
                                     <div class="col-md-12">
                                         <div class="card">
+                                            @if( is_admin())
                                             <div class="card-header d-flex justify-content-between">
                                                 <div>
                                                     <a href="#" class="btn btn-danger btn-sm deleteLimit"
@@ -43,6 +44,7 @@
                                                     </a>
                                                 </div>
                                             </div>
+                                            @endif
                                             <div class="card-body">
                                                 <div class="row  justify-content-center gap-3">
                                                     @foreach ($data->limit_number_group as $number => $amount)

@@ -9,6 +9,7 @@ use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use App\Models\Agent;
+use App\Models\AgentPaymentAllReport;
 use App\Models\TwoDigit;
 use App\Models\User;
 use App\Models\Enabled;
@@ -19,7 +20,11 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        $total_amount = Agent::sum('amount');
+
+        $payment = AgentPaymentAllReport::query();
+
+        $total_amount = number_format($payment->sum('deposit') - $payment->sum('withdraw'));
+
         $total_agent = Agent::count();
         $total_user = User::count();
 

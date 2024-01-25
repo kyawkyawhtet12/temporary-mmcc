@@ -27,10 +27,13 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5> Body Limit Amount Group </h5>
+
+                            @if( is_admin())
                             <a href="javascript:void(0)" class="btn btn-success btn-sm addBtn">
                                 <i class="fa fa-plus"></i>
                                 Add Group
                             </a>
+                            @endif
                         </div>
                         <div class="card-body">
 
@@ -59,6 +62,7 @@
                                                             {{ number_format($group->max_amount) }}
                                                         </td>
                                                         <td>
+                                                            @if( is_admin())
                                                             <a href="javascript:void(0)" class="text-success editBtn mx-1"
                                                                 data-group="{{ $group }}">
                                                                 <i class="fa fa-edit"></i>
@@ -68,6 +72,7 @@
                                                                 data-id="{{ $group->id }}">
                                                                 <i class="fa fa-trash"></i>
                                                             </a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @empty
