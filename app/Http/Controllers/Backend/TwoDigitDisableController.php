@@ -99,9 +99,7 @@ class TwoDigitDisableController extends Controller
     // For All
     public function disable_all(Request $request)
     {
-
         $data = TwoDigitLimit::whereNull('agent_id')->first();
-
         return view('backend.admin.2d-close.all', compact('data'));
     }
 
@@ -137,11 +135,14 @@ class TwoDigitDisableController extends Controller
 
     public function destroy_all($id)
     {
-        if ($id == 'all') {
-            TwoDigitLimit::whereNull('agent_id')->delete();
-        } else {
-            TwoDigitLimit::find($id)->delete();
-        }
+
+        TwoDigitLimit::whereNull('agent_id')->delete();
+
+        // if ($id == 'all') {
+        //     TwoDigitLimit::whereNull('agent_id')->delete();
+        // } else {
+        //     TwoDigitLimit::find($id)->delete();
+        // }
 
         return response()->json('success');
     }
