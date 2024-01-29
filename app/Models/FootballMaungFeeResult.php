@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\BalloneFeesResult;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FootballMaungFeeResult extends Model
 {
-    use HasFactory;
+    use HasFactory,BalloneFeesResult;
 
     protected $guarded = [];
 

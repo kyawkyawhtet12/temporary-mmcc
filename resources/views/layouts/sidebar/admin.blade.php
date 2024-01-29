@@ -49,13 +49,17 @@
                                     2D Result </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
-                                <a href="{{ route('2d.disable') }}" class="nav-link">
-                                    2D Open/Close
+                                <a href="{{ route('2d.disable.all') }}" class="nav-link">
+                                    2D Open/Close For All
                                 </a>
                             </li>
-                            @endif
+
+                            <li class="nav-item">
+                                <a href="{{ route('2d.disable') }}" class="nav-link">
+                                    2D Open/Close For Agent
+                                </a>
+                            </li>
 
                             <li class="nav-item">
                                 <a href="{{ url('admin/two_lucky_numbers') }}" class="nav-link"
@@ -66,7 +70,6 @@
                                     data-key="t-calendar"> Lucky Winners </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('lottery-time.index') }}" class="nav-link"
                                     data-key="t-calendar"> Lottery Times </a>
@@ -79,7 +82,6 @@
                                 <a href="{{ route('2d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate </a>
                             </li>
-                            @endif
                         </ul>
                     </div>
                 </li>
@@ -102,14 +104,11 @@
                                     3D Result </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('3d.disable') }}" class="nav-link">
                                     3D Open/Close
                                 </a>
                             </li>
-                            @endif
-
 
                             <li class="nav-item">
                                 <a href="{{ url('admin/three_winners') }}" class="nav-link"
@@ -117,11 +116,11 @@
                                 </a>
                             </li>
 
-                            @if( is_admin())
                             <li class="nav-item">
                                 <a href="{{ route('3d.lucky-number.index') }}" class="nav-link"
                                     data-key="t-lucky-draws"> 3D Lottery Setting </a>
                             </li>
+
                             <li class="nav-item">
                                 <a href="{{ route('3d.limit.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Amount
@@ -132,7 +131,6 @@
                                     data-key="t-calendar"> Limit Compensate
                                 </a>
                             </li>
-                            @endif
 
                         </ul>
                     </div>
@@ -175,7 +173,7 @@
                                     data-key="t-ballone-match"> Refund Match History</a>
                             </li>
 
-                            @if( is_admin() )
+
                             <li class="nav-item">
                                 <a href="{{ route('ballone.maung-limit.index') }}" class="nav-link"
                                     data-key="t-maung-limit"> Maung Limit Amount</a>
@@ -193,7 +191,11 @@
                                 <a href="{{ route('ballone.body-setting.index') }}" class="nav-link"
                                     data-key="t-body-setting"> Body Limit Amount </a>
                             </li>
-                            @endif
+
+                            <li class="nav-item">
+                                <a href="{{ route('ballone.body-limit-group.index') }}" class="nav-link"
+                                    data-key="t-body-setting"> Body Limit Amount Group </a>
+                            </li>
 
                         </ul>
                     </div>

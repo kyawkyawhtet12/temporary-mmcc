@@ -32,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('ballone.maung.fees.store') }}" method="POST" class="form-horizontal" novalidate>
+                    <form class="form-horizontal" id="form">
                         @csrf
 
                         <div class="card">
@@ -40,7 +40,8 @@
                                 <label for="round" class="col-sm-6 control-label"> Round
                                 </label>
                                 <div class="col-sm-12">
-                                    <input type="number" id="round" class="form-control" name="round" value="{{  $round }}">
+                                    <input type="number" id="round" class="form-control" name="round"
+                                        value="{{ $round }}">
                                 </div>
                             </div>
                         </div>
@@ -72,7 +73,7 @@
                                             <label for="name" class="control-label">Date</label>
                                             <div>
                                                 <input type="date" id="date" class="form-control" name="date[]"
-                                                    required>
+                                                    value="{{ date('Y-m-d') }}" required>
                                             </div>
                                         </div>
 
@@ -93,15 +94,15 @@
 
                                             <div>
                                                 <input type="radio" id="home_other" name="other[0]" value="1"
-                                                class="ml-2">
+                                                    class="ml-2">
                                                 <label class="ml-2 align-middle" for="home_other"> Home </label>
 
                                                 <input type="radio" id="away_other" name="other[0]" value="2"
-                                                class="ml-2">
+                                                    class="ml-2">
                                                 <label class="ml-2 align-middle" for="away_other"> Away </label>
 
                                                 <input type="radio" id="no_other" name="other[0]" value="0"
-                                                class="ml-2" checked>
+                                                    class="ml-2" checked>
                                                 <label class="ml-2 align-middle" for="no_other"> None </label>
                                             </div>
                                         </div>
@@ -130,8 +131,8 @@
                                             <label for="home_id" class="control-label"> Home Team
                                             </label>
                                             <div>
-                                                <select class="form-control selectHomeTeam" name="home_id[]" id="home_id"
-                                                    required style="width: 100%;">
+                                                <select class="form-control selectHomeTeam" name="home_id[]"
+                                                    id="home_id" required style="width: 100%;">
                                                 </select>
                                             </div>
                                         </div>
@@ -140,8 +141,8 @@
                                             <label for="away_id" class="control-label"> Away Team
                                             </label>
                                             <div>
-                                                <select class="form-control selectAwayTeam" name="away_id[]" id="away_id"
-                                                    required style="width: 100%;">
+                                                <select class="form-control selectAwayTeam" name="away_id[]"
+                                                    id="away_id" required style="width: 100%;">
                                                 </select>
                                             </div>
                                         </div>
@@ -154,9 +155,11 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="">Body</span>
                                                     </div>
-                                                    <input name="home_body[]" id="home_body" type="text" class="form-control">
+                                                    <input name="home_body[]" id="home_body" type="text"
+                                                        class="form-control fees">
 
-                                                    <input name="away_body[]" id="away_body" type="text" class="form-control">
+                                                    <input name="away_body[]" id="away_body" type="text"
+                                                        class="form-control fees">
                                                 </div>
                                             </div>
                                         </div>
@@ -169,9 +172,24 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">Goals</span>
                                                     </div>
-                                                    <input name="goals[]" id="goals" type="text" class="form-control">
+                                                    <input name="goals[]" id="goals" type="text"
+                                                        class="form-control fees">
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <select class="form-control" name="limit_group_id[]"
+                                                style="width: 100%;" required>
+                                                <option value="">-- Select Body Limit Group --</option>
+                                                @foreach ($groups as $group)
+                                                    <option value="{{ $group->id }}">
+                                                        {{ $group->name }} : {{ number_format($group->max_amount) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
 
@@ -189,7 +207,7 @@
                                                 <label for="name" class="control-label">Date</label>
                                                 <div>
                                                     <input type="date" id="date" class="form-control"
-                                                        name="date[]" required>
+                                                        value="{{ date('Y-m-d') }}" name="date[]" required>
                                                 </div>
                                             </div>
 
@@ -209,16 +227,17 @@
                                                 </label>
 
                                                 <div>
-                                                    <input type="radio" id="home_other" name="other[{{ $i }}]" value="1"
-                                                    class="ml-2">
+                                                    <input type="radio" id="home_other"
+                                                        name="other[{{ $i }}]" value="1" class="ml-2">
                                                     <label class="ml-2" for="home_other"> Home </label>
 
-                                                    <input type="radio" id="away_other" name="other[{{ $i }}]" value="2"
-                                                    class="ml-2">
+                                                    <input type="radio" id="away_other"
+                                                        name="other[{{ $i }}]" value="2" class="ml-2">
                                                     <label class="ml-2" for="away_other"> Away </label>
 
-                                                    <input type="radio" id="no_other" name="other[{{ $i }}]" value="0"
-                                                    class="ml-2" checked>
+                                                    <input type="radio" id="no_other"
+                                                        name="other[{{ $i }}]" value="0" class="ml-2"
+                                                        checked>
                                                     <label class="ml-2 align-middle" for="no_other"> None </label>
                                                 </div>
                                             </div>
@@ -273,9 +292,11 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text" id="">Body</span>
                                                         </div>
-                                                        <input name="home_body[]" id="home_body" type="text" class="form-control">
+                                                        <input name="home_body[]" id="home_body" type="text"
+                                                            class="form-control fees">
 
-                                                        <input name="away_body[]" id="away_body" type="text" class="form-control">
+                                                        <input name="away_body[]" id="away_body" type="text"
+                                                            class="form-control fees">
                                                     </div>
                                                 </div>
                                             </div>
@@ -288,9 +309,24 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Goals</span>
                                                         </div>
-                                                        <input name="goals[]" id="goals" type="text" class="form-control">
+                                                        <input name="goals[]" id="goals" type="text"
+                                                            class="form-control fees">
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-12">
+                                                <select class="form-control" name="limit_group_id[]"
+                                                    style="width: 100%;" required>
+                                                    <option value="">-- Select Body Limit Group --</option>
+                                                    @foreach ($groups as $group)
+                                                        <option value="{{ $group->id }}">
+                                                            {{ $group->name }} : {{ number_format($group->max_amount) }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
 
@@ -310,7 +346,7 @@
                         </div>
 
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-success" value="create">
+                            <button type="submit" class="btn btn-success" value="create" id="save">
                                 Add
                             </button>
                         </div>
@@ -325,10 +361,18 @@
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('assets/backend/plugins/moment/moment.js') }}"></script>
+    <script src="{{ asset('assets/js/ballone.js') }}"></script>
+
     <script>
         $(document).ready(function() {
 
             let count = 1;
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             $('#home_id').select2();
             $('#away_id').select2();
@@ -349,8 +393,7 @@
 
                             data.map(function(d) {
                                 var newOption = new Option(d.name, d.id, true, true);
-                                $('.selectAwayTeam').append(newOption)
-                                    .trigger('change');
+                                $('.selectAwayTeam').append(newOption).trigger('change');
                             });
                         }
                     })
@@ -374,6 +417,47 @@
             $("body").on('click', ".deleteMatch", function(e) {
                 let group = $(this).data('group');
                 $(`#${group}`).remove();
+            });
+
+            $('#save').click(function(e) {
+                e.preventDefault();
+
+                $("#save").attr("disabled", true);
+
+                $.ajax({
+                    data: $('#form').serialize(),
+                    url: "{{ route('ballone.maung.fees.store') }}",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function(data) {
+
+                        if (data.error) {
+                            swal.fire(
+                                "Error!", data.error, "error"
+                            );
+                            $("#save").attr("disabled", false);
+                        }
+
+                        if (data.url) {
+                            Swal.fire({
+                                text: "အောင်မြင်ပါသည်",
+                                icon: "success",
+                            }).then((e) => {
+                                location.replace(data.url);
+                            });
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error:', data);
+
+                        Swal.fire({
+                            text: "* Please fill all data correctly",
+                            icon: "error",
+                        })
+
+                        $("#save").attr("disabled", false);
+                    }
+                });
             });
 
         });

@@ -11,6 +11,8 @@ class FootballMaungFee extends Model
 
     protected $guarded = [];
 
+    protected $appends = [ 'match_format' ];
+
     public function match()
     {
         return $this->belongsTo(FootballMatch::class, 'match_id');
@@ -41,18 +43,23 @@ class FootballMaungFee extends Model
             return "done";
         }
 
+        if( $this->match->matchStatus->maung_refund == 1 ){
+            return "refund";
+        }
+
         if( $this->status == 0){
             return "old";
         }
 
-        if( $this->match->type == 0 ){
-            return "refund";
-        }
-
-        if( $this->match->date_time < now() )
+        if( $this->match->check_active() )
         {
             return "time-old";
         }
+    }
+
+    public function getMatchFormatAttribute()
+    {
+        return $this->match->match_format;
     }
 
     public function get_result($result)

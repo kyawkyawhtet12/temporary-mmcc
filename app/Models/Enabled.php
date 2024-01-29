@@ -13,6 +13,8 @@ class Enabled extends Model
         'two_thai_status',
         'two_dubai_status',
         'three_status',
-        'close_all_bets'
+        'close_all_bets',
+        'body_status',
+        'maung_status'
     ];
 }

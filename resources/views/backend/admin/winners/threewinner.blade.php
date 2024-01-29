@@ -34,7 +34,8 @@
                               <thead>
                                 <tr class="bg-primary text-white" role="row">
                                   <th>No.</th>
-                                  <th>User</th>
+                                  <th>User Name</th>
+                                  <th>User ID</th>
                                   <th>Agent</th>
                                   <th>Number</th>
                                   <th>Amount</th>
@@ -73,6 +74,7 @@
       columns: [
           {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
           {data: 'user', name: 'user', orderable: false, searchable: false},
+          {data: 'user_id', name: 'user_id', orderable: false, searchable: false},
           {data: 'agent', name: 'agent', orderable: false, searchable: false},
           {data: 'number', name: 'number', orderable: false, searchable: false},
           {data: 'amount', name: 'amount', orderable: false, searchable: false},

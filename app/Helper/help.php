@@ -41,3 +41,9 @@ function get3DCurrentRound()
     $setting = ThreeDigitSetting::whereStatus(1)->first();
     return $setting ? $setting->id : 1;
 }
+
+
+function getTwoDigit($number)
+{
+    return sprintf('%02d', $number);
+}

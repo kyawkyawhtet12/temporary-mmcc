@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Traits\BalloneBettingAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FootballMaung extends Model
 {
-    use HasFactory;
+    use HasFactory, BalloneBettingAttributes;
 
     protected $guarded = [];
 
     // Status
-    // 0 - Pending , 1 - Win , 2 - Lose ,
+    // 0 - Pending , 1 - Win , 2 - Lose , 3 - Draw , 4 - Cancel
     // Refund 0 - false , 1 - true
 
     public function match()
@@ -41,11 +41,6 @@ class FootballMaung extends Model
         return $this->belongsTo(Agent::class, 'agent_id');
     }
 
-    public function getBettingTimeAttribute()
-    {
-        return Carbon::parse($this->created_at)->format('d-m-Y g:i A');
-    }
-
     public function getChargePercentAttribute()
     {
         $teams = $this->bet->teams()->count();
@@ -53,4 +48,12 @@ class FootballMaung extends Model
 
         return $za ? ($za->percent / 100) : 0;
     }
+
+    public function getResultStatusAttribute()
+    {
+        $result = ($this->match->calculate_maung) ? $this->match->maung_temp_score : '-' ;
+
+        return ($this->match->type == 0) ? "P-P" : ( $this->refund == 1 ? "Refund" : $result );
+    }
+
 }

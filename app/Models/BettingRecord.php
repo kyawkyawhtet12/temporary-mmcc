@@ -49,4 +49,5 @@ class BettingRecord extends Model
     {
         return $this->hasMany(FootballBet::class, 'betting_record_id')->where('status', 0);
     }
+
 }

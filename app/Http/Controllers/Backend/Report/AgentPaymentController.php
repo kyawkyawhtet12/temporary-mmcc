@@ -18,20 +18,21 @@ class AgentPaymentController extends Controller
 {
     public function index(Request $request)
     {
-        $select_agent = "all";
         $agents = Agent::select('id','name')->get();
+
         $data = AgentPaymentAllReport::latest()->get();
 
-        return view("backend.report.agent-payments", compact('data', 'select_agent','agents'));
+        $search = [];
+
+        return view("backend.report.agent-payments", compact('data',  'agents', 'search'));
     }
 
     public function search(Request $request)
     {
-        $select_agent = $request->agent;
         $agents = Agent::select('id','name')->get();
 
-        $query = ( $select_agent && $select_agent != 'all' )
-                        ? AgentPaymentReport::where('agent_id',  $select_agent)->latest()
+        $query = ( $request->agent_id )
+                        ? AgentPaymentReport::whereIn('agent_id',  $request->agent_id)->latest()
                         : AgentPaymentAllReport::latest() ;
 
         $data = $query->when($request->start_date, function($q) use ($request){
@@ -42,6 +43,8 @@ class AgentPaymentController extends Controller
                 })
                 ->get();
 
-        return view("backend.report.agent-payments", compact('data','select_agent','agents'));
+        $search = $request->only("agent_id", "start_date", "end_date");
+
+        return view("backend.report.agent-payments", compact('data', 'agents','search'));
     }
 }

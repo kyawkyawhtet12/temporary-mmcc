@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\FootballMatchAttribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FootballMatch extends Model
 {
-    use HasFactory;
+    use HasFactory, FootballMatchAttribute;
 
     protected $guarded = [];
 
-    protected $with = [ 'home' , 'away' ];
+    protected $with = [ 'home' , 'away' , 'matchStatus' , 'bodyLimit' ];
 
     // type - 0 Refund
 
@@ -28,6 +29,16 @@ class FootballMatch extends Model
     public function league()
     {
         return $this->belongsTo(League::class, 'league_id');
+    }
+
+    public function matchStatus()
+    {
+        return $this->hasOne(FootballMatchStatus::class, 'match_id');
+    }
+
+    public function bodyLimit()
+    {
+        return $this->belongsTo(FootballBodyLimitGroup::class, 'body_limit');
     }
 
     //
@@ -76,47 +87,30 @@ class FootballMatch extends Model
         return $this->hasMany(FootballMaung::class, 'match_id');
     }
 
-    //
-
-    public function getMatchFormatAttribute()
+    public function pendingMaungs()
     {
-        return "{$this->home_team} Vs {$this->away_team}";
-    }
-
-    public function getHomeTeamAttribute()
-    {
-        return "({$this->home_no}) {$this->home?->name} {$this->other_status(1)}";
-    }
-
-    public function getAwayTeamAttribute()
-    {
-        return "({$this->away_no}) {$this->away?->name} {$this->other_status(2)}";
-    }
-
-    public function other_status($status)
-    {
-        return ($this->other == $status) ? '(N)' : '';
-    }
-
-    public function upteam_name($upteam)
-    {
-        return ($upteam == 1) ? $this->home?->name : $this->away?->name;
+        return $this->hasMany(FootballMaung::class, 'match_id')->where('status', 0);
     }
 
     //
 
-    public function body_score($key)
+    public function getBodyLimitGroupAttribute()
     {
-        return self::getTempScore($this->body_temp_score)[$key];
+        return $this->bodyLimit ?
+                "<p> ( {$this->limit_name} ) </p>
+                 <span class='mt-2'> {$this->limit_amount} </span>"
+                : "";
     }
 
-    public function maung_score($key)
+    public function getLimitNameAttribute()
     {
-        return self::getTempScore($this->maung_temp_score)[$key];
+        return $this->bodyLimit?->name;
     }
 
-    public static function getTempScore($score)
+    public function getLimitAmountAttribute()
     {
-        return array_pad( explode("-", $score) , 2, '');
+        return number_format($this->bodyLimit?->max_amount);
     }
+
+
 }

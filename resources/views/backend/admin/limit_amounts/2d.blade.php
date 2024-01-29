@@ -53,11 +53,13 @@
                                                 {{ number_format($agent->two_limit->max_amount) }}
                                             </td>
                                             <td>
+                                                @if( is_admin())
                                                 <a href="javascript:void(0)" class="btn btn-primary edit"
                                                     data-agent="{{ $agent->id }}"
                                                     data-min="{{ $agent->two_limit->min_amount }}"
                                                     data-max="{{ $agent->two_limit->max_amount }}"
                                                 > Edit </a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach

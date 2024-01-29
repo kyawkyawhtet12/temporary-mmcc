@@ -1,8 +1,26 @@
 @extends('layouts.master')
 
+
+@section('css')
+    <style>
+        input {
+            padding: 0.6rem !important;
+        }
+
+        .multiSelect button{
+            padding: 0.6rem !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="page-content">
-        <div class="container-fluid">
+
+        <div class="d-flex justify-content-center align-items-center w-100 vh-100" id="loader">
+            <img src="{{ asset('assets/backend/images/loader.gif') }}" alt="" width="200px">
+        </div>
+
+        <div class="container-fluid d-none" id="mainpage">
 
             <!-- start page title -->
             <div class="row">
@@ -26,33 +44,46 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+
                             <div class="row input-daterange">
-                                <form action="{{ route('agent.payment-reports.search') }}" method="POST" class="col-md-10 row">
+
+                                <form action="{{ route('agent.payment-reports.search') }}" method="POST" class="col-md-12 row">
                                     @csrf
-                                    <div class="col-md-2">
-                                        <div class="input-group">
-                                            <select name="agent" id="agentSelect" class="form-control">
-                                                <option value="all">All</option>
-                                                @foreach ($agents as $agent)
-                                                <option value="{{ $agent->id }}" {{ ($select_agent == $agent->id ? 'selected' : '') }}> {{ $agent->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
+                                    <div class="col-md-4 multiSelect">
+                                        <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
+                                            @foreach ($agents as $agent)
+                                                <option value="{{ $agent->id }}"
+                                                    {{ in_array($agent->id, $search['agent_id'] ?? [] ) ? 'selected' : '' }}>
+                                                    {{ $agent->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <div class="col-md-3">
-                                        <input type="date" class="form-control" placeholder="Start Date" name="start_date">
+
+                                    <div class="col">
+                                        <input type="date" class="form-control" placeholder="Start Date" name="start_date" value="{{ $search['start_date'] ?? '' }}">
                                     </div>
-                                    <div class="col-md-3">
+
+                                    <div class="col">
                                         <input type="date" class="form-control" placeholder="End Date" name="end_date">
                                     </div>
-                                    <div class="col-md-3">
+
+                                    <div class="col-1">
+
                                         <button type="submit" name="filter" id="filter"
-                                            class="btn btn-primary">Filter</button>
+                                            class="btn btn-primary d-block">Filter</button>
+
+                                    </div>
+
+                                    <div class="col-1">
+
                                         <a href="" class="btn btn-success">Refresh</a>
                                     </div>
                                 </form>
                             </div>
                         </div>
+
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 my-3 d-flex">
@@ -95,3 +126,27 @@
         </div>
     </div>
 @endsection
+
+
+@push('scripts')
+    <script>
+        $(function() {
+
+            setTimeout(() => {
+                $("#loader").removeClass('d-flex').addClass('d-none');
+                $("#mainpage").removeClass('d-none');
+            }, 700);
+
+            $('.agentSelect').multiselect({
+                columns: 2,
+                placeholder: 'Select Agent',
+                search: true,
+                searchOptions: {
+                    'default': 'Search Agents'
+                },
+                selectAll: true
+            });
+
+        });
+    </script>
+@endpush

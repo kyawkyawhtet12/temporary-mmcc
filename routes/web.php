@@ -8,6 +8,7 @@ use App\Http\Controllers\Record\CashController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
+use App\Http\Controllers\Backend\Report\UserLogController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -71,19 +72,22 @@ Route::group(
 
         Route::resource('users', 'UserController');
 
+        // User Amount Details
+        Route::get('amount-details/{id}', [UserLogController::class, 'index']);
+        Route::post('amount-details/{id}', [UserLogController::class, 'filter'])->name('amount_details.filter');
 
         // Game Record
         Route::get('recharge-record', [RechargeController::class, 'index'])->name('recharge.record');
-        Route::post('recharge-record', [RechargeController::class, 'search'])->name('recharge.record.search');
+        Route::post('recharge-record', [RechargeController::class, 'index'])->name('recharge.record.search');
 
         Route::get('cash-record', [CashController::class, 'index'])->name('cash.record');
-        Route::post('cash-record', [CashController::class, 'search'])->name('cash.record.search');
+        Route::post('cash-record', [CashController::class, 'index'])->name('cash.record.search');
 
         Route::get('betting-record', [BettingController::class, 'index'])->name('betting.record');
-        Route::post('betting-record', [BettingController::class, 'search'])->name('betting.record.search');
-        Route::get('betting-record/{type}/detail/{id}', [BettingController::class, 'detail'])->name('betting.record.detail');
+        Route::post('betting-record', [BettingController::class, 'index'])->name('betting.record.search');
+        Route::get('betting-record/detail/{id}', [BettingController::class, 'detail'])->name('betting.record.detail');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
-        Route::post('win-record', [WinController::class, 'search'])->name('win.record.search');
+        Route::post('win-record', [WinController::class, 'index'])->name('win.record.search');
     }
 );

@@ -51,4 +51,9 @@ class ThreeDigitSetting extends Model
         $data->lucky_number()->create([ 'status' => 'Pending' ]);
 
     }
+
+    public function getApprovedNumberAttribute()
+    {
+        return $this->lucky_number->status == 'Approved' ? $this->lucky_number_full : "";
+    }
 }

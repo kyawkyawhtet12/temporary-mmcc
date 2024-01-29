@@ -14,11 +14,16 @@ class ThreeWinnerController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+
             $query = ThreeWinner::with('threeLuckyDraw', 'threeLuckyNumber')->latest();
+
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('user', function ($digit) {
                         return '<label class="badge badge-primary badge-pill">'.$digit->threeLuckyDraw->user?->name.'</label>';
+                    })
+                    ->addColumn('user_id', function ($digit) {
+                        return $digit->threeLuckyDraw->user?->user_id;
                     })
                     ->addColumn('agent', function ($digit) {
                         if ($digit->threeLuckyDraw->agent) {
@@ -43,10 +48,19 @@ class ThreeWinnerController extends Controller
                         return date("F j, Y", strtotime($digit->created_at));
                     })
                     ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $instance->whereHas('threeLuckyDraw', function ($w) use ($request) {
-                                $w->whereHas('agent', function ($w) use ($request) {
-                                    $search = $request->get('search');
+
+                        $search = $request->get('search');
+
+                        if ( !empty($search) ) {
+
+                            $instance->whereHas('threeLuckyDraw', function ($w) use ($search) {
+
+                                $w->whereHas('agent', function ($w) use ($search) {
+                                    $w->where('name', 'LIKE', "%$search%");
+                                    $w->orWhere('user_id', 'LIKE', "%$search%");
+                                });
+
+                                $w->orWhereHas('agent', function ($w) use ($search) {
                                     $w->where('name', 'LIKE', "%$search%");
                                 });
                             });

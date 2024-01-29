@@ -4,15 +4,30 @@ namespace App\Http\Controllers\Backend;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Agent;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
+
+    protected $search;
+
+    public function __construct(Request $request)
+    {
+        Session::put('search.agent_id', $request->agent_id ?? []);
+
+        $this->search = Session::get('search');
+    }
+
     public function index(Request $request)
     {
+
+        $agents = Agent::select('id','name','referral_code')->get();
+
         if ($request->ajax()) {
 
             $query = User::latest('id');
@@ -45,6 +60,13 @@ class UserController extends Controller
                             ";
                         }
                     })
+                    ->addColumn('amount_details', function($user){
+                        return "
+                            <a href='/admin/amount-details/{$user->id}' class='btn btn-success'>
+                                Amount Details
+                            </a>
+                        ";
+                    })
                     ->addColumn('action', function ($user) {
                         if( is_admin() ){
                             return "
@@ -59,6 +81,11 @@ class UserController extends Controller
                         }
                     })
                     ->filter(function ($instance) use ($request) {
+
+                        if($request->get('agent_id')){
+                            $instance->whereIn('referral_code', $request->agent_id);
+                        }
+
                         if (!empty($request->get('search'))) {
                             $instance->where(function ($w) use ($request) {
                                 $search = $request->get('search');
@@ -67,10 +94,10 @@ class UserController extends Controller
                             });
                         }
                     })
-                    ->rawColumns(['status','action','payment'])
+                    ->rawColumns(['status','action','payment','amount_details'])
                     ->make(true);
         }
-        return view('backend.admin.users.index');
+        return view('backend.admin.users.index', compact("agents"));
     }
 
     /**

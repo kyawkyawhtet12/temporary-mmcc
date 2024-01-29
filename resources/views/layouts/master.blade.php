@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="{{ asset('assets/backend/vendors/iconfonts/font-awesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/vendors/css/vendor.bundle.base.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/vendors/css/vendor.bundle.addons.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/backend/vendors/multiselect/jquery.multiselect.css') }}">
+
     <link rel="stylesheet" href="{{ asset('assets/backend/css/style.css') }}">
 
     <link rel="stylesheet" href="http://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css">
@@ -33,7 +35,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.css">
 
     @yield('css')
@@ -60,21 +63,21 @@
                         </button>
 
                         <?php
-
-                            $prev_route = url()->previous();
-
-                            if( strpos(request()->url(), 'ballone-add-result/maung') ){
-                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/maung';
-                            }
-
-                            if( strpos(request()->url(), 'ballone-add-result/body') ){
-                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
-                            }
-
-                            if( strpos(request()->url(), 'body-report') ){
-                                $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
-                            }
-
+                        
+                        $prev_route = url()->previous();
+                        
+                        if (strpos(request()->url(), 'ballone-add-result/maung')) {
+                            $prev_route = Session::get('prev_route') ?? '/admin/ballone/maung';
+                        }
+                        
+                        if (strpos(request()->url(), 'ballone-add-result/body')) {
+                            $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
+                        }
+                        
+                        if (strpos(request()->url(), 'body-report')) {
+                            $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
+                        }
+                        
                         ?>
 
                         <a class="btn btn-sm btn-info ms-5 px-3" href="{{ $prev_route }}">
@@ -121,7 +124,8 @@
                                     <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                                     <span class="align-middle" data-key="t-logout">Logout</span>
                                 </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    class="d-none">
                                     @csrf
                                 </form>
                             </div>
@@ -187,6 +191,8 @@
     <script src="{{ asset('assets/backend/js/jquery.tabledit.min.js') }}"></script>
     <script src="{{ asset('assets/backend/js/file-upload.js') }}"></script>
 
+    <script src="{{ asset('assets/backend/vendors/multiselect/jquery.multiselect.js') }}"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     {{-- <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script> --}}
@@ -209,7 +215,7 @@
                 "progressBar": true,
                 "showDuration": "300",
                 "closeDuration": "100",
-                "timeOut" : "3000",
+                "timeOut": "3000",
                 "showEasing": "swing",
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",

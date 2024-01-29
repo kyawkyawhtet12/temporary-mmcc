@@ -158,7 +158,7 @@ class LotteryReportController extends Controller
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('number', function ($data) {
-                        return $data->lucky_number?->three_digit?->number;
+                        return $data->approved_number;
                     })
                     ->addColumn('date', function ($data) {
                         return date("F j, Y", strtotime($data->date));
@@ -177,32 +177,26 @@ class LotteryReportController extends Controller
 
     public function three_digits_detail(Request $request, $id)
     {
-
-        $data = ThreeDigitSetting::findOrFail($id);
+      $data = ThreeDigitSetting::findOrFail($id);
 
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
-        $win_betting = $data->lucky_number->winners->when($agent_id, function($query, $agent_id) {
-                                            $query->where('threeLuckyDraw.agent_id', $agent_id);
-                                        })?->sum('threeLuckyDraw.amount');
-
-        $draw = ThreeLuckyDraw::when($agent_id, function($query, $agent_id) {
-                                    $query->where('agent_id', $agent_id);
-                                })
-                                ->where('round', $data->id)
-                                ->selectRaw('SUM(amount) as amount, three_digit_id as three_digit_id, za as za')
-                                ->groupBy('three_digit_id','za')
-                                ->get();
-
-                                // return $draw;
+        $transactions = ThreeDigitTransaction::where('round', $data->id)
+                ->when($agent_id, function($query, $agent_id) {
+                        return $query->where('agent_id', $agent_id);
+                })
+                ->orderBy('three_digit_id')
+                ->pluck('amount', 'three_digit_id');
 
         $agents = Agent::select('id','name')->get();
-        $odds = ThreeDigitCompensation::first()->compensate;
-        // $odds = count($draw) ? $draw[0]->za : $current_odds;
 
-        $win = $win_betting * $odds;
-        $betting = $draw->sum("amount");
+        $results = [
+            'lucky_number'   => $data->lucky_number_full,
+            'number_betting' => $transactions[$data->lucky_number_id] ?? '0',
+            'odds'           => ThreeDigitCompensation::first()->compensate,
+            'betting'        => $transactions->sum()
+        ];
 
-        return view('backend.admin.report.result.3d-detail', compact( 'data', 'win_betting', 'odds', 'draw', 'agents', 'win', 'betting'));
+        return view('backend.admin.report.result.3d-detail', compact('agents', 'data', 'transactions', 'results'));
     }
 }

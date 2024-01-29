@@ -36,6 +36,11 @@ class FootballBet extends Model
         return $this->belongsTo(BettingRecord::class, 'betting_record_id');
     }
 
+    public function getAmountFormatAttribute()
+    {
+        return number_format($this->amount);
+    }
+
     public function getStatusFormatAttribute()
     {
         switch ($this->status) {

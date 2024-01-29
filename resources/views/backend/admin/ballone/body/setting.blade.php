@@ -57,12 +57,14 @@
                                                 {{ $agent->body_limit ? $agent->body_limit->max_amount : 1000000 }}
                                             </td>
                                             <td>
+                                                @if( is_admin())
                                                 <a href="javascript:void(0)" class="btn btn-primary edit"
                                                     data-agent={{ $agent->id }}
                                                     data-percentage={{ $agent->body_limit ? $agent->body_limit->percentage : 5 }}
                                                     data-min={{ $agent->body_limit ? $agent->body_limit->min_amount : 1000 }}
                                                     data-max={{ $agent->body_limit ? $agent->body_limit->max_amount : 1000000 }}
                                                 > Edit </a>
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach

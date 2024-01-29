@@ -10,20 +10,25 @@ use Illuminate\Http\Request;
 use App\Models\FootballMatch;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use App\Models\FootballMatchStatus;
 use App\Http\Controllers\Controller;
+use App\Models\FootballBodyLimitGroup;
 use App\Services\Ballone\RefundService;
 
 class MatchController extends Controller
 {
-
     public function refundHistory(Request $request)
     {
         if ($request->ajax()) {
+
             if (!empty($request->from_date)) {
-                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->whereBetween('date_time', [$request->from_date, $request->to_date])->get();
+                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))
+                                    ->whereBetween('date_time', [$request->from_date, $request->to_date]);
             } else {
-                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))->latest()->get();
+                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))
+                                    ->latest();
             }
+
             return Datatables::of($query)
                 ->addIndexColumn()
                 ->addColumn('league', function ($match) {
@@ -51,9 +56,12 @@ class MatchController extends Controller
                         });
                     }
                 })
+
                 ->rawColumns(['score'])
+
                 ->make(true);
         }
+
         return view('backend.admin.ballone.match.refund');
     }
 
@@ -75,11 +83,10 @@ class MatchController extends Controller
         return response()->json(['success' => 'Match saved successfully.']);
     }
 
-
-    //
     public function show($id)
     {
-        $match = FootballMatch::with('home', 'away', 'allBodyFees', 'allBodyFees.match', 'allMaungFees', 'allMaungFees.match')->find($id);
+        $match = FootballMatch::with('home', 'away', 'allBodyFees.match', 'allMaungFees.match')
+                            ->find($id);
         return response()->json($match);
     }
 
@@ -88,10 +95,11 @@ class MatchController extends Controller
         $match = FootballMatch::without('home','away')->findOrFail($id);
         $leagues = League::all();
         $clubs = Club::where('league_id', $match->league_id)->get();
+        $groups = FootballBodyLimitGroup::select('id', 'name', 'max_amount')->orderBy("max_amount")->get();
 
         $status = str_contains(url()->previous(), 'maung') ?  1 : 0;
 
-        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs', 'status'));
+        return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs', 'status', 'groups'));
     }
 
     public function update(Request $request, $id)
@@ -106,6 +114,7 @@ class MatchController extends Controller
             'time' => 'required',
             'home_id' => 'required',
             'away_id' => 'required',
+            'limit_group_id' => 'required'
         ]);
 
         $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
@@ -118,7 +127,8 @@ class MatchController extends Controller
             'league_id' => $request->league_id,
             'home_id' => $request->home_id,
             'away_id' => $request->away_id,
-            'other' => ($request->other) ?: 0
+            'other' => ($request->other) ?: 0,
+            'body_limit' => $request->limit_group_id
         ]);
 
         $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body';
@@ -132,7 +142,31 @@ class MatchController extends Controller
         return response()->json(['success' => 'Match deleted successfully.']);
     }
 
-    public function refund($id)
+    public function refund($type, $id)
+    {
+        $match = FootballMatch::find($id);
+
+        if (!$match) {
+            return response()->json('error match');
+        }
+
+        DB::transaction(function () use ($type, $match) {
+
+            if( $type == 'body'){
+                (new RefundService())->bodyRefund($match);
+                $match->matchStatus()->update([ 'body_refund' => 1 ]);
+            }
+
+            if( $type == 'maung'){
+                (new RefundService())->maungRefund($match);
+                $match->matchStatus()->update([ 'maung_refund' => 1 ]);
+            }
+        });
+
+        return response()->json(['success' => 'Match Refund successfully.']);
+    }
+
+    public function close($type, $id, $status)
     {
         $match = FootballMatch::find($id);
 
@@ -140,13 +174,14 @@ class MatchController extends Controller
             return response()->json('error');
         }
 
-        DB::transaction(function () use ($match) {
+        FootballMatchStatus::updateOrCreate([
+            'match_id' => $match->id
+        ],[
+            'all_close' => ($status == 'open') ? 0 : 1,
+            'admin_id'  => auth()->id()
+        ]);
 
-            (new RefundService())->handle($match);
-
-            return response()->json(['success' => 'Match Refund successfully.']);
-        });
-
+        return response()->json(['success' => 'Match closed successfully.']);
     }
 
     public function getClubs($league_id)

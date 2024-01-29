@@ -65,11 +65,14 @@ class Payment extends Model
     {
         if ($this->provider) {
             return $this->provider?->name;
-        }elseif(!$this->payment_provider_id && !$this->by){
-            return "Recharge By {$this->agent->name}.";
-        }else {
-            return "Recharge By {$this->admin->name}.";
         }
+        
+        if(!$this->payment_provider_id && !$this->by){
+            return "Recharge By {$this->agent->name}.";
+        }
+        
+        return "Recharge By {$this->admin->name}.";
+        
     }
 
     public function getActionTimeAttribute()

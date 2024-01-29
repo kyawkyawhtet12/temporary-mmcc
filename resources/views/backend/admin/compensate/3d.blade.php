@@ -41,6 +41,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
+                                            @if( is_admin())
                                             <form id="editable-form" class="editable-form">
                                                 <div class="form-group row">
                                                 <div class="col-6 col-lg-8 d-flex align-items-center">
@@ -48,6 +49,11 @@
                                                 </div>
                                                 </div>
                                             </form>
+                                            @else
+
+                                            {{ $data->compensate }}
+
+                                            @endif
                                         </td>
                                         <td>
                                             <label class="badge badge-info badge-pill">{{ date("F j, Y, g:i A", strtotime($data->updated_at)) }}</label>

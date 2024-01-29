@@ -9,15 +9,8 @@ use App\Services\Ballone\MaungService;
 
 class RefundService
 {
-    public function handle($match)
-    {
-        $this->body($match);
-        $this->maung($match);
 
-        $match->update([ 'type' => 0 ]);
-    }
-
-    protected function body($match)
+    public function bodyRefund($match)
     {
         $bodies = FootballBody::with("user", "bet")->where('match_id', $match->id)->get();
 
@@ -29,29 +22,37 @@ class RefundService
         }
     }
 
-    protected function maung($match)
+    public function maungRefund($match)
     {
         $maungs = FootballMaung::with('user','bet')->where('match_id', $match->id)->get();
 
             foreach ($maungs as $maung) {
-
-                $maung->update(['status' => 4, 'refund' => 1]);
-
-                $maung->bet->decrement('count', 1);
-
-                $betting = $maung->bet->bet;
-
-                if( $maung->bet->count == 1 ){
-                    $this->history_add($maung, $betting);
-                }else{
-                    (new MaungService())->calculation($betting, $maung);
-                }
+                $this->maungMatchRefund($maung);
             }
+    }
+
+    public function maungMatchRefund($maung)
+    {
+        $maung->update(['status' => 4, 'refund' => 1]);
+
+        $maung->bet->decrement('count', 1);
+
+        $betting = $maung->bet->bet;
+
+
+        (new MaungService())->calculation($betting, $maung);
+
+        // if( $maung->bet->count == 1 ){
+        //     $this->history_add($maung, $betting);
+        // }else{
+        //     (new MaungService())->calculation($betting, $maung);
+        // }
     }
 
     public function history_add($data, $betting)
     {
         $data->user->increment('amount', (int)$betting->amount);
+
         $betting->update(['status' => 4]);
 
         FootballRefundHistory::create([
