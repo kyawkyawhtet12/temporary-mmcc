@@ -177,7 +177,7 @@ class LotteryReportController extends Controller
 
     public function three_digits_detail(Request $request, $id)
     {
-        $data = ThreeDigitSetting::findOrFail($id);
+      $data = ThreeDigitSetting::findOrFail($id);
 
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
