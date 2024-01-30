@@ -74,7 +74,6 @@
 
             </div>
 
-            @if(is_admin())
             <div class="row">
                 <div class="col-12">
                     <div class="col-lg-12 grid-margin stretch-card">
@@ -127,10 +126,8 @@
                     </div>
                 </div>
             </div>
-            @endif
+
         </div>
-    </div>
-    <!-- container-fluid -->
     </div>
 @endsection
 

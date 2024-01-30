@@ -49,9 +49,11 @@
                                                 {{ $time->type_format }}
                                             </td>
                                             <td> 
+                                                @if( is_admin())
                                                 <a href="{{ route('lottery-time.edit', $time->id) }}" class="btn btn-info btn-sm">
                                                     Edit
                                                 </a>
+                                                @endif
                                             </td>
                                             </tr>
                                             @endforeach
