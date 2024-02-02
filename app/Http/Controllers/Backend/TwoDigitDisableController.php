@@ -135,14 +135,7 @@ class TwoDigitDisableController extends Controller
 
     public function destroy_all($id)
     {
-
         TwoDigitLimit::whereNull('agent_id')->delete();
-
-        // if ($id == 'all') {
-        //     TwoDigitLimit::whereNull('agent_id')->delete();
-        // } else {
-        //     TwoDigitLimit::find($id)->delete();
-        // }
 
         return response()->json('success');
     }

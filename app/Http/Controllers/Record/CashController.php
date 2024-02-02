@@ -47,9 +47,11 @@ class CashController extends Controller
         }
 
         if ($phone = $this->search['phone']){
-            $data = $data->whereHas('user', function ($query) use ($phone) {
-                        $query->where('phone', 'like', $phone.'%');
-                    });
+            // $data = $data->whereHas('user', function ($query) use ($phone) {
+            //             $query->where('phone', 'like', $phone.'%');
+            //         });
+
+            $data = $data->where("phone", $phone);
         }
 
         if ($start_date = $this->search['start_date']){
