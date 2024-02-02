@@ -182,19 +182,24 @@ class LotteryReportController extends Controller
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
         $transactions = ThreeDigitTransaction::where('round', $data->id)
-                ->when($agent_id, function($query, $agent_id) {
-                        return $query->where('agent_id', $agent_id);
-                })
-                ->orderBy('three_digit_id')
-                ->pluck('amount', 'three_digit_id');
+                                            ->when($agent_id, function($query, $agent_id) {
+                                                    return $query->where('agent_id', $agent_id);
+                                            })
+                                            ->selectRaw('SUM(amount) as amount, three_digit_id as number')
+                                            ->groupBy("number")
+                                            ->pluck("amount", "number");
 
+                
         $agents = Agent::select('id','name')->get();
+        $odds = ThreeDigitCompensation::first()->compensate;
+        $number_betting = $transactions[$data->lucky_number_id] ?? '0';
 
         $results = [
             'lucky_number'   => $data->lucky_number_full,
-            'number_betting' => $transactions[$data->lucky_number_id] ?? '0',
-            'odds'           => ThreeDigitCompensation::first()->compensate,
-            'betting'        => $transactions->sum()
+            'number_betting' => $number_betting,
+            'odds'           => $odds,
+            'betting'        => $transactions->sum(),
+            'win'            => $number_betting * $odds
         ];
 
         return view('backend.admin.report.result.3d-detail', compact('agents', 'data', 'transactions', 'results'));

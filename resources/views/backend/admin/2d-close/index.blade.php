@@ -23,12 +23,12 @@
                 </div>
             </div>
 
-            @includeWhen(is_admin(), 'backend.admin.2d-close.partials._form')
+            @include('backend.admin.2d-close.partials._form')
 
             <div class="row">
                 <div class="col-12">
 
-                    @if ($data->count() && is_admin())
+                    @if ($data->count())
                         <div class="mb-3">
                             <a href="#" class="btn btn-danger deleteLimit" data-id="all">
                                 Delete All
@@ -108,12 +108,10 @@
                                                                     {{ $fronts->limit_number_group->implode(' , ') }}
                                                                 </h6>
 
-                                                                @if( is_admin())
                                                                 <a href="#" class="text-danger deleteLimit"
                                                                     data-id="{{ $fronts->id }}">
                                                                     <i class="fa fa-trash"></i>
                                                                 </a>
-                                                                @endif
                                                             @else
                                                                 <h6> - </h6>
                                                             @endif
@@ -129,12 +127,10 @@
                                                             <p class="mb-0">
                                                                 Limit ကန့်ထားသောနံပါတ်များ
                                                             </p>
-                                                            @if(is_admin())
                                                             <a href="#" class="text-danger deleteLimit"
                                                                 data-id="{{ $others->id }}">
                                                                 <i class="fa fa-trash"></i>
                                                             </a>
-                                                            @endif
                                                         </div>
                                                     </div>
 
