@@ -69,7 +69,7 @@
 
                             <div class="my-4 d-flex align-items-center">
                                 <h5 class="col-2"> Number betting </h5>
-                                <h5 class="col-1 text-center"> {{ $results['number_betting'] }} </h5>
+                                <h5 class="col-1 text-center"> {{ number_format($results['number_betting']) }} </h5>
                             </div>
 
                             <div class="my-4 d-flex align-items-center">
@@ -79,17 +79,17 @@
 
                             <div class="my-4 d-flex align-items-center">
                                 <h5 class="col-2"> Betting </h5>
-                                <h5 class="col-1 text-center"> {{ $results['betting'] }} </h5>
+                                <h5 class="col-1 text-center"> {{ number_format($results['betting']) }} </h5>
                             </div>
 
                             <div class="my-4 d-flex align-items-center">
                                 <h5 class="col-2"> Win </h5>
-                                <h5 class="col-1 text-center"> {{ $win = $results['number_betting'] * $results['odds'] }} </h5>
+                                <h5 class="col-1 text-center"> {{ number_format($results['win']) }} </h5>
                             </div>
 
                             <div class="my-4 d-flex align-items-center">
                                 <h5 class="col-2"> Profit </h5>
-                                <h5 class="col-1 text-center"> {{ $results['betting'] - $win }} </h5>
+                                <h5 class="col-1 text-center"> {{ number_format($results['betting'] - $results['win']) }} </h5>
                             </div>
                         </div>
                     </div>
