@@ -44,6 +44,22 @@ class UserController extends Controller
                     ->addColumn('days_not_logged_in', function ($user) {
                         return now()->diffInDays($user->last_active);
                     })
+                    ->addColumn('kpay', function($user){
+
+                        if( $user->cashoutPhone){
+                            return "{$user->cashoutPhone->kpay}";
+                        }
+
+                        return " ";
+                    })
+                    ->addColumn('wave', function($user){
+
+                        if( $user->cashoutPhone){
+                            return "{$user->cashoutPhone->wave}";
+                        }
+
+                        return " ";
+                    })
                     ->addColumn('amount', function($user){
                         return number_format($user->amount);
                     })
@@ -63,7 +79,7 @@ class UserController extends Controller
                     ->addColumn('amount_details', function($user){
                         return "
                             <a href='/admin/amount-details/{$user->id}' class='btn btn-success'>
-                                Amount Details
+                                View
                             </a>
                         ";
                     })
@@ -86,11 +102,14 @@ class UserController extends Controller
                             $instance->whereIn('referral_code', $request->agent_id);
                         }
 
-                        if (!empty($request->get('search'))) {
-                            $instance->where(function ($w) use ($request) {
-                                $search = $request->get('search');
+                        if ( $search = $request->get('search')) {
+                            $instance->where(function ($w) use ($search) {
                                 $w->orWhere('name', 'LIKE', "%$search%");
                                 $w->orWhere('user_id', 'LIKE', "%$search%");
+                            })
+                            ->orwhereHas('cashoutPhone', function ($w) use ($search) {
+                                $w->where('kpay', 'LIKE', "%$search%");
+                                $w->orWhere('wave', 'LIKE', "%$search%");
                             });
                         }
                     })

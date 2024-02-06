@@ -75,7 +75,8 @@
                                                     <th>No.</th>
                                                     <th>User ID</th>
                                                     <th>Initial Password</th>
-                                                    <th>Phone</th>
+                                                    <th>Kpay No.</th>
+                                                    <th>Wave No.</th>
                                                     <th>Balance</th>
                                                     <th>Status</th>
                                                     <th>Days not logged in</th>
@@ -263,8 +264,12 @@
                         name: 'initial_password'
                     },
                     {
-                        data: 'phone',
-                        name: 'phone'
+                        data: 'kpay',
+                        name: 'kpay'
+                    },
+                    {
+                        data: 'wave',
+                        name: 'wave'
                     },
                     {
                         data: 'amount',

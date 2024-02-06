@@ -65,4 +65,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPaymentReport::class, 'user_id');
     }
+
+    public function cashoutPhone()
+    {
+        return $this->hasOne(UserPhone::class);
+    }
 }
