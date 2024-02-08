@@ -14,6 +14,7 @@ class Cashout extends Model
         'user_id',
         'payment_provider_id',
         'phone',
+        'payment_name',
         'remark',
         'status',
         'agent_id',
@@ -59,15 +60,23 @@ class Cashout extends Model
         return $query->whereBetween('created_at', [$date['0'] . " 00:00:00", $date['1'] . " 23:59:59"]);
     }
 
+
     public function getProviderNameAttribute()
     {
+        if( $this->payment_name){
+            return $this->payment_name;
+        }
+
         if ($this->provider) {
             return $this->provider?->name;
-        }elseif(!$this->payment_provider_id && !$this->by){
-            return "Cashout By {$this->agent->name}.";
-        }else {
-            return "Cashout By {$this->admin->name}.";
         }
+
+        if(!$this->payment_provider_id && !$this->by){
+            return "Cashout By {$this->agent->name}.";
+        }
+
+        return "Cashout By {$this->admin->name}.";
+
     }
 
     public function getActionTimeAttribute()
