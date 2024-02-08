@@ -104,12 +104,7 @@
                                         location.reload();
                                     });
                                 } else {
-                                    Swal.fire({
-                                        text: "အောင်မြင်ပါသည်",
-                                        icon: "success",
-                                    }).then((e) => {
-                                        location.replace(res.url);
-                                    });
+                                    location.replace(res.url);
                                 }
                             })
                         }
