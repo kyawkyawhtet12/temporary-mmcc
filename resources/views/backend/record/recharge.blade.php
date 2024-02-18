@@ -40,45 +40,35 @@
 
             <div class="row mb-3 d-flex">
 
-                <form action="{{ route('recharge.record.search') }}" method="POST" class="row">
+                <div class="col-md-3 multiSelect">
+                    <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
+                        @foreach ($agents as $agent)
+                            <option value="{{ $agent->id }}">
+                                {{ $agent->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    @csrf
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="User ID" name="user_id" id="user_id" >
+                </div>
 
-                    <div class="col-md-3 multiSelect">
-                        <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
-                            @foreach ($agents as $agent)
-                                <option value="{{ $agent->id }}"
-                                    {{ in_array($agent->id, Session::get('search.agent_id')) ? 'selected' : '' }}>
-                                    {{ $agent->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Phone" name="phone" id="phone" >
+                </div>
 
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" placeholder="User ID" name="user_id"
-                            value="{{ Session::get('search.user_id') }}">
-                    </div>
+                <div class="col">
+                    <input type="date" class="form-control" placeholder="Start Date" name="start_date" id="start_date" >
+                </div>
 
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" placeholder="User Phone" name="phone"
-                            value="{{ Session::get('search.phone') }}">
-                    </div>
+                <div class="col">
+                    <input type="date" class="form-control" placeholder="End Date" name="end_date" id="end_date" >
+                </div>
 
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" placeholder="Start Date" name="start_date"
-                            value="{{ Session::get('search.start_date') }}">
-                    </div>
-
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" placeholder="End Date" name="end_date"
-                            value="{{ Session::get('search.end_date') }}">
-                    </div>
-
-                    <div class="col-md-1">
-                        <input type="submit" class="form-control btn btn-primary btn-sm" name="search" value="Search">
-                    </div>
-                </form>
+                <div class="col">
+                    <button type="button" class="btn btn-block btn-primary btn-sm" id="search">Search</button>
+                </div>
 
             </div>
 
@@ -89,9 +79,10 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="table-responsive">
-                                        <table id="payments" class="table table-bordered table-hover nowrap">
+                                        <table id="datatable" class="table table-bordered table-hover nowrap">
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
+                                                    <th>No.</th>
                                                     <th>User ID</th>
                                                     <th>Phone</th>
                                                     <th>Amount</th>
@@ -102,35 +93,9 @@
                                                     <th>Process Time</th>
                                                 </tr>
                                             </thead>
-
-                                            <tbody>
-                                                @forelse($data as $dt)
-                                                    <tr>
-                                                        <td>{{ $dt->user->user_id }}</td>
-                                                        <td>{{ $dt->phone }}</td>
-                                                        <td>{{ number_format($dt->amount) }}</td>
-                                                        <td>{{ $dt->provider_name }}</td>
-                                                        <td>{{ $dt->status }}</td>
-                                                        <td>{{ $dt->created_at }}</td>
-                                                        <td>{{ $dt->action_time }}</td>
-                                                        <td>
-                                                            {{ $dt->process_time }}
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="8" class="text-center"> No Data Available. </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
-
-                                <div class="mt-3">
-                                    {{ $data->links() }}
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -157,6 +122,83 @@
                     'default': 'Search Agents'
                 },
                 selectAll: true
+            });
+
+            var table = $('#datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                pageLength : 15,
+                ajax: {
+                    url: "{{ route('recharge.record') }}",
+                    data: function(d) {
+                        d.search = $('input[type="search"]').val(),
+                        d.agent_id = $('#agent_id').val(),
+                        d.user_id = $('#user_id').val(),
+                        d.phone = $('#phone').val(),
+                        d.start_date = $('#start_date').val(),
+                        d.end_date = $('#end_date').val()
+                    }
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'user_id',
+                        name: 'user_id',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'provider_name',
+                        name: 'provider_name',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'created_at',
+                        name: 'created_at',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action_time',
+                        name: 'action_time',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'process_time',
+                        name: 'process_time',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+            });
+
+            $("#search").on('click',function(e){
+                e.preventDefault();
+                $("#datatable").DataTable().ajax.reload();
             });
 
         });

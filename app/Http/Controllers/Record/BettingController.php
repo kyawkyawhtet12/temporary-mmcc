@@ -6,67 +6,98 @@ use App\Models\Agent;
 use Illuminate\Http\Request;
 use App\Models\BettingRecord;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\DataTables;
 use App\Http\Resources\BettingRecord\DetailResource;
 
 class BettingController extends Controller
 {
-    protected $search;
-
-    public function __construct(Request $request)
-    {
-        Session::put('search.agent_id', $request->agent_id ?? []);
-        Session::put('search.user_id', $request->user_id ?? NULL);
-        Session::put('search.type', $request->type ?? NULL);
-        Session::put('search.min', $request->min ?? NULL );
-        Session::put('search.max', $request->max ?? NULL );
-        Session::put('search.start_date', $request->start_date ?? NULL);
-        Session::put('search.end_date', $request->end_date ?? NULL);
-
-        $this->search = Session::get('search');
-    }
-
     public function index(Request $request)
     {
         $agents = Agent::select('id','name')->get();
 
-        $data = BettingRecord::with('user')->latest();
+        if ($request->ajax()) {
 
-        if( $agent_id = $this->search['agent_id'] ){
-            $data = $data->whereIn("agent_id", $agent_id );
+            $query = BettingRecord::with('user')->latest();
+
+            return Datatables::of($query)
+
+                    ->addIndexColumn()
+
+                    ->addColumn('user_id', function ($q) {
+                        return $q->user->user_id;
+                    })
+
+                    ->addColumn('amount', function ($q) {
+                        return number_format($q->amount);
+                    })
+
+                    ->addColumn('time', function ($q) {
+                        return $q->created_at->format("d-m-Y g:i A");
+                    })
+
+                    ->addColumn('results', function ($q) {
+                        return $q->result ?? "No Prize";
+                    })
+
+                    ->addColumn('wins', function ($q) {
+                        return number_format($q->win_amount ?? 0);
+                    })
+
+                    ->addColumn('actions', function ($q) {
+                        return "
+                            <a href='javascript:void(0)' class='btn btn-success btn-sm viewDetail' data-id='$q->id'>
+                                View
+                            </a>
+                        ";
+                    })
+
+                    ->filter(function ($instance) use ($request) {
+
+                        if ( $search = $request->get('search') ) {
+                            $instance->whereHas('user', function ($w) use ($search) {
+                                    $w->where('name', 'LIKE', "%$search%");
+                                    $w->orWhere('user_id', 'LIKE', "%$search%");
+                            });
+                        }
+
+                        if( $agent_id = $request->get('agent_id') ){
+                            $instance->whereIn("agent_id", $agent_id );
+                        }
+
+                        if( $user_id = $request->get("user_id")){
+                            $instance->whereHas('user', function ($w) use ($user_id) {
+                                $w->where('user_id', $user_id);
+                            });
+                        }
+
+                        if( $type = $request->get("type")){
+                            $instance->where('type', $type);
+                        }
+
+                        if ( $min = $request->get('min_amount') ){
+                            $instance->where('amount', '>=' , $min);
+                        }
+
+                        if ( $max = $request->get('max_amount') ){
+                            $instance->where('amount', '<=' , $max);
+                        }
+
+                        if ($start_date = $request->get('start_date')){
+                            $instance->whereDate('created_at', '>=', $start_date);
+                        }
+
+                        if ($end_date = $request->get('end_date')){
+                            $instance->whereDate('created_at', '<=', $end_date);
+                        }
+
+                    })
+
+                    ->rawColumns([ 'actions' ])
+
+                    ->make(true);
         }
 
-        if ($user_id = $this->search['user_id']){
-            $data = $data->whereHas('user', function ($query) use ($user_id) {
-                         $query->where('user_id', 'like', $user_id.'%');
-                    });
-        }
-
-        if ( $type = $this->search['type'] ){
-            $data = $data->where('type', $type);
-        }
-
-        if ( $min = $this->search['min'] ){
-            $data = $data->where('amount', '>=' , $min);
-        }
-
-        if ( $max = $this->search['max'] ){
-            $data = $data->where('amount', '<=' , $max);
-        }
-
-        if ($start_date = $this->search['start_date']){
-            $data = $data->whereDate('created_at', '>=', $start_date);
-        }
-
-        if ($end_date = $this->search['end_date']){
-            $data = $data->whereDate('created_at', '<=', $end_date);
-        }
-
-        $data = $data->paginate(15);
-
-        Session::put("search", $this->search);
-
-        return view("backend.record.betting", compact('data','agents' ));
+        return view("backend.record.betting", compact('agents' ));
     }
 
     public function detail($id)
