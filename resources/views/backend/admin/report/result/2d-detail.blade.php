@@ -46,14 +46,16 @@
                             aria-labelledby="pills-home-tab-custom">
                             <div class="icons-list row">
                                 @foreach ($two_digits as $digit)
-                                    <div class="col-sm-6 col-md-4 col-lg-2 align-middle">
-                                        <button type="button" class="btn btn-info btn-rounded btn-icon">
+                                    <div class="col-sm-6 col-md-4 col-lg-2 d-flex justify-content-between align-items-center py-3 px-4">
+
+                                        <h5>
                                             {{ $digit->number }}
-                                        </button> &nbsp;
+                                        </h5>
+
                                         @foreach ($draw as $d)
                                             @if ($digit->id == $d->two_digit_id)
-                                                <span class="badge badge-success badge-pill">
-                                                    Ks {{ $d->amount }}
+                                                <span class="badge badge-pill" style="background-color: {{ getBadgeColor($badgeColors, $d->amount) }}">
+                                                     {{ number_format($d->amount) }} MMK
                                                 </span>
                                             @endif
                                         @endforeach

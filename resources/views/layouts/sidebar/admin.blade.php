@@ -82,6 +82,11 @@
                                 <a href="{{ route('2d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('report-color.setting', '2D') }}" class="nav-link"
+                                    data-key="t-calendar"> Report Color Setting </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -130,6 +135,11 @@
                                 <a href="{{ route('3d.compensate.amount') }}" class="nav-link"
                                     data-key="t-calendar"> Limit Compensate
                                 </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('report-color.setting', '3D') }}" class="nav-link"
+                                    data-key="t-calendar"> Report Color Setting </a>
                             </li>
 
                         </ul>

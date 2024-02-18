@@ -47,8 +47,8 @@
 
                                 <h5> {{ sprintf('%03d', $num - 1) }} </h5>
 
-                                <span class="btn btn-success btn-sm">
-                                    {{ $transactions[$num] }}
+                                <span class="badge badge-pill" style="background-color: {{ getBadgeColor($badgeColors, $transactions[$num]) }}">
+                                    {{ $transactions[$num] }} MMK
                                 </span>
                             </div>
 

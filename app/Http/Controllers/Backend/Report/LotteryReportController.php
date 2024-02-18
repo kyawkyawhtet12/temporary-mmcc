@@ -15,6 +15,7 @@ use App\Models\ThreeLuckyNumber;
 use Yajra\DataTables\DataTables;
 use App\Models\ThreeDigitSetting;
 use App\Http\Controllers\Controller;
+use App\Models\BadgeColorSetting;
 use App\Models\TwoDigitCompensation;
 use App\Models\ThreeDigitCompensation;
 use App\Models\ThreeDigitTransaction;
@@ -24,9 +25,9 @@ class LotteryReportController extends Controller
     public function today_2d()
     {
         $today = TwoLuckyDraw::whereDate('created_at', today())
-                                ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id, lottery_time_id')
-                                ->groupBy('two_digit_id','lottery_time_id')
-                                ->get();
+                            ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id, lottery_time_id')
+                            ->groupBy('two_digit_id','lottery_time_id')
+                            ->get();
 
         $thai_one = $today->where('lottery_time_id', 1);
         $thai_two = $today->where('lottery_time_id', 2);
@@ -35,7 +36,10 @@ class LotteryReportController extends Controller
         $thai_two_total = $thai_two->sum('amount');
 
         $two_digits = TwoDigit::all();
+
         $thai_times = LotteryTime::where('type', 0)->get();
+
+        $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount')->get();
 
         return view('backend.admin.report.today-2d', compact(
             'two_digits',
@@ -44,6 +48,7 @@ class LotteryReportController extends Controller
             'thai_one_total',
             'thai_two_total',
             'thai_times',
+            'badgeColors'
         ));
 
     }
@@ -144,7 +149,9 @@ class LotteryReportController extends Controller
         $current_odds = TwoDigitCompensation::first()->compensate;
         $odds = count($draw) ? $draw[0]->za : $current_odds;
 
-        return view('backend.admin.report.result.2d-detail', compact('two_digits', 'data', 'win_betting' ,'odds', 'draw','agents'));
+        $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount')->get();
+
+        return view('backend.admin.report.result.2d-detail', compact('two_digits', 'data', 'win_betting' ,'odds', 'draw','agents', 'badgeColors'));
     }
 
     // 3D
@@ -189,7 +196,7 @@ class LotteryReportController extends Controller
                                             ->groupBy("number")
                                             ->pluck("amount", "number");
 
-                
+
         $agents = Agent::select('id','name')->get();
         $odds = ThreeDigitCompensation::first()->compensate;
         $number_betting = $transactions[$data->lucky_number_id] ?? '0';
@@ -202,6 +209,8 @@ class LotteryReportController extends Controller
             'win'            => $number_betting * $odds
         ];
 
-        return view('backend.admin.report.result.3d-detail', compact('agents', 'data', 'transactions', 'results'));
+        $badgeColors = BadgeColorSetting::where("name", "3D")->orderBy('max_amount')->get();
+
+        return view('backend.admin.report.result.3d-detail', compact('agents', 'data', 'transactions', 'results' , 'badgeColors'));
     }
 }

@@ -28,7 +28,7 @@
                         <div class="row">
                             <div class="col-12 grid-margin stretch-card d-md-flex">
                                 <div class="card">
-                                    <div class="card-header bg-primary text-white">
+                                    <div class="card-header ">
                                         2D Today Report
                                     </div>
                                     <div class="card-body">
@@ -53,14 +53,16 @@
                                                         aria-labelledby="pills-home-tab-custom">
                                                         <div class="icons-list row">
                                                             @foreach ($two_digits as $digit)
-                                                                <div class="col-sm-6 col-md-4 col-lg-2 align-middle">
-                                                                    <button type="button" class="btn btn-info btn-rounded btn-icon">
+                                                                <div class="col-sm-6 col-md-4 col-lg-2 d-flex justify-content-between align-items-center py-3 px-4">
+                                                                    <h5>
                                                                         {{ $digit->number }}
-                                                                    </button> &nbsp;
-                                                                    @foreach ($thai_one as $draw)
-                                                                        @if ($digit->id == $draw->two_digit_id)
-                                                                            <span class="badge badge-success badge-pill">Ks
-                                                                                {{ $draw->amount }}</span>
+                                                                    </h5>
+
+                                                                    @foreach ($thai_one as $d)
+                                                                        @if ($digit->id == $d->two_digit_id)
+                                                                            <span class="badge badge-pill" style="background-color: {{ getBadgeColor($badgeColors, $d->amount) }}">
+                                                                                 {{ number_format($d->amount) }} MMK
+                                                                            </span>
                                                                         @endif
                                                                     @endforeach
                                                                 </div>
@@ -77,17 +79,19 @@
                                                         aria-labelledby="pills-profile-tab-custom">
                                                         <div class="icons-list row">
                                                             @foreach ($two_digits as $digit)
-                                                                <div class="col-sm-6 col-md-4 col-lg-2 align-middle">
-                                                                    <button type="button" class="btn btn-info btn-rounded btn-icon">
-                                                                        {{ $digit->number }}
-                                                                    </button> &nbsp;
-                                                                    @foreach ($thai_two as $draw)
-                                                                        @if ($digit->id == $draw->two_digit_id)
-                                                                            <span class="badge badge-success badge-pill">Ks
-                                                                                {{ $draw->amount }}</span>
-                                                                        @endif
-                                                                    @endforeach
-                                                                </div>
+                                                            <div class="col-sm-6 col-md-4 col-lg-2 d-flex justify-content-between align-items-center py-3 px-4">
+                                                                <h5>
+                                                                    {{ $digit->number }}
+                                                                </h5>
+
+                                                                @foreach ($thai_two as $d)
+                                                                    @if ($digit->id == $d->two_digit_id)
+                                                                        <span class="badge badge-pill" style="background-color: {{ getBadgeColor($badgeColors, $d->amount) }}">
+                                                                             {{ number_format($d->amount) }} MMK
+                                                                        </span>
+                                                                    @endif
+                                                                @endforeach
+                                                            </div>
                                                             @endforeach
                                                         </div>
                                                         <div class="icons-list row">

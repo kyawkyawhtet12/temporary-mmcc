@@ -47,3 +47,12 @@ function getTwoDigit($number)
 {
     return sprintf('%02d', $number);
 }
+
+function getBadgeColor($setting,$amount)
+{
+    if( $check = $setting->where('max_amount', '>=',  $amount)->first() ){
+        return $check->color;
+    }
+
+    return "#04b76b";
+}

@@ -26,7 +26,7 @@ Route::middleware('check_admin')->group(function () {
     Route::post('2d-limit-amounts', 'LimitAmountController@limit_2d_post')->name('2d.limit.amount.post');
 
     Route::post('/two_compensate', 'LimitCompensationController@updateTwoCompensate')->name('2d.compensate.amount.post');
-    
+
     Route::get('lottery-times/edit/{id}', 'LotteryTimeController@edit')->name('lottery-time.edit');
     Route::put('lottery-times/edit/{id}', 'LotteryTimeController@update')->name('lottery-time.update');
 });
@@ -42,3 +42,4 @@ Route::get('lottery-times', 'LotteryTimeController@index')->name('lottery-time.i
 Route::get('/2d-today-report', 'Report\LotteryReportController@today_2d')->name('twodigits.today-report');
 Route::get('/two-digits-results', 'Report\LotteryReportController@two_digits')->name('two-digits.result');
 Route::get('/two-digits-results/{id}', 'Report\LotteryReportController@two_digits_detail')->name('two-digits.result.detail')->whereNumber('id');
+
