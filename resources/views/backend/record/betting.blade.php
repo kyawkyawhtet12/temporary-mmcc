@@ -6,7 +6,7 @@
             padding: 0.6rem !important;
         }
 
-        .multiSelect button{
+        .multiSelect button {
             padding: 0.6rem !important;
         }
 
@@ -45,15 +45,10 @@
 
             <div class="row mb-3 d-flex">
 
-                <form action="{{ route('betting.record.search') }}" method="POST" class="row">
-
-                    @csrf
-
                     <div class="col-md-2 multiSelect">
                         <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
                             @foreach ($agents as $agent)
-                                <option value="{{ $agent->id }}"
-                                    {{ in_array($agent->id, Session::get('search.agent_id')) ? 'selected' : '' }}>
+                                <option value="{{ $agent->id }}" >
                                     {{ $agent->name }}
                                 </option>
                             @endforeach
@@ -61,7 +56,7 @@
                     </div>
 
                     <div class="col">
-                        <input type="text" class="form-control" placeholder="User ID" name="user_id"
+                        <input type="text" class="form-control" placeholder="User ID" name="user_id" id="user_id"
                             value="{{ Session::get('search.user_id') }}">
                     </div>
 
@@ -70,7 +65,7 @@
                         <select name="type" id="type" class="form-control">
                             <option value=""> All Type </option>
                             @foreach (get_all_types() as $type)
-                                <option {{ $type == Session::get('search.type') ? 'selected' : '' }}>
+                                <option>
                                     {{ $type }}
                                 </option>
                             @endforeach
@@ -78,31 +73,24 @@
                     </div>
 
                     <div class="col">
-                        <input type="number" class="form-control" placeholder="Min Amount" name="min"
-                        value="{{ Session::get('search.min') }}"
-                        >
+                        <input type="number" class="form-control" placeholder="Min Amount" name="min" id="min_amount" >
                     </div>
 
                     <div class="col">
-                        <input type="number" class="form-control" placeholder="Max Amount" name="max"
-                        value="{{ Session::get('search.max') }}"
-                        >
+                        <input type="number" class="form-control" placeholder="Max Amount" name="max" id="max_amount" >
                     </div>
 
                     <div class="col">
-                        <input type="date" class="form-control" placeholder="Start Date" name="start_date"
-                            value="{{ Session::get('search.start_date') }}">
+                        <input type="date" class="form-control" placeholder="Start Date" name="start_date" id="start_date" >
                     </div>
 
                     <div class="col">
-                        <input type="date" class="form-control" placeholder="End Date" name="end_date"
-                            value="{{ Session::get('search.end_date') }}">
+                        <input type="date" class="form-control" placeholder="End Date" name="end_date" id="end_date" >
                     </div>
 
                     <div class="col">
-                        <input type="submit" class="form-control btn btn-primary btn-sm" name="search" value="Search">
+                        <button type="button" class="btn btn-primary btn-block btn-sm" id="search">Search</button>
                     </div>
-                </form>
 
             </div>
 
@@ -113,9 +101,10 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="table-responsive">
-                                        <table id="payments" class="table table-bordered nowrap">
+                                        <table id="datatable" class="table table-bordered nowrap">
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
+                                                    <th>No.</th>
                                                     <th>User ID</th>
                                                     <th>Type</th>
                                                     <th>Count</th>
@@ -123,37 +112,13 @@
                                                     <th>Time</th>
                                                     <th>Betting Results </th>
                                                     <th>Betting Wins </th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
-
-                                            <tbody>
-                                                @forelse($data as $dt)
-                                                    <tr class="viewDetail" data-id="{{ $dt->id }}">
-                                                        <td>{{ $dt->user->user_id }}</td>
-                                                        <td>{{ $dt->type }}</td>
-                                                        <td>{{ $dt->count }}</td>
-                                                        <td>{{ number_format($dt->amount) }}</td>
-                                                        <td>{{ $dt->created_at }}</td>
-                                                        <td>
-                                                            {{ $dt->result ?? "No Prize" }}
-                                                        </td>
-                                                        <td>
-                                                            {{ number_format($dt->win_amount ?? 0) }}
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center"> No Data Available. </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
 
-                                <div class="mt-3">
-                                    {{ $data->links() }}
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -199,6 +164,88 @@
                 $("#mainpage").removeClass('d-none');
             }, 700);
 
+            var table = $('#datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                pageLength : 15,
+                ajax: {
+                    url: "{{ route('betting.record') }}",
+                    data: function(d) {
+                        d.search = $('input[type="search"]').val(),
+                        d.agent_id = $('#agent_id').val(),
+                        d.user_id = $('#user_id').val(),
+                        d.type = $('#type').val(),
+                        d.min_amount = $('#min_amount').val(),
+                        d.max_amount = $('#max_amount').val(),
+                        d.start_date = $('#start_date').val(),
+                        d.end_date = $('#end_date').val()
+                    }
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'user_id',
+                        name: 'user_id',
+                        orderable: false,
+                        searchable: false
+                    },
+
+                    {
+                        data: 'type',
+                        name: 'type',
+                        orderable: false,
+                        searchable: false
+                    },
+
+                    {
+                        data: 'count',
+                        name: 'count',
+                        orderable: false,
+                        searchable: false
+                    },
+
+                    {
+                        data: 'amount',
+                        name: 'amount',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'time',
+                        name: 'time',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'results',
+                        name: 'results',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'wins',
+                        name: 'wins',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+            });
+
+            $("#search").on('click',function(e){
+                e.preventDefault();
+                $("#datatable").DataTable().ajax.reload();
+            });
+
             $('.agentSelect').multiselect({
                 columns: 1,
                 placeholder: 'Select Agent',
@@ -211,15 +258,17 @@
 
             const url_prefix = "/admin/betting-record/detail/";
 
-            let total_columns ;
+            let total_columns;
 
             let num = 1;
 
-            let no_match_lists = [ "2D", "3D" ];
+            let no_match_lists = ["2D", "3D"];
 
             let no_match_status = false;
 
-            const columns = [ 'No', 'Match', 'Betting', 'Odds', 'Betting Type', 'Results', 'Betting Amount' , 'Betting Wins' ];
+            const columns = ['No', 'Match', 'Betting', 'Odds', 'Betting Type', 'Results', 'Betting Amount',
+                'Betting Wins'
+            ];
 
             add_table_heading();
 
@@ -227,11 +276,10 @@
 
             add_table_footer();
 
-            function add_table_heading()
-            {
+            function add_table_heading() {
                 let th = '';
 
-                columns.forEach((dt,index) => {
+                columns.forEach((dt, index) => {
                     th += `<th class="${dt.toLowerCase()}-column"> ${dt} </th>`;
                 });
 
@@ -240,14 +288,12 @@
                 total_columns = columns.length;
             }
 
-            function add_table_body()
-            {
+            function add_table_body() {
                 $('table tr').removeClass('text-danger');
                 $("#betting-data").html(`<tr> <td colspan="${total_columns}"> No Data Available. </td> </tr>`);
             }
 
-            function add_table_footer()
-            {
+            function add_table_footer() {
                 let colspan = (no_match_status) ? total_columns - 3 : total_columns - 2;
 
                 $("#betting-total").html(`
@@ -266,21 +312,20 @@
 
                 fetchData(url_prefix + $(this).data('id'));
 
-                $(this).addClass('text-danger');
+                // $(this).addClass('text-danger');
 
             });
 
-            function fetchData(url)
-            {
+            function fetchData(url) {
                 fetch(`${url}`)
-                .then((response) => response.json())
-                .then((data) => {
+                    .then((response) => response.json())
+                    .then((data) => {
 
-                    let tr = '';
+                        let tr = '';
 
-                    data.betting.forEach((dt, index) => {
+                        data.betting.forEach((dt, index) => {
 
-                        tr += `
+                            tr += `
                             <tr>
                                 <td> ${index + 1} </td>
                                 <td class="match-column"> ${dt.match} </td>
@@ -291,21 +336,21 @@
                                 <td> ${dt.amount} </td>
                                 <td> ${dt.win}</td>
                             </tr>`;
+                        });
+
+                        $("#betting-data").html(tr);
+
+                        no_match_status = no_match_lists.includes(data.type);
+
+                        if (no_match_status) {
+                            $(".match-column").addClass('d-none');
+                        }
+
+                        add_table_footer();
+
+                        $("tfoot #betting-amount").html(data.amount);
+                        $("tfoot #win-amount").html(data.win_amount);
                     });
-
-                    $("#betting-data").html(tr);
-
-                    no_match_status = no_match_lists.includes(data.type);
-
-                    if(no_match_status){
-                        $(".match-column").addClass('d-none');
-                    }
-
-                    add_table_footer();
-
-                    $("tfoot #betting-amount").html(data.amount);
-                    $("tfoot #win-amount").html(data.win_amount);
-                });
             }
         });
     </script>

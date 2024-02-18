@@ -66,19 +66,19 @@ class Payment extends Model
         if ($this->provider) {
             return $this->provider?->name;
         }
-        
+
         if(!$this->payment_provider_id && !$this->by){
             return "Recharge By {$this->agent->name}.";
         }
-        
+
         return "Recharge By {$this->admin->name}.";
-        
+
     }
 
     public function getActionTimeAttribute()
     {
         if( $this->status == 'Approved' || $this->status == 'Rejected' ){
-            return $this->updated_at;
+            return $this->updated_at->format("d-m-Y g:i A");
         }
 
         return "-";

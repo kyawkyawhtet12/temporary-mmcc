@@ -6,67 +6,82 @@ use App\Http\Controllers\Controller;
 use App\Models\Agent;
 use App\Models\Cashout;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\DataTables;
 
 class CashController extends Controller
 {
-    protected $search;
-
-    public function __construct(Request $request)
-    {
-        Session::put('search.agent_id', $request->agent_id ?? []);
-        Session::put('search.user_id', $request->user_id ?? NULL);
-        Session::put('search.name', $request->name ?? NULL);
-        Session::put('search.phone', $request->phone ?? NULL );
-        Session::put('search.start_date', $request->start_date ?? NULL);
-        Session::put('search.end_date', $request->end_date ?? NULL);
-
-        $this->search = Session::get('search');
-    }
-
     public function index(Request $request)
     {
         $agents = Agent::select('id','name')->get();
 
-        $data = Cashout::with('user', 'admin')->latest();
+        if ($request->ajax()) {
 
-        if( $agent_id = $this->search['agent_id'] ){
-            $data = $data->whereIn("agent_id", $agent_id );
+            $query = Cashout::with('user', 'admin')->latest();
+
+            return Datatables::of($query)
+
+                ->addIndexColumn()
+
+                ->addColumn('user_id', function ($q) {
+                    return $q->user->user_id;
+                })
+
+                ->addColumn('amount', function ($q) {
+                    return number_format($q->amount);
+                })
+
+                ->addColumn('provider_name', function ($q) {
+                    return $q->provider_name;
+                })
+
+                ->addColumn('created_at', function ($q) {
+                    return $q->created_at->format("d-m-Y g:i A");
+                })
+
+                ->addColumn('action_time', function ($q) {
+                    return $q->action_time;
+                })
+
+                ->addColumn('process_time', function ($q) {
+                    return $q->process_time;
+                })
+
+                ->filter(function ($instance) use ($request) {
+
+                    if ($search = $request->get('search')) {
+                        $instance->whereHas('user', function ($w) use ($search) {
+                            $w->where('name', 'LIKE', "%$search%");
+                            $w->orWhere('user_id', 'LIKE', "%$search%");
+                        });
+                    }
+
+                    if ($agent_id = $request->get('agent_id')) {
+                        $instance->whereIn("agent_id", $agent_id);
+                    }
+
+                    if ($user_id = $request->get("user_id")) {
+                        $instance->whereHas('user', function ($w) use ($user_id) {
+                            $w->where('user_id', $user_id);
+                        });
+                    }
+
+                    if ($phone = $request->get("phone")) {
+                        $instance->where('phone', $phone);
+                    }
+
+                    if ($start_date = $request->get('start_date')) {
+                        $instance->whereDate('created_at', '>=', $start_date);
+                    }
+
+                    if ($end_date = $request->get('end_date')) {
+                        $instance->whereDate('created_at', '<=', $end_date);
+                    }
+                })
+
+                ->make(true);
         }
 
-        if ($user_id = $this->search['user_id']){
-            $data = $data->whereHas('user', function ($query) use ($user_id) {
-                         $query->where('user_id', 'like', $user_id.'%');
-                    });
-        }
-
-        if ($name = $this->search['name']){
-            $data = $data->whereHas('user', function ($query) use ($name) {
-                        $query->where('name', 'like', $name.'%');
-                    });
-        }
-
-        if ($phone = $this->search['phone']){
-            // $data = $data->whereHas('user', function ($query) use ($phone) {
-            //             $query->where('phone', 'like', $phone.'%');
-            //         });
-
-            $data = $data->where("phone", $phone);
-        }
-
-        if ($start_date = $this->search['start_date']){
-            $data = $data->whereDate('created_at', '>=', $start_date);
-        }
-
-        if ($end_date = $this->search['end_date']){
-            $data = $data->whereDate('created_at', '<=', $end_date);
-        }
-
-        $data = $data->paginate(15);
-
-        Session::put("search", $this->search);
-
-        return view("backend.record.cash", compact('data','agents'));
+        return view("backend.record.cash", compact('agents'));
     }
 
 }
