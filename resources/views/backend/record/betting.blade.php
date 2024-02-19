@@ -126,7 +126,7 @@
             </div>
 
             {{-- Betting Detail --}}
-            <div class="row grid-margin">
+            <div class="row grid-margin" id="record-details">
                 <div class="col-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-header">
@@ -306,13 +306,15 @@
 
             $('body').on('click', '.viewDetail', function() {
 
+                $(".viewDetail").removeClass('btn-danger');
+
                 add_table_heading();
 
                 add_table_body();
 
                 fetchData(url_prefix + $(this).data('id'));
 
-                // $(this).addClass('text-danger');
+                $(this).addClass('btn-danger');
 
             });
 

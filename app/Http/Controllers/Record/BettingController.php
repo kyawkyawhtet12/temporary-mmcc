@@ -45,7 +45,7 @@ class BettingController extends Controller
 
                     ->addColumn('actions', function ($q) {
                         return "
-                            <a href='javascript:void(0)' class='btn btn-success btn-sm viewDetail' data-id='$q->id'>
+                            <a href='#record-details' class='btn btn-success btn-sm viewDetail' data-id='$q->id'>
                                 View
                             </a>
                         ";
