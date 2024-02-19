@@ -39,7 +39,7 @@ class LotteryReportController extends Controller
 
         $thai_times = LotteryTime::where('type', 0)->get();
 
-        $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount')->get();
+        $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount','desc')->get();
 
         return view('backend.admin.report.today-2d', compact(
             'two_digits',
@@ -149,7 +149,7 @@ class LotteryReportController extends Controller
         $current_odds = TwoDigitCompensation::first()->compensate;
         $odds = count($draw) ? $draw[0]->za : $current_odds;
 
-        $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount')->get();
+        $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount','desc')->get();
 
         return view('backend.admin.report.result.2d-detail', compact('two_digits', 'data', 'win_betting' ,'odds', 'draw','agents', 'badgeColors'));
     }
@@ -209,7 +209,8 @@ class LotteryReportController extends Controller
             'win'            => $number_betting * $odds
         ];
 
-        $badgeColors = BadgeColorSetting::where("name", "3D")->orderBy('max_amount')->get();
+
+        $badgeColors = BadgeColorSetting::where("name", "3D")->orderBy('max_amount','desc')->get();
 
         return view('backend.admin.report.result.3d-detail', compact('agents', 'data', 'transactions', 'results' , 'badgeColors'));
     }

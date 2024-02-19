@@ -50,9 +50,9 @@ function getTwoDigit($number)
 
 function getBadgeColor($setting,$amount)
 {
-    if( $check = $setting->where('max_amount', '>=',  $amount)->first() ){
-        return $check->color;
+    if( $check = $setting->where('max_amount', '<=',  $amount)->first() ){
+        return "background-color : $check->color";
     }
 
-    return "#04b76b";
+    return "color: #333";
 }

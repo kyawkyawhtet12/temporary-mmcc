@@ -54,7 +54,7 @@
 
                                         @foreach ($draw as $d)
                                             @if ($digit->id == $d->two_digit_id)
-                                                <span class="badge badge-pill" style="background-color: {{ getBadgeColor($badgeColors, $d->amount) }}">
+                                                <span class="badge badge-pill" style="{{ getBadgeColor($badgeColors, $d->amount) }}">
                                                      {{ number_format($d->amount) }} MMK
                                                 </span>
                                             @endif
