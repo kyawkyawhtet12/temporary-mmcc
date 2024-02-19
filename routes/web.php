@@ -89,5 +89,10 @@ Route::group(
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
         Route::post('win-record', [WinController::class, 'index'])->name('win.record.search');
+
+
+        Route::get('report-amount-setting/{type}', 'Setting\ReportAmountColorController@index')->name('report-color.setting');
+        Route::post('report-amount-setting/{type}', 'Setting\ReportAmountColorController@store')->name('report-color.setting.store');
+        Route::delete('report-amount-setting/{id}', 'Setting\ReportAmountColorController@destroy')->name('report-color.setting.destroy');
     }
 );

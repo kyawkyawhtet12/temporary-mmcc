@@ -159,6 +159,8 @@
 
                 let url = $("#feesForm").attr("action");
 
+                $(this).prop("disabled", true);
+
                 $.ajax({
                     data: $('#feesForm').serialize(),
                     url: url,
