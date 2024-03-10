@@ -7,7 +7,9 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Record\CashController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
+use App\Http\Controllers\Record\BalloneBodyController;
 use App\Http\Controllers\Backend\UserPaymentController;
+use App\Http\Controllers\Record\BalloneMaungController;
 use App\Http\Controllers\Backend\Report\UserLogController;
 
 Route::get('/', function () {
@@ -90,6 +92,8 @@ Route::group(
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
         Route::post('win-record', [WinController::class, 'index'])->name('win.record.search');
 
+        Route::get('body-record', [BalloneBodyController::class, 'index'])->name('body.record');
+        Route::get('maung-record', [BalloneMaungController::class, 'index'])->name('maung.record');
 
         Route::get('report-amount-setting/{type}', 'Setting\ReportAmountColorController@index')->name('report-color.setting');
         Route::post('report-amount-setting/{type}', 'Setting\ReportAmountColorController@store')->name('report-color.setting.store');
