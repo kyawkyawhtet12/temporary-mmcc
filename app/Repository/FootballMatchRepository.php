@@ -18,15 +18,21 @@ class FootballMatchRepository
 
         $agents = $data['agent_id'] ?? NULL;
 
+        $start_date = $data['start_date'] ?? NULL;
+
+        $end_date = $data['end_$end_date'] ?? NULL ;
+
         $query = DB::table("football_matches")
 
-            ->whereIn('round', $round)
+            ->when( !$start_date && !$end_date, function ($q) use ($round) {
+                return $q->whereIn('round', $round);
+            })
 
-            ->when( $start_date = $data['start_date'] ?? NULL, function ($q) use ($start_date) {
+            ->when( $start_date , function ($q) use ($start_date) {
                 return $q->whereDate('football_matches.created_at', '>=', $start_date);
             })
 
-            ->when( $end_date = $data['end_date'] ?? NULL, function ($q) use ($end_date) {
+            ->when( $end_date , function ($q) use ($end_date) {
                 return $q->whereDate('football_matches.created_at', '<=', $end_date);
             })
 

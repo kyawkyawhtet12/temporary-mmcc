@@ -11,7 +11,6 @@ class AutoService
     {
         DB::transaction(function () {
 
-            (new LuckyNumberService())->handle();
             (new PaymentService())->handle();
 
             AutoAdd::first()->update([ 'date' => today() ]);
