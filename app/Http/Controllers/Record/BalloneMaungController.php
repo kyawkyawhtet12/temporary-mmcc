@@ -33,12 +33,12 @@ class BalloneMaungController extends Controller
                 })
 
                 ->addColumn('betting_amount', function ($q) {
-                    $amount = $q['report']->betting_amount;
+                    $amount = $q['report']->betting_amount ?? 0;
                     return "<span class='bettingAmount' data-amount='{$amount}'>". number_format($amount) ."</span>";
                 })
 
                 ->addColumn('win_amount', function ($q) {
-                    $amount = $q['report']->win_amount;
+                    $amount = $q['report']->win_amount ?? 0;
                     return "<span class='winAmount' data-amount='{$amount}'>". number_format($amount) ."</span>";
                 })
 
