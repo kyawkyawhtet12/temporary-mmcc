@@ -78,6 +78,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
@@ -98,14 +99,13 @@
                 "language": {
                     processing: '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><span class="sr-only">Loading...</span>'
                 },
+                bFilter : false, // search input
                 serverSide: true,
                 ajax: {
                     url: "{{ route('payment.report', $id) }}",
                     data: function(d) {
-                        d.lottery_time = $('.js-example-basic-single').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
-                        d.search = $('input[type="search"]').val()
                     }
                 },
                 columns: [{

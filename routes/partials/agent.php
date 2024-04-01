@@ -14,11 +14,11 @@ Route::get('agent-withdrawal/history', 'AgentWithdrawController@history')->name(
 Route::post('agent-withdrawal/accept/{id}', 'AgentWithdrawController@accept');
 Route::post('agent-withdrawal/reject/{id}', 'AgentWithdrawController@reject');
 
-Route::get('/agent-payment/report/{id}', 'AgentController@payment_report')->name('payment.report');
+Route::get('/agent-payment/report/{id}', 'Report\AgentPaymentController@payment_report')->name('payment.report');
 // Route::get('/agent-payment-report/search/{id}', 'AgentController@payment_report_search')->name('payment.report.search');
 
 Route::get('agent-payment-reports', 'Report\AgentPaymentController@index')->name('agent.payment-reports');
-Route::post('agent-payment-reports', 'Report\AgentPaymentController@search')->name('agent.payment-reports.search');
+Route::post('agent-payment/total-reports', 'Report\AgentPaymentController@total_payments')->name('agent.payment-reports.total');
 
 // Route::get('withdrawChangeStatus', 'AgentWithdrawController@ChangeTransferStatus')->name('agent.changeStatus');
 

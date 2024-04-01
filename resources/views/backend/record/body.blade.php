@@ -155,7 +155,7 @@
             var table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                pageLength: 15,
+                pageLength: 25,
                 ajax: {
                     url: "{{ route('body.record') }}",
                     data: function(d) {
