@@ -79,10 +79,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <h6> Betting Amount : <span class="text-info totalBettingAmount"> 0 </span></h6>
-                            <h6> Win Amount : <span class="text-info totalWinAmount"> 0 </span></h6>
-                            <h6> Net Amount : <span class="text-info totalNetAmount"> 0 </span></h6>
-                            <h6> Status : <span class="text-info totalStatus"> ... </span></h6>
+                            <h6> Betting Amount : <span class="ml-2 text-info totalBettingAmount"> 0 </span></h6>
+                            <h6> Win Amount : <span class="ml-2 text-info totalWinAmount"> 0 </span></h6>
+                            <h6> Net Amount : <span class="ml-2 text-info totalNetAmount"> 0 </span></h6>
+                            <h6> Status : <span class="ml-2 text-info totalStatus"> ... </span></h6>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -133,11 +133,11 @@
 
                 let totalNet = totalBetting - totalWin;
 
-                $(".totalBettingAmount").text(totalBetting);
+                $(".totalBettingAmount").text(totalBetting.toLocaleString());
 
-                $(".totalWinAmount").text(totalWin);
+                $(".totalWinAmount").text(totalWin.toLocaleString());
 
-                $(".totalNetAmount").text(totalNet);
+                $(".totalNetAmount").text(totalNet.toLocaleString());
 
                 $(".totalStatus").text(getStatus(totalNet));
 
@@ -166,9 +166,12 @@
                             d.end_date = $('#end_date').val()
                     }
                 },
-                columns: [{
+                columns: [
+                    {
                         data: 'round',
-                        name: 'round'
+                        name: 'round',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'betting_amount',

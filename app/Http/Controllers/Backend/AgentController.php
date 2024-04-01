@@ -205,6 +205,7 @@ class AgentController extends Controller
         // $agent = Agent::with('payment_reports')->findOrFail($id);
 
         if ($request->ajax()) {
+
             if (!empty($request->from_date)) {
                 $query = AgentPaymentReport::where('agent_id', $id)
                                             ->whereBetween('created_at', [$request->from_date, $request->to_date])

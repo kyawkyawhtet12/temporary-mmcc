@@ -79,10 +79,10 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <h6> Betting Amount : <span class="text-info totalBettingAmount"> 0 </span></h6>
-                            <h6> Win Amount : <span class="text-info totalWinAmount"> 0 </span></h6>
-                            <h6> Net Amount : <span class="text-info totalNetAmount"> 0 </span></h6>
-                            <h6> Status : <span class="text-info totalStatus"> ... </span></h6>
+                            <h6> Betting Amount : <span class="ml-2 text-info totalBettingAmount"> 0 </span></h6>
+                            <h6> Win Amount : <span class="ml-2 text-info totalWinAmount"> 0 </span></h6>
+                            <h6> Net Amount : <span class="ml-2 text-info totalNetAmount"> 0 </span></h6>
+                            <h6> Status : <span class="ml-2 text-info totalStatus"> ... </span></h6>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -135,11 +135,11 @@
 
                 let totalNet = totalBetting - totalWin;
 
-                $(".totalBettingAmount").text(totalBetting);
+                $(".totalBettingAmount").text(totalBetting.toLocaleString());
 
-                $(".totalWinAmount").text(totalWin);
+                $(".totalWinAmount").text(totalWin.toLocaleString());
 
-                $(".totalNetAmount").text(totalNet);
+                $(".totalNetAmount").text(totalNet.toLocaleString());
 
                 $(".totalStatus").text(getStatus(totalNet));
 
@@ -168,7 +168,8 @@
                             d.end_date = $('#end_date').val()
                     }
                 },
-                columns: [{
+                columns: [
+                    {
                         data: 'round',
                         name: 'round',
                         orderable: false,
@@ -215,47 +216,15 @@
 
             $('.roundSelect').multiselect({
                 columns: 3,
-                placeholder: 'Select Round (Maximum 10)',
+                placeholder: 'Select Round',
                 search: true,
                 searchOptions: {
                     'default': 'Search Rounds'
                 },
-                onOptionClick: function(element, option) {
-                    var maxSelect = 10;
-
-                    // too many selected, deselect this option
-                    if ($(element).val().length > maxSelect) {
-                        if ($(option).is(':checked')) {
-                            var thisVals = $(element).val();
-
-                            thisVals.splice(
-                                thisVals.indexOf($(option).val()), 1
-                            );
-
-                            $(element).val(thisVals);
-
-                            $(option).prop('checked', false).closest('li')
-                                .toggleClass('selected');
-                        }
-                    }
-                    // max select reached, disable non-checked checkboxes
-                    else if ($(element).val().length == maxSelect) {
-                        $(element).next('.ms-options-wrap')
-                            .find('li:not(.selected)').addClass('disabled')
-                            .find('input[type="checkbox"]')
-                            .attr('disabled', 'disabled');
-                    }
-                    // max select not reached, make sure any disabled
-                    // checkboxes are available
-                    else {
-                        $(element).next('.ms-options-wrap')
-                            .find('li.disabled').removeClass('disabled')
-                            .find('input[type="checkbox"]')
-                            .removeAttr('disabled');
-                    }
-                }
+                selectAll: true
             });
 
         });
+
     </script>
 @endpush
