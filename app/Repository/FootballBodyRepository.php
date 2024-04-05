@@ -59,7 +59,7 @@ class FootballBodyRepository
                     ->select(
                         'round',
                         DB::raw('SUM(football_bets.amount) as betting_amount'),
-                        DB::raw('SUM(betting_records.win_amount) as win_amount')
+                        DB::raw('SUM(football_bets.net_amount) as win_amount')
                     )
 
                     ->groupBy('round')
