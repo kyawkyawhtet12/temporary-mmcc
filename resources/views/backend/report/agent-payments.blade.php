@@ -73,7 +73,6 @@
 
                                         <button type="submit" name="filter" id="filter"
                                             class="btn btn-primary d-block">Filter</button>
-
                                     </div>
 
                                     <div class="col-1">
@@ -87,15 +86,14 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12 my-3 d-flex">
-                                    <h6 class="mr-5"> Recharge : <span class="text-info">{{ number_format($data->sum('deposit')) }}</span></h6>
-                                    <h6 class="ml-5"> Cash : <span class="text-info">{{ number_format($data->sum('withdraw')) }}</span></h6>
+                                    <h6 class="mr-5"> Recharge : <span class="text-info">{{ number_format($query->sum('deposit')) }}</span></h6>
+                                    <h6 class="ml-5"> Cash : <span class="text-info">{{ number_format($query->sum('withdraw')) }}</span></h6>
                                 </div>
                                 <div class="col-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover nowrap data-table">
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
-                                                    <th>No.</th>
                                                     <th>Date</th>
                                                     <th>Recharge</th>
                                                     <th>Cash</th>
@@ -103,14 +101,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ( $data as $x => $dt )
+                                                @foreach ( $data as $date => $dt )
 
                                                     <tr>
-                                                        <td> {{ ++$x }}</td>
-                                                        <td> {{ $dt->created_at->format('d-m-Y'); }}</td>
-                                                        <td> {{ number_format($dt->deposit) }}</td>
-                                                        <td> {{ number_format($dt->withdraw) }}</td>
-                                                        <td> {{ number_format($dt->net_amount) }}</td>
+                                                        <td> {{ $date }}</td>
+                                                        <td> {{ number_format($dt->sum('deposit')) }}</td>
+                                                        <td> {{ number_format($dt->sum('withdraw')) }}</td>
+                                                        <td> {{ number_format($dt->sum('net_amount')) }}</td>
                                                     </tr>
 
                                                 @endforeach

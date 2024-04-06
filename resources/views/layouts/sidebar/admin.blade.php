@@ -305,14 +305,23 @@
                                     Cash Record </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('betting.record') }}?reset=1" class="nav-link" data-key="t-two-lucky-draw">
+                                <a href="{{ route('betting.record') }}?reset=1" class="nav-link" data-key="t-records">
                                     Betting Record </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('win.record') }}?reset=1" class="nav-link"
-                                    data-key="t-three-lucky-draw">
+                                    data-key="t-records">
                                     Win Record
                                 </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('body.record') }}?reset=1" class="nav-link" data-key="t-records">
+                                    Body Record </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('maung.record') }}?reset=1" class="nav-link" data-key="t-records">
+                                    Maung Record </a>
                             </li>
                         </ul>
                     </div>
