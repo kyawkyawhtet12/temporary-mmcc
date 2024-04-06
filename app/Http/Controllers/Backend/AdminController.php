@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Rules\MatchOldPassword;
-use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Admin;
 use App\Models\Agent;
-use App\Models\AgentPaymentAllReport;
-use App\Models\TwoDigit;
-use App\Models\User;
 use App\Models\Enabled;
+use App\Models\TwoDigit;
+use Illuminate\Http\Request;
 use App\Models\AgentWithdraw;
-use Carbon\Carbon;
+use App\Rules\MatchOldPassword;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\AgentPaymentAllReport;
 
 class AdminController extends Controller
 {
     public function index(Request $request)
     {
-
-        $payment = AgentPaymentAllReport::query();
-
-        $total_amount = number_format($payment->sum('deposit') - $payment->sum('withdraw'));
+        $total_amount = DB::table('agent_payment_all_reports')
+                            ->selectRaw("sum(deposit) - sum(withdraw) as net_amount")
+                            ->first()?->net_amount;
 
         $total_agent = Agent::count();
         $total_user = User::count();

@@ -57,7 +57,7 @@
                                         <i class="icon-sm fas fa-hourglass-half mr-2"></i>
                                         Total Amount
                                     </p>
-                                    <h2>{{ $total_amount }}</h2>
+                                    <h2>{{ number_format($total_amount) }}</h2>
                                 </div>
 
                                 <div class="statistics-item">
@@ -65,7 +65,7 @@
                                         <i class="icon-sm fas fa-chart-line mr-2"></i>
                                         Agent Withdraw (Today)
                                     </p>
-                                    <h2>{{ $agent_withdraw }}</h2>
+                                    <h2>{{ number_format($agent_withdraw) }}</h2>
                                 </div>
                             </div>
                         </div>

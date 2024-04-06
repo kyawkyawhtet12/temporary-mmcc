@@ -9,9 +9,9 @@ class FootballMaungRepository
 {
     protected $round, $agents, $start_date, $end_date;
 
-    public function __construct($data, $current_round)
+    public function __construct($data)
     {
-        $this->round = $data['round'] ?? $this->getRounds($current_round);
+        $this->round = $data['round'] ?? NULL;
 
         $this->agents = $data['agent_id'] ?? NULL;
 
@@ -26,7 +26,7 @@ class FootballMaungRepository
 
             ->join('football_matches', 'football_matches.id', '=', 'football_maungs.match_id')
 
-            ->when(!$this->start_date && !$this->end_date, function ($q) {
+            ->when($this->round, function ($q) {
                 return $q->whereIn('football_matches.round', $this->round);
             })
 
@@ -66,17 +66,8 @@ class FootballMaungRepository
 
             ->get();
 
-
-
         return $groups;
+
     }
 
-    protected function getRounds($current_round, $limit = 10)
-    {
-        for ($x = 0; $x < $limit; $x++) {
-            $rounds[] = $current_round - $x;
-        }
-
-        return $rounds;
-    }
 }

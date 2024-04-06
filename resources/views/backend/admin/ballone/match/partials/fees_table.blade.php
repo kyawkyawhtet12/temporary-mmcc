@@ -96,7 +96,7 @@
 
                             <td>
                                <p class="mb-0"> {{ $dt->by_user }}</p>
-                               <small>{{ $dt->updated_at->format('d-m-Y g:i A') }} </small>  
+                               <small>{{ $dt->created_at->format('d-m-Y g:i A') }} </small>
                             </td>
 
                             <td>

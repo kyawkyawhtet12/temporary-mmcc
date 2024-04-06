@@ -157,7 +157,7 @@
             var table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                pageLength: 10,
+                pageLength: 25,
                 ajax: {
                     url: "{{ route('maung.record') }}",
                     data: function(d) {

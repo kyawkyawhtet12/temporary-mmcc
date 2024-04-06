@@ -2,20 +2,12 @@
 
 namespace App\Http\Controllers\Backend;
 
-use DB;
-use Carbon\Carbon;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use App\Models\Agent;
 use Illuminate\Support\Str;
-use App\Models\AgentDeposit;
-use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
-use App\Models\AgentWithdraw;
-use App\Models\ThreeLuckyDraw;
 use Yajra\DataTables\DataTables;
-use App\Models\AgentPaymentReport;
 use App\Http\Controllers\Controller;
-use App\Models\UserPaymentReport;
 use Illuminate\Support\Facades\Hash;
 
 class AgentController extends Controller
@@ -199,56 +191,4 @@ class AgentController extends Controller
         return response()->json(['success'=>'Agent deleted successfully.']);
     }
 
-    // Payment Report
-    public function payment_report(Request $request, $id)
-    {
-        // $agent = Agent::with('payment_reports')->findOrFail($id);
-
-        if ($request->ajax()) {
-
-            if (!empty($request->from_date)) {
-                $query = AgentPaymentReport::where('agent_id', $id)
-                                            ->whereBetween('created_at', [$request->from_date, $request->to_date])
-                                            ->with('agent')->latest();
-            } else {
-                $query = AgentPaymentReport::where('agent_id', $id)
-                                            ->with('agent')->latest();
-            }
-
-            return Datatables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('agent', function ($data) {
-                        return $data->agent?->name;
-                    })
-                    ->addColumn('deposit', function ($data) {
-                        $count = UserPaymentReport::getDepositCount($data->agent_id, $data->created_at); // change with db raw
-                        // $count = 11;
-                        $amount = number_format($data->deposit);
-                        return "{$amount} ($count)";
-                    })
-                    ->addColumn('withdraw', function ($data) {
-                        $count = UserPaymentReport::getWithdrawCount($data->agent_id, $data->created_at);
-                        // $count = 12;
-                        $amount = number_format($data->withdraw);
-                        return "{$amount} ($count)";
-                    })
-                    ->addColumn('net', function ($data) {
-                        return number_format($data->net_amount);
-                    })
-                    ->addColumn('created_at', function ($data) {
-                        return $data->created_at->format('d-m-Y');
-                    })
-                    ->filter(function ($instance) use ($request) {
-                        if (!empty($request->get('search'))) {
-                            $instance->whereHas('agent', function ($w) use ($request) {
-                                $search = $request->get('search');
-                                $w->where('name', 'LIKE', "%$search%");
-                            });
-                        }
-                    })
-                    ->make(true);
-        }
-
-        return view("backend.report.payment", compact('id'));
-    }
 }
