@@ -26,6 +26,11 @@ class UserPaymentController extends Controller
             return response()->json([ 'error' => '* Invalid Amount' ]);
         }
 
+        if( $request->amount < 0 ){
+            $this->paymentFix($request, $user);
+            return response()->json([ 'success' => '* Successfully Done.' ]);
+        }
+
         if ($request->type == 'recharge') {
             $this->deposit($request, $user);
             return response()->json([ 'success' => '* Successfully Done.' ]);
@@ -53,6 +58,26 @@ class UserPaymentController extends Controller
 
             (new UserLogService())->add($user, $request->amount, 'Recharge');
             (new PaymentReportService())->addRecharge($payment);
+        });
+    }
+
+    protected function paymentFix($request, $user)
+    {
+        DB::transaction(function () use ($request, $user) {
+
+            $payment = Payment::create([
+                'amount' => $request->amount,
+                'user_id' => $user->id,
+                'agent_id' => $user->agent->id,
+                'by' => Auth::id(),
+                'status' => 'Approved'
+            ]);
+
+
+            (new UserLogService())->add($user, $request->amount, 'Fix');
+            (new PaymentReportService())->addRecharge($payment);
+
+            $user->increment('amount', $request->amount);
         });
     }
 
