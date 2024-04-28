@@ -89,7 +89,12 @@
                                                 <td>{{ $dt->user->user_id }}</td>
                                                 <td>{{ $dt->operation }}</td>
                                                 <td>
-                                                    {{ $dt->start_balance > $dt->end_balance ? '-' : '' }} {{ number_format($dt->amount) }}
+                                                    @if( $dt->amount > 0)
+                                                        {{ $dt->start_balance > $dt->end_balance ? '-' : '' }}
+                                                    @endif
+
+                                                    {{ number_format($dt->amount) }}
+
                                                 </td>
                                                 <td>{{ number_format($dt->start_balance) }}</td>
                                                 <td>{{ number_format($dt->end_balance) }}</td>
