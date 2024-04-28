@@ -26,17 +26,23 @@ class UserPaymentController extends Controller
             return response()->json([ 'error' => '* Invalid Amount' ]);
         }
 
-        if( $request->amount < 0 ){
-            $this->paymentFix($request, $user);
-            return response()->json([ 'success' => '* Successfully Done.' ]);
-        }
-
         if ($request->type == 'recharge') {
+
+            if( $request->amount < 0 ){
+                $this->paymentFix($request, $user);
+                return response()->json([ 'success' => '* Successfully Done.' ]);
+            }
+
             $this->deposit($request, $user);
             return response()->json([ 'success' => '* Successfully Done.' ]);
         }
 
         if( $request->type == 'cashout'){
+
+            if( $request->amount < 0 ){
+                return response()->json([ 'error' => '* Invalid Amount' ]);
+            }
+
             $this->cashout($request, $user);
             return response()->json([ 'success' => '* Successfully Done.' ]);
         }
