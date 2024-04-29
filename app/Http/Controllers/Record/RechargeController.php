@@ -46,6 +46,20 @@ class RechargeController extends Controller
                     return $q->process_time;
                 })
 
+                ->addColumn('actions', function ($q) {
+                    if($q->status == 'Approved'){
+
+                    
+                    return "
+                        <a href='#' class='btn btn-danger btn-sm deleteBtn' data-id='$q->id'>
+                           Delete
+                        </a>
+                    ";
+                    }
+
+                    return "";
+                })
+
                 ->filter(function ($instance) use ($request) {
 
                     if ($search = $request->get('search')) {
@@ -77,7 +91,7 @@ class RechargeController extends Controller
                         $instance->whereDate('created_at', '<=', $end_date);
                     }
                 })
-
+                ->rawColumns([ 'actions' ])
                 ->make(true);
         }
 

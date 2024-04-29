@@ -91,6 +91,7 @@
                                                     <th>Request Time</th>
                                                     <th>Action Time</th>
                                                     <th>Process Time</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -103,6 +104,45 @@
             </div>
         </div>
     </div>
+
+
+
+    <div class="modal fade" id="confirmModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title text-capitalize py-1" id="modelHeading">
+                        Confirm Delete ?
+                    </h6>
+                </div>
+                <div class="modal-body">
+    
+                    <div id="error" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+                        <strong> Error !</strong> <span id="text"></span>
+                    </div>
+
+                    <div class="p-3 text-center">
+                        <h6> Are you Sure to delete this payment ? </h6>
+                    </div>
+                   
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('payment.delete') }}" method="POST">
+                        @csrf
+                        @method("DELETE")
+                        <input type="hidden" name="id" id="id">
+                        <div class="">
+                            <a href="#" class="btn btn-outline-danger"> No </a>
+                            <button type="submit" class="btn btn-success">
+                                 Yes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -192,6 +232,12 @@
                         name: 'process_time',
                         orderable: false,
                         searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
                     }
                 ],
             });
@@ -201,6 +247,11 @@
                 $("#datatable").DataTable().ajax.reload();
             });
 
+
+            $('body').on('click', '.deleteBtn', function() {
+                $("#confirmModal form #id").val($(this).data('id'));
+                $('#confirmModal').modal('show');
+            });
         });
     </script>
 @endpush

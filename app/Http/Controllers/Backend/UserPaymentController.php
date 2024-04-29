@@ -106,4 +106,20 @@ class UserPaymentController extends Controller
             (new PaymentReportService())->addCashout($cashout);
         });
     }
+
+    // delete Payment
+
+    public function destroy(Request $request)
+    {
+        // return $request->all();
+        $payment = Payment::findOrFail($request->id);
+        
+        $payment->update([
+            'status' => 'Rejected'
+        ]);
+
+        $payment->user->decrement('amount', +$payment->amount);
+
+        return back()->with("success", "success");
+    }
 }

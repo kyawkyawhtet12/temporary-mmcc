@@ -70,6 +70,7 @@ Route::group(
             Route::get('/close-all-bets', 'EnabledController@close_all_bets')->name('close-all-bets');
 
             Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
+            Route::delete('payment/delete', [UserPaymentController::class, 'destroy'])->name('payment.delete');
         });
 
         Route::resource('users', 'UserController');
