@@ -49,12 +49,13 @@ class RechargeController extends Controller
                 ->addColumn('actions', function ($q) {
                     if($q->status == 'Approved'){
 
-                    
-                    return "
-                        <a href='#' class='btn btn-danger btn-sm deleteBtn' data-id='$q->id'>
-                           Delete
-                        </a>
-                    ";
+                    if( is_admin()){
+                        return "
+                            <a href='#' class='btn btn-danger btn-sm deleteBtn' data-id='$q->id'>
+                            Delete
+                            </a>
+                        ";
+                        }
                     }
 
                     return "";
