@@ -6,7 +6,7 @@
             padding: 0.6rem !important;
         }
 
-        .multiSelect button{
+        .multiSelect button {
             padding: 0.6rem !important;
         }
     </style>
@@ -51,19 +51,19 @@
                 </div>
 
                 <div class="col">
-                    <input type="text" class="form-control" placeholder="User ID" name="user_id" id="user_id" >
+                    <input type="text" class="form-control" placeholder="User ID" name="user_id" id="user_id">
                 </div>
 
                 <div class="col">
-                    <input type="text" class="form-control" placeholder="Phone" name="phone" id="phone" >
+                    <input type="text" class="form-control" placeholder="Phone" name="phone" id="phone">
                 </div>
 
                 <div class="col">
-                    <input type="date" class="form-control" placeholder="Start Date" name="start_date" id="start_date" >
+                    <input type="date" class="form-control" placeholder="Start Date" name="start_date" id="start_date">
                 </div>
 
                 <div class="col">
-                    <input type="date" class="form-control" placeholder="End Date" name="end_date" id="end_date" >
+                    <input type="date" class="form-control" placeholder="End Date" name="end_date" id="end_date">
                 </div>
 
                 <div class="col">
@@ -75,6 +75,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0"> Total Amount : <span class="totalAmount"></span> </h6>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -116,7 +119,7 @@
                     </h6>
                 </div>
                 <div class="modal-body">
-    
+
                     <div id="error" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
                         <strong> Error !</strong> <span id="text"></span>
                     </div>
@@ -124,17 +127,17 @@
                     <div class="p-3 text-center">
                         <h6> Are you Sure to delete this payment ? </h6>
                     </div>
-                   
+
                 </div>
                 <div class="modal-footer">
                     <form action="{{ route('payment.delete') }}" method="POST">
                         @csrf
-                        @method("DELETE")
+                        @method('DELETE')
                         <input type="hidden" name="id" id="id">
                         <div class="">
                             <a href="#" class="btn btn-outline-danger"> No </a>
                             <button type="submit" class="btn btn-success">
-                                 Yes
+                                Yes
                             </button>
                         </div>
                     </form>
@@ -142,7 +145,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
@@ -167,16 +169,22 @@
             var table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                pageLength : 15,
+                pageLength: 15,
+                searching: false,
                 ajax: {
                     url: "{{ route('recharge.record') }}",
                     data: function(d) {
                         d.search = $('input[type="search"]').val(),
-                        d.agent_id = $('#agent_id').val(),
-                        d.user_id = $('#user_id').val(),
-                        d.phone = $('#phone').val(),
-                        d.start_date = $('#start_date').val(),
-                        d.end_date = $('#end_date').val()
+                            d.agent_id = $('#agent_id').val(),
+                            d.user_id = $('#user_id').val(),
+                            d.phone = $('#phone').val(),
+                            d.start_date = $('#start_date').val(),
+                            d.end_date = $('#end_date').val()
+                    },
+                    dataFilter: function(data) {
+                        var json = jQuery.parseJSON(data);
+                        $(".totalAmount").text(parseFloat(json.total).toLocaleString());
+                        return JSON.stringify(json);
                     }
                 },
                 columns: [{
@@ -239,14 +247,13 @@
                         orderable: false,
                         searchable: false
                     }
-                ],
+                ]
             });
 
-            $("#search").on('click',function(e){
+            $("#search").on('click', function(e) {
                 e.preventDefault();
                 $("#datatable").DataTable().ajax.reload();
             });
-
 
             $('body').on('click', '.deleteBtn', function() {
                 $("#confirmModal form #id").val($(this).data('id'));

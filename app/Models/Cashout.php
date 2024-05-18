@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\FilterQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Cashout extends Model
 {
-    use HasFactory;
+    use HasFactory, FilterQuery;
 
     protected $fillable = [
         'amount',
@@ -96,4 +97,5 @@ class Cashout extends Model
 
         return "-";
     }
+
 }
