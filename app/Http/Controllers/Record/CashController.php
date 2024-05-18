@@ -12,13 +12,22 @@ class CashController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::select('id','name')->get();
+        $agents = Agent::select('id', 'name')->get();
 
         if ($request->ajax()) {
 
-            $query = Cashout::with('user', 'admin')->latest();
+            $query = Cashout::with('user', 'admin')
+                ->filterAgent()
+                ->filterUser()
+                ->filterPhone()
+                ->filterByDate()
+                ->latest();
 
             return Datatables::of($query)
+
+                ->with('total', function () use ($query) {
+                    return $query->whereStatus("Approved")->sum('amount');
+                })
 
                 ->addIndexColumn()
 
@@ -48,34 +57,34 @@ class CashController extends Controller
 
                 ->filter(function ($instance) use ($request) {
 
-                    if ($search = $request->get('search')) {
-                        $instance->whereHas('user', function ($w) use ($search) {
-                            $w->where('name', 'LIKE', "%$search%");
-                            $w->orWhere('user_id', 'LIKE', "%$search%");
-                        });
-                    }
+                    // if ($search = $request->get('search')) {
+                    //     $instance->whereHas('user', function ($w) use ($search) {
+                    //         $w->where('name', 'LIKE', "%$search%");
+                    //         $w->orWhere('user_id', 'LIKE', "%$search%");
+                    //     });
+                    // }
 
-                    if ($agent_id = $request->get('agent_id')) {
-                        $instance->whereIn("agent_id", $agent_id);
-                    }
+                    // if ($agent_id = $request->get('agent_id')) {
+                    //     $instance->whereIn("agent_id", $agent_id);
+                    // }
 
-                    if ($user_id = $request->get("user_id")) {
-                        $instance->whereHas('user', function ($w) use ($user_id) {
-                            $w->where('user_id', $user_id);
-                        });
-                    }
+                    // if ($user_id = $request->get("user_id")) {
+                    //     $instance->whereHas('user', function ($w) use ($user_id) {
+                    //         $w->where('user_id', $user_id);
+                    //     });
+                    // }
 
-                    if ($phone = $request->get("phone")) {
-                        $instance->where('phone', $phone);
-                    }
+                    // if ($phone = $request->get("phone")) {
+                    //     $instance->where('phone', $phone);
+                    // }
 
-                    if ($start_date = $request->get('start_date')) {
-                        $instance->whereDate('created_at', '>=', $start_date);
-                    }
+                    // if ($start_date = $request->get('start_date')) {
+                    //     $instance->whereDate('created_at', '>=', $start_date);
+                    // }
 
-                    if ($end_date = $request->get('end_date')) {
-                        $instance->whereDate('created_at', '<=', $end_date);
-                    }
+                    // if ($end_date = $request->get('end_date')) {
+                    //     $instance->whereDate('created_at', '<=', $end_date);
+                    // }
                 })
 
                 ->make(true);
@@ -83,5 +92,4 @@ class CashController extends Controller
 
         return view("backend.record.cash", compact('agents'));
     }
-
 }

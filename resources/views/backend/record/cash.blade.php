@@ -80,6 +80,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0"> Total Amount : <span class="totalAmount"></span> </h6>
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -134,6 +137,7 @@
                 processing: true,
                 serverSide: true,
                 pageLength : 15,
+                searching: false,
                 ajax: {
                     url: "{{ route('cash.record') }}",
                     data: function(d) {
@@ -143,6 +147,11 @@
                             d.phone = $('#phone').val(),
                             d.start_date = $('#start_date').val(),
                             d.end_date = $('#end_date').val()
+                    },
+                    dataFilter: function(data) {
+                        var json = jQuery.parseJSON(data);
+                        $(".totalAmount").text(parseFloat(json.total).toLocaleString());
+                        return JSON.stringify(json);
                     }
                 },
                 columns: [{
