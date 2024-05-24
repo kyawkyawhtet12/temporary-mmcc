@@ -132,7 +132,11 @@
 
                         if (res.success) {
                             toastr.success(res.success);
-                        } else {
+                        }
+                        else if (res.error) {
+                            toastr.error(res.error);
+                        }
+                         else {
                             toastr.error("Error !");
                         }
 

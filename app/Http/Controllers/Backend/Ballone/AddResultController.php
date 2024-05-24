@@ -96,6 +96,10 @@ class AddResultController extends Controller
 
     public function addManual(Request $request, $result_id)
     {
+        if( !is_admin() ){
+            return response()->json(['error' => 'no permission']);
+        }
+
         if($request->type == "body"){
             $result = FootballBodyFeeResult::findOrFail($result_id);
         }else{
