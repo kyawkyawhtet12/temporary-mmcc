@@ -30,7 +30,7 @@ class UserController extends Controller
 
         if ($request->ajax()) {
 
-            $query = User::latest('id');
+            $query = User::withCount('approved_cashouts')->withCount('approved_deposits')->with('cashoutPhone')->latest('id');
 
             return Datatables::of($query)
                     ->addIndexColumn()

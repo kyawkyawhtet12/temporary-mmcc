@@ -79,7 +79,8 @@
                                                     <th>Wave No.</th>
                                                     <th>Balance</th>
                                                     <th>Status</th>
-                                                    <th>Days not logged in</th>
+                                                    <th>Deposit</th>
+                                                    <th>Withdrawal</th>
                                                     <th>Payment</th>
                                                     <th>Amount Details</th>
                                                     <th>Action</th>
@@ -280,8 +281,12 @@
                         name: 'status'
                     },
                     {
-                        data: 'days_not_logged_in',
-                        name: 'days_not_logged_in'
+                        data: 'approved_deposits_count',
+                        name: 'deposit'
+                    },
+                    {
+                        data: 'approved_cashouts_count',
+                        name: 'withdrawal'
                     },
                     {
                         data: 'payment',

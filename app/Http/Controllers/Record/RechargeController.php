@@ -47,6 +47,25 @@ class RechargeController extends Controller
                     return $q->provider_name;
                 })
 
+                ->addColumn('phone', function ($payment) {
+
+                    if( $payment->phone ){
+                        return $payment->phone;
+                    }
+
+                    if( $cashoutPhone = $payment->user->cashoutPhone ){
+
+                       $kpay = ($cashoutPhone->kpay) ? "<span>$cashoutPhone->kpay (kpay) </span>" : "";
+                       $wave = ($cashoutPhone->wave) ? "<span>$cashoutPhone->wave (wave) </span>" : "";
+
+                       return ($cashoutPhone->kpay == $cashoutPhone->wave)
+                            ? "$cashoutPhone->kpay"
+                            : "$kpay <br><br> $wave";
+                    }
+
+                    return '';
+
+                })
                 ->addColumn('created_at', function ($q) {
                     return $q->created_at->format("d-m-Y g:i A");
                 })
@@ -102,7 +121,7 @@ class RechargeController extends Controller
                     // }
                 })
 
-                ->rawColumns(['actions', 'amount'])
+                ->rawColumns(['actions', 'amount', 'phone'])
 
                 ->make(true);
         }
