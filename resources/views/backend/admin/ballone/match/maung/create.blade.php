@@ -374,6 +374,8 @@
                 }
             });
 
+            $('#league').select2();
+
             $('#home_id').select2();
             $('#away_id').select2();
 

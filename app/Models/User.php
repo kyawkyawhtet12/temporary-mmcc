@@ -70,4 +70,24 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserPhone::class);
     }
+
+    public function deposits()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function approved_deposits()
+    {
+        return $this->hasMany(Payment::class)->where('status', 'Approved');
+    }
+
+    public function cashouts()
+    {
+        return $this->hasMany(Cashout::class);
+    }
+
+    public function approved_cashouts()
+    {
+        return $this->hasMany(Cashout::class)->where('status', 'Approved');
+    }
 }
