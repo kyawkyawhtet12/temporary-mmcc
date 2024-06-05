@@ -188,6 +188,12 @@
 @section('script')
     <script>
         $(document).ready(function() {
+
+            $('#league').select2();
+
+            $('#home_id').select2();
+            $('#away_id').select2();
+
             $("body").on('change', '.selectLeague', function(e) {
                 if (this.value) {
                     $.get(`/admin/get-clubs/${this.value}`, function(data) {

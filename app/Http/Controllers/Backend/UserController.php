@@ -131,7 +131,7 @@ class UserController extends Controller
             'name' => 'nullable|string|max:255',
             // 'phone' => 'required|phone:MM|unique:users,phone,'.$request->user_id,
             'user_id' => 'required|unique:users,user_id,'.$request->old_id,
-            'password' => 'nullable|string|min:7',
+            'password' => 'nullable|string|min:5',
             'old_id' => 'required',
         ]);
 
