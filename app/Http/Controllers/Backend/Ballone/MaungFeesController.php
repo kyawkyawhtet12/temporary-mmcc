@@ -74,9 +74,10 @@ class MaungFeesController extends Controller
     public function add()
     {
         $leagues = League::all();
-        $match = FootballMatch::latest()->first();
-        $round = $match ? $match->round : 1;
+
         $groups = FootballBodyLimitGroup::select('id', 'name', 'max_amount')->orderBy("max_amount")->get();
+
+        $round = FootballMatch::orderBy('round', 'desc')->first()->round;
 
         return view("backend.admin.ballone.match.maung.create", compact('leagues', 'round', 'groups'));
     }
