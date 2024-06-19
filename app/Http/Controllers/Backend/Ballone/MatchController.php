@@ -22,11 +22,22 @@ class MatchController extends Controller
         if ($request->ajax()) {
 
             if (!empty($request->from_date)) {
-                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))
-                                    ->whereBetween('date_time', [$request->from_date, $request->to_date]);
+                $query = FootballMatch::whereHas('matchStatus', function($q){
+                    $q->where('body_refund', 1)
+                    ->orWhere('maung_refund', 1);
+                })
+                ->whereBetween('date_time', [$request->from_date, $request->to_date])
+                // ->where('created_at', '>=', now()->subDays(30))
+                ->latest()
+                ->get();
             } else {
-                $query = FootballMatch::where('type', 0)->where('created_at', '>=', now()->subDays(30))
-                                    ->latest();
+                $query = FootballMatch::whereHas('matchStatus', function($q){
+                    $q->where('body_refund', 1)
+                    ->orWhere('maung_refund', 1);
+                })
+                ->where('created_at', '>=', now()->subDays(30))
+                ->latest()
+                ->get();
             }
 
             return Datatables::of($query)
@@ -45,6 +56,21 @@ class MatchController extends Controller
                 })
                 ->addColumn('body', function ($match) {
                     return $match->fees?->body;
+                })
+                ->addColumn('type', function ($match) {
+                    $body = $match->matchStatus?->body_refund;
+                    $maung = $match->matchStatus?->maung_refund;
+
+                    if( $body && $maung )
+                    {
+                        return  "All Refund";
+                    }else if($body){
+                        return "Body Refund";
+                    }else if($maung){
+                        return "Maung Refund";
+                    }else{
+                        return "";
+                    }
                 })
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
