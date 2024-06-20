@@ -69,9 +69,11 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
+                                            <th>Round</th>
                                             <th>League</th>
                                             <th>Date Time</th>
                                             <th>Match</th>
+                                            <th>Type</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -111,7 +113,7 @@
                     },
                     serverSide: true,
                     ajax: {
-                        url: '{{ route('ballone.match.refund.history') }}',
+                        url: "{{ route('ballone.match.refund.history') }}",
                         data: function(d) {
                             d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
@@ -121,6 +123,10 @@
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex'
+                        },
+                        {
+                            data : 'round',
+                            name : 'round'
                         },
                         {
                             data: 'league',
@@ -133,6 +139,10 @@
                         {
                             data: 'match',
                             name: 'match'
+                        },
+                        {
+                            data: 'type',
+                            name: 'type'
                         }
                     ],
                 });
