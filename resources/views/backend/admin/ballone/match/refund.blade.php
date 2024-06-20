@@ -69,6 +69,7 @@
                                     <thead>
                                         <tr>
                                             <th>No.</th>
+                                            <th>Round</th>
                                             <th>League</th>
                                             <th>Date Time</th>
                                             <th>Match</th>
@@ -122,6 +123,10 @@
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex'
+                        },
+                        {
+                            data : 'round',
+                            name : 'round'
                         },
                         {
                             data: 'league',
