@@ -1,10 +1,16 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\Agent;
 use App\Models\ThreeDigitSetting;
 use Illuminate\Support\Facades\Auth;
 
 //
+
+function dateFormat($date, $format = "d-m-Y")
+{
+    return Carbon::parse($date)->format($format);
+}
 
 function get_date_format($match)
 {
@@ -56,3 +62,25 @@ function getBadgeColor($setting,$amount)
 
     return "color: #333";
 }
+
+function getNetAmountStatus($amount)
+{
+    return match (true) {
+        $amount > 0  => "Win",
+        $amount < 0  => "No Win",
+        $amount == 0 => "...",
+    };
+}
+
+function getTotalAmountRecords($data)
+{
+    $total = [
+        'betting' => number_format($data->sum('betting_amount')),
+        'win'     => number_format($data->sum('win_amount')),
+        'net'     => number_format($data->sum('net_amount')),
+        'status'  => getNetAmountStatus($data->sum('net_amount'))
+    ];
+
+    return $total;
+}
+

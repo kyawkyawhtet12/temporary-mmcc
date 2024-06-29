@@ -84,7 +84,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('report-color.setting', '2D') }}" class="nav-link"
+                                <a href="{{ route('report-color.setting.index', '2D') }}" class="nav-link"
                                     data-key="t-calendar"> Report Color Setting </a>
                             </li>
                         </ul>
@@ -138,7 +138,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('report-color.setting', '3D') }}" class="nav-link"
+                                <a href="{{ route('report-color.setting.index', '3D') }}" class="nav-link"
                                     data-key="t-calendar"> Report Color Setting </a>
                             </li>
 
@@ -234,20 +234,20 @@
                                     Agent Lists </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agent.payment-reports') }}" class="nav-link"
+                                <a href="{{ route('agents.payment-reports', 'all') }}" class="nav-link"
                                     data-key="t-agent-payment-reports">
                                     Payment Reports </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agents.create') }}" class="nav-link" data-key="t-two-lucky-draw">
+                                <a href="{{ route('agents.records', '2d') }}" class="nav-link" data-key="t-two-lucky-draw">
                                     Two Lucky Draw </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agents.three') }}" class="nav-link"
+                                <a href="{{ route('agents.records', '3d') }}" class="nav-link"
                                     data-key="t-three-lucky-draw"> Three Lucky Draw </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('agents.football') }}" class="nav-link"
+                                <a href="{{ route('agents.records', 'football') }}" class="nav-link"
                                     data-key="t-football-lucky-draw"> Football Lucky Draw </a>
                             </li>
                             <li class="nav-item">
@@ -289,11 +289,11 @@
 
                 {{-- Game Record --}}
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="#game_record" data-bs-toggle="collapse" role="button"
-                        aria-expanded="false" aria-controls="game_record">
+                    <a class="nav-link menu-link" href="#report_record" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="report_record">
                         <i class="ri-file-line"></i> <span data-key="t-apps"> Record </span>
                     </a>
-                    <div class="collapse menu-dropdown" id="game_record">
+                    <div class="collapse menu-dropdown" id="report_record">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="{{ route('recharge.record') }}?reset=1" class="nav-link" data-key="t-agent-lists">
@@ -315,14 +315,38 @@
                                 </a>
                             </li>
 
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#game_record" data-bs-toggle="collapse" role="button"
+                        aria-expanded="false" aria-controls="game_record">
+                        <i class="ri-file-line"></i> <span data-key="t-apps"> Game Record </span>
+                    </a>
+                    <div class="collapse menu-dropdown" id="game_record">
+                        <ul class="nav nav-sm flex-column">
+
                             <li class="nav-item">
-                                <a href="{{ route('body.record') }}?reset=1" class="nav-link" data-key="t-records">
+                                <a href="{{ route('ballone.record', 'body') }}?reset=1" class="nav-link" data-key="t-records">
                                     Body Record </a>
                             </li>
+
                             <li class="nav-item">
-                                <a href="{{ route('maung.record') }}?reset=1" class="nav-link" data-key="t-records">
+                                <a href="{{ route('ballone.record', 'maung') }}?reset=1" class="nav-link" data-key="t-records">
                                     Maung Record </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('lottery.record', '2D') }}?reset=1" class="nav-link" data-key="t-records">
+                                    Two Digit Record </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('lottery.record', '3D') }}?reset=1" class="nav-link" data-key="t-records">
+                                    Three Digit Record </a>
+                            </li>
+
                         </ul>
                     </div>
                 </li>

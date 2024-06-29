@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Record;
 
-use App\Models\Agent;
 use Illuminate\Http\Request;
 use App\Models\BettingRecord;
 use App\Http\Controllers\Controller;
@@ -13,8 +12,6 @@ class BettingController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::select('id','name')->get();
-
         if ($request->ajax()) {
 
             $query = BettingRecord::with('user')->latest();
@@ -97,7 +94,7 @@ class BettingController extends Controller
                     ->make(true);
         }
 
-        return view("backend.record.betting", compact('agents' ));
+        return view("backend.record.betting");
     }
 
     public function detail($id)

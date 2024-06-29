@@ -30,13 +30,12 @@
 
     <link rel="stylesheet" href="{{ asset('assets/backend/css/style.css') }}">
 
-    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.css">
 
     @yield('css')
@@ -63,21 +62,21 @@
                         </button>
 
                         <?php
-                        
+
                         $prev_route = url()->previous();
-                        
+
                         if (strpos(request()->url(), 'ballone-add-result/maung')) {
                             $prev_route = Session::get('prev_route') ?? '/admin/ballone/maung';
                         }
-                        
+
                         if (strpos(request()->url(), 'ballone-add-result/body')) {
                             $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
                         }
-                        
+
                         if (strpos(request()->url(), 'body-report')) {
                             $prev_route = Session::get('prev_route') ?? '/admin/ballone/body';
                         }
-                        
+
                         ?>
 
                         <a class="btn btn-sm btn-info ms-5 px-3" href="{{ $prev_route }}">
@@ -176,20 +175,11 @@
         integrity="sha512-suUtSPkqYmFd5Ls30Nz6bjDX+TCcfEzhFfqjijfdggsaFZoylvTj+2odBzshs0TCwYrYZhQeCgHgJEkncb2YVQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script src="http://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
 
     <script src="{{ asset('assets/backend/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('assets/backend/vendors/js/vendor.bundle.addons.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/formpickers.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/form-addons.js') }}"></script>
     <script src="{{ asset('assets/backend/js/x-editable.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/dropify.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/jquery-file-upload.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/formpickers.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/form-repeater.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/date-range.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/jquery.tabledit.min.js') }}"></script>
-    <script src="{{ asset('assets/backend/js/file-upload.js') }}"></script>
 
     <script src="{{ asset('assets/backend/vendors/multiselect/jquery.multiselect.js') }}"></script>
 
@@ -202,6 +192,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.all.min.js"></script>
 
     <script type="text/javascript">
+
         $(document).ready(function() {
 
             $.ajaxSetup({

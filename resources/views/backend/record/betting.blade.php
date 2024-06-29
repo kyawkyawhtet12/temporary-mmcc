@@ -46,13 +46,7 @@
             <div class="row mb-3 d-flex">
 
                     <div class="col-md-2 multiSelect">
-                        <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
-                            @foreach ($agents as $agent)
-                                <option value="{{ $agent->id }}" >
-                                    {{ $agent->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-agent-select />
                     </div>
 
                     <div class="col">
@@ -246,15 +240,6 @@
                 $("#datatable").DataTable().ajax.reload();
             });
 
-            $('.agentSelect').multiselect({
-                columns: 1,
-                placeholder: 'Select Agent',
-                search: true,
-                searchOptions: {
-                    'default': 'Search Agents'
-                },
-                selectAll: true
-            });
 
             const url_prefix = "/admin/betting-record/detail/";
 

@@ -52,6 +52,11 @@ class ThreeLuckyDraw extends Model
         return $this->hasOne(ThreeLuckyNumber::class, 'date_id', 'round')->where('status','Approved');
     }
 
+    public function winner()
+    {
+        return $this->hasone(ThreeWinner::class);
+    }
+
     public function scopeFilterDates($query)
     {
         $date = explode(" - ", request()->input('from_to', ""));

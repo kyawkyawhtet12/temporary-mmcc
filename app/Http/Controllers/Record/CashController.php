@@ -12,8 +12,6 @@ class CashController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::select('id', 'name')->get();
-
         if ($request->ajax()) {
 
             $query = Cashout::with('user', 'admin')
@@ -90,6 +88,6 @@ class CashController extends Controller
                 ->make(true);
         }
 
-        return view("backend.record.cash", compact('agents'));
+        return view("backend.record.cash");
     }
 }

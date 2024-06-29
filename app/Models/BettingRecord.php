@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\FilterQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BettingRecord extends Model
 {
-    use HasFactory;
+    use HasFactory, FilterQuery;
 
     protected $fillable = [ 'agent_id','user_id','amount','type','count','result','win_amount'];
 
@@ -49,5 +50,4 @@ class BettingRecord extends Model
     {
         return $this->hasMany(FootballBet::class, 'betting_record_id')->where('status', 0);
     }
-
 }
