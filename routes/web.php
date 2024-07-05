@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ThreeDigit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Record\WinController;
@@ -10,7 +11,9 @@ use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
 use App\Http\Controllers\Record\BalloneRecordController;
 use App\Http\Controllers\Record\LotteryRecordController;
+use App\Http\Controllers\Record\TwoDigitRecordController;
 use App\Http\Controllers\Backend\Report\UserLogController;
+use App\Http\Controllers\Record\ThreeDigitRecordController;
 use App\Http\Controllers\Backend\Setting\ReportAmountColorController;
 
 Route::get('/', function () {
@@ -81,9 +84,10 @@ Route::group(
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
 
-        Route::get('lottery-record/{type}', [LotteryRecordController::class, 'index'])->name('lottery.record');
-        Route::get('ballone-record/{type}', [BalloneRecordController::class, 'index'])->name('ballone.record');
+        Route::get('3d-record', [ThreeDigitRecordController::class, 'index'])->name('3d.record');
+        Route::get('2d-record', [TwoDigitRecordController::class, 'index'])->name('2d.record');
 
+        Route::get('ballone-record/{type}', [BalloneRecordController::class, 'index'])->name('ballone.record');
 
         Route::controller('Setting\ReportAmountColorController')
             ->as('report-color.setting.')

@@ -41,4 +41,14 @@ class TwoLuckyNumber extends Model
 
         return $data ? $data->two_digit->number : "";
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'Approved');
+    }
+
+    public function getResultAttribute()
+    {
+        return $this->two_digit?->number;
+    }
 }

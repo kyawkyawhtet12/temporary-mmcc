@@ -338,12 +338,12 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('lottery.record', '2D') }}?reset=1" class="nav-link" data-key="t-records">
+                                <a href="{{ route('2d.record') }}" class="nav-link" data-key="t-records">
                                     Two Digit Record </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('lottery.record', '3D') }}?reset=1" class="nav-link" data-key="t-records">
+                                <a href="{{ route('3d.record') }}" class="nav-link" data-key="t-records">
                                     Three Digit Record </a>
                             </li>
 

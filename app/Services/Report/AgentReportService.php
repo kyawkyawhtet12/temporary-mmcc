@@ -21,7 +21,13 @@ class AgentReportService
 
             ->join("agents", "agents.id", "betting_records.agent_id")
 
-            ->whereBetween("betting_records.created_at", [$filter['start_date'], $filter['end_date']])
+            ->when($filter['start_date'] ?? NULL, function ($q) use ($filter) {
+                return $q->whereDate('betting_records.created_at', '>=', $filter['start_date']);
+            })
+
+            ->when($filter['end_date'] ?? NULL, function ($q) use ($filter) {
+                return $q->whereDate('betting_records.created_at', '<=', $filter['end_date']);
+            })
 
             ->selectRaw(
                 '

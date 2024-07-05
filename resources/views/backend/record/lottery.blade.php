@@ -13,6 +13,10 @@
         table .done {
             background-color: #dff8ff;
         }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f6fbff !important;
+        }
     </style>
 @endsection
 
@@ -42,9 +46,7 @@
             <div class="row mb-3 d-flex">
 
                 <div class="col-md-4 multiSelect">
-
                     <x-agent-select />
-
                 </div>
 
                 <div class="col">
@@ -56,10 +58,10 @@
                 </div>
 
                 <div class="col">
-                   <div class="row">
+                    <div class="row">
                         <button type="button" class="btn btn-primary col mx-1 btn-sm" id="search">Filter</button>
                         <a href="#" class="btn btn-danger col mx-1 btn-sm" id="refresh">Refresh</a>
-                   </div>
+                    </div>
                 </div>
 
             </div>
@@ -77,17 +79,13 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="table-responsive">
-                                        <table id="datatable" class="table table-bordered nowrap text-center">
-                                            <thead>
-                                                <tr class="bg-primary text-white" role="row">
-                                                    <th>Date</th>
-                                                    <th>Betting Amount</th>
-                                                    <th>Win Amount </th>
-                                                    <th>Net Amount </th>
-                                                    <th>Status</th>
-                                                </tr>
-                                            </thead>
-                                        </table>
+
+                                        @if( $type == '2D')
+                                            @include("backend.record.two_digit")
+                                        @else
+                                            @include("backend.record.three_digit")
+                                        @endif
+
                                     </div>
                                 </div>
                             </div>
@@ -99,62 +97,12 @@
     </div>
 @endsection
 
-@push('scripts')
+
+
+
+@push("scripts")
     <script>
-        $(function() {
-
-            var table = $('#datatable').DataTable({
-                processing: true,
-                serverSide: true,
-                pageLength: 25,
-                ajax: {
-                    url: "{{ route('lottery.record', $type) }}",
-                    data: function(d) {
-                        d.search = $('input[type="search"]').val(),
-                            d.agent_id = $('#agent_id').val(),
-                            d.start_date = $('#start_date').val(),
-                            d.end_date = $('#end_date').val()
-                    },
-                    dataFilter: function(res) {
-
-                        let { total } = jQuery.parseJSON(res);
-
-                        $(".totalBettingAmount").text(total.betting);
-                        $(".totalWinAmount").text(total.win);
-                        $(".totalNetAmount").text(total.net);
-                        $(".totalStatus").text(total.status);
-
-                        return res;
-                    }
-                },
-                columns: [
-                    {
-                        data: 'date',
-                        name: 'date',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'betting_amount',
-                        name: 'betting_amount'
-                    },
-                    {
-                        data: 'win_amount',
-                        name: 'win_amount'
-                    },
-                    {
-                        data: 'net_amount',
-                        name: 'net_amount',
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    }
-                ],
-            });
-
-
-            $("#search").on('click', function(e) {
+          $("#search").on('click', function(e) {
                 e.preventDefault();
                 $("#datatable").DataTable().ajax.reload();
             });
@@ -167,8 +115,5 @@
                 $("#datatable").DataTable().ajax.reload();
             });
 
-
-
-        });
     </script>
 @endpush

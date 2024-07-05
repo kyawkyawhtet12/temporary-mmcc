@@ -23,7 +23,7 @@ class RechargeController extends Controller
             return Datatables::of($query)
 
                 ->with('total', function () use ($query) {
-                    return $query->whereStatus("Approved")->sum('amount');
+                    return $query->clone()->where("status", "Approved")->sum('amount');
                 })
 
                 ->addIndexColumn()

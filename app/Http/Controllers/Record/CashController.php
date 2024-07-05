@@ -24,7 +24,7 @@ class CashController extends Controller
             return Datatables::of($query)
 
                 ->with('total', function () use ($query) {
-                    return $query->whereStatus("Approved")->sum('amount');
+                    return $query->clone()->whereStatus("Approved")->sum('amount');
                 })
 
                 ->addIndexColumn()
