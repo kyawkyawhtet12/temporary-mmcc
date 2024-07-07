@@ -7,36 +7,66 @@ use Illuminate\Database\Query\JoinClause;
 
 class BalloneRecordRepository
 {
-    public function __construct(protected $filter)
+    public function __construct(protected $filter = [])
     {
         //
     }
 
-    public function getBodyRecord()
+    public function executeRecord($type)
     {
-        $rounds = DB::table('football_bets')
-            ->join('football_bodies', 'football_bodies.id', '=', 'football_bets.body_id')
-            ->join('football_matches', 'football_matches.id', '=', 'football_bodies.match_id')
-            ->select('football_bets.betting_record_id',  'football_matches.round')
-            ->groupBy('round', 'betting_record_id');
-
-        return $this->generateQueryCollections($rounds);
+        return $this->generateQueryCollections(
+                        $this->getSubQuery($type)
+                    );
     }
 
-    public function getMaungRecord()
-    {
-        $rounds = DB::table('football_bets')
-            ->join('football_maungs', 'football_maungs.maung_group_id', '=', 'football_bets.maung_group_id')
-            ->join('football_matches', 'football_matches.id', '=', 'football_maungs.match_id')
-            ->select('football_bets.betting_record_id',  'football_matches.round')
-            ->groupBy('round', 'betting_record_id');
+    // public function getBodyRecord()
+    // {
+    //     $rounds = $this->getBodyRoundGroup();
 
-        return $this->generateQueryCollections($rounds);
+    //     return $this->generateQueryCollections($rounds);
+    // }
+
+    // public function getMaungRecord()
+    // {
+    //     $rounds = $this->getMaungRoundGroup();
+
+    //     return $this->generateQueryCollections($rounds);
+    // }
+
+    public function getSubQuery($type)
+    {
+        return match (strtolower($type)) {
+            'body'  => $this->getBodyRoundGroup(),
+            'maung' => $this->getMaungRoundGroup()
+        };
+    }
+
+    public function getBodyRoundGroup()
+    {
+        $query = DB::table('football_bets')
+        ->join('football_bodies', 'football_bodies.id', '=', 'football_bets.body_id')
+        ->join('football_matches', 'football_matches.id', '=', 'football_bodies.match_id')
+        ->select('football_bets.betting_record_id',  'football_matches.round')
+        ->groupBy('round', 'betting_record_id');
+
+        return $query;
+    }
+
+    public function getMaungRoundGroup()
+    {
+        $query = DB::table('football_bets')
+        ->join('football_maungs', 'football_maungs.maung_group_id', '=', 'football_bets.maung_group_id')
+        ->join('football_matches', 'football_matches.id', '=', 'football_maungs.match_id')
+        ->select('football_bets.betting_record_id',  'football_matches.round')
+        ->groupBy('round', 'betting_record_id');
+
+        return $query;
     }
 
     protected function generateQueryCollections($subquery)
     {
         $query = DB::table('betting_records')
+
                     ->joinSub($subquery, 'rounds', function (JoinClause $join) {
                         $join->on('betting_records.id', '=', 'rounds.betting_record_id');
                     });

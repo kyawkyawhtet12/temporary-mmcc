@@ -16,18 +16,18 @@ class BalloneRecordController extends Controller
     {
         $this->filter = $request->only(['agent_id', 'round', 'start_date', 'end_date']);
 
-        $this->current_round = DB::table('football_matches')->latest()->first()?->round;
     }
 
     public function index(Request $request, $type)
     {
-        $current_round = $this->current_round;
 
         if ($request->ajax()) {
 
-            $query = ($type == 'body')
-                ? (new BalloneRecordRepository($this->filter))->getBodyRecord()
-                : (new BalloneRecordRepository($this->filter))->getMaungRecord();
+            // $query = ($type == 'body')
+            //     ? (new BalloneRecordRepository($this->filter))->getBodyRecord()
+            //     : (new BalloneRecordRepository($this->filter))->getMaungRecord();
+
+            $query = (new BalloneRecordRepository($this->filter))->executeRecord($type);
 
             return Datatables::of($query)
 
@@ -60,6 +60,6 @@ class BalloneRecordController extends Controller
                 ->make(true);
         }
 
-        return view("backend.record.ballone", compact('current_round', 'type'));
+        return view("backend.record.ballone", compact('type'));
     }
 }

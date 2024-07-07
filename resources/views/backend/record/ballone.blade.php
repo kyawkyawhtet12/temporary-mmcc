@@ -46,13 +46,7 @@
                 </div>
 
                 <div class="col-md-3 multiSelect">
-                    <select name="round[]" id="round" multiple="multiple" class="roundSelect form-control">
-                        @for ($i = $current_round; $i >= 1; $i--)
-                            <option value="{{ $i }}">
-                                {{ $i }}
-                            </option>
-                        @endfor
-                    </select>
+                    <x-football-round-select />
                 </div>
 
                 <div class="col">
@@ -175,16 +169,6 @@
                 $('#start_date').val('');
                 $('#end_date').val('');
                 $("#datatable").DataTable().ajax.reload();
-            });
-
-            $('.roundSelect').multiselect({
-                columns: 3,
-                placeholder: 'Select Round',
-                search: true,
-                searchOptions: {
-                    'default': 'Search Rounds'
-                },
-                selectAll: true
             });
 
         });
