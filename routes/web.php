@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ThreeDigit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Record\WinController;
@@ -7,10 +8,13 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Record\CashController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
-use App\Http\Controllers\Record\BalloneBodyController;
 use App\Http\Controllers\Backend\UserPaymentController;
-use App\Http\Controllers\Record\BalloneMaungController;
+use App\Http\Controllers\Record\BalloneRecordController;
+use App\Http\Controllers\Record\LotteryRecordController;
+use App\Http\Controllers\Record\TwoDigitRecordController;
 use App\Http\Controllers\Backend\Report\UserLogController;
+use App\Http\Controllers\Record\ThreeDigitRecordController;
+use App\Http\Controllers\Backend\Setting\ReportAmountColorController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -22,20 +26,11 @@ Route::get('image/{filename}', [ApplicationController::class, 'image'])->where('
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-// Route::get('/dashboard', function () {
-//     return view('index');
-// });
-
-
 Route::get('/login/admin', 'Auth\LoginController@showAdminLoginForm')->name('login.admin');
 Route::post('/login/admin', 'Auth\LoginController@adminLogin')->name('admin.login');
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::post('change-password', 'Backend\AdminController@store')->name('change.password');
-
-// Route::group(['middleware' => ['auth:admin'], 'namespace' => 'Backend'], function () {
-//     Route::get('/dashboard', 'AdminController@index')->name('dashboard.index');
-// });
 
 Route::get('/profile', 'Backend\ProfileController@index')->name('profile');
 Route::post('/profile/update', 'Backend\ProfileController@update')->name('profile.update');
@@ -81,23 +76,26 @@ Route::group(
 
         // Game Record
         Route::get('recharge-record', [RechargeController::class, 'index'])->name('recharge.record');
-        Route::post('recharge-record', [RechargeController::class, 'index'])->name('recharge.record.search');
 
         Route::get('cash-record', [CashController::class, 'index'])->name('cash.record');
-        Route::post('cash-record', [CashController::class, 'index'])->name('cash.record.search');
 
         Route::get('betting-record', [BettingController::class, 'index'])->name('betting.record');
-        Route::post('betting-record', [BettingController::class, 'index'])->name('betting.record.search');
         Route::get('betting-record/detail/{id}', [BettingController::class, 'detail'])->name('betting.record.detail');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
-        Route::post('win-record', [WinController::class, 'index'])->name('win.record.search');
 
-        Route::get('body-record', [BalloneBodyController::class, 'index'])->name('body.record');
-        Route::get('maung-record', [BalloneMaungController::class, 'index'])->name('maung.record');
+        Route::get('3d-record', [ThreeDigitRecordController::class, 'index'])->name('3d.record');
+        Route::get('2d-record', [TwoDigitRecordController::class, 'index'])->name('2d.record');
 
-        Route::get('report-amount-setting/{type}', 'Setting\ReportAmountColorController@index')->name('report-color.setting');
-        Route::post('report-amount-setting/{type}', 'Setting\ReportAmountColorController@store')->name('report-color.setting.store');
-        Route::delete('report-amount-setting/{id}', 'Setting\ReportAmountColorController@destroy')->name('report-color.setting.destroy');
+        Route::get('ballone-record/{type}', [BalloneRecordController::class, 'index'])->name('ballone.record');
+
+        Route::controller('Setting\ReportAmountColorController')
+            ->as('report-color.setting.')
+            ->prefix('report-amount-setting')
+            ->group(function () {
+                Route::get('{type}', 'index')->name('index');
+                Route::post('{type}', 'store')->name('store');
+                Route::delete('{id}', 'destroy')->name('destroy');
+            });
     }
 );

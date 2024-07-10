@@ -12,8 +12,6 @@ class CashController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::select('id', 'name')->get();
-
         if ($request->ajax()) {
 
             $query = Cashout::with('user', 'admin')
@@ -26,7 +24,7 @@ class CashController extends Controller
             return Datatables::of($query)
 
                 ->with('total', function () use ($query) {
-                    return $query->whereStatus("Approved")->sum('amount');
+                    return $query->clone()->whereStatus("Approved")->sum('amount');
                 })
 
                 ->addIndexColumn()
@@ -90,6 +88,6 @@ class CashController extends Controller
                 ->make(true);
         }
 
-        return view("backend.record.cash", compact('agents'));
+        return view("backend.record.cash");
     }
 }

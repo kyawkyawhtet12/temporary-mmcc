@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Record;
 
 use App\Http\Controllers\Controller;
-use App\Models\Agent;
 use App\Models\WinRecord;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -14,8 +13,6 @@ class WinController extends Controller
 
     public function index(Request $request)
     {
-        $agents = Agent::select('id', 'name')->get();
-
         if ($request->ajax()) {
 
             $query = WinRecord::with('user')->latest();
@@ -67,6 +64,6 @@ class WinController extends Controller
                 ->make(true);
         }
 
-        return view("backend.record.win", compact('agents'));
+        return view("backend.record.win");
     }
 }

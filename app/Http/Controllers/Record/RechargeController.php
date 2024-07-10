@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Record;
 
 use App\Http\Controllers\Controller;
-use App\Models\Agent;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -12,11 +11,9 @@ class RechargeController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::select('id', 'name')->get();
-
         if ($request->ajax()) {
 
-            $query = Payment::with('user', 'admin', 'provider')
+            $query = Payment::with('user.cashoutPhone', 'admin', 'agent', 'provider')
                 ->filterAgent()
                 ->filterUser()
                 ->filterPhone()
@@ -26,7 +23,7 @@ class RechargeController extends Controller
             return Datatables::of($query)
 
                 ->with('total', function () use ($query) {
-                    return $query->whereStatus("Approved")->sum('amount');
+                    return $query->clone()->where("status", "Approved")->sum('amount');
                 })
 
                 ->addIndexColumn()
@@ -126,6 +123,6 @@ class RechargeController extends Controller
                 ->make(true);
         }
 
-        return view("backend.record.recharge", compact('agents'));
+        return view("backend.record.recharge");
     }
 }

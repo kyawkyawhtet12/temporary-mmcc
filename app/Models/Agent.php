@@ -97,4 +97,9 @@ class Agent extends Model
     {
         return $this->users;
     }
+
+    public function two_lucky_draws()
+    {
+        return $this->hasOne(TwoLuckyDraw::class);
+    }
 }

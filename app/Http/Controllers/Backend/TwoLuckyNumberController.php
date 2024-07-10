@@ -10,6 +10,7 @@ use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TwoLuckyNumberRequest;
 use App\Services\TwoDigit\LuckyNumberService;
+use App\Services\TwoDigit\LuckyNumberFixService;
 
 class TwoLuckyNumberController extends Controller
 {
@@ -54,7 +55,14 @@ class TwoLuckyNumberController extends Controller
 
                         // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
 
-                        return ($number->status == "Approved") ? "" : $btn;
+                        if( $number->status == "Approved" && $number->date == today()->format('Y-m-d')){
+
+                            return '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="delete btn btn-danger deleteNumber">
+                                    Delete
+                            </a>';
+                        }
+
+                        return ( $number->status == "Approved") ? "" : $btn;
 
                     })
                     // ->filter(function ($instance) use ($request) {
@@ -121,6 +129,14 @@ class TwoLuckyNumberController extends Controller
     {
         // TwoLuckyNumber::find($id)->delete();
         // return response()->json(['success'=>'Lucky number deleted successfully.']);
+
+        $data = TwoLuckyNumber::find($id);
+
+        (new LuckyNumberFixService())->handle($data);
+
+        $data->update([ 'status' => 'Pending']);
+
+        return response()->json(['success'=>'Lucky number deleted successfully.']);
     }
 
     public function UpdateByAjax(Request $request)

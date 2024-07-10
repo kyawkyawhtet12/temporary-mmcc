@@ -46,13 +46,7 @@
             <div class="row mb-3 d-flex">
 
                 <div class="col-md-3 multiSelect">
-                    <select name="agent_id[]" id="agent_id" multiple="multiple" class="agentSelect form-control">
-                        @foreach ($agents as $agent)
-                            <option value="{{ $agent->id }}">
-                                {{ $agent->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <x-agent-select />
                 </div>
 
                 <div class="col">
@@ -110,16 +104,6 @@
                 $("#loader").removeClass('d-flex').addClass('d-none');
                 $("#mainpage").removeClass('d-none');
             }, 700);
-
-            $('.agentSelect').multiselect({
-                columns: 2,
-                placeholder: 'Select Agent',
-                search: true,
-                searchOptions: {
-                    'default': 'Search Agents'
-                },
-                selectAll: true
-            });
 
             var table = $('#datatable').DataTable({
                 processing: true,

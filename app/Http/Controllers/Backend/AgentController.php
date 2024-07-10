@@ -18,13 +18,14 @@ class AgentController extends Controller
         // return view('backend.admin.agents.index', compact('data'));
 
         if ($request->ajax()) {
+
             $query = Agent::select('*');
 
             return Datatables::of($query)
                     ->addIndexColumn()
                     ->addColumn('name', function ($agent) {
                         return "
-                            <a href='/admin/agent-payment/report/$agent->id' > $agent->name </a>
+                            <a href='/admin/agents/payment-report/$agent->id' > $agent->name </a>
                         ";
                     })
                     ->addColumn('created_at', function ($agent) {
@@ -59,9 +60,9 @@ class AgentController extends Controller
                    ->join('two_lucky_draws', 'two_lucky_draws.agent_id', '=', 'agents.id')
                    ->selectRaw('SUM(two_lucky_draws.amount) as amount, DATE(two_lucky_draws.created_at) day, agents.name as name, agents.referral_code as referral_code')
                    ->groupBy('day', 'name', 'referral_code')
+                   ->orderBy('day')
                    ->get();
 
-        // return $two_lucky_draws;
         return view('backend.agent.agent-two', compact('two_lucky_draws'));
     }
 
@@ -71,9 +72,9 @@ class AgentController extends Controller
                    ->join('three_lucky_draws', 'three_lucky_draws.agent_id', '=', 'agents.id')
                    ->selectRaw('SUM(three_lucky_draws.amount) as amount, DATE(three_lucky_draws.created_at) day, agents.name as name, agents.referral_code as referral_code')
                    ->groupBy('day', 'name', 'referral_code')
+                   ->orderBy('day')
                    ->get();
 
-        // return $three_lucky_draws;
         return view('backend.agent.agent-three', compact('three_lucky_draws'));
     }
 
