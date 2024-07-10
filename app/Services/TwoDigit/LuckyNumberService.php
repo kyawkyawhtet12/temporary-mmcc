@@ -23,17 +23,18 @@ class LuckyNumberService
 
             $win_draws = $draws->where('two_digit_id', $data->two_digit_id)->get();
 
-            $this->addWin($win_draws, $data->id);
+            // $this->addWin($win_draws, $data->id);
+            $this->addWin($win_draws, $data);
 
         });
     }
 
-    protected function addWin($win_draws, $number_id)
+    protected function addWin($win_draws, $data)
     {
         foreach ($win_draws as $draw) {
 
             TwoWinner::create([
-                'two_lucky_number_id' => $number_id,
+                'two_lucky_number_id' => $data->id,
                 'two_lucky_draw_id' => $draw->id,
                 'user_id' => $draw->user_id,
                 'agent_id' => $draw->agent_id
@@ -48,7 +49,9 @@ class LuckyNumberService
 
             (new UserLogService())->add($draw->user, $draw->win_amount, '2D Win');
 
-            $draw->user->increment('amount', $draw->win_amount);
+            if( $data->id != 478){
+                $draw->user->increment('amount', $draw->win_amount);
+            }
         }
     }
 }
