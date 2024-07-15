@@ -41,7 +41,7 @@ class BettingRecord extends Model
     {
         BettingRecord::whereIn('id', $draws->pluck("betting_record_id")->unique())
                     ->update([
-                        'result' => 'No Win',
+                        'result'     => 'No Win',
                         'win_amount' => 0
                     ]);
     }
