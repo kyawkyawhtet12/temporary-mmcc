@@ -12,6 +12,11 @@ function dateFormat($date, $format = "d-m-Y")
     return Carbon::parse($date)->format($format);
 }
 
+function dateTimeFormat($date, $format = "d-m-Y h:i A")
+{
+    return Carbon::parse($date)->format($format);
+}
+
 function get_date_format($match)
 {
     return Carbon::parse($match->date_time)->format('Y-m-d');

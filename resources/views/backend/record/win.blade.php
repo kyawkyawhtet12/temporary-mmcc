@@ -61,8 +61,15 @@
                     <input type="date" class="form-control" placeholder="End Date" name="end_date" id="end_date" >
                 </div>
 
-                <div class="col">
+                {{-- <div class="col">
                     <button type="button" class="btn btn-block btn-primary btn-sm" id="search">Search</button>
+                </div> --}}
+
+                <div class="col">
+                    <div class="row">
+                        <button type="button" class="btn btn-primary col mx-1 btn-sm" id="search">Filter</button>
+                        <a href="#" class="btn btn-danger col mx-1 btn-sm" id="refresh">Refresh</a>
+                    </div>
                 </div>
 
             </div>
@@ -108,7 +115,8 @@
             var table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                pageLength : 15,
+                pageLength: 25,
+                searching : false,
                 ajax: {
                     url: "{{ route('win.record') }}",
                     data: function(d) {
@@ -155,6 +163,15 @@
 
             $("#search").on('click',function(e){
                 e.preventDefault();
+                $("#datatable").DataTable().ajax.reload();
+            });
+
+            $("#refresh").on('click', function(e) {
+                e.preventDefault();
+                $('#agent_id').multiselect('reset');
+                $('#user_id').val('');
+                $('#start_date').val('');
+                $('#end_date').val('');
                 $("#datatable").DataTable().ajax.reload();
             });
 

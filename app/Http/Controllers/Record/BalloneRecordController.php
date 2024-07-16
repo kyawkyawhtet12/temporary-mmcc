@@ -7,6 +7,8 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Repository\BalloneRecordRepository;
+use App\Repository\BodyRecordRepository;
+use App\Repository\MaungRecordRepository;
 
 class BalloneRecordController extends Controller
 {
@@ -23,11 +25,9 @@ class BalloneRecordController extends Controller
 
         if ($request->ajax()) {
 
-            // $query = ($type == 'body')
-            //     ? (new BalloneRecordRepository($this->filter))->getBodyRecord()
-            //     : (new BalloneRecordRepository($this->filter))->getMaungRecord();
-
-            $query = (new BalloneRecordRepository($this->filter))->executeRecord($type);
+            $query = ($type == 'body')
+                ? (new BodyRecordRepository($this->filter))->executeRecord()
+                : (new MaungRecordRepository($this->filter))->executeRecord();
 
             return Datatables::of($query)
 
@@ -42,11 +42,11 @@ class BalloneRecordController extends Controller
                 })
 
                 ->addColumn('betting_amount', function ($q) {
-                    return number_format($q->betting_amount);
+                    return number_format($q->betting_amount) . " ( $q->betting_count )";
                 })
 
                 ->addColumn('win_amount', function ($q) {
-                    return number_format($q->win_amount);
+                    return number_format($q->win_amount) . " ( $q->win_count )";
                 })
 
                 ->addColumn('net_amount', function ($q) {

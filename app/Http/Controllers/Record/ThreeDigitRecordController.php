@@ -46,11 +46,11 @@ class ThreeDigitRecordController extends Controller
                 })
 
                 ->addColumn('betting_amount', function ($q) {
-                    return number_format($q->betting_amount);
+                    return number_format($q->betting_amount) . " ( $q->betting_count )";
                 })
 
                 ->addColumn('win_amount', function ($q) {
-                    return number_format($q->win_amount);
+                    return number_format($q->win_amount) . " ($q->win_count)";
                 })
 
                 ->addColumn('net_amount', function ($q) {

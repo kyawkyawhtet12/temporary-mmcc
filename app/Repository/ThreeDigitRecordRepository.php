@@ -24,7 +24,11 @@ class ThreeDigitRecordRepository
 
             ->select(
                 DB::raw('SUM(amount) as betting_amount'),
+                DB::raw('COUNT(amount) as betting_count'),
+
                 DB::raw('SUM(win_amount) as win_amount'),
+                DB::raw('COUNT(CASE when win_amount != 0 then 1 end) as win_count'),
+
                 DB::raw('SUM(amount) - SUM(win_amount) as net_amount'),
                 'round',
                 'number',
@@ -33,7 +37,7 @@ class ThreeDigitRecordRepository
 
             ->groupBy('round', 'number', 'result_date')
 
-            ->orderByDesc('round');
+            ->orderByDesc('result_date');
 
         return $query;
     }

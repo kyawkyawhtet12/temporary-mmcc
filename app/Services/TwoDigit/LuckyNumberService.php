@@ -49,9 +49,7 @@ class LuckyNumberService
 
             (new UserLogService())->add($draw->user, $draw->win_amount, '2D Win');
 
-            if( $data->id != 478){
-                $draw->user->increment('amount', $draw->win_amount);
-            }
+            $draw->user->increment('amount', $draw->win_amount);
         }
     }
 }

@@ -32,6 +32,11 @@ class TwoDigitRecordController extends Controller
 
     public function index(Request $request)
     {
+
+        $query = (new TwoDigitRecordRepository($this->data))->execute();
+
+        // return $query->get();
+
        if ($request->ajax()) {
 
             $query = (new TwoDigitRecordRepository($this->data))->execute();
