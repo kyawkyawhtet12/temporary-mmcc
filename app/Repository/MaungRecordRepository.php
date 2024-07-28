@@ -56,7 +56,7 @@ class MaungRecordRepository
     protected function filterQuery($query)
     {
         return $query->when($this->filter['agent_id'] ?? NULL, function ($q) {
-            return $q->whereIn('agent_id', $this->filter['agent_id']);
+            return $q->whereIn('football_bets.agent_id', $this->filter['agent_id']);
         })
 
             ->when($this->filter['round'] ?? NULL, function ($q) {

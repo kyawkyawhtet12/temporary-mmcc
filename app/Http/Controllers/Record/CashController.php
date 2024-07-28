@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers\Record;
 
-use App\Http\Controllers\Controller;
 use App\Models\Agent;
 use App\Models\Cashout;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use App\Http\Controllers\Controller;
+use App\Services\Daily\PaymentRejectService;
 
 class CashController extends Controller
 {
+    public function __construct(protected PaymentRejectService $rejectService)
+    {
+
+    }
+
     public function index(Request $request)
     {
+        $this->rejectService->executeWithdrawal();
+
         if ($request->ajax()) {
 
             $query = Cashout::with('user', 'admin')
@@ -42,7 +50,7 @@ class CashController extends Controller
                 })
 
                 ->addColumn('created_at', function ($q) {
-                    return $q->created_at->format("d-m-Y g:i A");
+                    return $q->created_at->format("d-m-Y h:i A");
                 })
 
                 ->addColumn('action_time', function ($q) {
