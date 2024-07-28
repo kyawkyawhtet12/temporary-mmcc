@@ -46,15 +46,15 @@ class BodyRecordRepository
         })
 
             ->when($this->filter['round'] ?? NULL, function ($q) {
-                return $q->whereIn('round', $this->filter['round']);
+                return $q->whereIn('football_bets.round', $this->filter['round']);
             })
 
             ->when($this->filter['start_date'] ?? NULL, function ($q) {
-                return $q->whereDate('created_at', '>=', $this->filter['start_date']);
+                return $q->whereDate('football_bets.created_at', '>=', $this->filter['start_date']);
             })
 
             ->when($this->filter['end_date'] ?? NULL, function ($q) {
-                return $q->whereDate('created_at', '<=', $this->filter['end_date']);
+                return $q->whereDate('football_bets.created_at', '<=', $this->filter['end_date']);
             });
     }
 }
