@@ -4,6 +4,7 @@ namespace App\Services\Daily;
 
 use App\Models\AutoAdd;
 use Illuminate\Support\Facades\DB;
+use App\Services\Daily\PaymentReportService;
 
 class AutoService
 {
@@ -11,9 +12,10 @@ class AutoService
     {
         DB::transaction(function () {
 
-            (new PaymentService())->handle();
+            (new PaymentReportService())->handle();
 
             AutoAdd::first()->update([ 'date' => today() ]);
+
         });
     }
 }

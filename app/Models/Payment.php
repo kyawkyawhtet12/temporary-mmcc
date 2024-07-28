@@ -79,7 +79,7 @@ class Payment extends Model
     public function getActionTimeAttribute()
     {
         if( $this->status == 'Approved' || $this->status == 'Rejected' ){
-            return $this->updated_at->format("d-m-Y g:i A");
+            return $this->updated_at->format("d-m-Y h:i A");
         }
 
         return "-";

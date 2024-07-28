@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Agent;
 use App\Models\AgentPaymentAllReport;
 
-class PaymentService
+class PaymentReportService
 {
     public function handle()
     {

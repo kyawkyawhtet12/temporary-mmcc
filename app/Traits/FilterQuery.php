@@ -37,4 +37,14 @@ trait FilterQuery
             $query->whereDate('created_at', '<=', $end_date);
         }
     }
+
+    public function scopePending($query)
+    {
+        $query->where('status', 'Pending');
+    }
+
+    public function scopeFilterNotToday($query)
+    {
+        $query->whereDate('created_at', '!=', today());
+    }
 }

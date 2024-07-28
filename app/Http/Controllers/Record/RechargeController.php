@@ -4,13 +4,20 @@ namespace App\Http\Controllers\Record;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
+use App\Services\Daily\PaymentRejectService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class RechargeController extends Controller
 {
+    public function __construct(protected PaymentRejectService $rejectService)
+    {
+    }
+
     public function index(Request $request)
     {
+        $this->rejectService->executeDeposit();
+
         if ($request->ajax()) {
 
             $query = Payment::with('user.cashoutPhone', 'admin', 'agent', 'provider')
@@ -64,7 +71,7 @@ class RechargeController extends Controller
 
                 })
                 ->addColumn('created_at', function ($q) {
-                    return $q->created_at->format("d-m-Y g:i A");
+                    return $q->created_at->format("d-m-Y h:i A");
                 })
 
                 ->addColumn('action_time', function ($q) {
