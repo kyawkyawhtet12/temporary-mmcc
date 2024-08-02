@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Record;
 
+use App\Models\TwoLuckyDraw;
 use Illuminate\Http\Request;
 use App\Models\BettingRecord;
 use App\Models\ThreeLuckyDraw;
@@ -10,6 +11,7 @@ use App\Models\ThreeLuckyNumber;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Query\JoinClause;
 use App\Repository\LotteryResultRepository;
 use App\Repository\TwoDigitRecordRepository;
@@ -26,17 +28,13 @@ class TwoDigitRecordController extends Controller
             'filter' => $request->only(['agent_id', 'start_date', 'end_date'])
         ];
 
-        $this->results = $this->lotteryResultRepository->executeResults('2D');
-
+        $this->results = Cache::remember('results', 60 * 5 , function(){
+            return $this->lotteryResultRepository->executeResults('2D');
+        });
     }
 
     public function index(Request $request)
     {
-
-        $query = (new TwoDigitRecordRepository($this->data))->execute();
-
-        // return $query->get();
-
        if ($request->ajax()) {
 
             $query = (new TwoDigitRecordRepository($this->data))->execute();
@@ -44,7 +42,13 @@ class TwoDigitRecordController extends Controller
             return Datatables::of($query)
 
                 ->with('total', function () use ($query) {
-                    return getTotalAmountRecords($query->clone()->get());
+
+                    $query = $query->clone()->get();
+
+                    return [
+                        'betting' => $query->sum('betting_amount'),
+                        'win'     => $query->sum('win_amount')
+                    ];
                 })
 
                 ->addIndexColumn()
@@ -70,11 +74,11 @@ class TwoDigitRecordController extends Controller
                 })
 
                 ->addColumn('net_amount', function ($q) {
-                    return number_format($q->net_amount);
+                    return number_format($q->betting_amount - $q->win_amount);
                 })
 
                 ->addColumn('status', function ($q) {
-                    return getNetAmountStatus($q->net_amount);
+                    return getNetAmountStatus($q->betting_amount - $q->win_amount);
                 })
 
                 ->rawColumns(['time', 'betting_amount', 'win_amount', 'net_amount', 'status', 'result_number'])

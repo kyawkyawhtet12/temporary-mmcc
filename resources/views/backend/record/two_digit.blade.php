@@ -16,6 +16,26 @@
     <script>
         $(function() {
 
+            function amountformat(value)
+            {
+                return parseFloat(value).toLocaleString();
+            }
+
+            function getStatus(value)
+            {
+                if( value > 0 ){
+                   return 'Win';
+                }
+
+                if( value < 0 ){
+                   return 'No Win';
+                }
+
+                if( value == 0 ){
+                   return '.....';
+                }
+            }
+
             var table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -34,10 +54,15 @@
                             total
                         } = jQuery.parseJSON(res);
 
-                        $(".totalBettingAmount").text(total.betting);
-                        $(".totalWinAmount").text(total.win);
-                        $(".totalNetAmount").text(total.net);
-                        $(".totalStatus").text(total.status);
+                        let netAmount = total.betting - total.win;
+
+                        $(".totalBettingAmount").text(amountformat(total.betting));
+
+                        $(".totalWinAmount").text(amountformat(total.win));
+
+                        $(".totalNetAmount").text(amountformat(netAmount));
+
+                        $(".totalStatus").text(getStatus(netAmount));
 
                         return res;
                     }
