@@ -32,6 +32,11 @@ class TwoLuckyNumber extends Model
         return $this->hasMany(TwoWinner::class, 'two_lucky_number_id');
     }
 
+    public function bettings()
+    {
+        return $this->hasMany(TwoLuckyDraw::class, 'two_lucky_number_id');
+    }
+
     public static function get_lucky_number($date, $time)
     {
         $data = TwoLuckyNumber::whereDate('date', $date)
