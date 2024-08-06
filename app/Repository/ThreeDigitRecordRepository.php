@@ -17,7 +17,7 @@ class ThreeDigitRecordRepository
     public function execute()
     {
         $query = $this->filterQuery(DB::table("betting_records"))
-
+            ->whereNull('deleted_at')
             ->joinSub($this->getSubQuery(), 'rounds', function (JoinClause $join) {
                 $join->on('betting_records.id', '=', 'rounds.betting_record_id');
             })
@@ -45,6 +45,7 @@ class ThreeDigitRecordRepository
     public function getSubQuery()
     {
         return DB::table('three_lucky_draws')
+            ->whereNull('deleted_at')
             ->join('three_lucky_numbers', 'three_lucky_draws.round', '=', 'three_lucky_numbers.date_id')
             ->leftJoin('three_digits', 'three_lucky_numbers.three_digit_id', '=', 'three_digits.id')
             ->select(

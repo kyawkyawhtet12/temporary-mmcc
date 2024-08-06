@@ -29,12 +29,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Betting Record</h4>
+                        <h4 class="mb-sm-0">Betting Record Delete History </h4>
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboards</a></li>
-                                <li class="breadcrumb-item active">Game</li>
+                                <li class="breadcrumb-item active">Delete History</li>
                             </ol>
                         </div>
 
@@ -42,23 +42,62 @@
                 </div>
             </div>
             <!-- end page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card  bg-light">
+                        <div class="card-body">
 
-            @include("backend.record.partials._betting_filter")
+                            <div class="row">
+
+                                <div class="col-md-3 multiSelect">
+                                    <x-agent-select />
+                                </div>
+
+                                <div class="col-md-1">
+                                    <select name="type" id="type" class="form-control">
+                                        <option value=""> All Type </option>
+                                        <option value="2D"> 2D </option>
+                                        <option value="3D"> 3D </option>
+                                    </select>
+                                </div>
+
+                                <div class="col">
+                                    <input type="text" class="form-control" placeholder="User ID" name="user_id" id="user_id">
+                                </div>
+
+                                <div class="col">
+                                    <input type="date" class="form-control" placeholder="Start Date" name="start_date"
+                                        id="start_date">
+                                </div>
+
+                                <div class="col">
+                                    <input type="date" class="form-control" placeholder="End Date" name="end_date"
+                                        id="end_date">
+                                </div>
+
+                                <div class="col">
+                                    <div class="row">
+                                        <button type="button" class="btn btn-primary col mx-1 btn-sm" id="search">Filter</button>
+                                        <a href="#" class="btn btn-danger col mx-1 btn-sm" id="refresh">Refresh</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="row">
 
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-end">
-                            <a href="{{ route('betting.record.delete.history') }}" class="btn btn-danger btn-sm">
-                                <i class="fa fa-eye mr-1"></i> View Delete History
-                            </a>
-                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table id="datatable" class="table table-bordered table-hover nowrap">
+                                    <div class="table-responsive text-center">
+                                        <table id="datatable" class="table table-bordered nowrap">
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>No.</th>
@@ -66,10 +105,8 @@
                                                     <th>Type</th>
                                                     <th>Count</th>
                                                     <th>Amount</th>
-                                                    <th>Time</th>
-                                                    <th>Betting Results </th>
-                                                    <th>Betting Wins </th>
-                                                    <th></th>
+                                                    <th>Betting Time</th>
+                                                    <th>Deleted Time </th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -81,11 +118,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Betting Detail --}}
-            @include("backend.record.partials._betting_detail")
-
-            @include("backend.record.partials._delete_confirm")
 
         </div>
     </div>
@@ -103,10 +135,10 @@
             var table = $('#datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                searching: false,
-                pageLength: 15,
+                searching : false,
+                pageLength: 25,
                 ajax: {
-                    url: "{{ route('betting.record') }}",
+                    url: "{{ route('betting.record.delete.history') }}",
                     data: function(d) {
                         d.search = $('input[type="search"]').val(),
                             d.agent_id = $('#agent_id').val(),
@@ -159,26 +191,33 @@
                         searchable: false
                     },
                     {
-                        data: 'results',
-                        name: 'results',
+                        data: 'deleted_at',
+                        name: 'deleted_at',
                         orderable: false,
                         searchable: false
                     },
-                    {
-                        data: 'wins',
-                        name: 'wins',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'actions',
-                        name: 'actions',
-                        orderable: false,
-                        searchable: false
-                    }
                 ],
             });
 
+
+            $("#search").on('click', function(e) {
+                e.preventDefault();
+
+                $("#datatable").DataTable().ajax.reload();
+            });
+
+            $("#refresh").on('click', function(e) {
+                e.preventDefault();
+
+                $('#agent_id').multiselect('reset');
+
+                $('#type').val('');
+                $('#user_id').val('');
+                $('#start_date').val('');
+                $('#end_date').val('');
+
+                $("#datatable").DataTable().ajax.reload();
+            });
 
         });
     </script>

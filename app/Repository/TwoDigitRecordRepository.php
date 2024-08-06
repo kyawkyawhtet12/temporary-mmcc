@@ -31,6 +31,8 @@ class TwoDigitRecordRepository
     {
         $query = DB::table('two_lucky_draws')
 
+        ->whereNull('deleted_at')
+
         ->leftJoinSub( $this->getJoinSub() , 'wins', function (JoinClause $join) {
             $join->on( 'wins.two_lucky_draw_id'  , '=', 'two_lucky_draws.id');
         })

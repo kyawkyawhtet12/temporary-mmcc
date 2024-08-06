@@ -15,6 +15,7 @@ use App\Http\Controllers\Record\TwoDigitRecordController;
 use App\Http\Controllers\Backend\Report\UserLogController;
 use App\Http\Controllers\Record\ThreeDigitRecordController;
 use App\Http\Controllers\Backend\Setting\ReportAmountColorController;
+use App\Http\Controllers\Record\DeleteRecordController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -81,6 +82,9 @@ Route::group(
 
         Route::get('betting-record', [BettingController::class, 'index'])->name('betting.record');
         Route::get('betting-record/detail/{id}', [BettingController::class, 'detail'])->name('betting.record.detail');
+
+        Route::delete('betting-record/delete/{id}', [DeleteRecordController::class, 'delete'])->name('betting.record.delete');
+        Route::get('betting-record/delete', [DeleteRecordController::class, 'index'])->name('betting.record.delete.history');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
 

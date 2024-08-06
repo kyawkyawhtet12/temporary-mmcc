@@ -34,7 +34,10 @@ class TwoDigitRecordRepository
 
             ->groupBy('date', 'time')
 
-            ->orderByDesc('date');
+            ->orderByDesc('date')
+            ->orderByDesc('time');
+
+
 
         return $query;
     }
