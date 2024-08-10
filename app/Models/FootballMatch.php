@@ -112,5 +112,9 @@ class FootballMatch extends Model
         return number_format($this->bodyLimit?->max_amount);
     }
 
+    public function getBodyPercentageAttribute()
+    {
+        return $this->bodyLimit?->percentage;
+    }
 
 }

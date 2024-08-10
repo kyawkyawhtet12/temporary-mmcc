@@ -19,12 +19,14 @@ class TwoDigitRecordRepository
     public function getJoinSub()
     {
         return DB::table('two_winners')
+                ->join('two_lucky_numbers', 'two_lucky_numbers.id' , 'two_winners.two_lucky_number_id')
+                ->join('two_digits', 'two_digits.id' , 'two_lucky_numbers.two_digit_id')
                 ->select(
                     DB::raw('COUNT(*) as count'),
                     'two_lucky_draw_id',
-                    'two_lucky_number_id'
+                    'two_digits.number as number'
                 )
-                ->groupBy('two_lucky_number_id', 'two_lucky_draw_id');
+                ->groupBy('number', 'two_lucky_draw_id');
     }
 
     public function execute()
@@ -55,18 +57,26 @@ class TwoDigitRecordRepository
 
             DB::raw('SUM(amount) as betting_amount'),
 
+            DB::raw('COUNT(DISTINCT two_lucky_draws.user_id) as betting_count'),
+
             DB::raw('DATE(two_lucky_draws.created_at) as date'),
 
             DB::raw('SUM(CASE when count != 0 then amount * za else 0 end) as win_amount'),
 
-            DB::raw('MAX(za) as za')
+            DB::raw('SUM(count) as win_count'),
+
+            DB::raw('MAX(za) as za'),
+
+            DB::raw('MAX(number) as result')
         )
 
-        ->groupBy('date', 'time')
+        ->groupBy('date', 'time' )
 
         ->orderByDesc('date')
 
-        ->orderByDesc('time');
+        ->orderByDesc('time')
+
+        ->get();
 
         return $query;
 

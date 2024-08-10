@@ -14,7 +14,7 @@ class LimitAmountController extends Controller
     // 2d
     public function limit_2d()
     {
-        $agents = Agent::all();
+        $agents = Agent::with('two_limit')->get();
         return view('backend.admin.limit_amounts.2d', compact('agents'));
     }
 
@@ -33,7 +33,7 @@ class LimitAmountController extends Controller
     // 3d
     public function limit_3d()
     {
-        $agents = Agent::all();
+        $agents = Agent::with('three_limit')->get();
         return view('backend.admin.limit_amounts.3d', compact('agents'));
     }
 

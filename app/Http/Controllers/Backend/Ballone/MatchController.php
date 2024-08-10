@@ -119,9 +119,12 @@ class MatchController extends Controller
     public function edit($id)
     {
         $match = FootballMatch::without('home','away')->findOrFail($id);
-        $leagues = League::all();
+
+        $leagues = League::pluck('name', 'id');
+
         $clubs = Club::where('league_id', $match->league_id)->get();
-        $groups = FootballBodyLimitGroup::select('id', 'name', 'max_amount')->orderBy("max_amount")->get();
+
+        $groups = FootballBodyLimitGroup::orderBy("max_amount")->get();
 
         $status = str_contains(url()->previous(), 'maung') ?  1 : 0;
 

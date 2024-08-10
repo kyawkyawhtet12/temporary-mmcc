@@ -7,7 +7,7 @@ use App\Services\UserLogService;
 
 class BodyService
 {
-    public static function calculate($bodies)
+    public static function calculate($bodies, $percentage = 0)
     {
         foreach ($bodies as $body) {
 
@@ -17,19 +17,19 @@ class BodyService
 
                 $result = $body->fees->result;
                 $type      =  $body->type;
-                $percent   =  $result->$type;
+                $win_percent   =  $result->$type;
                 $betAmount =  $betting->amount;
 
                 $status = 2;
-                $win_amount = ( $betAmount * $percent / 100 );
+                $win_amount = ( $betAmount * $win_percent / 100 );
 
-                if( $percent == 0 ){
+                if( $win_percent == 0 ){
                     $status = 3;
                 }
 
-                if( $percent > 0 ){
+                if( $win_percent > 0 ){
                     $status = 1;
-                    $win_amount = $win_amount -  ($win_amount * $body->agent->body_percentage );
+                    $win_amount = $win_amount -  ($win_amount * $percentage / 100 ); // အကောက် ပါဆင့် နှုတ်
                 }
 
                 $net_amount = $betAmount + $win_amount;
@@ -50,7 +50,10 @@ class BodyService
 
                 $body->user->increment('amount', $net_amount);
 
-                $betting->update(['status' => $status , 'net_amount' => $net_amount ]);
+                $betting->update([
+                    'status' => $status ,
+                    'net_amount' => $net_amount
+                ]);
             }
         }
     }

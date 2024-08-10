@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Session;
 
 class CalculationController extends Controller
 {
-    public function body($id, BodyService $bodyService)
+    public function body($id)
     {
         $match = FootballMatch::with('bodies')->findOrFail($id);
 
@@ -19,9 +19,14 @@ class CalculationController extends Controller
             return response()->json(['error' => "Calculation is already done." ]);
         }
 
-        DB::transaction(function () use ($match, $bodyService) {
-            $bodyService->calculate($match->bodies);
-            $match->update([ 'score' => $match->body_temp_score , 'calculate_body' => 1 ]);
+        DB::transaction(function () use ($match) {
+
+            (new BodyService())->calculate($match->bodies, $match->body_percentage);
+
+            $match->update([
+                'score' => $match->body_temp_score ,
+                'calculate_body' => 1
+            ]);
         });
 
         $url = Session::get("prev_route") ?? '/admin/ballone/body';

@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FootballBodyLimitGroup;
 use App\Services\Ballone\FeesValidation;
+use App\Services\Ballone\MaungFeesService;
 
 class MaungFeesController extends Controller
 {
@@ -57,6 +58,7 @@ class MaungFeesController extends Controller
             $maungFees->result()->create();
 
             return response()->json(['success' => 'Match saved successfully.']);
+
         } catch (\Exception $exception) {
 
             return response()->json(['error' => $exception->getMessage()]);
@@ -73,9 +75,9 @@ class MaungFeesController extends Controller
 
     public function add()
     {
-        $leagues = League::all();
+        $leagues = League::pluck('name', 'id');
 
-        $groups = FootballBodyLimitGroup::select('id', 'name', 'max_amount')->orderBy("max_amount")->get();
+        $groups = FootballBodyLimitGroup::orderBy("max_amount")->get();
 
         $round = FootballMatch::orderBy('round', 'desc')->first()?->round;
 
@@ -86,7 +88,7 @@ class MaungFeesController extends Controller
     {
         // return $request->all();
 
-        $request->validate([
+        $validated = $request->validate([
             'round' => 'required',
             'home_no' => 'required|array',
             'away_no' => 'required|array',
@@ -95,56 +97,21 @@ class MaungFeesController extends Controller
             'time' => 'required|array',
             'home_id' => 'required|array',
             'away_id' => 'required|array',
+            'home_body' => 'required|array',
+            'away_body' => 'required|array',
+            'goals' => 'required|array',
+            'other' => 'nullable',
+            'limit_group_id' => 'required|array'
         ]);
 
         try {
 
             (new FeesValidation())->multipleHandle($request);
 
-            DB::transaction(function () use ($request) {
-
-                foreach ($request->time as $key => $time) {
-
-                    if ($request->date[$key] && $request->time[$key]) {
-
-                        $match = FootballMatch::create([
-                            'round'   => $request->round,
-                            'home_no' => $request->home_no[$key],
-                            'away_no' => $request->away_no[$key],
-                            'date_time' => Carbon::createFromFormat("Y-m-d H:i", $request->date[$key] . $request->time[$key]),
-                            'league_id' => $request->league_id,
-                            'home_id' => $request->home_id[$key],
-                            'away_id' => $request->away_id[$key],
-                            'other'   => ($request->other && array_key_exists($key, $request->other)) ? $request->other[$key] : 0,
-                            'body_limit' => $request->limit_group_id[$key]
-                        ]);
-
-                        $match->matchStatus()->create(['admin_id' => Auth::id()]);
-
-                        // $bodyFees = $match->bodyfees()->create(['by' => Auth::id()]);
-
-                        $bodyFees = $match->bodyFees()->create([
-                            'body'     => ($request->home_body[$key]) ?? $request->away_body[$key],
-                            'goals'    => $request->goals[$key],
-                            'up_team'  => ($request->home_body[$key]) ? 1 : 2,
-                            'status'   => 1,
-                            'by' => Auth::id()
-                        ]);
-
-                        $maungFees = $match->maungfees()->create([
-                            'body'     => ($request->home_body[$key]) ?? $request->away_body[$key],
-                            'goals'    => $request->goals[$key],
-                            'up_team'  => ($request->home_body[$key]) ? 1 : 2,
-                            'by' => Auth::id()
-                        ]);
-
-                        $bodyFees->result()->create();
-                        $maungFees->result()->create();
-                    }
-                }
-            });
+            (new MaungFeesService())->executeAdd($validated);
 
             return response()->json(['url' => '/admin/ballone/maung']);
+
         } catch (\Exception $exception) {
 
             return response()->json(['error' => $exception->getMessage()]);

@@ -57,9 +57,9 @@
                                     <select class="form-control selectLeague" name="league_id" id="league"
                                         style="width: 100%;" required>
                                         <option value="">--Select League Name--</option>
-                                        @foreach ($leagues as $league)
-                                            <option value="{{ $league->id }}" {{ ($league->id == $match->league_id) ? 'selected' : '' }}>
-                                                {{ $league->name }}
+                                        @foreach ($leagues as $id => $name)
+                                            <option value="{{ $id }}" {{ ($id == $match->league_id) ? 'selected' : '' }}>
+                                                {{ $name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -160,11 +160,18 @@
                                             <select class="form-control" name="limit_group_id"
                                                 style="width: 100%;" required>
                                                 <option value="">-- Select Body Limit Group --</option>
+
                                                 @foreach ($groups as $group)
+
                                                     <option value="{{ $group->id }}" {{ $match->body_limit == $group->id ? "selected" : "" }}>
-                                                        {{ $group->name }} : {{ number_format($group->max_amount) }}
+                                                        {{ $group->name }} :
+
+                                                        {{ number_format($group->max_amount) }}
+
+                                                        ( {{ $group->percentage }} % )
                                                     </option>
                                                 @endforeach
+
                                             </select>
                                         </div>
                                     </div>
