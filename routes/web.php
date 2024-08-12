@@ -83,6 +83,7 @@ Route::group(
         Route::get('betting-record/detail/{id}', [BettingController::class, 'detail'])->name('betting.record.detail');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
+        Route::post('win-record/delete/{id}', [WinController::class, 'destroy'])->name('win.record.delete');
 
         Route::get('3d-record', [ThreeDigitRecordController::class, 'index'])->name('3d.record');
         Route::get('2d-record', [TwoDigitRecordController::class, 'index'])->name('2d.record');

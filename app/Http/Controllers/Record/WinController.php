@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Record;
 
+use App\Models\UserLog;
+use App\Models\WinRecord;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Repository\WinRecordRepository;
+use App\Services\Record\WinRecordService;
+use PhpParser\Node\Stmt\Catch_;
 
 class WinController extends Controller
 {
@@ -34,41 +38,50 @@ class WinController extends Controller
                 })
 
                 ->addColumn('time', function ($q) {
-                return dateTimeFormat($q->created_at);
-                    // return $q->created_at->format("d-m-Y g:i A");
+                    return dateTimeFormat($q->created_at);
                 })
 
-                ->filter(function ($instance) use ($request) {
-
-                    // if ($search = $request->get('search')) {
-                    //     $instance->whereHas('user', function ($w) use ($search) {
-                    //         $w->where('name', 'LIKE', "%$search%");
-                    //         $w->orWhere('user_id', 'LIKE', "%$search%");
-                    //     });
-                    // }
-
-                    // if ($agent_id = $request->get('agent_id')) {
-                    //     $instance->whereIn("agent_id", $agent_id);
-                    // }
-
-                    // if ($user_id = $request->get("user_id")) {
-                    //     $instance->whereHas('user', function ($w) use ($user_id) {
-                    //         $w->where('user_id', $user_id);
-                    //     });
-                    // }
-
-                    // if ($start_date = $request->get('start_date')) {
-                    //     $instance->whereDate('date', '>=', $start_date);
-                    // }
-
-                    // if ($end_date = $request->get('end_date')) {
-                    //     $instance->whereDate('date', '<=', $end_date);
-                    // }
+                ->addColumn("action", function($q){
+                    return "
+                        <a href='#' class='btn btn-danger btn-sm delete_btn' data-route='/admin/win-record/delete/{$q->id}'> Delete </a>
+                    ";
                 })
+
+                ->rawColumns([ 'action' ])
 
                 ->make(true);
         }
 
         return view("backend.record.win");
+    }
+
+    public function destroy($id, WinRecordService $winRecordService)
+    {
+        $record = WinRecord::with('user')->find($id);
+
+        if(!$record){
+            return response()->json([
+                'error'   => true,
+                'message' => 'No Record Found'
+            ]);
+        }
+
+        try{
+
+            $winRecordService->executeDelete($record);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'success'
+            ]);
+
+        }catch(\Exception $exception){
+
+            return response()->json([
+                'error' => true,
+                'message' => $exception->getMessage()
+            ]);
+        }
+
     }
 }

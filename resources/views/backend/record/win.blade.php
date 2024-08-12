@@ -89,6 +89,7 @@
                                                     <th>Amount</th>
                                                     <th>Type</th>
                                                     <th>Time</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -157,6 +158,9 @@
                         name: 'time',
                         orderable: false,
                         searchable: false
+                    },
+                    {
+                        data : 'action' , name : 'action'
                     }
                 ],
             });
@@ -174,6 +178,46 @@
                 $('#end_date').val('');
                 $("#datatable").DataTable().ajax.reload();
             });
+
+            $('body').on('click', '.delete_btn', function(e) {
+                e.preventDefault();
+                let url = $(this).data('route');
+                console.log(url);
+
+                Swal.fire({
+                    text: "Are you sure to delete this win record ?",
+                    icon: "info",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                })
+                .then(function(e) {
+                    if (e.isConfirmed) {
+                        $.ajax({
+                            url: url,
+                            type: "POST"
+                        }).done(function(res) {
+
+                            console.log(res);
+
+                            if(res.error){
+                                toastr.error('error');
+                                return;
+                            }
+
+                            Swal.fire({
+                                text: "အောင်မြင်ပါသည်",
+                                icon: "success",
+                            }).then((e) => {
+                                location.reload();
+                            });
+                        })
+                    }
+                });
+            })
 
         });
     </script>

@@ -67,22 +67,40 @@ class MaungService
 
             $net_amount = (int) ($win_amount - ( $win_amount * $maung->charge_percent) );
 
-            if ($net_amount > $betting->amount) {
+            if( $betting->betting_record->result == 'No Prize')
+            {
+                if ($net_amount > $betting->amount)
+                {
 
-                (new RecordService())->add($maung->user, $net_amount, "Maung");
+                    (new RecordService())->add(
+                        $maung->user,
+                        $net_amount,
+                        "Maung"
+                    );
 
-                $betting->betting_record()->update([
-                    'result' => 'Win',
-                    'win_amount' => $net_amount
-                ]);
+                    $betting->betting_record()->update(
+                        [
+                            'result' => 'Win',
+                            'win_amount' => $net_amount
+                        ]
+                    );
+                }
 
+                (new UserLogService())->add(
+                    $maung->user,
+                    $net_amount,
+                    'Maung Win'
+                );
+
+                $maung->user->increment('amount', $net_amount);
+
+                $betting->update(
+                    [
+                        'status'     => 1 ,
+                        'net_amount' => $net_amount
+                    ]
+                );
             }
-
-            (new UserLogService())->add($maung->user, $net_amount, 'Maung Win');
-
-            $maung->user->increment('amount', $net_amount);
-
-            $betting->update([ 'status' => 1 , 'net_amount' => $net_amount ]);
         }
     }
 }

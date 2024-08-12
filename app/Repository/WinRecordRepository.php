@@ -26,6 +26,8 @@ class WinRecordRepository
                 'users.user_id as user_ids'
             )
 
+            ->whereIn('win_records.type', ['2D', '3D', 'Body', 'Maung'])
+
             ->when(request()->input('agent_id') ?? NULL, function ($q) {
                 return $q->whereIn('agent_id', request()->input('agent_id'));
             })
