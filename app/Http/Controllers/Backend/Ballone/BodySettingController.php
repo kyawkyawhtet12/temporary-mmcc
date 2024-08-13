@@ -27,6 +27,7 @@ class BodySettingController extends Controller
         FootballBodySetting::updateOrCreate(
             [   'agent_id' => $agent->id ],
             [
+                'percentage' => 0,
                 'min_amount' => $request->min ,
                 'max_amount' => $request->max
             ]
