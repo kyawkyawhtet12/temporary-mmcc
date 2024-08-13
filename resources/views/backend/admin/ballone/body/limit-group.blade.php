@@ -26,7 +26,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5> Body Limit Amount Group </h5>
+                            <h5 class="mb-0"> Body Limit Amount Group </h5>
 
                             @if( is_admin())
                             <a href="javascript:void(0)" class="btn btn-success btn-sm addBtn">
@@ -45,6 +45,7 @@
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>No.</th>
                                                     <th>Name</th>
+                                                    <th>Percentage</th>
                                                     <th>Limit Amount</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -57,6 +58,9 @@
                                                         </td>
                                                         <td>
                                                             {{ $group->name }}
+                                                        </td>
+                                                        <td>
+                                                            {{ $group->percentage }}
                                                         </td>
                                                         <td>
                                                             {{ number_format($group->max_amount) }}
@@ -97,8 +101,10 @@
     <div class="modal fade" id="ajaxModel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-
-                <div class="modal-body">
+                <div class="modal-header py-3">
+                    <h6 class="mb-0"> Body Limit Group </h6>
+                </div>
+                <div class="modal-body py-5">
                     <form action="{{ route('ballone.body-limit-group.store') }}" method="POST" id="form"
                         name="form" class="form-horizontal">
                         @csrf
@@ -113,12 +119,19 @@
 
                         <div class="form-group">
                             <div class="col-sm-12">
+                                <input type="number" class="form-control" id="percentage" name="percentage"
+                                    placeholder="Percentage" value="" required="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-12">
                                 <input type="number" class="form-control" id="limit_amount" name="limit_amount"
                                     placeholder="Limit Amount" value="" required="">
                             </div>
                         </div>
 
-                        <div class="col-sm-offset-2 col-sm-10 mt-3">
+                        <div class="col-sm-offset-2 col-sm-10 mt-4">
                             <button type="submit" class="btn btn-primary" id="saveBtn" value="create">
                                 Submit
                             </button>
@@ -136,9 +149,7 @@
 
             $('body').on('click', '.addBtn', function() {
 
-                $("form #id").val('');
-                $("form #group").val('');
-                $("#form #limit_amount").val('');
+                $("#form").get(0).reset();
 
                 $('#ajaxModel').modal('show');
 
@@ -149,11 +160,13 @@
                 let {
                     id,
                     name,
+                    percentage,
                     max_amount
                 } = $(this).data("group");
 
                 $("form #id").val(id);
                 $("form #group").val(name);
+                $("form #percentage").val(percentage);
                 $("#form #limit_amount").val(max_amount);
 
                 $('#ajaxModel').modal('show');

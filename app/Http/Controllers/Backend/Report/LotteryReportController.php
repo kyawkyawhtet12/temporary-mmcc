@@ -125,33 +125,40 @@ class LotteryReportController extends Controller
 
     public function two_digits_detail(Request $request, $id)
     {
-        $data = TwoLuckyNumber::with('two_digit','lottery_time', 'winners','winners.twoLuckyDraw')->findOrFail($id);
+        $lucky_number = TwoLuckyNumber::with('two_digit','lottery_time')->findOrFail($id);
 
-        $two_digits = TwoDigit::all();
+        $two_digits = TwoDigit::pluck('number', 'id');
 
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
-        $win_betting = $data->winners->when($agent_id, function($query, $agent_id) {
-                                        return $query->where('agent_id', $agent_id);
-                                    })?->sum('twoLuckyDraw.amount');
+        $win_betting = $lucky_number->winners()
+                    ->when($agent_id, function($query, $agent_id) {
+                        $query->where('agent_id', $agent_id);
+                    })
+                    ?->withSum('twoLuckyDraw as total', 'amount')
+                    ->pluck('total')
+                    ->sum();
 
-        $draw = TwoLuckyDraw::when($agent_id, function($query, $agent_id) {
-                                    $query->where('agent_id', $agent_id);
-                                })
-                                ->where('lottery_time_id', $data->lottery_time_id)
-                                ->whereDate('created_at', $data->date)
-                                ->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id, za as za')
-                                ->groupBy('two_digit_id','za')
-                                ->get();
-
-        $agents = Agent::select('id','name')->get();
+        $draws = TwoLuckyDraw::query()
+                            ->when($agent_id, function($query, $agent_id) {
+                                $query->where('agent_id', $agent_id);
+                            })
+                            ->where('lottery_time_id', $lucky_number->lottery_time_id)
+                            ->whereDate('created_at', $lucky_number->date);
 
         $current_odds = TwoDigitCompensation::first()->compensate;
-        $odds = count($draw) ? $draw[0]->za : $current_odds;
+        $odds = $draws->clone()->first()?->za ?? $current_odds;
+
+        $draw = $draws->selectRaw('SUM(amount) as amount, two_digit_id as two_digit_id, za as za')
+                        ->groupBy('two_digit_id','za')
+                        ->pluck('amount', 'two_digit_id')
+                        ->toArray();
+
+        $agents = Agent::pluck('name', 'id');
 
         $badgeColors = BadgeColorSetting::where("name", "2D")->orderBy('max_amount','desc')->get();
 
-        return view('backend.admin.report.result.2d-detail', compact('two_digits', 'data', 'win_betting' ,'odds', 'draw','agents', 'badgeColors'));
+        return view('backend.admin.report.result.2d-detail', compact('two_digits', 'lucky_number', 'win_betting' ,'odds', 'draw','agents', 'badgeColors'));
     }
 
     // 3D
@@ -184,7 +191,7 @@ class LotteryReportController extends Controller
 
     public function three_digits_detail(Request $request, $id)
     {
-      $data = ThreeDigitSetting::findOrFail($id);
+        $data = ThreeDigitSetting::findOrFail($id);
 
         $agent_id = ($request->agent != 'all') ? $request->agent : NULL;
 
@@ -197,7 +204,8 @@ class LotteryReportController extends Controller
                                             ->pluck("amount", "number");
 
 
-        $agents = Agent::select('id','name')->get();
+        $agents = Agent::pluck('name', 'id');
+
         $odds = ThreeDigitCompensation::first()->compensate;
         $number_betting = $transactions[$data->lucky_number_id] ?? '0';
 

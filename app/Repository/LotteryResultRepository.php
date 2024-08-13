@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Models\TwoLuckyNumber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -18,6 +19,7 @@ class LotteryResultRepository
 
     public function handle2D()
     {
+
         return Cache::remember('two_digit_results', 60, function () {
 
             $query = DB::table('two_lucky_numbers')

@@ -9,5 +9,5 @@ class FootballBodyLimitGroup extends Model
 {
     use HasFactory;
 
-    protected $fillable = [ 'name' , 'min_amount', 'max_amount' , 'status' ];
+    protected $fillable = [ 'name' , 'percentage', 'min_amount', 'max_amount' , 'status' ];
 }

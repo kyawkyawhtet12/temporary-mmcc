@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Query\JoinClause;
 use App\Http\Resources\BettingRecord\DetailResource;
+use App\Models\TwoDigitTransaction;
 use App\Repository\BalloneRecordRepository;
+use App\Services\BettingRecord\DeleteService;
 
 class BettingController extends Controller
 {
@@ -17,7 +19,7 @@ class BettingController extends Controller
 
     public function __construct(protected BalloneRecordRepository $balloneRecord)
     {
-        $this->ballone = in_array( request()->get('type') , ['Body', 'Maung']);
+        $this->ballone = in_array(request()->get('type'), ['Body', 'Maung']);
     }
 
     public function index(Request $request)
@@ -25,18 +27,22 @@ class BettingController extends Controller
         if ($request->ajax()) {
 
             $subquery = $this->ballone
-                            ? $this->balloneRecord->getSubQuery($request->type)
-                            : [];
+                ? $this->balloneRecord->getSubQuery($request->type)
+                : [];
 
             $query = BettingRecord::with('user')
 
-            ->when( $this->ballone, function ($q) use ($subquery) {
-                $q->joinSub($subquery, 'rounds', function (JoinClause $join) {
-                    $join->on('betting_records.id', '=', 'rounds.betting_record_id');
-                });
-            })
+                ->when($this->ballone, function ($q) use ($subquery) {
+                    $q->joinSub($subquery, 'rounds', function (JoinClause $join) {
+                        $join->on('betting_records.id', '=', 'rounds.betting_record_id');
+                    });
+                })
+                ->latest();
 
-            ->latest();
+            if($request->delete_status == 1){
+                $query = $query->onlyTrashed();
+            }
+
 
             return Datatables::of($query)
 
@@ -63,11 +69,16 @@ class BettingController extends Controller
                 })
 
                 ->addColumn('actions', function ($q) {
-                    return "
+
+                    $view_btn = "
                             <a href='#record-details' class='btn btn-success btn-sm viewDetail' data-id='$q->id'>
                                 View
-                            </a>
-                        ";
+                            </a>";
+
+                    $delete_btn = $this->getDeleteButton($q);
+
+                    return "$view_btn $delete_btn";
+
                 })
 
                 ->filter(function ($instance) use ($request) {
@@ -83,7 +94,7 @@ class BettingController extends Controller
                         $instance->whereIn("agent_id", $agent_id);
                     }
 
-                    if ($request->get('round') && $this->ballone ) {
+                    if ($request->get('round') && $this->ballone) {
                         $instance->whereIn("round", request()->get('round'));
                     }
 
@@ -124,7 +135,20 @@ class BettingController extends Controller
 
     public function detail($id)
     {
-        $data = BettingRecord::findOrFail($id);
+        $data = BettingRecord::withTrashed()->findOrFail($id);
         return response()->json(new DetailResource($data));
+    }
+
+    protected function getDeleteButton($q)
+    {
+        $btn = (is_admin() && $q->result == 'No Prize' && in_array($q->type, ['2D', '3D']) && !$q->deleted_at )
+        ? "
+            <a href='#' class='btn btn-danger btn-sm ml-2 delete-record' data-route='/admin/betting-record/delete/$q->id'>
+                Delete
+            </a>"
+        : "";
+
+        return $btn;
+
     }
 }

@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Traits\FilterQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BettingRecord extends Model
 {
-    use HasFactory, FilterQuery;
+    use HasFactory, FilterQuery , SoftDeletes;
 
     protected $fillable = [ 'agent_id','user_id','amount','type','count','result','win_amount'];
 
@@ -49,5 +50,15 @@ class BettingRecord extends Model
     public function pending_body()
     {
         return $this->hasMany(FootballBet::class, 'betting_record_id')->where('status', 0);
+    }
+
+    public function getTwoDigitTimeAttribute()
+    {
+        return $this->two_digit->first()?->lottery_time_id;
+    }
+
+    public function getThreeDigitRoundAttribute()
+    {
+        return $this->three_digit()->first()?->round;
     }
 }

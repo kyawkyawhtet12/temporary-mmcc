@@ -9,7 +9,6 @@
                         <x-agent-select />
                     </div>
 
-
                     <div class="col">
                         <select name="type" id="type" class="form-control">
                             <option value=""> All Type </option>

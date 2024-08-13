@@ -32,7 +32,7 @@
                         </div>
                     @endif
 
-                    <form class="form-horizontal" id="form" >
+                    <form class="form-horizontal" id="form">
                         @csrf
 
                         <div class="card">
@@ -53,7 +53,7 @@
                                 </label>
                                 <div class="col-sm-12">
                                     <select class="form-control selectLeague" name="league_id" id="league"
-                                        style="width: 100%;" >
+                                        style="width: 100%;" required>
                                         <option value="">--Select League Name--</option>
                                         @foreach ($leagues as $id => $name)
                                             <option value="{{ $id }}">
@@ -73,7 +73,7 @@
                                             <label for="name" class="control-label">Date</label>
                                             <div>
                                                 <input type="date" id="date" class="form-control" name="date[]"
-                                                    value="{{ date('Y-m-d') }}" >
+                                                    value="{{ date('Y-m-d') }}" required>
                                             </div>
                                         </div>
 
@@ -81,7 +81,7 @@
                                             <label for="name" class="control-label">Time</label>
                                             <div>
                                                 <input type="time" id="time" class="form-control" name="time[]"
-                                                    >
+                                                    required>
                                             </div>
                                         </div>
                                     </div>
@@ -132,7 +132,7 @@
                                             </label>
                                             <div>
                                                 <select class="form-control selectHomeTeam" name="home_id[]"
-                                                    id="home_id"  style="width: 100%;">
+                                                    id="home_id" required style="width: 100%;">
                                                 </select>
                                             </div>
                                         </div>
@@ -142,7 +142,7 @@
                                             </label>
                                             <div>
                                                 <select class="form-control selectAwayTeam" name="away_id[]"
-                                                    id="away_id"  style="width: 100%;">
+                                                    id="away_id" required style="width: 100%;">
                                                 </select>
                                             </div>
                                         </div>
@@ -182,15 +182,13 @@
                                     <div class="form-group row">
                                         <div class="col-12">
                                             <select class="form-control" name="limit_group_id[]"
-                                                style="width: 100%;" >
+                                                style="width: 100%;" required>
                                                 <option value="">-- Select Body Limit Group --</option>
                                                 @foreach ($groups as $group)
                                                     <option value="{{ $group->id }}">
-                                                        {{ $group->name }} :
-
-                                                        {{ number_format($group->max_amount) }}
-
-                                                        ( {{ $group->percentage }} % )
+                                                        Group : {{ $group->name }}
+                                                        Percentage : {{ $group->percentage }}
+                                                        Limit : {{ number_format($group->max_amount) }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -202,8 +200,8 @@
                         </div>
 
                         <div id="more">
-                            @for ($i = 1; $i < 5; $i++)
-                                <div class="card {{ $i == 0 ? '' : 'd-none' }}" id="group_{{ $i }}">
+                            @for ($i = 1; $i < 20; $i++)
+                                <div class="card d-none" id="group_{{ $i }}">
                                     <div class="card-body">
 
                                         <div class="form-group row">
@@ -211,7 +209,7 @@
                                                 <label for="name" class="control-label">Date</label>
                                                 <div>
                                                     <input type="date" id="date" class="form-control"
-                                                        value="{{ date('Y-m-d') }}" name="date[]" >
+                                                        value="{{ date('Y-m-d') }}" name="date[]" required>
                                                 </div>
                                             </div>
 
@@ -219,7 +217,7 @@
                                                 <label for="name" class="control-label">Time</label>
                                                 <div>
                                                     <input type="time" id="time" class="form-control"
-                                                        name="time[]" >
+                                                        name="time[]" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -273,7 +271,7 @@
                                                 </label>
                                                 <div>
                                                     <select class="form-control selectHomeTeam" name="home_id[]"
-                                                        id="home_id_{{ $i }}"  style="width: 100%;">
+                                                        id="home_id_{{ $i }}" required style="width: 100%;">
                                                     </select>
                                                 </div>
                                             </div>
@@ -283,7 +281,7 @@
                                                 </label>
                                                 <div>
                                                     <select class="form-control selectAwayTeam" name="away_id[]"
-                                                        id="away_id_{{ $i }}"  style="width: 100%;">
+                                                        id="away_id_{{ $i }}" required style="width: 100%;">
                                                     </select>
                                                 </div>
                                             </div>
@@ -323,7 +321,7 @@
                                         <div class="form-group row">
                                             <div class="col-12">
                                                 <select class="form-control" name="limit_group_id[]"
-                                                    style="width: 100%;" >
+                                                    style="width: 100%;" required>
                                                     <option value="">-- Select Body Limit Group --</option>
                                                     @foreach ($groups as $group)
                                                         <option value="{{ $group->id }}">

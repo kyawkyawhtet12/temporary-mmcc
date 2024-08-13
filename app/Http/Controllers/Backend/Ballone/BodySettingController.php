@@ -19,8 +19,7 @@ class BodySettingController extends Controller
     {
         $request->validate([
             'min' => 'required|numeric|min:0',
-            'max' => 'required|numeric|min:0',
-            'percentage' => 'required|numeric|min:0',
+            'max' => 'required|numeric|min:0'
         ]);
 
         $agent = Agent::findOrFail($request->agent_id);
@@ -28,7 +27,6 @@ class BodySettingController extends Controller
         FootballBodySetting::updateOrCreate(
             [   'agent_id' => $agent->id ],
             [
-                'percentage' => $request->percentage,
                 'min_amount' => $request->min ,
                 'max_amount' => $request->max
             ]

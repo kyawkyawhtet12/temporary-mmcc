@@ -27,14 +27,14 @@
 
                     <div class="d-flex justify-content-between mb-3">
                         <h4 class="mb-3">
-                            {{ date('F j, Y', strtotime($data->date)) }} {{ $data->lottery_time->time }}
+                            {{ date('F j, Y', strtotime($lucky_number->date)) }} {{ $lucky_number->lottery_time->time }}
                         </h4>
 
                         <select name="agent" id="agent" class="form-control col-md-3">
                                 <option value="all">-- Select All --</option>
-                            @foreach($agents as $agent)
-                                <option value="{{  $agent->id }}" {{ request()->agent == $agent->id ? 'selected' : '' }}>
-                                    {{  $agent->name }}
+                            @foreach($agents as $id => $name)
+                                <option value="{{  $id }}" {{ request()->agent == $id ? 'selected' : '' }}>
+                                    {{ $name }}
                                 </option>
                             @endforeach
                         </select>
@@ -45,35 +45,34 @@
                         <div class="tab-pane fade show active" id="thai-1" role="tabpanel"
                             aria-labelledby="pills-home-tab-custom">
                             <div class="icons-list row">
-                                @foreach ($two_digits as $digit)
+
+                                @foreach ($two_digits as $id => $number)
                                     <div class="col-sm-6 col-md-4 col-lg-2 d-flex justify-content-between align-items-center py-3 px-4">
 
                                         <h5>
-                                            {{ $digit->number }}
+                                            {{ $number }}
                                         </h5>
 
-                                        @foreach ($draw as $d)
-                                            @if ($digit->id == $d->two_digit_id)
-                                                <span class="badge badge-pill" style="{{ getBadgeColor($badgeColors, $d->amount) }}">
-                                                     {{ number_format($d->amount) }} MMK
-                                                </span>
-                                            @endif
-                                        @endforeach
+                                        <span class="badge badge-pill" style="{{ getBadgeColor($badgeColors, $draw[$id] ?? 0) }}">
+                                            {{ number_format($draw[$id] ?? 0) }} MMK
+                                        </span>
+
                                     </div>
                                 @endforeach
+
                             </div>
 
                             <div class="mt-3">
                                 @php
                                     $win = $win_betting * $odds;
-                                    $betting = $draw->sum('amount');
+                                    $betting = array_sum($draw);
                                 @endphp
-                                <h5>Winning number : {{ $data->two_digit?->number }}</h5>
-                                <h5>Number betting : {{ $win_betting }}</h5>
+                                <h5>Winning number : {{ $lucky_number->two_digit?->number }}</h5>
+                                <h5>Number betting : {{ number_format($win_betting) }}</h5>
                                 <h5>Odds : {{ $odds }}</h5>
-                                <h5>betting : {{ $betting }} </h5>
-                                <h5>Win : {{ $win }}</h5>
-                                <h5>Profit : {{ $betting - $win }}</h5>
+                                <h5>betting : {{ number_format($betting )}} </h5>
+                                <h5>Win : {{ number_format($win) }}</h5>
+                                <h5>Profit : {{ number_format($betting - $win) }}</h5>
                             </div>
                         </div>
 
