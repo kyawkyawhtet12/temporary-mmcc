@@ -202,7 +202,7 @@
                         </div>
 
                         <div id="more">
-                            @for ($i = 1; $i < 5; $i++)
+                            @for ($i = 1; $i < 20; $i++)
                                 <div class="card {{ $i == 0 ? '' : 'd-none' }}" id="group_{{ $i }}">
                                     <div class="card-body">
 

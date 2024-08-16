@@ -24,6 +24,7 @@ class BodyRecordRepository
                 'round',
 
                 DB::raw('SUM(amount) as betting_amount'),
+
                 DB::raw('COUNT(amount) as betting_count'),
 
                 DB::raw('SUM(net_amount) as win_amount'),

@@ -44,7 +44,7 @@
                             @if ($fee)
                                 <tr>
                                     <td>
-                                        {{ $fee->up_team_name }}
+                                        {{ $fee->up_team == 1 ? $match->home_team : $match->away_team }}
                                     </td>
 
                                     <td>
@@ -74,10 +74,19 @@
     <script>
         $(document).ready(function() {
 
+            setTimeout(() => {
+                $("#loader").removeClass('d-flex').addClass('d-none');
+                $("#mainpage").removeClass('d-none');
+            }, 500);
+
             $('body').on('click', '.result-done', function(e) {
                 e.preventDefault();
 
                 let url = $(this).data("url");
+
+                $(this).attr('disabled', true);
+
+                $("#loader").removeClass('d-none').addClass('d-flex');
 
                 Swal.fire({
                         text: "Are you sure ?",
@@ -91,22 +100,36 @@
                     })
                     .then(function(e) {
                         if (e.isConfirmed) {
+
                             $.ajax({
                                 url: url,
                                 type: "POST",
                             }).done(function(res) {
 
+                                $("#loader").removeClass('d-flex').addClass('d-none');
+
                                 if (res.error) {
+
                                     Swal.fire({
                                         text: res.error,
                                         icon: "error",
                                     }).then((e) => {
                                         location.reload();
                                     });
+
                                 } else {
-                                    location.replace(res.url);
+
+                                    Swal.fire({
+                                        text: 'success',
+                                        icon: "success",
+                                    }).then((e) => {
+                                        location.replace(res.url);
+                                    });
+
+
                                 }
                             })
+
                         }
                     });
             });

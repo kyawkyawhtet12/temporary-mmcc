@@ -11,7 +11,7 @@ class FootballMaungFee extends Model
 
     protected $guarded = [];
 
-    protected $appends = [ 'match_format' ];
+    // protected $appends = [ 'match_format' ];
 
     public function match()
     {

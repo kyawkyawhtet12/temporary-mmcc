@@ -20,4 +20,14 @@ class FootballMaungGroup extends Model
     {
         return $this->hasOne(FootballBet::class, 'maung_group_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class, 'agent_id');
+    }
 }

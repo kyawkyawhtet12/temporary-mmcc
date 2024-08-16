@@ -65,6 +65,7 @@ class AddResultController extends Controller
         if( strpos( url()->previous(), 'page') ) {
             Session::put("prev_route", url()->previous());
         }
+
         $match->load('allMaungfees.result');
 
         return view("backend.admin.ballone.match.maung.result", compact("match"));

@@ -2,7 +2,12 @@
 
 @section('content')
     <div class="page-content">
-        <div class="container-fluid">
+
+        <div class="d-flex justify-content-center align-items-center w-100 vh-100" id="loader">
+            <img src="{{ asset('assets/backend/images/loader.gif') }}" alt="" width="200px">
+        </div>
+
+        <div class="container-fluid d-none" id="mainpage">
 
             <!-- start page title -->
             <div class="row">
@@ -99,7 +104,7 @@
                 </div>
             </div>
 
-            <x-ballone.result-manual type="maung" :fees="$match->allMaungFees" :isCalculationDone="$match->calculate_maung" />
+            <x-ballone.result-manual type="maung" :match="$match" :fees="$match->allMaungFees" :isCalculationDone="$match->calculate_maung" />
 
         </div>
     </div>
