@@ -50,7 +50,9 @@ class BalloneRecordController extends Controller
                 })
 
                 ->addColumn('net_amount', function ($q) {
-                    return number_format($q->net_amount);
+                    // return number_format($q->net_amount);
+
+                    return number_format( $q->betting_amount - $q->win_amount);
                 })
 
                 ->addColumn('status', function ($q) {

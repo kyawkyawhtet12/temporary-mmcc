@@ -9,7 +9,7 @@ class WinRecord extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['agent_id','user_id','amount','type'];
+    protected $fillable = ['agent_id','user_id','amount','type', 'betting_id', 'round' , 'status' ];
 
     public function user()
     {
