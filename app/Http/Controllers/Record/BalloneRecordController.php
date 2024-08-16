@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Record;
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Repository\BalloneRecordRepository;
 use App\Repository\BodyRecordRepository;
 use App\Repository\MaungRecordRepository;
 

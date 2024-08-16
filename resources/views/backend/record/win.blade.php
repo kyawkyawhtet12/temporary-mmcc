@@ -61,9 +61,15 @@
                     <input type="date" class="form-control" placeholder="End Date" name="end_date" id="end_date" >
                 </div>
 
-                {{-- <div class="col">
-                    <button type="button" class="btn btn-block btn-primary btn-sm" id="search">Search</button>
-                </div> --}}
+                <div class="col">
+                  <select name="type" id="type" class="form-control">
+                    <option value="">--All--</option>
+                    <option value="2d"> 2D </option>
+                    <option value="3d"> 3D </option>
+                    <option value="body"> Body </option>
+                    <option value="maung"> Maung </option>
+                  </select>
+                </div>
 
                 <div class="col">
                     <div class="row">
@@ -126,7 +132,8 @@
                         d.user_id = $('#user_id').val(),
                         d.phone = $('#phone').val(),
                         d.start_date = $('#start_date').val(),
-                        d.end_date = $('#end_date').val()
+                        d.end_date = $('#end_date').val(),
+                        d.type = $('#type').val()
                     }
                 },
                 columns: [{

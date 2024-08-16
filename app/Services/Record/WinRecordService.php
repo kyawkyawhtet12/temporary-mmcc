@@ -26,7 +26,10 @@ class WinRecordService
 
             // $record->delete();
 
-            $record->update([ 'type' => "{$record->type} Win Fix"]);
+            $record->update([
+                // 'type' => "{$record->type} Win Fix",
+                'status' => 2
+            ]);
 
         });
     }
