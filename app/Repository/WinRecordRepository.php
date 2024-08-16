@@ -28,12 +28,18 @@ class WinRecordRepository
 
             ->whereIn('win_records.type', ['2D', '3D', 'Body', 'Maung'])
 
+            ->where('win_records.status', '!=' , 2 )
+
             ->when(request()->input('agent_id') ?? NULL, function ($q) {
                 return $q->whereIn('agent_id', request()->input('agent_id'));
             })
 
             ->when(request()->input('user_id') ?? NULL, function ($q) {
                 return $q->where('users.user_id', request()->input('user_id'));
+            })
+
+            ->when(request()->input('type') ?? NULL, function ($q) {
+                return $q->where('win_records.type', request()->input('type'));
             })
 
             ->when(request()->input('start_date') ?? NULL, function ($q) {

@@ -11,6 +11,9 @@ class WinRecord extends Model
 
     protected $fillable = ['agent_id','user_id','amount','type', 'betting_id', 'round' , 'status' ];
 
+    // betting id
+    // two_lucky_draw , three_lucky_draw , football_body , football_maung_group
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
