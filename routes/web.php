@@ -13,6 +13,7 @@ use App\Http\Controllers\Record\BalloneRecordController;
 use App\Http\Controllers\Record\TwoDigitRecordController;
 use App\Http\Controllers\Backend\Report\UserLogController;
 use App\Http\Controllers\Record\ThreeDigitRecordController;
+use App\Http\Controllers\Testing\MaungController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -104,7 +105,7 @@ Route::group(
 
 
 
-
+        // Route::get('maung-test', [MaungController::class, 'calculate_test']);
 
     }
 );

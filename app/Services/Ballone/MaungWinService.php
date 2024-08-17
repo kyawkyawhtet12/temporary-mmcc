@@ -5,9 +5,10 @@ namespace App\Services\Ballone;
 use App\Models\UserLog;
 use App\Models\WinRecord;
 use App\Models\FootballMaung;
+use App\Models\FootballMaungGroup;
 use Illuminate\Support\Facades\DB;
 
-class MaungService
+class MaungWinService
 {
     protected $za = [];
 
@@ -16,81 +17,31 @@ class MaungService
         $this->za = DB::table("football_maung_zas")->pluck('percent', 'teams');
     }
 
-    public function execute($match_id)
+    public function calculate($match_id)
     {
-        $maungs = FootballMaung::query()
-            ->with(['fees.result', 'bet'])
+        $group_ids = FootballMaung::query()
             ->where('match_id', $match_id)
-            ->where('status', 0)
+            ->pluck('maung_group_id')
+            ->unique()
+            ->toArray();
+
+        $groups = FootballMaungGroup::query()
+            ->withCount('pending_maungs')
+            ->having('pending_maungs_count', 0)
+            ->with('bet')
+            ->whereHas('bet', function ($q) {
+                $q->where('status', 0);
+            })
+            ->whereIn('id', $group_ids)
             ->get();
 
-        return DB::transaction(function () use ($maungs, $match_id) {
+      return DB::transaction(function () use ($groups) {
 
-            foreach ($maungs as $maung) {
+            foreach ($groups as $group) {
 
-                $group = $maung->bet->loadCount('teams')->load('bet'); // maung group
+                $charge_percent = 15 / 100;
 
-                $betting = $group->bet; // football bet
-
-                if ($betting->status == 0) {
-
-                    $result  =  $maung->fees->result;
-
-                    $type    =  $maung->type;
-
-                    $percent =  $result->$type;
-
-                    $betAmount = $betting->net_amount == 0 ? $betting->amount : $betting->net_amount;
-
-                    $status = 1;
-
-                    $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
-
-                    if ($percent == 0) {
-
-                        $status = 3;
-
-                        $betting->net_amount = $betAmount;
-                    }
-
-                    if ($percent == '-100') {
-
-                        $status = 2;
-
-                        $betting->status = 2;
-
-                        $betting->net_amount = 0;
-
-                        $betting->betting_record()->update([
-                            'result' => 'No Win',
-                            'win_amount' => 0
-                        ]);
-                    }
-
-                    $maung->update(['status' => $status]);
-
-                    $betting->save();
-                }
-            }
-
-            return (new MaungWinService())->calculate($match_id);
-
-        });
-    }
-
-    public function calculation($betting, $group)
-    {
-        $data = FootballMaung::where('maung_group_id', $group->id)
-            ->where('status', 0)
-            ->count();
-
-        // ပွဲ မကျန်တော့ရင် အလျော်အစားလုပ်
-
-        if ($data == 0 && $betting->status == 0) {
-
-            DB::transaction(function () use ($betting, $group) {
-
-                $charge_percent = ($this->za[$group->teams_count] ?? 0) / 100;
+                $betting = $group->bet;
 
                 $win_amount = $betting->net_amount;
 
@@ -101,6 +52,7 @@ class MaungService
                     $result = 'No Win';
 
                     if ($net_amount > $betting->amount) {
+
                         WinRecord::firstOrCreate([
                             'user_id'    => $group->user_id,
                             'agent_id'   => $group->agent_id,
@@ -150,7 +102,9 @@ class MaungService
                         $group->user()->increment('amount', $net_amount);
                     }
                 }
-            });
-        }
+            }
+
+            return $groups;
+        });
     }
 }

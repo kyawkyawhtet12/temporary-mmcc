@@ -48,7 +48,7 @@ class CalculationController extends Controller
 
         try {
 
-            $maungService->execute($id);
+            $service = $maungService->execute($id);
 
             $match->update([ 'score' => $match->maung_temp_score , 'calculate_maung' => 1 ]);
 

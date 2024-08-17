@@ -9,6 +9,7 @@ use App\Models\FootballBet;
 use Illuminate\Http\Request;
 use App\Models\FootballMaung;
 use App\Http\Controllers\Controller;
+use App\Models\FootballMaungGroup;
 use App\Services\Ballone\MaungServiceCheck;
 
 class MaungController extends Controller
@@ -155,5 +156,33 @@ class MaungController extends Controller
         }
 
         return back()->with('success', 'success');
+    }
+
+    //calculate test
+    public function calculate_test()
+    {
+        // $groups = [ 50799, 50800, 50797, 50798 ];
+
+        $match_id = 13903;
+
+
+
+        $group_ids = FootballMaung::where('match_id', $match_id)->pluck('maung_group_id')->unique()->toArray();
+
+
+        // dd($group_ids);
+
+        $groups = FootballMaungGroup::withCount('pending_maungs')
+        ->with('bet')
+        ->whereHas('bet', function($q){
+            $q->where('status', 0);
+        })
+        ->having('pending_maungs_count', 0)
+        ->whereIn('id', $group_ids)
+        ->get();
+
+
+
+        return $groups;
     }
 }

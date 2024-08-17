@@ -30,4 +30,11 @@ class FootballMaungGroup extends Model
     {
         return $this->belongsTo(Agent::class, 'agent_id');
     }
+
+    ///
+
+    public function pending_maungs()
+    {
+        return $this->hasMany(FootballMaung::class, 'maung_group_id')->where('status', 0);
+    }
 }
