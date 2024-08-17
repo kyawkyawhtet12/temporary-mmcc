@@ -9,13 +9,15 @@ use App\Http\Controllers\Record\CashController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
 use App\Http\Controllers\Backend\UserPaymentController;
+use App\Http\Controllers\Record\DeleteRecordController;
 use App\Http\Controllers\Record\BalloneRecordController;
 use App\Http\Controllers\Record\LotteryRecordController;
 use App\Http\Controllers\Record\TwoDigitRecordController;
 use App\Http\Controllers\Backend\Report\UserLogController;
 use App\Http\Controllers\Record\ThreeDigitRecordController;
 use App\Http\Controllers\Backend\Setting\ReportAmountColorController;
-use App\Http\Controllers\Record\DeleteRecordController;
+
+use App\Http\Controllers\Testing\MaungController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -88,6 +90,7 @@ Route::group(
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
         Route::get('win-record-check', [WinController::class, 'check'])->name('win.record.check');
+
         Route::post('win-record/delete/{id}', [WinController::class, 'destroy'])->name('win.record.delete');
 
         Route::get('3d-record', [ThreeDigitRecordController::class, 'index'])->name('3d.record');
@@ -103,5 +106,22 @@ Route::group(
                 Route::post('{type}', 'store')->name('store');
                 Route::delete('{id}', 'destroy')->name('destroy');
             });
+
+
+
+        Route::get('maung-bet/calculate/temp_reset', [MaungController::class, 'temp_amount_reset']);
+
+        Route::get('maung-bet/calculate/fix', [MaungController::class, 'fix']);
+
+        Route::get('maung-bet/calculate/fix_check', [MaungController::class, 'fix_check']);
+
+        Route::get('maung-bet/calculate/fix_update', [MaungController::class, 'fix_update']);
+
+        Route::get('maung-bet/calculate/user_log', [MaungController::class, 'user_log']);
+
+        Route::get('amount-details/{id}/fix', [MaungController::class, 'user_log_fix']);
+
+        Route::post('amount-details/{id}/fix', [MaungController::class, 'user_log_add'])->name('amount_details.add');
+
     }
 );
