@@ -87,6 +87,7 @@ Route::group(
         Route::get('betting-record/delete', [DeleteRecordController::class, 'index'])->name('betting.record.delete.history');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
+        Route::get('win-record-check', [WinController::class, 'check'])->name('win.record.check');
         Route::post('win-record/delete/{id}', [WinController::class, 'destroy'])->name('win.record.delete');
 
         Route::get('3d-record', [ThreeDigitRecordController::class, 'index'])->name('3d.record');
