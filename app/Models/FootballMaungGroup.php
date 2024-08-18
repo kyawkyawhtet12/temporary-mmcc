@@ -37,4 +37,9 @@ class FootballMaungGroup extends Model
     {
         return $this->hasMany(FootballMaung::class, 'maung_group_id')->where('status', 0);
     }
+
+    public function no_pending_maungs()
+    {
+        return $this->hasMany(FootballMaung::class, 'maung_group_id')->where('status', '!=' ,0);
+    }
 }

@@ -2,187 +2,56 @@
 
 namespace App\Http\Controllers\Testing;
 
-use App\Models\User;
-use App\Models\UserLog;
-use App\Models\WinRecord;
-use App\Models\FootballBet;
 use Illuminate\Http\Request;
+use App\Models\FootballMatch;
 use App\Models\FootballMaung;
-use App\Http\Controllers\Controller;
 use App\Models\FootballMaungGroup;
-use App\Services\Ballone\MaungServiceCheck;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\UserLog;
 
 class MaungController extends Controller
 {
 
-    public function temp_amount_reset()
+    public function calculate()
     {
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
+        $match_id = 13911;
 
-        // $bets = FootballBet::whereIn('maung_group_id', $groups)->update([ 'temp_amount' => 0 ]);
-        $bets = FootballBet::query()->update(['temp_amount' => 0]);
+        return 'test';
 
-        return $bets;
-    }
+        $maungs = FootballMaung::query()
+                                ->with(['fees.result', 'bet'])
+                                ->where('match_id', $match_id)
+                                ->where('status', 0)
+                                ->get();
 
-    public function fix()
-    {
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
-
-        $maungs = FootballMaung::whereIn('maung_group_id', $groups)->get();
-
-        $service = (new MaungServiceCheck())->execute($maungs);
-
-        return $service;
-    }
-
-    public function fix_check()
-    {
-
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
+        $maung_group_ids = $maungs->pluck('maung_group_id')->unique();
 
 
-        $bets = FootballBet::whereIn('maung_group_id', $groups)->with('user')->get();
-
-        return $bets;
-    }
-
-    public function fix_update()
-    {
-
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
-
-        $bets = FootballBet::whereIn('maung_group_id', $groups)->get();
-
-        foreach ($bets as $bet) {
-            $win_amount = $bet->temp_amount - ($bet->temp_amount * 0.15);
-
-            $bet->update([
-                'net_amount' => $win_amount,
-                'temp_amount' => $win_amount
-            ]);
-
-            $bet->betting_record()->update(['win_amount' => $win_amount]);
-
-            WinRecord::where('betting_id', $bet->maung_group_id)
-                ->where('status', 0)
-                ->update(['amount' => $win_amount]);
-        }
-    }
-
-    public function user_log()
-    {
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
-
-        $logs = UserLog::whereIn('remark', $groups)->where('operation', 'Maung Win')->get();
-
-        return $logs;
-    }
-
-    public function user_log_fix($id)
-    {
-        $user = User::find($id);
-
-        return view("backend.admin.users.user_log", compact("user"));
-    }
-
-    public function user_log_add(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-
-        // return $request->all();
-
-        $end_balance = ($request->type === 'increment')
-            ? $user->amount + $request->amount
-            : $user->amount - $request->amount;
-
-        UserLog::create([
-            'agent_id' => $user->agent->id,
-            'user_id' => $user->id,
-            'remark' => $request->remark,
-            'operation' => $request->operation,
-            'amount' => $request->amount,
-            'start_balance' => $user->amount,
-            'end_balance' => $end_balance
-        ]);
+        // return $maungs;
 
 
-        if ($request->type === 'increment') {
-            $user->increment("amount", $request->amount);
+
+        $percentage = [ 100 , 70 , 60 ];
+
+        $amount = 500;
+
+        foreach( $percentage as $percent )
+        {
+
+            $amount = $amount + $this->percentageAmount($amount, $percent);
+
+
         }
 
-        if ($request->type === 'decrement') {
-            $user->decrement("amount", $request->amount);
-        }
 
-        return back()->with('success', 'success');
+        return $amount;
+
     }
 
-    //calculate test
-    public function calculate_test()
+    public function percentageAmount($amount, $percent)
     {
-        // $groups = [ 50799, 50800, 50797, 50798 ];
-
-        $match_id = 13903;
-
-
-
-        $group_ids = FootballMaung::where('match_id', $match_id)->pluck('maung_group_id')->unique()->toArray();
-
-
-        // dd($group_ids);
-
-        $groups = FootballMaungGroup::withCount('pending_maungs')
-        ->with('bet')
-        ->whereHas('bet', function($q){
-            $q->where('status', 0);
-        })
-        ->having('pending_maungs_count', 0)
-        ->whereIn('id', $group_ids)
-        ->get();
-
-
-
-        return $groups;
+        return $amount * $percent / 100 ;
     }
+
 }

@@ -16,6 +16,8 @@ class FootballMaung extends Model
     // 0 - Pending , 1 - Win , 2 - Lose , 3 - Draw , 4 - Cancel
     // Refund 0 - false , 1 - true
 
+    // protected $appends =  [ 'win_percent' ];
+
     public function match()
     {
         return $this->belongsTo(FootballMatch::class, 'match_id');
@@ -54,6 +56,22 @@ class FootballMaung extends Model
         $result = ($this->match->calculate_maung) ? $this->match->maung_temp_score : '-' ;
 
         return ($this->match->type == 0) ? "P-P" : ( $this->refund == 1 ? "Refund" : $result );
+    }
+
+
+    public function football_bet()
+    {
+        return $this->belongsTo(FootballBet::class, 'maung_group_id', 'maung_group_id');
+    }
+
+    public function fee_result()
+    {
+        return $this->belongsTo(FootballMaungFeeResult::class, 'fee_id', 'fee_id');
+    }
+
+    public function getWinPercentAttribute()
+    {
+        return $this->fee_result?->{$this->type} ?? 0 ;
     }
 
 }

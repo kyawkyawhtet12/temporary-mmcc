@@ -105,7 +105,7 @@ Route::group(
 
 
 
-        // Route::get('maung-test', [MaungController::class, 'calculate_test']);
+        Route::get('test/calculate', [MaungController::class, 'calculate']);
 
     }
 );

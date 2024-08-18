@@ -4,7 +4,6 @@ namespace App\Services\Ballone;
 
 use App\Models\UserLog;
 use App\Models\WinRecord;
-use App\Models\FootballMaung;
 use App\Models\FootballMaungGroup;
 use Illuminate\Support\Facades\DB;
 
@@ -17,22 +16,16 @@ class MaungWinService
         $this->za = DB::table("football_maung_zas")->pluck('percent', 'teams');
     }
 
-    public function calculate($match_id)
+    public function calculate($maung_group_ids)
     {
-        $group_ids = FootballMaung::query()
-            ->where('match_id', $match_id)
-            ->pluck('maung_group_id')
-            ->unique()
-            ->toArray();
-
         $groups = FootballMaungGroup::query()
+            ->whereIn('id', $maung_group_ids)
             ->withCount('pending_maungs')
             ->having('pending_maungs_count', 0)
             ->with('bet')
             ->whereHas('bet', function ($q) {
                 $q->where('status', 0);
             })
-            ->whereIn('id', $group_ids)
             ->get();
 
       return DB::transaction(function () use ($groups) {
@@ -78,33 +71,30 @@ class MaungWinService
                         ]
                     );
 
+                    // payment logs
 
-                    // check user log already add or not
-                    $check = UserLog::where('user_id', $group->user_id)
-                        ->where('remark', $group->id)
-                        ->where('operation', 'Maung Win')
-                        ->doesntExist();
+                    $logs = UserLog::firstOrCreate([
+                        'user_id' => $group->user_id,
+                        'agent_id' => $group->agent_id,
+                        'operation' => 'Maung Win',
+                        'remark' => $group->id
+                    ],[
+                        'amount' => $net_amount,
+                        'start_balance' => $group->user->amount,
+                        'end_balance' => $group->user->amount + $net_amount
+                    ]);
 
-                    if ($check) {
-
-                        UserLog::create(
-                            [
-                                'agent_id' => $group->agent_id,
-                                'user_id' => $group->user_id,
-                                'remark' => $group->id,
-                                'operation' => 'Maung Win',
-                                'amount' => $net_amount,
-                                'start_balance' => $group->user->amount,
-                                'end_balance' => $group->user->amount + $net_amount
-                            ]
-                        );
+                    if( $logs->wasRecentlyCreated){
 
                         $group->user()->increment('amount', $net_amount);
+
                     }
+
                 }
             }
 
             return $groups;
+
         });
     }
 }

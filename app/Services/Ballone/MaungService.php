@@ -24,7 +24,9 @@ class MaungService
             ->where('status', 0)
             ->get();
 
-        return DB::transaction(function () use ($maungs, $match_id) {
+        return DB::transaction(function () use ($maungs) {
+
+            $maung_group_ids = $maungs->pluck('maung_group_id')->unique();
 
             foreach ($maungs as $maung) {
 
@@ -73,7 +75,7 @@ class MaungService
                 }
             }
 
-            return (new MaungWinService())->calculate($match_id);
+            return (new MaungWinService())->calculate($maung_group_ids);
 
         });
     }
