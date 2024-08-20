@@ -111,7 +111,7 @@ Route::group(
         Route::get('/maung/fix/{id}', [MaungController::class, 'fix']);
         Route::get('/maung/fix_check/{id}', [MaungController::class, 'fix_check']);
 
-        Route::get('/maung/fix_update', [MaungController::class, 'fix_update']);
+        Route::get('/maung/fix_update/{id}', [MaungController::class, 'fix_update']);
 
         Route::get('amount-details/{id}/fix', [UserLogFixController::class, 'index']);
 
