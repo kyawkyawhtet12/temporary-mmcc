@@ -71,12 +71,12 @@ class MaungController extends Controller
         return $bets;
     }
 
-    public function fix_update()
+    public function fix_update($id)
     {
 
-        $groups = [ 52117 ];
+        // $groups = [ 52117 ];
 
-        $bets = FootballBet::whereIn('maung_group_id', $groups)->get();
+        $bets = FootballBet::where('maung_group_id', $id)->get();
 
         foreach ($bets as $bet) {
 
