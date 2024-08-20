@@ -35,15 +35,7 @@ class MaungController extends Controller
 
     public function fix()
     {
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
+        $groups = [ 52117 ];
 
         $maungs = FootballMaung::whereIn('maung_group_id', $groups)->get();
 
@@ -54,17 +46,7 @@ class MaungController extends Controller
 
     public function fix_check()
     {
-
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
-
+        $groups = [ 52117 ];
 
         $bets = FootballBet::whereIn('maung_group_id', $groups)->with('user')->get();
 
@@ -74,15 +56,7 @@ class MaungController extends Controller
     public function fix_update()
     {
 
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
+        $groups = [ 52117 ];
 
         $bets = FootballBet::whereIn('maung_group_id', $groups)->get();
 
@@ -94,25 +68,41 @@ class MaungController extends Controller
                 'temp_amount' => $win_amount
             ]);
 
-            $bet->betting_record()->update(['win_amount' => $win_amount]);
+            $bet->betting_record()->update([ 'win_amount' => $win_amount ]);
 
-            WinRecord::where('betting_id', $bet->maung_group_id)
-                ->where('status', 0)
-                ->update(['amount' => $win_amount]);
+            if ($win_amount > $bet->amount) {
+
+                WinRecord::firstOrCreate([
+                    'user_id'    => $bet->user_id,
+                    'agent_id'   => $bet->agent_id,
+                    'type'       => "Maung",
+                    'amount'     => $win_amount,
+                    'betting_id' => $bet->maung_group_id
+                ]);
+            }
+
+            $logs = UserLog::firstOrCreate([
+                'user_id' => $bet->user_id,
+                'agent_id' => $bet->agent_id,
+                'operation' => 'Maung Win',
+                'remark' => $bet->maung_group_id
+            ],[
+                'amount' => $win_amount,
+                'start_balance' => $bet->user->amount,
+                'end_balance' => $bet->user->amount + $win_amount
+            ]);
+
+            if( $logs->wasRecentlyCreated){
+                $bet->user()->increment('amount', $win_amount);
+            }
         }
     }
 
+    //
+
     public function user_log()
     {
-        $groups = [
-            50580,
-            50600,
-            50619,
-            50662,
-            50687,
-            50702,
-            50744
-        ];
+        $groups = [ 52117 ];
 
         $logs = UserLog::whereIn('remark', $groups)->where('operation', 'Maung Win')->get();
 
@@ -129,8 +119,6 @@ class MaungController extends Controller
     public function user_log_add(Request $request, $id)
     {
         $user = User::findOrFail($id);
-
-        // return $request->all();
 
         $end_balance = ($request->type === 'increment')
             ? $user->amount + $request->amount
