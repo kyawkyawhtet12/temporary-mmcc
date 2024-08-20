@@ -5,15 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Record\WinController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Record\CashController;
+use App\Http\Controllers\Testing\MaungController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
+use App\Http\Controllers\Testing\UserLogFixController;
 use App\Http\Controllers\Backend\UserPaymentController;
 use App\Http\Controllers\Record\DeleteRecordController;
 use App\Http\Controllers\Record\BalloneRecordController;
 use App\Http\Controllers\Record\TwoDigitRecordController;
 use App\Http\Controllers\Backend\Report\UserLogController;
 use App\Http\Controllers\Record\ThreeDigitRecordController;
-use App\Http\Controllers\Testing\MaungController;
 
 Route::get('/', function () {
     return redirect(route('login'));
@@ -111,5 +112,8 @@ Route::group(
         Route::get('/maung/fix_check', [MaungController::class, 'fix_check']);
         Route::get('/maung/fix_update', [MaungController::class, 'fix_update']);
 
+        Route::get('amount-details/{id}/fix', [UserLogFixController::class, 'index']);
+
+        Route::post('amount-details/{id}/fix', [UserLogFixController::class, 'add'])->name('amount_details.add');
     }
 );
