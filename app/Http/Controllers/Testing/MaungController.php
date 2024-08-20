@@ -49,22 +49,24 @@ class MaungController extends Controller
 
     // check and fix
 
-    public function fix()
+    public function fix($id)
     {
         $groups = [ 52117 ];
 
-        $maungs = FootballMaung::whereIn('maung_group_id', $groups)->get();
+        // $maungs = FootballMaung::whereIn('maung_group_id', $groups)->get();
+        $maungs = FootballMaung::where('maung_group_id', $id)->get();
 
         $service = (new MaungServiceCheck())->execute($maungs);
 
         return $service;
     }
 
-    public function fix_check()
+    public function fix_check($id)
     {
-        $groups = [ 52117 ];
+        // $groups = [ 52117 ];
 
-        $bets = FootballBet::whereIn('maung_group_id', $groups)->with('user')->get();
+        // $bets = FootballBet::whereIn('maung_group_id', $groups)->with('user')->get();
+        $bets = FootballBet::where('maung_group_id', $id)->with('user')->get();
 
         return $bets;
     }
@@ -77,6 +79,7 @@ class MaungController extends Controller
         $bets = FootballBet::whereIn('maung_group_id', $groups)->get();
 
         foreach ($bets as $bet) {
+
             $win_amount = $bet->temp_amount - ($bet->temp_amount * 0.15);
 
             $bet->update([
