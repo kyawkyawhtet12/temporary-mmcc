@@ -30,6 +30,10 @@
                                 <h4 class="card-title"> Match List </h4>
 
                                 <div>
+                                    <a href="{{ route('ballone.maung.win.check') }}" class="btn btn-info mr-3">
+                                        Win Result
+                                    </a>
+
                                     @if( $enabled->maung_status )
                                     <a href="{{ route('ballone.maung-fees.enabled') }}" class="btn btn-success">
                                         Close Maung Fees
