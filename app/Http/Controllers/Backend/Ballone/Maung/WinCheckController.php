@@ -28,12 +28,14 @@ class WinCheckController extends Controller
                         ->latest()
                         ->get();
 
-        // return $bets;
-
-
         $this->winRecordService->execute($bets);
 
-        $wins = $bets->load('maung.teams');
+        $wins =  FootballBet::where('round', $this->round)
+        ->with('user','agent', 'maung.teams')
+        ->where('status', 1)
+        ->where('is_done', 1 )
+        ->latest()
+        ->get();
 
         // return $wins;
 

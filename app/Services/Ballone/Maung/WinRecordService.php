@@ -24,6 +24,10 @@ class WinRecordService
                 // payment logs
 
                 $this->addUserLog($betting, $betting->net_amount);
+
+                $betting->update([
+                    'is_done' => 1
+                ]);
             }
 
 
@@ -32,7 +36,9 @@ class WinRecordService
 
     public function addWinRecord($bet, $amount)
     {
-        WinRecord::firstOrCreate([
+        $winrecord = new WinRecord();
+
+        $winrecord->firstOrCreate([
             'user_id'    => $bet->user_id,
             'agent_id'   => $bet->agent_id,
             'type'       => "Maung",
