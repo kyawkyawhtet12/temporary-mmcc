@@ -21,7 +21,7 @@ class BodyRecordRepository
         return $this->filterQuery($query)
 
             ->select(
-                'round',
+                'football_matches.round',
 
                 DB::raw('SUM(amount) as betting_amount'),
 
@@ -33,9 +33,9 @@ class BodyRecordRepository
                 DB::raw('SUM(amount) - SUM(net_amount) as net_amount'),
             )
 
-            ->orderByDesc('round')
+            ->orderByDesc('football_matches.round')
 
-            ->groupBy('round')
+            ->groupBy('football_matches.round')
 
             ->get();
     }
