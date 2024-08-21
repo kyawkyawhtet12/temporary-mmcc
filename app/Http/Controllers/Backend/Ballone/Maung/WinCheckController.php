@@ -21,14 +21,7 @@ class WinCheckController extends Controller
     {
         // return "ok";
 
-        $bets = FootballBet::where('round', $this->round)
-                        ->with('user','agent')
-                        ->where('status', 1)
-                        ->where('is_done', 0 )
-                        ->latest()
-                        ->get();
-
-        $this->winRecordService->execute($bets);
+        $this->winRecordService->execute($this->round);
 
         $wins =  FootballBet::where('round', $this->round)
         ->with('user','agent', 'maung.teams')

@@ -4,41 +4,44 @@ namespace App\Services\Ballone\Maung;
 
 use App\Models\UserLog;
 use App\Models\WinRecord;
+use App\Models\FootballBet;
 use App\Models\FootballMaungGroup;
 use Illuminate\Support\Facades\DB;
 
 class WinRecordService
 {
-    public function execute($bettings)
+    public function execute($round)
     {
+        $bets = FootballBet::where('round', $round)
+                        ->with('user','agent')
+                        ->where('status', 1)
+                        ->where('is_done', 0 )
+                        ->chunkById(50, function ($bettings) {
+                            DB::transaction(function () use ($bettings) {
 
-        DB::transaction(function () use ($bettings) {
+                                foreach ($bettings as $betting) {
 
-            foreach ($bettings as $betting) {
+                                    if ($betting->net_amount > $betting->amount) {
 
-                if ($betting->net_amount > $betting->amount) {
+                                        $this->addWinRecord($betting, $betting->net_amount);
+                                    }
 
-                    $this->addWinRecord($betting, $betting->net_amount);
-                }
+                                    // payment logs
 
-                // payment logs
+                                    $this->addUserLog($betting, $betting->net_amount);
 
-                $this->addUserLog($betting, $betting->net_amount);
+                                    $betting->update([
+                                        'is_done' => 1
+                                    ]);
+                                }
 
-                $betting->update([
-                    'is_done' => 1
-                ]);
-            }
-
-
-        });
+                            });
+                        });
     }
 
     public function addWinRecord($bet, $amount)
     {
-        $winrecord = new WinRecord();
-
-        $winrecord->firstOrCreate([
+        WinRecord::firstOrCreate([
             'user_id'    => $bet->user_id,
             'agent_id'   => $bet->agent_id,
             'type'       => "Maung",
