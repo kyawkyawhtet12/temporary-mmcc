@@ -17,7 +17,7 @@ class WinRecordService
                         ->with('user','agent')
                         ->where('status', 1)
                         ->where('is_done', 0 )
-                        ->chunkById(50, function ($bettings) {
+                        ->chunkById(200, function ($bettings) {
                             DB::transaction(function () use ($bettings) {
 
                                 foreach ($bettings as $betting) {

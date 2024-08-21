@@ -46,12 +46,6 @@ class MaungWinService
 
                 if ($betting->betting_record->result == 'No Prize') {
 
-                    // if ($net_amount > $betting->amount) {
-
-                    //     $this->addWinRecord($group, $net_amount);
-
-                    // }
-
                     $betting
                     ->betting_record()
                     ->update([
@@ -63,12 +57,6 @@ class MaungWinService
                             'status'     => 1,
                             'net_amount' => $net_amount
                         ]);
-
-                    // payment logs
-
-                    // $this->addUserLog($group, $net_amount);
-
-
                 }
             }
 

@@ -69,6 +69,13 @@ class MaungService
                             'status' => 2,
                             'is_done' => 1
                         ]);
+
+                        $betting
+                        ->betting_record()
+                        ->update([
+                                'result'     => 'No WIn',
+                                'win_amount' => 0
+                            ]);
                     }
 
                     $maung->update(['status' => $status]);
