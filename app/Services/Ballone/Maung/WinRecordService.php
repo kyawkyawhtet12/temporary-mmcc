@@ -13,6 +13,7 @@ class WinRecordService
     public function execute($round)
     {
         $bets = FootballBet::where('round', $round)
+                        ->whereNotNull('maung_group_id')
                         ->with('user','agent')
                         ->where('status', 1)
                         ->where('is_done', 0 )
