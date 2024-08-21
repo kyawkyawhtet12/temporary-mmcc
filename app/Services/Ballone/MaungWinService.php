@@ -19,14 +19,13 @@ class MaungWinService
     public function calculate($maung_group_ids)
     {
         $groups = FootballMaungGroup::query()
-            ->whereIn('id', $maung_group_ids)
-            ->withCount('pending_maungs')
-            ->having('pending_maungs_count', 0)
-            ->with('bet')
-            ->whereHas('bet', function ($q) {
-                $q->where('status', 0);
-            })
-            ->get();
+                                    ->with('bet')
+                                    ->whereIn('id', $maung_group_ids)
+                                    ->withCount('pending_maungs')
+                                    ->having('pending_maungs_count', 0)
+                                    ->where('is_done', 0)
+                                    ->where('status', '!=', 2)
+                                    ->get();
 
       return DB::transaction(function () use ($groups) {
 
@@ -40,55 +39,35 @@ class MaungWinService
 
                 $net_amount = (int) ($win_amount - ($win_amount * $charge_percent));
 
+                $group->update([
+                    'status' => 1,
+                    'is_done' => 1
+                ]);
+
                 if ($betting->betting_record->result == 'No Prize') {
 
-                    $result = 'No Win';
+                    // if ($net_amount > $betting->amount) {
 
-                    if ($net_amount > $betting->amount) {
+                    //     $this->addWinRecord($group, $net_amount);
 
-                        WinRecord::firstOrCreate([
-                            'user_id'    => $group->user_id,
-                            'agent_id'   => $group->agent_id,
-                            'type'       => "Maung",
-                            'amount'     => $net_amount,
-                            'betting_id' => $group->id
+                    // }
+
+                    $betting
+                    ->betting_record()
+                    ->update([
+                            'result'     => $net_amount > $betting->amount ? 'Win' : 'No WIn',
+                            'win_amount' => $net_amount
                         ]);
 
-                        $result = 'Win';
-                    }
-
-                    $betting->betting_record()->update(
-                        [
-                            'result' => $result,
-                            'win_amount' => $net_amount
-                        ]
-                    );
-
-                    $betting->update(
-                        [
+                    $betting->update([
                             'status'     => 1,
                             'net_amount' => $net_amount
-                        ]
-                    );
+                        ]);
 
                     // payment logs
 
-                    $logs = UserLog::firstOrCreate([
-                        'user_id' => $group->user_id,
-                        'agent_id' => $group->agent_id,
-                        'operation' => 'Maung Win',
-                        'remark' => $group->id
-                    ],[
-                        'amount' => $net_amount,
-                        'start_balance' => $group->user->amount,
-                        'end_balance' => $group->user->amount + $net_amount
-                    ]);
+                    // $this->addUserLog($group, $net_amount);
 
-                    if( $logs->wasRecentlyCreated){
-
-                        $group->user()->increment('amount', $net_amount);
-
-                    }
 
                 }
             }
@@ -96,5 +75,36 @@ class MaungWinService
             return $groups;
 
         });
+    }
+
+    public function addWinRecord($bet, $amount)
+    {
+        WinRecord::firstOrCreate([
+            'user_id'    => $bet->user_id,
+            'agent_id'   => $bet->agent_id,
+            'type'       => "Maung",
+            'amount'     => $amount,
+            'betting_id' => $bet->id
+        ]);
+    }
+
+    public function addUserLog($bet, $amount)
+    {
+        $logs = UserLog::firstOrCreate([
+            'user_id' => $bet->user_id,
+            'agent_id' => $bet->agent_id,
+            'operation' => 'Maung Win',
+            'remark' => $bet->id
+        ],[
+            'amount' => $amount,
+            'start_balance' => $bet->user->amount,
+            'end_balance' => $bet->user->amount + $amount
+        ]);
+
+        if( $logs->wasRecentlyCreated){
+
+            $bet->user()->increment('amount', $amount);
+
+        }
     }
 }

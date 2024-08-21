@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Controllers\Backend\Ballone\Maung;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\FootballBet;
+use App\Services\Ballone\Maung\WinRecordService;
+
+class WinCheckController extends Controller
+{
+    protected $round;
+
+    public function __construct(protected WinRecordService $winRecordService)
+    {
+        $this->round = DB::table("football_matches")->latest('round')->first()?->round;
+    }
+
+    public function index()
+    {
+        // return "ok";
+
+        $bets = FootballBet::where('round', $this->round)
+                        ->with('user','agent')
+                        ->where('status', 1)
+                        ->where('is_done', 0 )
+                        ->latest()
+                        ->get();
+
+        // return $bets;
+
+
+        $this->winRecordService->execute($bets);
+
+        $wins = $bets->load('maung.teams');
+
+        // return $wins;
+
+        return view("backend.admin.ballone.match.maung.win_result", compact("wins"));
+    }
+
+}

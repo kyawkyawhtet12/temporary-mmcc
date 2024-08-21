@@ -92,3 +92,8 @@ Route::get('match/maung-report/{id}/{fee_id}', 'Ballone\ReportDetailController@m
 
 Route::get('football/body-detail/{id}', 'Ballone\ReportDetailController@bodyDetail')->name('match.body.detail.report');
 Route::get('football/maung-detail/{id}', 'Ballone\ReportDetailController@maungDetail')->name('match.maung.detail.report');
+
+
+// Maung Win
+
+Route::get('maung-win/check', 'Ballone\Maung\WinCheckController@index')->name('ballone.maung.win.check');

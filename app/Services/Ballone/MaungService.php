@@ -30,11 +30,11 @@ class MaungService
 
             foreach ($maungs as $maung) {
 
-                $group = $maung->bet->loadCount('teams')->load('bet'); // maung group
+                // $group = $maung->bet->loadCount('teams')->load('bet'); // maung group
 
-                $betting = $group->bet; // football bet
+                $betting = $maung->bet->bet; // football bet
 
-                if ($betting->status == 0) {
+                if ($betting->status == 0 && $maung->bet->is_done == 0) {
 
                     $result  =  $maung->fees->result;
 
@@ -63,9 +63,11 @@ class MaungService
 
                         $betting->net_amount = 0;
 
-                        $betting->betting_record()->update([
-                            'result' => 'No Win',
-                            'win_amount' => 0
+                        $betting->is_done = 1;
+
+                        $maung->bet()->update([
+                            'status' => 2,
+                            'is_done' => 1
                         ]);
                     }
 
@@ -80,79 +82,5 @@ class MaungService
         });
     }
 
-    public function calculation($betting, $group)
-    {
-        $data = FootballMaung::where('maung_group_id', $group->id)
-            ->where('status', 0)
-            ->count();
 
-        // ပွဲ မကျန်တော့ရင် အလျော်အစားလုပ်
-
-        if ($data == 0 && $betting->status == 0) {
-
-            DB::transaction(function () use ($betting, $group) {
-
-                $charge_percent = ($this->za[$group->teams_count] ?? 0) / 100;
-
-                $win_amount = $betting->net_amount;
-
-                $net_amount = (int) ($win_amount - ($win_amount * $charge_percent));
-
-                if ($betting->betting_record->result == 'No Prize') {
-
-                    $result = 'No Win';
-
-                    if ($net_amount > $betting->amount) {
-                        WinRecord::firstOrCreate([
-                            'user_id'    => $group->user_id,
-                            'agent_id'   => $group->agent_id,
-                            'type'       => "Maung",
-                            'amount'     => $net_amount,
-                            'betting_id' => $group->id
-                        ]);
-
-                        $result = 'Win';
-                    }
-
-                    $betting->betting_record()->update(
-                        [
-                            'result' => $result,
-                            'win_amount' => $net_amount
-                        ]
-                    );
-
-                    $betting->update(
-                        [
-                            'status'     => 1,
-                            'net_amount' => $net_amount
-                        ]
-                    );
-
-
-                    // check user log already add or not
-                    $check = UserLog::where('user_id', $group->user_id)
-                        ->where('remark', $group->id)
-                        ->where('operation', 'Maung Win')
-                        ->doesntExist();
-
-                    if ($check) {
-
-                        UserLog::create(
-                            [
-                                'agent_id' => $group->agent_id,
-                                'user_id' => $group->user_id,
-                                'remark' => $group->id,
-                                'operation' => 'Maung Win',
-                                'amount' => $net_amount,
-                                'start_balance' => $group->user->amount,
-                                'end_balance' => $group->user->amount + $net_amount
-                            ]
-                        );
-
-                        $group->user()->increment('amount', $net_amount);
-                    }
-                }
-            });
-        }
-    }
 }
