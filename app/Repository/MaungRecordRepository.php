@@ -44,7 +44,7 @@ class MaungRecordRepository
                 // DB::raw('SUM(net_amount) as win_amount'),
                 DB::raw('SUM(CASE when football_bets.status != 0 then net_amount end) as win_amount'),
 
-                DB::raw('COUNT(CASE when football_bets.status != 0 then 1 end) as win_count'),
+                DB::raw('COUNT(CASE when football_bets.status = 1 then 1 end) as win_count'),
                 // DB::raw('COUNT(CASE when net_amount != 0 then 1 end) as win_count'),
 
                 DB::raw('SUM(amount) - SUM(net_amount) as net_amount'),
