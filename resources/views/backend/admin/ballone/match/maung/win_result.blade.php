@@ -50,7 +50,7 @@
                                                 <td>{{ $win->agent?->name }}</td>
                                                 <td>{{ $win->created_at }}</td>
                                                 <td>{{ $win->amount }}</td>
-                                                <td>{{ $win->maung->teams->count() }}</td>
+                                                <td>{{ $win->total_count }}</td>
                                                 <td>{{ $win->net_amount }}</td>
                                                 <td>{{ $win->updated_at }}</td>
                                             </tr>

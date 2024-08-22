@@ -24,14 +24,15 @@ class WinCheckController extends Controller
         $this->winRecordService->execute($this->round);
 
         $wins =  FootballBet::where('round', $this->round)
-        ->whereNotNull('maung_group_id')
-        ->with('user','agent', 'maung.teams')
-        ->where('status', 1)
-        ->where('is_done', 1 )
-        ->latest()
-        ->get();
-
-        // return $wins;
+                            ->whereNotNull('maung_group_id')
+                            ->with([
+                                'user:id,user_id','agent:id,name'
+                            ])
+                            ->withCount('maung_teams as total_count')
+                            ->where('status', 1)
+                            ->where('is_done', 1 )
+                            ->latest()
+                            ->get();
 
         return view("backend.admin.ballone.match.maung.win_result", compact("wins"));
     }

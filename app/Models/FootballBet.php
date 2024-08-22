@@ -21,6 +21,11 @@ class FootballBet extends Model
         return $this->belongsTo(FootballMaungGroup::class, 'maung_group_id');
     }
 
+    public function maung_teams()
+    {
+        return $this->hasMany(FootballMaung::class, 'maung_group_id', 'maung_group_id');
+    }
+
     public function agent()
     {
         return $this->belongsTo(Agent::class, 'agent_id');
