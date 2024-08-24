@@ -57,3 +57,7 @@ table thead tr.bg-primary {
     background: unset !important;
     border: unset !important;
 }
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f6fbff !important;
+}

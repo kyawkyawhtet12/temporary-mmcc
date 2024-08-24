@@ -13,10 +13,6 @@
         table .done {
             background-color: #dff8ff;
         }
-
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #f6fbff !important;
-        }
     </style>
 @endsection
 

@@ -5,19 +5,19 @@ namespace App\Services\Ballone\Maung;
 use App\Models\UserLog;
 use App\Models\WinRecord;
 use App\Models\FootballBet;
-use App\Models\FootballMaungGroup;
 use Illuminate\Support\Facades\DB;
 
 class WinRecordService
 {
     public function execute($round)
     {
-        $bets = FootballBet::where('round', $round)
-                        ->whereNotNull('maung_group_id')
-                        ->with('user','agent')
-                        ->where('status', 1)
+        $bets = FootballBet::query()
+                        ->where('round', $round)
+                        ->maungWinFilter()
                         ->where('is_done', 0 )
+                        ->with('user')
                         ->chunkById(200, function ($bettings) {
+
                             DB::transaction(function () use ($bettings) {
 
                                 foreach ($bettings as $betting) {
@@ -31,9 +31,7 @@ class WinRecordService
 
                                     $this->addUserLog($betting, $betting->net_amount);
 
-                                    $betting->update([
-                                        'is_done' => 1
-                                    ]);
+                                    $betting->update([ 'is_done' => 1 ]);
                                 }
 
                             });
