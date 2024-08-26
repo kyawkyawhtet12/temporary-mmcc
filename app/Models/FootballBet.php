@@ -29,7 +29,8 @@ class FootballBet extends Model
     public function maung_win()
     {
         return $this->hasOne(WinRecord::class, 'betting_id', 'maung_group_id')
-        ->where('type', 'Maung')->where('status', '!=', 2);
+        ->where('type', 'Maung')
+        ->where('status', '!=', 2);
     }
 
     public function agent()
@@ -95,5 +96,10 @@ class FootballBet extends Model
     public function getResultColorAttribute()
     {
         return $this->net_amount > $this->amount ? 'text-info' : 'text-danger';
+    }
+
+    public function getBettingTimeAttribute()
+    {
+        return $this->created_at->format('d-m-Y h:i A');
     }
 }

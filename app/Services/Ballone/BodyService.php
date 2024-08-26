@@ -2,6 +2,7 @@
 
 namespace App\Services\Ballone;
 
+use App\Models\UserLog;
 use App\Services\RecordService;
 use App\Services\UserLogService;
 
@@ -35,10 +36,28 @@ class BodyService
                 $net_amount = $betAmount + $win_amount;
 
                 if( $net_amount > $betAmount ){
-                    (new RecordService())->add($body->user, $net_amount, "Body");
+                    (new RecordService())->executeAddRecord($body , $net_amount, "Body");
                 }
 
-                (new UserLogService())->add($body->user, $net_amount, 'Body Win');
+                // (new UserLogService())->add($body , $net_amount, 'Body Win');
+
+                $logs = UserLog::firstOrCreate([
+                    'user_id' => $body->user_id,
+                    'agent_id' => $body->agent_id,
+                    'operation' => 'Body Win',
+                    'remark' => $body->id
+                ],[
+                    'amount' => $net_amount,
+                    'start_balance' => $body->user->amount,
+                    'end_balance' => $body->user->amount + $net_amount
+                ]);
+
+                if( $logs->wasRecentlyCreated){
+
+                    $body->user()->increment('amount', $net_amount);
+
+                }
+
 
                 $record = $betting->betting_record;
 
@@ -48,7 +67,7 @@ class BodyService
                     'result' => ($record->win_amount > $record->amount ) ? "Win" : "No Win"
                 ]);
 
-                $body->user->increment('amount', $net_amount);
+                // $body->user->increment('amount', $net_amount);
 
                 $betting->update([
                     'status' => $status ,

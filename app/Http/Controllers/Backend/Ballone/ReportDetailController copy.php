@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Backend\Ballone;
 
-use App\Models\User;
 use App\Models\FootballBet;
 use App\Models\FootballBody;
 use Illuminate\Http\Request;
 use App\Models\FootballMaung;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use App\Services\Ballone\RefundService;
 use Illuminate\Support\Facades\Session;
 use App\Http\Resources\BettingRecord\Collection\BodyCollection;
 use App\Http\Resources\BettingRecord\Collection\MaungCollection;
-use App\Services\Ballone\Body\BettingReportService;
 
 class ReportDetailController extends Controller
 {
@@ -26,14 +22,11 @@ class ReportDetailController extends Controller
             Session::put("prev_route", url()->previous());
         }
 
-        $service = new BettingReportService();
+        $body = FootballBody::with('user', 'agent', 'bet')->where('match_id', $id)->where('fee_id', $fee_id)->get();
 
-        $data = [
-            'report'   => $service->executeReportAmount($fee_id),
-            'bettings' => $service->executeRecords($fee_id)
-        ];
+        // return $body->where('type', 'home')->sum('')
 
-        return view('backend.admin.ballone.match.body.detail', compact('data'));
+        return view('backend.admin.ballone.match.body.detail', compact('body'));
     }
 
     public function bodyDetail($id)

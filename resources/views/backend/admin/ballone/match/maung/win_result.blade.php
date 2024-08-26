@@ -47,8 +47,8 @@
                 <div class="card-body">
                     <div class="row d-flex">
 
-                        <div class="col">
-                            <input type="text" class="form-control" value="Round : 100" readonly>
+                        <div class="col-md-1">
+                            <input type="text" class="form-control text-center" value="" placeholder="Round" id="round_no" readonly>
                         </div>
 
                         <div class="col-md-3 multiSelect">
@@ -161,7 +161,7 @@
                             ${parseFloat(report.win).toLocaleString()} ( ${report.count} )
                         `);
 
-                        $("#round_no").text(report.round);
+                        $("#round_no").val(report.round);
 
                         if(report.no_done > 0){
                             $("#refreshBtn").removeClass('d-none');
