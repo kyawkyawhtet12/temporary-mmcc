@@ -46,4 +46,16 @@ class UserLogFixController extends Controller
         return back()->with('success', 'success');
     }
 
+    // check amount
+    public function check_amount()
+    {
+        $date = today();
+        // $date = '2024-08-24';
+
+        $users = User::with('last_log:id,user_id,end_balance')->whereDate('updated_at', $date)->get();
+
+        // return $users;
+        return view("backend.admin.users.user_log_check", compact("users"));
+    }
+
 }

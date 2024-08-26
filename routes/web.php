@@ -116,5 +116,7 @@ Route::group(
         Route::get('amount-details/{id}/fix', [UserLogFixController::class, 'index']);
 
         Route::post('amount-details/{id}/fix', [UserLogFixController::class, 'add'])->name('amount_details.add');
+
+        Route::get("/user-log/check", [UserLogFixController::class, 'check_amount']);
     }
 );

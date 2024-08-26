@@ -90,4 +90,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cashout::class)->where('status', 'Approved');
     }
+
+    // last log
+    public function last_log()
+    {
+        return $this->hasOne(UserLog::class)->latest()->limit(1);
+    }
 }
