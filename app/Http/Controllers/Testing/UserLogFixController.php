@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Testing;
 use App\Models\User;
 use App\Models\UserLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class UserLogFixController extends Controller
@@ -52,10 +53,26 @@ class UserLogFixController extends Controller
         $date = today();
         // $date = '2024-08-24';
 
-        $users = User::with('last_log:id,user_id,end_balance')->whereDate('updated_at', $date)->get();
+        $data = [];
 
-        // return $users;
-        return view("backend.admin.users.user_log_check", compact("users"));
+        $users = User::with('last_log:id,user_id,end_balance')->whereDate('updated_at', $date)
+        ->chunkById(50, function ($user) {
+            DB::transaction(function () use ($user) {
+
+                foreach ($user as $u) {
+
+                    if ($u->amount != $u->last_log->end_balance) {
+
+                       $data[] = $u;
+
+                    }
+
+                }
+
+            });
+        });
+
+        return $data;
     }
 
 }
