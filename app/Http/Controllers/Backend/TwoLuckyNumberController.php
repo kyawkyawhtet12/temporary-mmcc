@@ -51,18 +51,21 @@ class TwoLuckyNumberController extends Controller
                     })
                     ->addColumn('action', function ($number) {
 
-                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
+                        if(is_admin()){
 
-                        // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
+                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
 
-                        if( $number->status == "Approved" && $number->date == today()->format('Y-m-d')){
+                            // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
 
-                            return '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="delete btn btn-danger deleteNumber">
-                                    Delete
-                            </a>';
+                            if( $number->status == "Approved" && $number->date == today()->format('Y-m-d')){
+
+                                return '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="delete btn btn-danger deleteNumber">
+                                        Delete
+                                </a>';
+                            }
+
+                            return ( $number->status == "Approved") ? "" : $btn;
                         }
-
-                        return ( $number->status == "Approved") ? "" : $btn;
 
                     })
                     // ->filter(function ($instance) use ($request) {

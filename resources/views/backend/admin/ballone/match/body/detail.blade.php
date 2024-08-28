@@ -54,6 +54,7 @@
                                                 <td class="status-{{ $dt->id }}">{{ $dt->bet?->status_format }}</td>
                                                 <td>{{ $dt->bet?->net_amount }}</td>
                                                 <td>
+                                                    @if(is_admin())
                                                     @if ($dt->refund == 0 && $dt->bet?->status == 0)
                                                         <a href="javascript:void(0)" class="btn btn-danger btn-sm cancelBet"
                                                             data-id="{{ $dt->id }}"
@@ -61,6 +62,7 @@
                                                         >
                                                             Cancel
                                                         </a>
+                                                    @endif
                                                     @endif
                                                 </td>
                                                 <td>
