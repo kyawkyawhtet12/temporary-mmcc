@@ -67,7 +67,9 @@ class ReportDetailController extends Controller
     public function maungCancel(Request $request)
     {
         $maung = FootballMaung::findOrFail($request->id);
+
         (new RefundService())->maungMatchRefund($maung);
+
         return response()->json('success');
     }
 }

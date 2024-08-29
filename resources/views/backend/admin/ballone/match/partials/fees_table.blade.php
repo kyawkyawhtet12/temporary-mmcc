@@ -105,6 +105,7 @@
                                         <i class="fa fa-edit text-success m-1"></i>
                                     </a>
 
+                                    @if(is_admin())
                                 @if ($dt->match->check_action($feesType))
                                     @if ($dt->match->check_delete())
                                         <a href="javascript:void(0)" data-id="{{ $dt->match->id }}"
@@ -118,6 +119,7 @@
                                             <i class="far fa-times-circle text-danger m-1"></i>
                                         </a>
                                     @endif
+                                @endif
                                 @endif
                             </td>
 
