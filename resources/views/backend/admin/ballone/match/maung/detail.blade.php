@@ -60,6 +60,7 @@
                                                     <td>{{ $dt->bet?->bet?->net_amount }}</td>
                                                 @endif
                                                 <td>
+                                                    @if(is_admin())
                                                     @if ($dt->refund == 0 && $dt->bet?->bet?->status == 0)
                                                         <a href="javascript:void(0)" class="btn btn-danger btn-sm cancelBet"
                                                             data-id="{{ $dt->id }}"
@@ -67,6 +68,7 @@
                                                         >
                                                             Cancel
                                                         </a>
+                                                    @endif
                                                     @endif
                                                 </td>
                                                 <td>
@@ -89,9 +91,9 @@
             </div>
 
             {{-- Maung Detail --}}
-            <x-ballone.view-detail></x-ballone.view-detail>
+            @include("backend.admin.ballone.match.partials.report_detail")
 
-            <x-ballone.betting-cancel></x-ballone.betting-cancel>
+            @include("backend.admin.ballone.match.partials._betting_cancel")
 
         </div>
         <!-- container-fluid -->

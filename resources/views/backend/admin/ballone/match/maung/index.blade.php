@@ -30,7 +30,8 @@
                                 <h4 class="card-title"> Match List </h4>
 
                                 <div>
-                                    <a href="{{ route('ballone.maung.win.check') }}" class="btn btn-info mr-3">
+                                    <a href="{{ route('ballone.maung.win.result') }}" class="btn btn-info mr-3">
+                                        <i class="fas fa-trophy mr-1" style="font-size:0.8rem"></i>
                                         Win Result
                                     </a>
 

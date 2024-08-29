@@ -96,4 +96,5 @@ Route::get('football/maung-detail/{id}', 'Ballone\ReportDetailController@maungDe
 
 // Maung Win
 
-Route::get('maung-win/check', 'Ballone\Maung\WinCheckController@index')->name('ballone.maung.win.check');
+Route::get('maung/win-result', 'Ballone\Maung\WinResultController@index')->name('ballone.maung.win.result.lists');
+Route::get('maung/win-result/check', 'Ballone\Maung\WinResultController@action')->name('ballone.maung.win.result');

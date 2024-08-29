@@ -22,38 +22,6 @@
             </div>
             <!-- end page title -->
 
-            <div class="row">
-                <div class="col-12 stretch-card">
-                    <div class="card bg-light">
-                        <div class="card-body px-5">
-                            <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center">
-
-                                <div>
-                                    <h5 class="mb-3"> Home </h5>
-                                    <h4>{{ $data['report']['home'] ?? 0 }}</h4>
-                                </div>
-
-                                <div>
-                                    <h5 class="mb-3"> Away </h5>
-                                    <h4>{{ $data['report']['away'] ?? 0 }}</h4>
-                                </div>
-
-                                <div>
-                                    <h5 class="mb-3"> Goal Over </h5>
-                                    <h4>{{ $data['report']['over'] ?? 0 }}</h4>
-                                </div>
-
-                                <div>
-                                    <h5 class="mb-3"> Goal Under </h5>
-                                    <h4>{{ $data['report']['under'] ?? 0 }}</h4>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {{-- Body Report List --}}
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
@@ -62,6 +30,43 @@
                             <h5> Body Report </h5>
                         </div>
                         <div class="card-body">
+                            <div class="my-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5> Match </h5>
+                                    <p> Arsenal Vs Manutd </p>
+                                </div>
+
+                                <div>
+                                    <p> Body 1+90 </p>
+                                    <p>  Goal 1+90 </p>
+                                </div>
+
+                                <div>
+                                    <h5> Goal </h5>
+                                    <p> 2-90 </p>
+                                </div>
+
+                                <div>
+                                    <h5> Home</h5>
+                                    <p> 100000 </p>
+                                </div>
+
+                                <div>
+                                    <h5> Home</h5>
+                                    <p> 100000 </p>
+                                </div>
+
+                                <div>
+                                    <h5> Home</h5>
+                                    <p> 100000 </p>
+                                </div>
+
+                                <div>
+                                    <h5> Home</h5>
+                                    <p> 100000 </p>
+                                </div>
+
+                            </div>
                             <div class="table-responsive">
                                 <table id="table" class="table table-bordered nowrap text-center">
                                     <thead>
@@ -77,40 +82,29 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($data['bettings'] as $x => $bet)
+                                        @foreach ($body as $k => $dt)
                                             <tr>
-                                                <td>{{ $bet->user->user_id }}</td>
-
-                                                <td>{{ $bet->agent->name }}</td>
-
-                                                <td>{{ $bet->betting_time }}</td>
-
-                                                <td>{{ $bet->amount_format }}</td>
-
-                                                <td class="status-{{ $bet->id }}">
-                                                    {{ $bet->status_format }}
-                                                </td>
-
-                                                <td>{{ $bet->net_amount }}</td>
-
+                                                <td>{{ $dt->user?->user_id }}</td>
+                                                <td>{{ $dt->agent?->name }}</td>
+                                                <td>{{ $dt->betting_time }}</td>
+                                                <td>{{ $dt->bet?->amount_format }}</td>
+                                                <td class="status-{{ $dt->id }}">{{ $dt->bet?->status_format }}</td>
+                                                <td>{{ $dt->bet?->net_amount }}</td>
                                                 <td>
-                                                    @if(is_admin())
-                                                    @if ($bet->status == 0)
+                                                    @if ($dt->refund == 0 && $dt->bet?->status == 0)
                                                         <a href="javascript:void(0)" class="btn btn-danger btn-sm cancelBet"
-                                                            data-id="{{ $bet->body_id }}"
+                                                            data-id="{{ $dt->id }}"
                                                             data-url="{{ route('ballone.body.refund') }}"
                                                         >
                                                             Cancel
                                                         </a>
                                                     @endif
-                                                    @endif
                                                 </td>
-
                                                 <td>
                                                     <a href="javascript:void(0)" class="btn btn-success btn-sm viewDetail"
-                                                        data-id="{{ $bet->body_id }}"
+                                                        data-id="{{ $dt->id }}"
                                                         data-type="body-detail"
-                                                        data-amount="{{ $bet->amount_format }}">
+                                                        data-amount="{{ $dt->bet?->amount_format }}">
                                                         view
                                                     </a>
                                                 </td>
@@ -125,10 +119,9 @@
             </div>
 
             {{-- Body Detail --}}
-            @include("backend.admin.ballone.match.partials.report_detail")
+            <x-ballone.view-detail></x-ballone.view-detail>
 
-            @include("backend.admin.ballone.match.partials._betting_cancel")
-\
+            <x-ballone.betting-cancel></x-ballone.betting-cancel>
         </div>
         <!-- container-fluid -->
     </div>

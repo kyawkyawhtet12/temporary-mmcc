@@ -25,10 +25,10 @@
                                 </td>
                             </tr>
                         </tbody>
-                        <tfoot>
+                        <tfoot class="d-none">
                             <tr>
                                 <td class="" colspan="6"></td>
-                                <td id="maung-amount"></td>
+                                <td id="amount"></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -74,8 +74,13 @@
                                         <td> ${dt.result} </td>
                                         <td> </td>
                                     </tr>`;
-                                $("#maung-amount").text(amount);
+
                             });
+
+
+                            $("tfoot #amount").text(amount);
+                            $("tfoot").removeClass('d-none');
+
                         }else{
                             tr += `<tr>
                                     <td> 1 </td>
@@ -95,6 +100,7 @@
                 $(this).parent().parent().addClass('text-danger');
 
             });
+
         });
     </script>
 @endsection

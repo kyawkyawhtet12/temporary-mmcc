@@ -26,6 +26,13 @@ class FootballBet extends Model
         return $this->hasMany(FootballMaung::class, 'maung_group_id', 'maung_group_id');
     }
 
+    public function maung_win()
+    {
+        return $this->hasOne(WinRecord::class, 'betting_id', 'maung_group_id')
+        ->where('type', 'Maung')
+        ->where('status', '!=', 2);
+    }
+
     public function agent()
     {
         return $this->belongsTo(Agent::class, 'agent_id');
@@ -69,5 +76,30 @@ class FootballBet extends Model
                 return "-";
                 break;
         }
+    }
+
+    public function scopeMaungWinFilter($query)
+    {
+        $query->whereNotNull('maung_group_id')->whereStatus(1);
+    }
+
+    public function scopeDoneFilter($query , $done = 0)
+    {
+        $query->where('is_done', $done);
+    }
+
+    public function getResultAttribute()
+    {
+        return $this->net_amount > $this->amount ? 'Win' : 'No Win';
+    }
+
+    public function getResultColorAttribute()
+    {
+        return $this->net_amount > $this->amount ? 'text-info' : 'text-danger';
+    }
+
+    public function getBettingTimeAttribute()
+    {
+        return $this->created_at->format('d-m-Y h:i A');
     }
 }
