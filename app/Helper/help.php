@@ -89,3 +89,28 @@ function getTotalAmountRecords($data)
     return $total;
 }
 
+
+function getFootballBettingStatus($status)
+{
+    switch ($status) {
+        case 0:
+            return "Pending";
+            break;
+        case 1:
+            return "Win";
+            break;
+        case 2:
+            return "No Win";
+            break;
+        case 3:
+            return "Draw";
+            break;
+        case 4:
+            return "Refund";
+            break;
+
+        default:
+            return "-";
+            break;
+    }
+}

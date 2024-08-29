@@ -51,11 +51,9 @@ class TwoLuckyNumberController extends Controller
                     })
                     ->addColumn('action', function ($number) {
 
+                        $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
+
                         if(is_admin()){
-
-                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Edit" class="edit btn btn-warning editNumber">Edit</a>';
-
-                            // $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$number->id.'" data-original-title="Delete" class="btn btn-danger deleteNumber">Delete</a>';
 
                             if( $number->status == "Approved" && $number->date == today()->format('Y-m-d')){
 
@@ -63,9 +61,9 @@ class TwoLuckyNumberController extends Controller
                                         Delete
                                 </a>';
                             }
-
-                            return ( $number->status == "Approved") ? "" : $btn;
                         }
+
+                        return ( $number->status == "Approved") ? "" : $btn;
 
                     })
                     // ->filter(function ($instance) use ($request) {

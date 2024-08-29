@@ -91,9 +91,9 @@
             </div>
 
             {{-- Maung Detail --}}
-            <x-ballone.view-detail></x-ballone.view-detail>
+            @include("backend.admin.ballone.match.partials.report_detail")
 
-            <x-ballone.betting-cancel></x-ballone.betting-cancel>
+            @include("backend.admin.ballone.match.partials._betting_cancel")
 
         </div>
         <!-- container-fluid -->

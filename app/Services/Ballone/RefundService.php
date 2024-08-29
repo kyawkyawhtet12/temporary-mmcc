@@ -35,12 +35,12 @@ class RefundService
     {
         $maung->update(['status' => 4, 'refund' => 1]);
 
-        $maung->bet->decrement('count', 1);
+        // $maung->bet->decrement('count', 1);
 
-        $betting = $maung->bet->bet;
+        // $betting = $maung->bet->bet;
 
 
-        (new MaungService())->calculation($betting, $maung);
+        // (new MaungService())->calculation($betting, $maung);
 
         // if( $maung->bet->count == 1 ){
         //     $this->history_add($maung, $betting);

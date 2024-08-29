@@ -30,22 +30,22 @@
 
                                 <div>
                                     <h5 class="mb-3"> Home </h5>
-                                    <h4>{{ number_format($data['report']['home'] ?? 0) }}</h4>
+                                    <h4>{{ $data['report']['home'] ?? 0 }}</h4>
                                 </div>
 
                                 <div>
                                     <h5 class="mb-3"> Away </h5>
-                                    <h4>{{ number_format($data['report']['away'] ?? 0) }}</h4>
+                                    <h4>{{ $data['report']['away'] ?? 0 }}</h4>
                                 </div>
 
                                 <div>
                                     <h5 class="mb-3"> Goal Over </h5>
-                                    <h4>{{ number_format($data['report']['over'] ?? 0) }}</h4>
+                                    <h4>{{ $data['report']['over'] ?? 0 }}</h4>
                                 </div>
 
                                 <div>
                                     <h5 class="mb-3"> Goal Under </h5>
-                                    <h4>{{ number_format($data['report']['under'] ?? 0) }}</h4>
+                                    <h4>{{ $data['report']['under'] ?? 0 }}</h4>
                                 </div>
 
                             </div>
@@ -63,10 +63,9 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="datatable" class="table table-bordered nowrap text-center">
+                                <table id="table" class="table table-bordered nowrap text-center">
                                     <thead>
                                         <tr>
-                                            <th>No.</th>
                                             <th>User ID</th>
                                             <th>Agent</th>
                                             <th>Betting Time</th>
@@ -80,21 +79,19 @@
                                     <tbody>
                                         @foreach ($data['bettings'] as $x => $bet)
                                             <tr>
-                                                <td>{{ ++$x }}</td>
+                                                <td>{{ $bet->user->user_id }}</td>
 
-                                                <td>{{ $bet->user_id }}</td>
+                                                <td>{{ $bet->agent->name }}</td>
 
-                                                <td>{{ $bet->agent_name }}</td>
+                                                <td>{{ $bet->betting_time }}</td>
 
-                                                <td>{{ dateTimeFormat($bet->betting_time) }}</td>
-
-                                                <td>{{ number_format($bet->betting_amount) }}</td>
+                                                <td>{{ $bet->amount_format }}</td>
 
                                                 <td class="status-{{ $bet->id }}">
-                                                    {{ getFootballBettingStatus($bet->status) }}
+                                                    {{ $bet->status_format }}
                                                 </td>
 
-                                                <td>{{ number_format($bet->win_amount) }}</td>
+                                                <td>{{ $bet->net_amount }}</td>
 
                                                 <td>
                                                     @if(is_admin())
@@ -113,7 +110,7 @@
                                                     <a href="javascript:void(0)" class="btn btn-success btn-sm viewDetail"
                                                         data-id="{{ $bet->body_id }}"
                                                         data-type="body-detail"
-                                                        data-amount="{{ number_format($bet->betting_amount) }}">
+                                                        data-amount="{{ $bet->amount_format }}">
                                                         view
                                                     </a>
                                                 </td>
@@ -138,20 +135,3 @@
 @endsection
 
 
-
-@push('scripts')
-
-    <script>
-        $(function() {
-
-
-            var table = $('#datatable').DataTable({
-
-                searching : false,
-                ordering : false
-            });
-
-        });
-    </script>
-
-@endpush
