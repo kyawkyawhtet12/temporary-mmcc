@@ -13,19 +13,19 @@ class MaungServiceCheck
     {
         DB::transaction(function () use ($maungs) {
 
-            foreach ($maungs as $maung) {
+            $maungs = $maungs->load(['bet.bet', 'fees.result']);
 
-                $group = $maung->bet->loadCount('teams')->load('bet'); // maung group
-
-                $betting = $group->bet; // football bet
-
-                $result  =  $maung->fees->result;
+            foreach ($maungs as $x => $maung) {
 
                 $type    =  $maung->type;
 
-                $percent =  $result->$type;
+                $betting = $maung->bet->bet; // football bet
 
-                $betAmount = $betting->temp_amount == 0 ? $betting->amount : $betting->temp_amount;
+                $percent  =  $maung->fees->result->$type;
+
+                $temp_amount = $x == 0 ? 0 : $betting->temp_amount;
+
+                $betAmount = $temp_amount == 0 ? $betting->amount : $betting->temp_amount;
 
                 $status = 1;
 
