@@ -49,24 +49,27 @@ class MaungController extends Controller
 
     // check and fix
 
-    public function fix($id)
+    public function fix($round)
     {
-        $groups = [ 52117 ];
+        $groups = FootballMaungGroup::where('round', $round)
+        ->where('status', 1)
+        ->with(['teams'])
+        ->chunkById(100, function($query){
+            foreach($query as $q){
+                (new MaungServiceCheck())->execute($q->teams);
+            }
+        });
 
-        // $maungs = FootballMaung::whereIn('maung_group_id', $groups)->get();
-        $maungs = FootballMaung::where('maung_group_id', $id)->get();
+        return $groups;
 
-        $service = (new MaungServiceCheck())->execute($maungs);
-
-        return $service;
     }
 
-    public function fix_check($id)
+    public function fix_check($round)
     {
-        // $groups = [ 52117 ];
-
-        // $bets = FootballBet::whereIn('maung_group_id', $groups)->with('user')->get();
-        $bets = FootballBet::where('maung_group_id', $id)->with('user')->get();
+        $bets = FootballBet::where('round', $round)
+        ->whereNotNull('maung_group_id')
+        ->where('status', 1)
+        ->get();
 
         return $bets;
     }
