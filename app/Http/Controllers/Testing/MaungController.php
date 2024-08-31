@@ -22,29 +22,27 @@ class MaungController extends Controller
 
         return 'test';
         $maungs = FootballMaung::query()
-                                ->with(['fees.result', 'bet'])
-                                ->where('match_id', $match_id)
-                                ->where('status', 0)
-                                ->get();
+            ->with(['fees.result', 'bet'])
+            ->where('match_id', $match_id)
+            ->where('status', 0)
+            ->get();
 
         $maung_group_ids = $maungs->pluck('maung_group_id')->unique();
 
         // return $maungs;
-        $percentage = [ 100 , 70 , 60 ];
+        $percentage = [100, 70, 60];
 
         $amount = 500;
 
-        foreach( $percentage as $percent )
-        {
+        foreach ($percentage as $percent) {
             $amount = $amount + $this->percentageAmount($amount, $percent);
         }
         return $amount;
-
     }
 
     public function percentageAmount($amount, $percent)
     {
-        return $amount * $percent / 100 ;
+        return $amount * $percent / 100;
     }
 
     // check and fix
@@ -52,71 +50,70 @@ class MaungController extends Controller
     public function fix($round)
     {
         $groups = FootballMaungGroup::where('round', $round)
-        ->where('status', 1)
-        ->with(['teams'])
-        ->chunkById(100, function($query){
-            foreach($query as $q){
-                (new MaungServiceCheck())->execute($q->teams);
-            }
-        });
+            ->where('status', 1)
+            ->with(['teams'])
+            ->chunkById(100, function ($query) {
+                foreach ($query as $q) {
+                    (new MaungServiceCheck())->execute($q->teams);
+                }
+            });
 
         return $groups;
-
     }
 
-    public function fix_check($round)
+    public function fix_update($round)
     {
         $bets = FootballBet::where('round', $round)
-        ->whereNotNull('maung_group_id')
-        ->where('status', 1)
-        ->get();
+            ->whereNotNull('maung_group_id')
+            ->where('status', 1)
+            ->get()
+            ->filter(function ($q) {
+
+                if ($q->net_amount != $q->temp_amount) {
+                    $q->temp_amount = intval($q->temp_amount - ($q->temp_amount * 0.15));
+                    return $q;
+                }
+            });
+
+        foreach ($bets as $bet) {
+            $bet->update([
+                'net_amount' => $bet->temp_amount,
+                'temp_amount' => $bet->temp_amount
+            ]);
+
+            $bet->betting_record()->update(['win_amount' => $bet->temp_amount]);
+
+            WinRecord::where('betting_id', $bet->maung_group_id)
+                ->where('status', 0)
+                ->where('type', 'Maung')
+                ->update(['amount' => $bet->temp_amount]);
+        }
 
         return $bets;
     }
 
-    public function fix_update($id)
+    public function fix_check($round)
     {
 
-        // $groups = [ 52117 ];
+        $bets = FootballBet::where('round', $round)
+            ->whereNotNull('maung_group_id')
+            ->where('status', 1)
+            ->get();
 
-        $bets = FootballBet::where('maung_group_id', $id)->get();
+            // return $bets;
 
-        foreach ($bets as $bet) {
+         $bets =   $bets->filter(function ($q) {
 
-            $win_amount = $bet->temp_amount - ($bet->temp_amount * 0.15);
 
-            $bet->update([
-                'net_amount' => $win_amount,
-                'temp_amount' => $win_amount
-            ]);
+                if ($q->net_amount != $q->temp_amount) {
 
-            $bet->betting_record()->update([ 'win_amount' => $win_amount ]);
+                    $q->temp_amount = intval($q->temp_amount - ($q->temp_amount * 0.15));
 
-            if ($win_amount > $bet->amount) {
+                    return $q;
+                }
+            });
 
-                WinRecord::firstOrCreate([
-                    'user_id'    => $bet->user_id,
-                    'agent_id'   => $bet->agent_id,
-                    'type'       => "Maung",
-                    'amount'     => $win_amount,
-                    'betting_id' => $bet->maung_group_id
-                ]);
-            }
 
-            $logs = UserLog::firstOrCreate([
-                'user_id' => $bet->user_id,
-                'agent_id' => $bet->agent_id,
-                'operation' => 'Maung Win',
-                'remark' => $bet->maung_group_id
-            ],[
-                'amount' => $win_amount,
-                'start_balance' => $bet->user->amount,
-                'end_balance' => $bet->user->amount + $win_amount
-            ]);
-
-            if( $logs->wasRecentlyCreated){
-                $bet->user()->increment('amount', $win_amount);
-            }
-        }
+            return $bets;
     }
 }
