@@ -2,33 +2,39 @@
 
 namespace App\Repository;
 
+use App\Actions\CheckWinRecordAction;
 use Illuminate\Support\Facades\DB;
 
 class WinRecordRepository
 {
     protected $record, $filter, $type;
 
-    public function __construct(
-        protected $data
-    ) {
+    protected $duplicate_error;
+
+    public function __construct( protected $data ) {
+
         $this->filter = $data['filter'];
+
+        $this->duplicate_error = (new CheckWinRecordAction())->executeCheck();
+
     }
 
     public function execute()
     {
 
-        $query = DB::table("win_records")
+        return DB::table('win_records')
 
             ->join('users', 'users.id', 'win_records.user_id')
 
-            ->select(
-                'win_records.*',
-                'users.user_id as user_ids'
-            )
+            ->select( 'win_records.*', 'users.user_id as user_ids' )
 
             ->whereIn('win_records.type', ['2D', '3D', 'Body', 'Maung'])
 
             ->where('win_records.status', '!=' , 2 )
+
+            ->when(request()->input('duplicate_filter') ?? NULL, function ($q) {
+                return $q->whereIntegerInRaw('betting_id', $this->duplicate_error);
+            })
 
             ->when(request()->input('agent_id') ?? NULL, function ($q) {
                 return $q->whereIn('agent_id', request()->input('agent_id'));
@@ -50,9 +56,11 @@ class WinRecordRepository
                 return $q->whereDate('win_records.created_at', '<=', request()->input('end_date'));
             })
 
-            ->latest();
+            ->latest()
 
-        return $query;
+            ->when(request()->input('duplicate_filter') ?? NULL, function ($q) {
+                return $q->orderByDesc('betting_id');
+            });
     }
 
     protected function filterQuery($query)

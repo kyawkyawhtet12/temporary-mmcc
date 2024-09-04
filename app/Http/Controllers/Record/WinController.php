@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\FootballMaung;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
 use App\Repository\WinRecordRepository;
 use App\Services\Record\WinRecordService;
 use App\Services\Ballone\MaungServiceCheck;
@@ -16,9 +17,11 @@ use App\Repository\WinRecordCheckRepository;
  class WinController extends Controller
 {
     protected $search;
+    protected $error;
 
     public function index(Request $request)
     {
+
         if ($request->ajax()) {
 
             $data = [
@@ -40,66 +43,35 @@ use App\Repository\WinRecordCheckRepository;
                 })
 
                 ->addColumn('time', function ($q) {
-                    return dateTimeFormat($q->created_at);
+                    $time = dateTimeFormat($q->created_at);
+
+                    $bet_id = request()->input('record_check') ? $q->betting_id : '';
+
+                    return "<p class='mb-2'> $time </p> <span class='text-danger'> $bet_id </span>";
                 })
 
                 ->addColumn("action", function($q){
-                    return "
-                        <a href='#' class='btn btn-danger btn-sm delete_btn' data-route='/admin/win-record/delete/{$q->id}'> Delete </a>
-                    ";
+                    if(is_admin()){
+                        return "
+                            <a href='#' class='btn btn-danger btn-sm delete_btn' data-route='/admin/win-record/delete/{$q->id}'> Delete </a>
+                        ";
+                    }
                 })
 
-                ->rawColumns([ 'action' ])
+                ->rawColumns([ 'action' , 'time' ])
 
                 ->make(true);
         }
 
-        return view("backend.record.win");
+        return view("backend.record.win", [ 'duplicate_filter' => false ]);
     }
 
-    public function check(Request $request)
+    public function error_record(Request $request)
     {
-        if ($request->ajax()) {
-
-            $data = [
-                'filter' => $request->only(['agent_id', 'user_id', 'start_date', 'end_date'])
-            ];
-
-            $query = (new WinRecordCheckRepository($data))->execute();
-
-            return Datatables::of($query)
-
-                ->addIndexColumn()
-
-                ->addColumn('user_id', function ($q) {
-                    return $q->user_ids;
-                })
-
-                ->addColumn('amount', function ($q) {
-                    return number_format($q->amount);
-                })
-
-                ->addColumn('time', function ($q) {
-                    return dateTimeFormat($q->created_at);
-                })
-
-                ->addColumn('remark', function ($q) {
-                    return $q->betting_id;
-                })
-
-                ->addColumn("action", function($q){
-                    return "
-                        <a href='#' class='btn btn-danger btn-sm delete_btn' data-route='/admin/win-record/delete/{$q->id}'> Delete </a>
-                    ";
-                })
-
-                ->rawColumns([ 'action' ])
-
-                ->make(true);
-        }
-
-        return view("backend.record.win-check");
+        return view("backend.record.win", [ 'duplicate_filter' => true ]);
     }
+
+
 
     public function fix()
     {
@@ -158,6 +130,14 @@ use App\Repository\WinRecordCheckRepository;
 
     public function destroy($id, WinRecordService $winRecordService)
     {
+
+        if(!is_admin()){
+            return response()->json([
+                'error' => true,
+                'message' => 'permission denied'
+            ]);
+        }
+
         $record = WinRecord::with('user')->find($id);
 
         if(!$record){

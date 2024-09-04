@@ -9,33 +9,32 @@ use Illuminate\Support\Facades\DB;
 
 class WinRecordService
 {
+
     public function execute($round)
     {
-        $bets = FootballBet::query()
-                        ->where('round', $round)
-                        ->maungWinFilter()
-                        ->where('is_done', 0 )
-                        ->with('user')
-                        ->chunkById(200, function ($bettings) {
+        return FootballBet::query()
+            ->where('round', $round)
+            ->maungWinFilter()
+            ->where('is_done', 0 )
+            ->chunkById(200, function ($bettings) {
 
-                            DB::transaction(function () use ($bettings) {
+                DB::transaction(function () use ($bettings) {
 
-                                foreach ($bettings as $betting) {
+                        foreach ($bettings as $betting) {
 
-                                    if ($betting->net_amount > $betting->amount) {
+                            if ($betting->net_amount > $betting->amount) {
 
-                                        $this->addWinRecord($betting, $betting->net_amount);
-                                    }
+                                $this->addWinRecord($betting, $betting->net_amount);
+                            }
 
-                                    // payment logs
+                            // payment logs
 
-                                    $this->addUserLog($betting, $betting->net_amount);
+                            $this->addUserLog($betting, $betting->net_amount);
 
-                                    $betting->update([ 'is_done' => 1 ]);
-                                }
-
-                            });
-                        });
+                            $betting->update(['is_done' => 1]);
+                        }
+                });
+            });
     }
 
     public function addWinRecord($bet, $amount)
@@ -63,7 +62,7 @@ class WinRecordService
         ]);
 
         if ($logs->wasRecentlyCreated) {
-            $bet->user()->increment('amount', $amount);
+            $bet->user->increment('amount', $amount);
         }
     }
 }

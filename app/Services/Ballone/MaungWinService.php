@@ -20,7 +20,8 @@ class MaungWinService
     {
         $groups = FootballMaungGroup::query()
                                     ->with('bet')
-                                    ->whereIn('id', $maung_group_ids)
+                                    // ->whereIn('id', $maung_group_ids)
+                                    ->whereIntegerInRaw('betting_id', $maung_group_ids)
                                     ->withCount('pending_maungs')
                                     ->having('pending_maungs_count', 0)
                                     ->where('is_done', 0)
