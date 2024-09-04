@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend\Ballone\Maung;
 
+use App\Actions\CheckWinRecordAction;
 use App\Models\FootballBet;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -99,9 +100,20 @@ class WinResultController extends Controller
 
     public function action(WinRecordService $winRecordService)
     {
-        $winRecordService->execute($this->round);
 
-        return view("backend.admin.ballone.match.maung.win_result");
+       $duplicate_error = ( (new CheckWinRecordAction())->executeCheck() ) ? true : false;
+
+        $lock = Cache::lock('win_record_service', 10);
+
+        if ($lock->get()) {
+
+            $winRecordService->execute($this->round);
+
+            $lock->release();
+
+        }
+
+        return view("backend.admin.ballone.match.maung.win_result", [ 'duplicate_error' => $duplicate_error ]);
 
     }
 }

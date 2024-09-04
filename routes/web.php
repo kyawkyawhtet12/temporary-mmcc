@@ -86,7 +86,8 @@ Route::group(
         Route::get('betting-record/delete', [DeleteRecordController::class, 'index'])->name('betting.record.delete.history');
 
         Route::get('win-record', [WinController::class, 'index'])->name('win.record');
-        Route::get('win-record-check', [WinController::class, 'check'])->name('win.record.check');
+        Route::get('win-record-error', [WinController::class, 'error_record'])->name('win.record.error');
+        Route::get('win-record-check', [WinController::class, 'index'])->name('win.record.check');
 
         Route::post('win-record/delete/{id}', [WinController::class, 'destroy'])->name('win.record.delete');
 
@@ -107,16 +108,16 @@ Route::group(
 
         // testing route
 
-        Route::get('test/calculate', [MaungController::class, 'calculate']);
+        // Route::get('test/calculate', [MaungController::class, 'calculate']);
 
-        Route::get('/maung/fix/{id}', [MaungController::class, 'fix']);
-        Route::get('/maung/fix_check/{id}', [MaungController::class, 'fix_check']);
+        // Route::get('/maung/fix/{id}', [MaungController::class, 'fix']);
+        // Route::get('/maung/fix_check/{id}', [MaungController::class, 'fix_check']);
 
-        Route::get('/maung/fix_update/{id}', [MaungController::class, 'fix_update']);
+        // Route::get('/maung/fix_update/{id}', [MaungController::class, 'fix_update']);
 
-        Route::get('amount-details/{id}/fix', [UserLogFixController::class, 'index']);
+        // Route::get('amount-details/{id}/fix', [UserLogFixController::class, 'index']);
 
-        Route::post('amount-details/{id}/fix', [UserLogFixController::class, 'add'])->name('amount_details.add');
+        // Route::post('amount-details/{id}/fix', [UserLogFixController::class, 'add'])->name('amount_details.add');
 
         // Route::get("/user-log/check", [UserLogFixController::class, 'check_amount']);
     }

@@ -43,7 +43,7 @@
             </div>
             <!-- end page title -->
 
-            <div class="row mb-3 d-flex">
+            <div class="row mb-4 mt-3 d-flex">
 
                 <div class="col-md-3 multiSelect">
                     <x-agent-select />
@@ -71,6 +71,10 @@
                   </select>
                 </div>
 
+                <input type="hidden" class="form-control" placeholder="duplicate_filter" name="duplicate_filter" id="duplicate_filter" value="{{ $duplicate_filter }}" >
+
+                <input type="hidden" class="form-control" placeholder="record_check" name="record_check" id="record_check" value="{{ request()->route()->named('win.record.check') }}" >
+
                 <div class="col">
                     <div class="row">
                         <button type="button" class="btn btn-primary col mx-1 btn-sm" id="search">Filter</button>
@@ -83,11 +87,18 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">
+                            @if( $duplicate_filter )
+                            <h6 class="mb-0 text-danger"> Win Record Duplicate Error Lists </h6>
+                            @else
+                            <h6 class="mb-0 text-dark"> Win Record History </h6>
+                            @endif
+                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="table-responsive">
-                                        <table id="datatable" class="table table-bordered nowrap">
+                                        <table id="datatable" class="table table-bordered text-center nowrap">
                                             <thead>
                                                 <tr class="bg-primary text-white" role="row">
                                                     <th>No.</th>
@@ -133,7 +144,9 @@
                         d.phone = $('#phone').val(),
                         d.start_date = $('#start_date').val(),
                         d.end_date = $('#end_date').val(),
-                        d.type = $('#type').val()
+                        d.type = $('#type').val(),
+                        d.duplicate_filter = $('#duplicate_filter').val(),
+                        d.record_check = $('#record_check').val()
                     }
                 },
                 columns: [{

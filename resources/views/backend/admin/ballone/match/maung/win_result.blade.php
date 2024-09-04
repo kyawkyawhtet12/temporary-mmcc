@@ -86,6 +86,23 @@
                 </div>
             </div>
 
+            @if($duplicate_error)
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-danger">
+                        <div class="d-flex justify-content-center align-items-center py-3">
+                            <h6 class="mb-0">
+                                <span class="fw-bold"> Error ! </span> Duplicate Win Record Error Found.
+                            </h6>
+                            <a href="{{ route("win.record.error") }}" class="ms-3 text-dark text-decoration-underline">
+                                View Error
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <div class="row grid-margin">
                 <div class="col-12 grid-margin stretch-card">
                     <div class="card">

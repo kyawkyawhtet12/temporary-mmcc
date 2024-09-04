@@ -6,6 +6,7 @@ use App\Models\UserLog;
 use App\Models\WinRecord;
 use App\Models\FootballMaung;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class MaungService
 {
@@ -26,68 +27,69 @@ class MaungService
 
         return DB::transaction(function () use ($maungs) {
 
-            $maung_group_ids = $maungs->pluck('maung_group_id')->unique();
+            Cache::lock('calculate_maung', 10)->get(function () use ($maungs) {
 
-            foreach ($maungs as $maung) {
+                foreach ($maungs as $maung) {
 
-                // $group = $maung->bet->loadCount('teams')->load('bet'); // maung group
+                    // $group = $maung->bet->loadCount('teams')->load('bet'); // maung group
 
-                $betting = $maung->bet->bet; // football bet
+                    $betting = $maung->bet->bet; // football bet
 
-                if ($betting->status == 0 && $maung->bet->is_done == 0) {
+                    if ($betting->status == 0 && $maung->bet->is_done == 0) {
 
-                    $result  =  $maung->fees->result;
+                        $result  =  $maung->fees->result;
 
-                    $type    =  $maung->type;
+                        $type    =  $maung->type;
 
-                    $percent =  $result->$type;
+                        $percent =  $result->$type;
 
-                    $betAmount = $betting->net_amount == 0 ? $betting->amount : $betting->net_amount;
+                        $betAmount = $betting->net_amount == 0 ? $betting->amount : $betting->net_amount;
 
-                    $status = 1;
+                        $status = 1;
 
-                    $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
+                        $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
 
-                    if ($percent == 0) {
+                        if ($percent == 0) {
 
-                        $status = 3;
+                            $status = 3;
 
-                        $betting->net_amount = $betAmount;
-                    }
+                            $betting->net_amount = $betAmount;
+                        }
 
-                    if ($percent == '-100') {
+                        if ($percent == '-100') {
 
-                        $status = 2;
+                            $status = 2;
 
-                        $betting->status = 2;
+                            $betting->status = 2;
 
-                        $betting->net_amount = 0;
+                            $betting->net_amount = 0;
 
-                        $betting->is_done = 1;
+                            $betting->is_done = 1;
 
-                        $maung->bet()->update([
-                            'status' => 2,
-                            'is_done' => 1
-                        ]);
-
-                        $betting
-                        ->betting_record()
-                        ->update([
-                                'result'     => 'No WIn',
-                                'win_amount' => 0
+                            $maung->bet()->update([
+                                'status' => 2,
+                                'is_done' => 1
                             ]);
+
+                            $betting
+                                ->betting_record()
+                                ->update([
+                                    'result'     => 'No Win',
+                                    'win_amount' => 0
+                                ]);
+                        }
+
+                        $maung->update(['status' => $status]);
+
+                        $betting->save();
                     }
-
-                    $maung->update(['status' => $status]);
-
-                    $betting->save();
                 }
-            }
 
-            return (new MaungWinService())->calculate($maung_group_ids);
+                $maung_group_ids = $maungs->pluck('maung_group_id')->unique();
 
+                return (new MaungWinService())->calculate($maung_group_ids);
+
+            });
         });
     }
-
-
 }
