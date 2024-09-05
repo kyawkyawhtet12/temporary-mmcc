@@ -11,6 +11,7 @@ use App\Models\FootballMaung;
 use App\Models\FootballMaungGroup;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Services\Ballone\MaungService;
 use App\Services\Ballone\MaungServiceTest;
 use App\Services\Ballone\MaungServiceCheck;
 
@@ -48,16 +49,17 @@ class MaungController extends Controller
 
     // check and fix
 
-    public function fix()
+    public function fix($match_id)
     {
-        $groups = FootballMaungGroup::where('round', '335')
-        ->where('status', 0)
-        ->with(['teams'])
-        ->chunkById(200, function ($query) {
-            foreach ($query as $q) {
-                (new MaungServiceTest())->execute($q->teams);
-            }
-        });
+        // $groups = FootballMaungGroup::where('round', '335')
+        // ->where('status', 0)
+        // ->with(['teams'])
+        // ->chunkById(200, function ($query) {
+        //     foreach ($query as $q) {
+        //         (new MaungServiceTest())->execute($q->teams);
+        //     }
+        // });
+        $groups = (new MaungService())->execute($match_id);
 
         return $groups;
     }
