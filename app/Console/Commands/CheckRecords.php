@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\BettingRecord;
 use Illuminate\Console\Command;
 use App\Models\FootballMaungGroup;
+use App\Services\Ballone\MaungServiceTest;
 use App\Services\Ballone\MaungServiceCheck;
 
 class CheckRecords extends Command
@@ -48,11 +49,11 @@ class CheckRecords extends Command
         //             ]);
 
         $groups = FootballMaungGroup::where('round', '335')
-            ->where('status', '!=' , 2)
+            ->where('status', 0)
             ->with(['teams'])
             ->chunkById(100, function ($query) {
                 foreach ($query as $q) {
-                    (new MaungServiceCheck())->execute($q->teams);
+                    (new MaungServiceTest())->execute($q->teams);
                 }
             });
 
