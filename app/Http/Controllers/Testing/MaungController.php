@@ -49,7 +49,7 @@ class MaungController extends Controller
 
     // check and fix
 
-    public function fix($match_id)
+    public function fix()
     {
         $group_ids = FootballBet::where('round', '335')->where('status', 0)->pluck('maung_group_id');
 
