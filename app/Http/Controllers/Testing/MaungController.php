@@ -11,6 +11,7 @@ use App\Models\FootballMaung;
 use App\Models\FootballMaungGroup;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Services\Ballone\MaungServiceTest;
 use App\Services\Ballone\MaungServiceCheck;
 
 class MaungController extends Controller
@@ -47,23 +48,23 @@ class MaungController extends Controller
 
     // check and fix
 
-    public function fix($round)
+    public function fix()
     {
-        $groups = FootballMaungGroup::where('round', $round)
-            ->where('status', 1)
-            ->with(['teams'])
-            ->chunkById(100, function ($query) {
-                foreach ($query as $q) {
-                    (new MaungServiceCheck())->execute($q->teams);
-                }
-            });
+        $groups = FootballMaungGroup::where('round', '335')
+        ->where('status', 0)
+        ->with(['teams'])
+        ->chunkById(200, function ($query) {
+            foreach ($query as $q) {
+                (new MaungServiceTest())->execute($q->teams);
+            }
+        });
 
         return $groups;
     }
 
-    public function fix_update($round)
+    public function fix_update()
     {
-        $bets = FootballBet::where('round', $round)
+        $bets = FootballBet::where('round', '335')
             ->whereNotNull('maung_group_id')
             ->where('status', 1)
             ->get()
@@ -92,10 +93,10 @@ class MaungController extends Controller
         return $bets;
     }
 
-    public function fix_check($round)
+    public function fix_check()
     {
 
-        $bets = FootballBet::where('round', $round)
+        $bets = FootballBet::where('round', '335')
             ->whereNotNull('maung_group_id')
             ->where('status', 1)
             ->get();
