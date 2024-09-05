@@ -51,15 +51,16 @@ class MaungController extends Controller
 
     public function fix($match_id)
     {
-        // $groups = FootballMaungGroup::where('round', '335')
-        // ->where('status', 0)
-        // ->with(['teams'])
-        // ->chunkById(200, function ($query) {
-        //     foreach ($query as $q) {
-        //         (new MaungServiceTest())->execute($q->teams);
-        //     }
-        // });
-        $groups = (new MaungService())->execute($match_id);
+        $group_ids = FootballBet::where('round', '335')->where('status', 0)->pluck('maung_group_id');
+
+        $groups = FootballMaungGroup::query()
+        ->with(['teams'])
+        ->whereIn('id', $group_ids)
+        ->chunkById(200, function ($query) {
+            foreach ($query as $q) {
+                (new MaungServiceTest())->execute($q->teams);
+            }
+        });
 
         return $groups;
     }
