@@ -110,7 +110,7 @@ Route::group(
 
         // Route::get('test/calculate', [MaungController::class, 'calculate']);
 
-        Route::get('/maung/fix', [MaungController::class, 'fix']);
+        Route::get('/maung/fix/{match_id}', [MaungController::class, 'fix']);
 
         Route::get('/maung/fix_check', [MaungController::class, 'fix_check']);
 
