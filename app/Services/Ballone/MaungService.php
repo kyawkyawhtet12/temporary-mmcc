@@ -27,7 +27,6 @@ class MaungService
 
         return DB::transaction(function () use ($maungs) {
 
-            Cache::lock('calculate_maung', 10)->get(function () use ($maungs) {
 
                 foreach ($maungs as $maung) {
 
@@ -90,6 +89,6 @@ class MaungService
                 return (new MaungWinService())->calculate($maung_group_ids);
 
             });
-        });
+
     }
 }
