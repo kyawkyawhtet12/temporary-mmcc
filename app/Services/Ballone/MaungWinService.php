@@ -16,12 +16,12 @@ class MaungWinService
         $this->za = DB::table("football_maung_zas")->pluck('percent', 'teams');
     }
 
-    public function calculate($maung_group_ids)
+    public function calculate()
     {
         $groups = FootballMaungGroup::query()
                                     ->with('bet')
                                     // ->whereIn('id', $maung_group_ids)
-                                    ->whereIntegerInRaw('betting_id', $maung_group_ids)
+                                    // ->whereIntegerInRaw('betting_id', $maung_group_ids)
                                     ->withCount('pending_maungs')
                                     ->having('pending_maungs_count', 0)
                                     ->where('is_done', 0)

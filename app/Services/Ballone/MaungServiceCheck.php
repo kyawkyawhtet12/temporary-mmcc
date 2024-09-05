@@ -23,19 +23,19 @@ class MaungServiceCheck
 
                 $percent  =  $maung->fees->result->$type;
 
-                $temp_amount = $x == 0 ? 0 : $betting->temp_amount;
+                $net_amount = $x == 0 ? 0 : $betting->net_amount;
 
-                $betAmount = $temp_amount == 0 ? $betting->amount : $betting->temp_amount;
+                $betAmount = $net_amount == 0 ? $betting->amount : $betting->net_amount;
 
                 $status = 1;
 
-                $betting->temp_amount = $betAmount + ($betAmount * ($percent / 100));
+                $betting->net_amount = $betAmount + ($betAmount * ($percent / 100));
 
                 if ($percent == 0) {
 
                     $status = 3;
 
-                    $betting->temp_amount = $betAmount;
+                    $betting->net_amount = $betAmount;
                 }
 
                 if ($percent == '-100') {
@@ -44,7 +44,7 @@ class MaungServiceCheck
 
                     $betting->status = 2;
 
-                    $betting->temp_amount = 0;
+                    $betting->net_amount = 0;
                 }
 
                 $betting->save();
