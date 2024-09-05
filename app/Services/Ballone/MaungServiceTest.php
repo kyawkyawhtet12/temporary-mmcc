@@ -19,12 +19,12 @@ class MaungServiceTest
 
     public function execute()
     {
-        $maungs = FootballMaung::query()
+        FootballMaung::query()
             ->with(['fees.result', 'bet'])
             ->where('status', 0)
-            ->get();
+            ->lazyById(200, function ($maungs) {
 
-        return DB::transaction(function () use ($maungs) {
+         DB::transaction(function () use ($maungs) {
 
                 foreach ($maungs as $maung) {
 
@@ -82,7 +82,7 @@ class MaungServiceTest
                     }
                 }
 
-
+            });
 
         });
     }
