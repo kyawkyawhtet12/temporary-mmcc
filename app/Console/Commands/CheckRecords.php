@@ -48,7 +48,7 @@ class CheckRecords extends Command
         //             ]);
 
         $groups = FootballMaungGroup::where('round', '335')
-            ->where('status', 1)
+            ->where('status', '!=' , 2)
             ->with(['teams'])
             ->chunkById(100, function ($query) {
                 foreach ($query as $q) {
