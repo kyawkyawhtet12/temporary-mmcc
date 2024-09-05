@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\FootballBet;
 use App\Models\BettingRecord;
 use Illuminate\Console\Command;
 use App\Models\FootballMaungGroup;
@@ -42,7 +43,9 @@ class MaungWinCommand extends Command
     public function handle()
     {
 
-        (new MaungWinService())->calculate();
+        $group_ids = FootballBet::where('round', '335')->where('status', 0)->pluck('maung_group_id');
+
+        (new MaungWinService())->calculate($group_ids);
 
         echo "done";
     }
