@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Log;
 
 class RefundService
 {
+    // protected $maungService;
+
+    // public function __construct(MaungService $maungService)
+    // {
+    //     $this->maungService = $maungService;
+    // }
 
     public function bodyRefund($match)
     {
@@ -68,7 +74,7 @@ class RefundService
 
         if ($betting) {
             (new MaungService())->calculation($betting, $maung);
-
+            // $this->maungService->calculation($betting, $maung);
             if ($maung->bet->count == 1) {
                 $this->history_add($maung, $betting);
             }
