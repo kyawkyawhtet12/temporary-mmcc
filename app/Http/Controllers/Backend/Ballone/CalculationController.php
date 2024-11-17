@@ -58,11 +58,9 @@ class CalculationController extends Controller
 
         } catch (\Throwable $th) {
 
-            return response()->json(['error' => "* error" ]);
+            return response()->json(['error' => $th->getMessage() ]);
 
         }
-
-
     }
 
 }
