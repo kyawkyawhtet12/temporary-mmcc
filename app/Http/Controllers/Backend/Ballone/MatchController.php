@@ -12,8 +12,10 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use App\Models\FootballMatchStatus;
 use App\Http\Controllers\Controller;
+use App\Models\ActionRecord;
 use App\Models\FootballBodyLimitGroup;
 use App\Services\Ballone\RefundService;
+use Illuminate\Support\Facades\Auth;
 
 class MatchController extends Controller
 {
@@ -131,11 +133,43 @@ class MatchController extends Controller
         return view("backend.admin.ballone.match.edit", compact('match', 'leagues', 'clubs', 'status', 'groups'));
     }
 
+    // public function update(Request $request, $id)
+    // {
+    //     // return $request->all();
+
+    //     $request->validate([
+    //         'home_no' => 'nullable',
+    //         'away_no' => 'nullable',
+    //         'league_id' => 'required',
+    //         'date' => 'required',
+    //         'time' => 'required',
+    //         'home_id' => 'required',
+    //         'away_id' => 'required',
+    //         'limit_group_id' => 'required'
+    //     ]);
+
+    //     $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
+
+    //     FootballMatch::findOrFail($id)->update([
+    //         'round' => $request->round,
+    //         'home_no' => $request->home_no,
+    //         'away_no' => $request->away_no,
+    //         'date_time' => $date_time,
+    //         'league_id' => $request->league_id,
+    //         'home_id' => $request->home_id,
+    //         'away_id' => $request->away_id,
+    //         'other' => ($request->other) ?: 0,
+    //         'body_limit' => $request->limit_group_id
+    //     ]);
+
+    //     $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body';
+
+    //     return redirect($route)->with('success', '* match successfully updated.');
+    // }
     public function update(Request $request, $id)
     {
-        // return $request->all();
-
-        $request->validate([
+        // Validate input
+        $validated = $request->validate([
             'home_no' => 'nullable',
             'away_no' => 'nullable',
             'league_id' => 'required',
@@ -146,9 +180,14 @@ class MatchController extends Controller
             'limit_group_id' => 'required'
         ]);
 
+        // Combine date and time into a Carbon instance
         $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
 
-        FootballMatch::findOrFail($id)->update([
+        // Find the match and update it
+        $footballMatch = FootballMatch::findOrFail($id);
+        $originalData = $footballMatch->getOriginal();  // Get original values before update
+
+        $footballMatch->update([
             'round' => $request->round,
             'home_no' => $request->home_no,
             'away_no' => $request->away_no,
@@ -159,6 +198,25 @@ class MatchController extends Controller
             'other' => ($request->other) ?: 0,
             'body_limit' => $request->limit_group_id
         ]);
+
+        // Get the changes after the update
+        $changes = $footballMatch->getChanges();
+
+        // Log action if there are any changes
+        if (!empty($changes)) {
+            ActionRecord::create([
+                'user_id'    => Auth::id(),
+                'action'     => 'update',
+                'table_name' => 'football_matches',
+                'record_id'  => $footballMatch->id,
+                'data'       => json_encode([
+                    'before' => array_intersect_key($originalData, $changes),
+                    'after'  => $changes
+                ]),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+            ]);
+        }
 
         $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body';
 

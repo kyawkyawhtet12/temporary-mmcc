@@ -225,6 +225,30 @@
             });
         });
     </script>
+    {{-- <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let currentUrl = window.location.href;
+                console.log(currentUrl);
+
+
+                // Highlight the current page link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.href === currentUrl || currentUrl.includes(link.href)) {
+                        link.classList.add('active');
+
+                        // Check if the link belongs to a collapse menu and expand it
+                        let parentCollapse = link.closest('.collapse');
+                        if (parentCollapse) {
+                            parentCollapse.classList.add('show');
+                            let parentNavLink = parentCollapse.previousElementSibling;
+                            if (parentNavLink && parentNavLink.classList.contains('nav-link')) {
+                                parentNavLink.classList.add('active');
+                            }
+                        }
+                    }
+                });
+            });
+        </script> --}}
 
     @yield('script')
     @stack('scripts')

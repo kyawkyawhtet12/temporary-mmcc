@@ -346,11 +346,17 @@
                                 <a href="{{ route('3d.record') }}" class="nav-link" data-key="t-records">
                                     Three Digit Record </a>
                             </li>
-
                         </ul>
                     </div>
                 </li>
 
+                @if (is_admin())
+                    <li class="nav-item">
+                        <a class="nav-link menu-link" href="{{ route('action-records.index') }}">
+                            <i class="ri-history-line"></i> <span data-key="t-users">Action Records</span>
+                        </a>
+                    </li>
+                @endif
             </ul>
 
         </div>

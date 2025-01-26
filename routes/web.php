@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Record\WinController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\Record\CashController;
+use App\Http\Controllers\ActionRecordController;
 use App\Http\Controllers\Testing\MaungController;
 use App\Http\Controllers\Record\BettingController;
 use App\Http\Controllers\Record\RechargeController;
@@ -66,6 +67,8 @@ Route::group(
 
             Route::post('payment', [UserPaymentController::class, 'store'])->name('payment.store');
             Route::delete('payment/delete', [UserPaymentController::class, 'destroy'])->name('payment.delete');
+
+            Route::get('/admin/action-records', [ActionRecordController::class, 'index'])->name('action-records.index');
         });
 
         Route::resource('users', 'UserController');

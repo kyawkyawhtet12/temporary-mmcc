@@ -10,6 +10,7 @@ use App\Models\FootballMatch;
 use App\Models\FootballMaungFee;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\ActionRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FootballBodyLimitGroup;
 use App\Services\Ballone\FeesValidation;
@@ -109,6 +110,27 @@ class MaungFeesController extends Controller
             (new FeesValidation())->multipleHandle($request);
 
             (new MaungFeesService())->executeAdd($validated);
+
+            // $maungFee =
+            // if (empty($maungFeeRecords)) {
+            //     return response()->json(['error' => 'No maung fee records were created.'], 400);
+            // }
+
+            // foreach ($maungFeeRecords as $maungFee) {
+            //     if (!$maungFee || !isset($maungFee->id)) {
+            //         return response()->json(['error' => 'Invalid maung fee record encountered.'], 400);
+            //     }
+
+            //     ActionRecord::create([
+            //         'user_id'    => Auth::id(),
+            //         'action'     => 'create',
+            //         'table_name' => 'maung_fees',
+            //         'record_id'  => $maungFee->id,
+            //         'data'       => json_encode($validated),
+            //         'ip_address' => $request->ip(),
+            //         'user_agent' => $request->header('User-Agent'),
+            //     ]);
+            // }
 
             return response()->json(['url' => '/admin/ballone/maung']);
 

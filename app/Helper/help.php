@@ -114,3 +114,10 @@ function getFootballBettingStatus($status)
             break;
     }
 }
+
+if (! function_exists('setActive')) {
+    function setActive($routeName, $output = 'active')
+    {
+        return request()->routeIs($routeName) ? $output : '';
+    }
+}
