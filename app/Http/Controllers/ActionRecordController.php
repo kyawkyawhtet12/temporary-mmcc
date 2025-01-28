@@ -10,7 +10,7 @@ class ActionRecordController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ActionRecord::with(['admin', 'footballMatch']);
+        $query = ActionRecord::query();
 
         if ($request->filled('user_id')) {
             $query->where('user_id', $request->user_id);
@@ -21,10 +21,12 @@ class ActionRecordController extends Controller
         }
 
         if ($request->filled('table_name')) {
-            $query->where('table_name', 'football_matches'); // Ensure filtering for football_matches
+            $query->where('table_name', $request->table_name);
         }
 
-        $actionRecords = $query->latest()->paginate(10);
+        $actionRecords = $query->with(['admin', 'footballMatch'])->latest()->paginate(10);
+
+        // $json = json_decode($actionRecords[0]->data);
 
         // return $actionRecords;
 

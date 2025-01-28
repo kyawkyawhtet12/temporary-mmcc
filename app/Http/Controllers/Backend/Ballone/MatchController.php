@@ -183,10 +183,11 @@ class MatchController extends Controller
         // Combine date and time into a Carbon instance
         $date_time = Carbon::createFromFormat("Y-m-d H:i", $request->date . $request->time);
 
-        // Find the match and update it
+        // Find the match and store original data before updating
         $footballMatch = FootballMatch::findOrFail($id);
-        $originalData = $footballMatch->getOriginal();  // Get original values before update
+        $originalData = $footballMatch->getOriginal(); // Get original values before update
 
+        // Update the football match
         $footballMatch->update([
             'round' => $request->round,
             'home_no' => $request->home_no,
@@ -199,8 +200,11 @@ class MatchController extends Controller
             'body_limit' => $request->limit_group_id
         ]);
 
-        // Get the changes after the update
+        // Get changed fields only
         $changes = $footballMatch->getChanges();
+
+        // Filter only the changed fields for `before` state
+        $beforeChanges = array_intersect_key($originalData, $changes);
 
         // Log action if there are any changes
         if (!empty($changes)) {
@@ -210,7 +214,7 @@ class MatchController extends Controller
                 'table_name' => 'football_matches',
                 'record_id'  => $footballMatch->id,
                 'data'       => json_encode([
-                    'before' => array_intersect_key($originalData, $changes),
+                    'before' => $beforeChanges,
                     'after'  => $changes
                 ]),
                 'ip_address' => $request->ip(),
@@ -220,7 +224,7 @@ class MatchController extends Controller
 
         $route = ($request->status) ? '/admin/ballone/maung' : '/admin/ballone/body';
 
-        return redirect($route)->with('success', '* match successfully updated.');
+        return redirect($route)->with('success', '* Match successfully updated.');
     }
 
     public function destroy($id)

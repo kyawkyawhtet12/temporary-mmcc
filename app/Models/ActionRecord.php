@@ -33,4 +33,13 @@ class ActionRecord extends Model
     {
         return $this->belongsTo(FootballMatch::class, 'record_id')->with(['home', 'away', 'league']);
     }
+
+    public function getChangesAttribute()
+    {
+        $decodedData = json_decode($this->data, true);
+        return [
+            'before' => $decodedData['before'] ?? null,
+            'after' => $decodedData['after'] ?? null,
+        ];
+    }
 }
