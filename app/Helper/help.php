@@ -5,8 +5,6 @@ use App\Models\Agent;
 use App\Models\ThreeDigitSetting;
 use Illuminate\Support\Facades\Auth;
 
-//
-
 function dateFormat($date, $format = "d-m-Y")
 {
     return Carbon::parse($date)->format($format);
@@ -39,12 +37,12 @@ function check_plus_format($number)
 
 function get_all_types()
 {
-    return [ '2D' ,'3D','Body','Maung' ];
+    return ['Recharge', 'Cash', 'Cash Reject', '2D', '2D Win', '3D', '3D Win', 'Body', 'Body Win', 'Maung', 'Maung Win'];
 }
 
 function is_admin()
 {
-    return ( Auth::user()->is_admin ) ? true : false;
+    return Auth::user()->is_admin;
 }
 
 function get3DCurrentRound()
@@ -53,18 +51,16 @@ function get3DCurrentRound()
     return $setting ? $setting->id : 1;
 }
 
-
 function getTwoDigit($number)
 {
     return sprintf('%02d', $number);
 }
 
-function getBadgeColor($setting,$amount)
+function getBadgeColor($setting, $amount)
 {
-    if( $check = $setting->where('max_amount', '<=',  $amount)->first() ){
+    if ($check = $setting->where('max_amount', '<=', $amount)->first()) {
         return "background-color : $check->color";
     }
-
     return "color: #333";
 }
 
@@ -79,40 +75,24 @@ function getNetAmountStatus($amount)
 
 function getTotalAmountRecords($data)
 {
-    $total = [
+    return [
         'betting' => number_format($data->sum('betting_amount')),
         'win'     => number_format($data->sum('win_amount')),
         'net'     => number_format($data->sum('net_amount')),
-        'status'  => getNetAmountStatus($data->sum('net_amount'))
+        'status'  => getNetAmountStatus($data->sum('net_amount')),
     ];
-
-    return $total;
 }
-
 
 function getFootballBettingStatus($status)
 {
-    switch ($status) {
-        case 0:
-            return "Pending";
-            break;
-        case 1:
-            return "Win";
-            break;
-        case 2:
-            return "No Win";
-            break;
-        case 3:
-            return "Draw";
-            break;
-        case 4:
-            return "Refund";
-            break;
-
-        default:
-            return "-";
-            break;
-    }
+    return match ($status) {
+        0 => "Pending",
+        1 => "Win",
+        2 => "No Win",
+        3 => "Draw",
+        4 => "Refund",
+        default => "-",
+    };
 }
 
 if (! function_exists('setActive')) {
@@ -120,4 +100,9 @@ if (! function_exists('setActive')) {
     {
         return request()->routeIs($routeName) ? $output : '';
     }
+}
+
+function checkUser($user)
+{
+    return $user->agent->id == auth()->id();
 }

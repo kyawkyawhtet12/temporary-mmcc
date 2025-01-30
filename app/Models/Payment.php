@@ -26,7 +26,7 @@ class Payment extends Model
     public static function getDepositCount($date, $agent = null)
     {
         // return Payment::whereDate('created_at', $date)->where('status', 'Approved')->count();
-        if($agent) {
+        if ($agent) {
             return Payment::where('agent_id', $agent)->whereDate('created_at', $date)->where('status', 'Approved')->count();
         } else {
             return Payment::whereDate('created_at', $date)->where('status', 'Approved')->count();
@@ -68,17 +68,16 @@ class Payment extends Model
             return $this->provider?->name;
         }
 
-        if(!$this->payment_provider_id && !$this->by){
+        if (!$this->payment_provider_id && !$this->by) {
             return "Recharge By {$this->agent->name}.";
         }
 
         return "Recharge By {$this->admin->name}.";
-
     }
 
     public function getActionTimeAttribute()
     {
-        if( $this->status == 'Approved' || $this->status == 'Rejected' ){
+        if ($this->status == 'Approved' || $this->status == 'Rejected') {
             return $this->updated_at->format("d-m-Y h:i A");
         }
 
@@ -87,10 +86,15 @@ class Payment extends Model
 
     public function getProcessTimeAttribute()
     {
-        if( $this->status == 'Approved' || $this->status == 'Rejected' ){
+        if ($this->status == 'Approved' || $this->status == 'Rejected') {
             return $this->created_at->diffForHumans($this->updated_at);
         }
 
         return "-";
+    }
+    public function getTime($time)
+    {
+        // return $time;
+        return Carbon::parse($time)->format('d-m-Y');
     }
 }

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\AuthController;
 use App\Http\Controllers\Api\Games\FootballController;
+use App\Http\Controllers\Api\User\TopUpController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -31,4 +33,8 @@ Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/football/all-history', [FootballController::class, 'allHistoryMatch']);
 
     Route::get('/football/results', [FootballController::class, 'resultMatch']);
+
+    //TopUp
+    Route::get('/topup', [TopUpController::class, 'index'])->middleware('close-all-bets');
+    Route::post('/topup', [TopupController::class, 'store'])->middleware('close-all-bets');
 });
