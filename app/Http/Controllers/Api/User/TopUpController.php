@@ -18,7 +18,9 @@ class TopUpController extends ResponseController
         $data = $user->agent->active_payment_providers ?? [];
 
         if (count($data) == 0) {
-            return response()->json(['error' => 'Payment method not found. Please contact your agent.'], 404);
+            return $this->errorResponse('Payment method not found. Please contact your agent.', 404);
+
+            // return response()->json(['error' => 'Payment method not found. Please contact your agent.'], 404);
         }
 
         return $this->successResponse($data, 'Payment Method Fetched Successfully', 200);
@@ -27,7 +29,8 @@ class TopUpController extends ResponseController
     public function store(TopupRequest $request)
     {
         if ($request->amount > 1000000) {
-            return response()->json(['error' => 'Maximum limit amount is 1,000,000 MMK.'], 400);
+            return $this->errorResponse('Maximum limit amount is 1,000,000 MMK.', 400);
+            // return response()->json(['error' => 'Maximum limit amount is 1,000,000 MMK.'], 400);
         }
 
         if ($request->transation_ss) {
@@ -46,6 +49,8 @@ class TopUpController extends ResponseController
             'transation_ss' => $file_path,
         ]);
 
-        return response()->json(['success' => 'Payment request submitted successfully.', 'payment' => $payment]);
+        return $this->successResponse($payment, 'Payment request submitted successfully', 201);
+
+        // return response()->json(['success' => 'Payment request submitted successfully.', 'payment' => $payment]);
     }
 }

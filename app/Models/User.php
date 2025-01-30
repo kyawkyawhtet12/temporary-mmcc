@@ -176,4 +176,9 @@ class User extends Authenticatable
 
         return $draws;
     }
+
+    public function payment_reports()
+    {
+        return $this->hasMany(UserPaymentReport::class, 'user_id');
+    }
 }
