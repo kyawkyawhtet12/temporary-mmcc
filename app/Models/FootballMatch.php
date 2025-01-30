@@ -3,18 +3,29 @@
 namespace App\Models;
 
 use App\Traits\FootballMatchAttribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FootballMatch extends Model
 {
-    use HasFactory, FootballMatchAttribute;
+    use HasFactory;
 
     protected $guarded = [];
 
-    protected $with = [ 'home' , 'away' , 'matchStatus' , 'bodyLimit' ];
+    protected $with = ['home', 'away', 'league'];
 
-    // type - 0 Refund
+    protected $appends = ['date_time_format', 'limit_amount'];
+
+    // relationship
+    use FootballMatchAttribute; // Ensure this trait is included
+
+
+    public function matchStatus()
+    {
+        return $this->hasOne(FootballMatchStatus::class, 'match_id');
+    }
 
     public function home()
     {
@@ -31,51 +42,15 @@ class FootballMatch extends Model
         return $this->belongsTo(League::class, 'league_id');
     }
 
-    public function matchStatus()
-    {
-        return $this->hasOne(FootballMatchStatus::class, 'match_id');
-    }
-
-    public function bodyLimit()
-    {
-        return $this->belongsTo(FootballBodyLimitGroup::class, 'body_limit');
-    }
-
-    //
-
     public function bodyfees()
     {
-        return $this->hasOne(FootballBodyFee::class, 'match_id')->where('status', '=', 1);
+        return $this->hasOne(FootballBodyFee::class, 'match_id')->where('status', '=', 1)->whereNotNull('body');
     }
-
-    public function oldBodyfees()
-    {
-        return $this->hasMany(FootballBodyFee::class, 'match_id')->where('status', '=', 0);
-    }
-
-    public function allBodyfees()
-    {
-        return $this->hasMany(FootballBodyFee::class, 'match_id');
-    }
-
-    //
 
     public function maungfees()
     {
-        return $this->hasOne(FootballMaungFee::class, 'match_id')->where('status', '=', 1);
+        return $this->hasOne(FootballMaungFee::class, 'match_id')->where('status', '=', 1)->whereNotNull('body');
     }
-
-    public function oldMaungfees()
-    {
-        return $this->hasMany(FootballMaungFee::class, 'match_id')->where('status', '=', 0);
-    }
-
-    public function allMaungfees()
-    {
-        return $this->hasMany(FootballMaungFee::class, 'match_id');
-    }
-
-    //
 
     public function bodies()
     {
@@ -87,29 +62,56 @@ class FootballMatch extends Model
         return $this->hasMany(FootballMaung::class, 'match_id');
     }
 
-    public function pendingMaungs()
+    public function bodiesByUser()
     {
-        return $this->hasMany(FootballMaung::class, 'match_id')->where('status', 0);
+        return $this->hasMany(FootballBody::class, 'match_id')->where('user_id', auth()->id());
     }
 
-    //
-
-    public function getBodyLimitGroupAttribute()
+    public function bodyLimit()
     {
-        return $this->bodyLimit ?
-                "<p> ( {$this->limit_name} ) </p>
-                 <span class='mt-2'> {$this->limit_amount} </span>"
-                : "";
+        return $this->belongsTo(FootballBodyLimitGroup::class, 'body_limit');
     }
 
-    public function getLimitNameAttribute()
+    // Attribute
+
+    public function getDateTimeFormatAttribute()
     {
-        return $this->bodyLimit?->name;
+        return Carbon::parse($this->date_time)->format('d-m-Y g:i A');
+    }
+
+    public function getMatchFormatAttribute()
+    {
+        return "{$this->home_team} Vs {$this->away_team}";
+    }
+
+    public function getHomeTeamAttribute()
+    {
+        return "({$this->home_no}) {$this->home?->name} {$this->other_status(1)}";
+    }
+
+    public function getAwayTeamAttribute()
+    {
+        return "({$this->away_no}) {$this->away?->name} {$this->other_status(2)}";
+    }
+
+    public function other_status($status)
+    {
+        return ($this->other == $status) ? '(N)' : '';
+    }
+
+    public function getBodyResultAttribute()
+    {
+        return $this->calculate_body ? $this->body_temp_score : '';
+    }
+
+    public function getMaungResultAttribute()
+    {
+        return $this->calculate_maung ? $this->maung_temp_score : '';
     }
 
     public function getLimitAmountAttribute()
     {
-        return number_format($this->bodyLimit?->max_amount);
+        return $this->bodyLimit?->max_amount;
     }
 
     public function getBodyPercentageAttribute()
@@ -117,4 +119,32 @@ class FootballMatch extends Model
         return $this->bodyLimit?->percentage;
     }
 
+
+    // function
+
+    public function getBodyAmountByUser($type)
+    {
+        return $this->bodiesByUser->where('type', $type)->sum('bet.amount');
+    }
+
+    public function getBodyAmountByAll($type)
+    {
+        return $this->bodies->where('type', $type)->sum('bet.amount');
+    }
+
+    public function check_refund($type)
+    {
+        return ($type == 'maung') ? $this->matchStatus?->maung_refund
+            : $this->matchStatus?->body_refund;
+    }
+
+    //
+
+    public function getBettingType($type)
+    {
+        if ($type == 'home') return $this->home_team;
+        if ($type == 'away') return $this->away_team;
+
+        return $type;
+    }
 }

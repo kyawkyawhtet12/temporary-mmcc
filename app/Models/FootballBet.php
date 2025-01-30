@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class FootballBet extends Model
 {
@@ -29,8 +30,8 @@ class FootballBet extends Model
     public function maung_win()
     {
         return $this->hasOne(WinRecord::class, 'betting_id', 'maung_group_id')
-        ->where('type', 'Maung')
-        ->where('status', '!=', 2);
+            ->where('type', 'Maung')
+            ->where('status', '!=', 2);
     }
 
     public function agent()
@@ -58,23 +59,16 @@ class FootballBet extends Model
         switch ($this->status) {
             case 0:
                 return "Pending";
-                break;
             case 1:
                 return "Win";
-                break;
             case 2:
                 return "No Win";
-                break;
             case 3:
                 return "Draw";
-                break;
             case 4:
                 return "Refund";
-                break;
-
             default:
                 return "-";
-                break;
         }
     }
 
@@ -83,7 +77,7 @@ class FootballBet extends Model
         $query->whereNotNull('maung_group_id')->whereStatus(1);
     }
 
-    public function scopeDoneFilter($query , $done = 0)
+    public function scopeDoneFilter($query, $done = 0)
     {
         $query->where('is_done', $done);
     }
@@ -101,5 +95,19 @@ class FootballBet extends Model
     public function getBettingTimeAttribute()
     {
         return $this->created_at->format('d-m-Y h:i A');
+    }
+
+    public function scopeFilterByDate($query, $request)
+    {
+        $start_date = $request->start_date ? Carbon::parse($request->start_date) : today()->subDay(14);
+        $end_date   = $request->end_date   ? Carbon::parse($request->end_date)   : today();
+
+        return $query->whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date);
+    }
+
+    public function scopeStatus($query, $value)
+    {
+        return $query->where('status', $value);
     }
 }
